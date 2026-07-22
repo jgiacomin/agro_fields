@@ -207,38 +207,97 @@ Estado:
 ✅ Base económica inicial implementada.
 
 
-Pendiente V8:
-
-
-Separar claramente:
-
-
-## Situación actual
-
-- costos reales;
-- producción actual;
-- ingresos actuales.
-
-
-## Proyecto futuro
-
-- inversión requerida;
-- expansión;
-- capacidad productiva esperada;
-- escenarios;
-- riesgos.
-
-
-Importante:
-
-
-La plataforma registra información declarada y análisis.
-
-No garantiza rentabilidad.
-
 
 ---
 
+# Evolución EconomiaActivo V8
+
+
+Fecha:
+
+22/07/2026
+
+
+Objetivo:
+
+Evolucionar el modelo económico del Activo Agro para representar no solamente una inversión solicitada, sino la situación actual, la proyección productiva y la expectativa de expansión del proyecto.
+
+
+
+## Nuevos conceptos incorporados
+
+
+El modelo económico deberá permitir relacionar:
+
+
+Productor / Propietario
+
+↓
+
+Proyecto productivo
+
+↓
+
+Necesidad de capital
+
+↓
+
+Expansión esperada
+
+↓
+
+Información para inversor
+
+
+
+## Información agregada
+
+
+Se incorporaron campos orientados a:
+
+
+- objetivo del proyecto;
+- etapa actual del proyecto;
+- inversión esperada;
+- capacidad actual;
+- capacidad proyectada;
+- riesgos identificados;
+- origen de la información;
+- responsable de la declaración.
+
+
+
+## Criterio de confianza
+
+
+Agro Fields no determina ni garantiza rentabilidad.
+
+
+La plataforma registra:
+
+
+- información declarada;
+- origen de la información;
+- evolución histórica;
+- respaldo disponible.
+
+
+
+## Objetivo futuro
+
+
+Permitir que un inversor pueda analizar:
+
+
+- dónde está el activo actualmente;
+- qué necesita para crecer;
+- qué resultado espera el productor;
+- qué riesgos existen;
+- quién respalda la información.
+
+
+
+---
 # 6. Confianza
 
 
