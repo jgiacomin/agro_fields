@@ -1330,24 +1330,87 @@ Estado:
 ✅ Implementado
 
 
-Representa actores relacionados.
+Responsabilidad:
+
+Representar las personas, organizaciones y actores relacionados con un Activo Agro.
 
 
-Futuro:
+
+Actualmente permite asociar:
 
 
-Integración con:
-
-
-- productores;
 - propietarios;
+- productores;
+- administradores;
+- representantes;
+- usuarios relacionados.
+
+
+
+## Rol dentro del ecosistema
+
+
+Los participantes permiten separar:
+
+
+Activo Agro
+
+↓
+
+Personas relacionadas
+
+↓
+
+Responsabilidades
+
+↓
+
+Intervenciones
+
+
+
+Esto evita que el activo dependa de un único usuario.
+
+
+
+## Evolución V8
+
+
+El modelo deberá permitir identificar:
+
+
+- identidad del participante;
+- tipo de relación con el activo;
+- fecha de incorporación;
+- estado de participación;
+- permisos;
+- validaciones.
+
+
+
+## Integración futura
+
+
+Se conectará con:
+
+
+- Red Profesional Agro Fields;
+- TPAF;
 - inversores;
-- profesionales;
-- operadores.
+- auditores;
+- especialistas técnicos.
+
+
+
+Objetivo:
+
+
+Conocer quién participa, qué responsabilidad tiene y qué intervención realizó dentro de la historia del activo.
 
 
 
 ---
+
 
 # 10. Historial
 
@@ -1362,25 +1425,105 @@ Estado:
 ✅ Implementado
 
 
-Objetivo:
+Responsabilidad:
 
 
-Registrar evolución del activo.
+Registrar la evolución completa del Activo Agro.
 
 
 
-Pendiente:
+Actualmente permite almacenar eventos asociados al activo.
 
 
-Ampliar eventos:
+
+## Objetivo V8
+
+
+El historial será la base de trazabilidad temporal.
+
+
+
+Debe permitir reconstruir:
+
+
+Creación del activo
+
+↓
+
+Evolución productiva
+
+↓
+
+Cambios económicos
+
+↓
+
+Intervenciones profesionales
+
+↓
+
+Operaciones futuras
+
+
+
+## Tipos de eventos futuros
+
+
+### Eventos generales
 
 
 - creación;
 - modificación;
+- actualización de información;
+- cambio de estado.
+
+
+
+### Eventos productivos
+
+
+- incorporación de producción;
+- cambio de actividad;
+- mejoras;
+- expansión;
+- nuevos ciclos productivos.
+
+
+
+### Eventos económicos
+
+
+- inversión;
+- actualización de costos;
+- modificación del proyecto;
+- incorporación de capital.
+
+
+
+### Eventos profesionales
+
+
 - auditoría;
-- intervención profesional;
-- cambio productivo;
-- inversión.
+- certificación;
+- validación técnica;
+- intervención profesional.
+
+
+
+### Eventos legales
+
+
+- revisión normativa;
+- autorización;
+- restricción;
+- cambio jurisdiccional.
+
+
+
+Objetivo:
+
+
+Garantizar que cualquier persona pueda comprender la evolución histórica del activo.
 
 
 
