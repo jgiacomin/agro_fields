@@ -1691,3 +1691,105 @@ Documentación
 +
 
 Commit Git
+---
+
+# 14. Auditoría Servicio Activo Agro V2
+
+
+Archivo:
+
+lib/services/activo_agro_service_v2.dart
+
+
+Estado:
+
+✅ Implementado
+
+
+Responsabilidad:
+
+Gestionar la comunicación entre la aplicación y Firebase para las operaciones del Activo Agro.
+
+
+
+## Funciones actuales
+
+
+Permite:
+
+
+- crear activos;
+- consultar activos;
+- buscar por propietario;
+- buscar por publicador;
+- publicar activos;
+- pausar activos;
+- actualizar información;
+- actualizar índice de confianza.
+
+
+
+## Evaluación arquitectura
+
+
+Cumple:
+
+
+Screen
+
+↓
+
+Service
+
+↓
+
+Model
+
+↓
+
+Firebase
+
+
+
+Las pantallas no acceden directamente a Firestore.
+
+
+
+## Fortalezas actuales
+
+
+- separación correcta de responsabilidades;
+- uso de modelos para transformación de datos;
+- validación mediante hashActivo;
+- separación entre existencia del activo y publicación comercial;
+- soporte para evolución V8.
+
+
+
+## Mejoras futuras
+
+
+Agregar:
+
+
+- generación automática de historial;
+- registro del usuario que modifica;
+- validaciones de permisos;
+- auditorías profesionales;
+- eventos económicos;
+- eventos legales.
+
+
+
+## Próximo paso
+
+
+Analizar servicios complementarios:
+
+
+- confianza_activo_service.dart;
+- inversion_service.dart;
+- chat_service.dart.
+
+
+Mantener evolución sobre servicios existentes sin crear versiones paralelas.
