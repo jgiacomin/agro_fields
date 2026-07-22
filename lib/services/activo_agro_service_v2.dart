@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../models/activos/activo_agro_model_v2.dart';
 import '../models/activos/confianza_activo_model.dart';
 
