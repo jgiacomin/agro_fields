@@ -649,7 +649,35 @@ Permitir analizar:
 
 Archivo:
 
-confianza_activo_model.dart
+lib/models/activos/confianza_activo_model.dart
+
+
+Clase:
+
+ConfianzaActivo
+
+
+Responsabilidad:
+
+Representar el nivel de confianza asociado al Activo Agro.
+
+
+
+## Estado actual
+
+
+Campos implementados:
+
+
+- nivelGeneral;
+- identidadVerificada;
+- documentacionCompleta;
+- cantidadEvidencias;
+- informacionProductivaCompleta;
+- participantesVerificados;
+- ultimaVerificacion;
+- observaciones.
+
 
 
 Estado:
@@ -657,31 +685,292 @@ Estado:
 ✅ Implementado
 
 
+
+## Capacidad actual
+
+
+El modelo permite evaluar si la información del activo posee respaldo suficiente.
+
+
+
 Actualmente contempla:
 
 
-- identidad verificada;
-- documentación;
-- evidencias;
-- información productiva;
-- participantes;
-- observaciones.
+## Identidad
 
 
-Pendiente:
+Verifica:
 
 
-Integrar:
+- existencia del activo;
+- relación con propietario;
+- información básica registrada.
 
 
-- profesionales;
-- validaciones;
-- auditorías;
-- historial de verificaciones.
+
+## Documentación
+
+
+Permite determinar:
+
+
+- documentación disponible;
+- completitud documental;
+- respaldo administrativo.
+
+
+
+## Evidencias
+
+
+Registra:
+
+
+- cantidad de evidencias asociadas;
+- respaldo de información declarada.
+
+
+
+## Información productiva
+
+
+Evalúa:
+
+
+- disponibilidad de información productiva;
+- nivel de detalle del módulo productivo.
+
+
+
+## Participantes
+
+
+Permite controlar:
+
+
+- actores relacionados;
+- validación de personas vinculadas al activo.
 
 
 
 ---
+
+
+# Evolución Confianza V8
+
+
+Objetivo:
+
+
+Transformar el modelo de confianza desde un indicador general hacia un sistema de evaluación multidimensional del Activo Agro.
+
+
+
+La confianza deberá construirse mediante:
+
+
+Información
+
++
+
+Evidencias
+
++
+
+Profesionales
+
++
+
+Historial
+
++
+
+Validaciones
+
+
+
+---
+
+# Factores futuros de confianza
+
+
+El índice deberá poder dividirse en factores:
+
+
+## Factor documental
+
+
+Evalúa:
+
+
+- títulos;
+- permisos;
+- registros;
+- contratos;
+- documentación respaldatoria.
+
+
+
+## Factor productivo
+
+
+Evalúa:
+
+
+- información productiva;
+- historial;
+- capacidad;
+- consistencia de datos.
+
+
+
+## Factor económico
+
+
+Evalúa:
+
+
+- información declarada;
+- origen de datos;
+- coherencia de proyecciones.
+
+
+
+## Factor legal
+
+
+Evalúa:
+
+
+- jurisdicción;
+- restricciones;
+- revisión profesional.
+
+
+
+## Factor profesional
+
+
+Evalúa:
+
+
+- intervenciones;
+- profesionales participantes;
+- validaciones realizadas.
+
+
+
+---
+
+# Integración con Red Profesional
+
+
+Futuro:
+
+
+La confianza deberá relacionar:
+
+
+Profesional
+
+↓
+
+Validación
+
+↓
+
+Activo Agro
+
+↓
+
+Historial
+
+
+
+Cada intervención profesional podrá aumentar el respaldo de determinada información.
+
+
+
+---
+
+# Integración con TPAF
+
+
+La confianza será una de las fuentes principales del sistema TPAF.
+
+
+Ejemplo:
+
+
+Ingeniero Agrónomo
+
+↓
+
+Intervención técnica
+
+↓
+
+Módulo Productivo
+
+↓
+
+Factor de Confianza Productiva
+
+
+
+---
+
+# Integración con Inteligencia Artificial
+
+
+La IA podrá utilizar la información de confianza para:
+
+
+- explicar por qué un activo posee determinado nivel;
+- detectar información faltante;
+- sugerir documentación necesaria;
+- identificar puntos débiles.
+
+
+
+La IA no asigna confianza definitiva.
+
+
+La confianza surge de datos verificables y validaciones.
+
+
+
+---
+
+# Conclusión Confianza
+
+
+ConfianzaActivo posee una base correcta para evolucionar hacia el Índice de Confianza Agro Fields V8.
+
+
+
+No requiere crear:
+
+
+confianza_activo_model_v2.dart
+
+
+
+La evolución debe realizarse sobre:
+
+
+confianza_activo_model.dart
+
+
+
+Próxima evolución:
+
+
+- factores de confianza;
+- profesionales;
+- auditorías;
+- historial de verificaciones;
+- validaciones externas.
 
 # 7. Factor de confianza
 
