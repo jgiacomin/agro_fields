@@ -972,7 +972,307 @@ Próxima evolución:
 - historial de verificaciones;
 - validaciones externas.
 
-# 7. Factor de confianza
+---
+
+# 7. Documentación
+
+
+Archivo:
+
+lib/models/activos/documentacion_activo_model.dart
+
+
+Clase:
+
+DocumentacionActivo
+
+
+Responsabilidad:
+
+Representar la documentación asociada al Activo Agro y servir como fuente de evidencia para el Índice de Confianza.
+
+
+
+## Estado actual
+
+
+Campos implementados:
+
+
+- documentacionCompleta;
+- documentos;
+- certificaciones;
+- permisos;
+- archivos;
+- observaciones;
+- fechaActualizacion.
+
+
+
+Estado:
+
+✅ Implementado
+
+
+
+## Capacidad actual
+
+
+El modelo permite registrar:
+
+
+## Documentos
+
+
+Información documental general del activo.
+
+
+Ejemplos:
+
+
+- escrituras;
+- contratos;
+- registros;
+- documentación administrativa.
+
+
+
+## Certificaciones
+
+
+Permite almacenar:
+
+
+- certificaciones productivas;
+- certificaciones técnicas;
+- estándares de calidad;
+- validaciones externas.
+
+
+
+## Permisos
+
+
+Permite registrar:
+
+
+- permisos productivos;
+- autorizaciones;
+- habilitaciones;
+- documentación regulatoria.
+
+
+
+## Archivos
+
+
+Representa referencias a archivos asociados:
+
+
+- imágenes;
+- documentos digitales;
+- informes;
+- evidencias.
+
+
+
+---
+
+# Evolución Documentación V8
+
+
+Objetivo:
+
+
+Transformar la documentación desde un almacenamiento simple hacia un sistema de evidencia trazable del Activo Agro.
+
+
+
+## Información futura requerida
+
+
+Cada documento deberá poder asociarse a:
+
+
+Documento
+
+↓
+
+Tipo
+
+↓
+
+Fecha
+
+↓
+
+Origen
+
+↓
+
+Responsable
+
+↓
+
+Activo Agro
+
+
+
+---
+
+# Evidencias documentales
+
+
+La documentación deberá integrarse con el sistema de confianza.
+
+
+Ejemplo:
+
+
+Documento respaldatorio
+
+↓
+
+Validación
+
+↓
+
+Factor documental
+
+↓
+
+Índice de Confianza
+
+
+
+---
+
+# Integración profesional
+
+
+Futuro:
+
+
+Un profesional podrá:
+
+
+- cargar documentación;
+- validar documentos;
+- emitir observaciones;
+- registrar intervención.
+
+
+
+Flujo:
+
+
+Profesional
+
+↓
+
+Documento
+
+↓
+
+TPAF
+
+↓
+
+Activo Agro
+
+↓
+
+Historial
+
+
+
+---
+
+# Integración legal
+
+
+La documentación será utilizada para análisis regulatorios:
+
+
+Ubicación
+
++
+
+Documentación
+
++
+
+Marco Legal
+
+↓
+
+Evaluación de operación
+
+
+
+Ejemplos:
+
+
+- títulos;
+- permisos de uso;
+- contratos;
+- restricciones administrativas.
+
+
+
+---
+
+# Integración con Inteligencia Artificial
+
+
+La IA podrá asistir mediante:
+
+
+- detección de documentación faltante;
+- clasificación documental;
+- generación de resúmenes;
+- identificación de inconsistencias.
+
+
+
+La IA no valida legalmente documentos.
+
+
+La validación corresponde a profesionales habilitados.
+
+
+
+---
+
+# Conclusión Documentación
+
+
+DocumentacionActivo posee una base correcta para evolucionar hacia Plan Maestro V8.
+
+
+No requiere crear:
+
+
+documentacion_activo_model_v2.dart
+
+
+
+La evolución debe realizarse sobre:
+
+
+documentacion_activo_model.dart
+
+
+
+Próxima evolución:
+
+
+- documentos con metadata;
+- evidencias verificables;
+- validaciones profesionales;
+- auditoría documental.
+
+# 8. Factor de confianza
 
 
 Archivo:
@@ -1017,7 +1317,7 @@ Factor profesional
 
 ---
 
-# 8. Participantes
+# 9. Participantes
 
 
 Archivo:
@@ -1049,7 +1349,7 @@ Integración con:
 
 ---
 
-# 9. Historial
+# 10. Historial
 
 
 Archivo:
@@ -1086,7 +1386,7 @@ Ampliar eventos:
 
 ---
 
-# 10. Marco legal internacional
+# 11. Marco legal internacional
 
 
 Estado:
@@ -1134,7 +1434,7 @@ Resultado:
 
 ---
 
-# 11. Trazabilidad económica del inversor
+# 12. Trazabilidad económica del inversor
 
 
 Estado:
@@ -1167,7 +1467,7 @@ Registrar:
 
 ---
 
-# 12. Conclusión auditoría
+# 13. Conclusión auditoría
 
 
 ActivoAgroV2 posee una arquitectura correcta para evolucionar hacia Plan Maestro V8.
