@@ -3,13 +3,19 @@
 ## Estado
 
 Proyecto:
+
 Agro Fields
 
+
 Versión arquitectura:
+
 V8.0
 
+
 Fecha auditoría:
+
 22/07/2026
+
 
 Objetivo:
 
@@ -24,6 +30,7 @@ Analizar la estructura actual del modelo ActivoAgroV2 y sus módulos asociados p
 ---
 
 # 1. Modelo principal auditado
+
 
 Archivo:
 
@@ -45,6 +52,7 @@ Actualmente contiene:
 
 ## Identidad
 
+
 Campos:
 
 - activoId
@@ -59,7 +67,8 @@ Estado:
 
 Observación:
 
-Permite identificar el activo como entidad independiente.
+Permite identificar el activo como entidad independiente dentro del ecosistema.
+
 
 
 ---
@@ -83,12 +92,14 @@ Permite representar:
 - agricultura;
 - ganadería;
 - vitivinicultura;
+- proyectos mixtos;
 - otros modelos productivos.
 
 
 Futuro:
 
-Ampliar categorías sin romper modelo actual.
+Ampliar categorías sin romper compatibilidad del modelo actual.
+
 
 
 ---
@@ -98,13 +109,27 @@ Ampliar categorías sin romper modelo actual.
 
 Archivo:
 
-ubicacion_activo_model.dart
+lib/models/activos/ubicacion_activo_model.dart
 
 
-Actualmente:
+Clase:
+
+UbicacionActivo
 
 
-- país;
+Responsabilidad:
+
+Representar la ubicación territorial del Activo Agro y servir como base para análisis productivo, legal y estratégico.
+
+
+
+## Estado actual
+
+
+Campos implementados:
+
+
+- pais;
 - provincia;
 - localidad;
 - latitud;
@@ -117,10 +142,22 @@ Estado:
 ✅ Implementado
 
 
-Pendiente según V8:
+
+## Capacidad actual
 
 
-Agregar estructura territorial completa:
+Permite identificar:
+
+- ubicación geográfica;
+- posición exacta mediante coordenadas;
+- superficie productiva asociada.
+
+
+
+## Evolución V8 requerida
+
+
+La ubicación debe evolucionar hacia una estructura territorial internacional:
 
 
 País
@@ -138,9 +175,66 @@ Departamento
 Municipio / Localidad
 
 
+
 Objetivo:
 
-Soportar restricciones legales según jurisdicción.
+
+Permitir:
+
+
+- análisis legal por jurisdicción;
+- aplicación de restricciones territoriales;
+- comparación entre mercados;
+- expansión internacional.
+
+
+
+## Futuro modelo territorial
+
+
+La ubicación deberá poder incorporar:
+
+
+- código país;
+- región administrativa;
+- departamento;
+- municipio;
+- zona productiva;
+- características climáticas;
+- recursos disponibles;
+- restricciones territoriales.
+
+
+
+## Relación con marco legal
+
+
+La ubicación será utilizada por:
+
+
+Activo Agro
+
+↓
+
+Ubicación
+
+↓
+
+Marco Legal Aplicable
+
+↓
+
+Evaluación de Operación
+
+
+
+Permitiendo determinar:
+
+
+- permitido;
+- requiere revisión profesional;
+- restringido.
+
 
 
 ---
@@ -169,10 +263,21 @@ Pendiente:
 
 Agregar trazabilidad:
 
+
 - ciclos productivos;
 - historial;
-- expansión;
-- capacidad futura.
+- evolución;
+- capacidad actual;
+- capacidad futura;
+- expansión proyectada.
+
+
+
+Objetivo:
+
+
+Representar la realidad productiva del activo.
+
 
 
 ---
@@ -220,6 +325,7 @@ Fecha:
 
 Objetivo:
 
+
 Evolucionar el modelo económico del Activo Agro para representar no solamente una inversión solicitada, sino la situación actual, la proyección productiva y la expectativa de expansión del proyecto.
 
 
@@ -227,7 +333,7 @@ Evolucionar el modelo económico del Activo Agro para representar no solamente u
 ## Nuevos conceptos incorporados
 
 
-El modelo económico deberá permitir relacionar:
+El modelo económico deberá relacionar:
 
 
 Productor / Propietario
@@ -253,17 +359,17 @@ Información para inversor
 ## Información agregada
 
 
-Se incorporaron campos orientados a:
+Campos incorporados:
 
 
-- objetivo del proyecto;
-- etapa actual del proyecto;
-- inversión esperada;
-- capacidad actual;
-- capacidad proyectada;
-- riesgos identificados;
-- origen de la información;
-- responsable de la declaración.
+- objetivoProyecto;
+- etapaProyecto;
+- inversionEsperada;
+- capacidadActual;
+- capacidadProyectada;
+- riesgosIdentificados;
+- origenInformacion;
+- responsableDeclaracion.
 
 
 
@@ -277,7 +383,8 @@ La plataforma registra:
 
 
 - información declarada;
-- origen de la información;
+- origen de información;
+- responsable;
 - evolución histórica;
 - respaldo disponible.
 
@@ -286,18 +393,20 @@ La plataforma registra:
 ## Objetivo futuro
 
 
-Permitir que un inversor pueda analizar:
+Permitir analizar:
 
 
 - dónde está el activo actualmente;
 - qué necesita para crecer;
-- qué resultado espera el productor;
+- qué inversión requiere;
+- qué resultado espera;
 - qué riesgos existen;
 - quién respalda la información.
 
 
 
 ---
+
 # 6. Confianza
 
 
@@ -327,10 +436,12 @@ Pendiente:
 
 Integrar:
 
+
 - profesionales;
 - validaciones;
 - auditorías;
 - historial de verificaciones.
+
 
 
 ---
@@ -356,10 +467,12 @@ Representa:
 - observaciones.
 
 
+
 Pendiente:
 
 
 Definir factores oficiales:
+
 
 Ejemplo:
 
@@ -373,6 +486,7 @@ Factor económico
 Factor legal
 
 Factor profesional
+
 
 
 ---
@@ -398,11 +512,13 @@ Futuro:
 
 Integración con:
 
+
 - productores;
 - propietarios;
 - inversores;
 - profesionales;
 - operadores.
+
 
 
 ---
@@ -422,7 +538,9 @@ Estado:
 
 Objetivo:
 
+
 Registrar evolución del activo.
+
 
 
 Pendiente:
@@ -439,12 +557,14 @@ Ampliar eventos:
 - inversión.
 
 
+
 ---
 
 # 10. Marco legal internacional
 
 
 Estado:
+
 
 ❌ No implementado
 
@@ -455,14 +575,17 @@ Necesidad:
 Crear módulo de análisis regulatorio.
 
 
+
 Debe contemplar:
 
 
 - país;
 - provincia;
 - estado;
+- departamento;
 - municipio;
 - localidad.
+
 
 
 Variables:
@@ -478,8 +601,9 @@ Resultado:
 
 
 - permitido;
-- requiere revisión;
+- requiere revisión profesional;
 - restringido.
+
 
 
 ---
@@ -489,10 +613,12 @@ Resultado:
 
 Estado:
 
+
 🟡 Parcialmente implementado
 
 
 Existe:
+
 
 - capital requerido;
 - rentabilidad declarada.
@@ -508,7 +634,9 @@ Registrar:
 - objetivo;
 - plazo;
 - inversión necesaria;
-- resultado esperado.
+- resultado esperado;
+- seguimiento posterior.
+
 
 
 ---
@@ -516,30 +644,81 @@ Registrar:
 # 12. Conclusión auditoría
 
 
-ActivoAgroV2 tiene una base correcta para evolucionar hacia Plan Maestro V8.
+ActivoAgroV2 posee una arquitectura correcta para evolucionar hacia Plan Maestro V8.
 
 
 No requiere crear:
 
+
 activo_agro_model_v3.dart
 
 
-La evolución debe realizarse sobre:
+
+La evolución debe continuar sobre:
 
 
 activo_agro_model_v2.dart
 
 
-y sus módulos relacionados.
+y sus módulos asociados:
 
 
-Próximo análisis:
+- economia_activo_model.dart;
+- ubicacion_activo_model.dart;
+- modulo_produccion_model.dart;
+- confianza_activo_model.dart.
 
 
-- economia_activo_model.dart
-- ubicacion_activo_model.dart
-- modulo_produccion_model.dart
-- confianza_activo_model.dart
+
+La arquitectura actual permite incorporar:
 
 
-manteniendo trazabilidad mediante Git.
+- IA;
+- profesionales;
+- trazabilidad;
+- marco legal;
+- inversión internacional.
+
+
+
+---
+
+# Próximo análisis
+
+
+Continuar auditoría técnica sobre:
+
+
+1. modulo_produccion_model.dart
+
+Analizar:
+
+- ciclos;
+- historial;
+- expansión;
+- capacidad productiva.
+
+
+2. confianza_activo_model.dart
+
+Analizar:
+
+- índice;
+- factores;
+- profesionales;
+- auditorías.
+
+
+
+Mantener siempre:
+
+
+Evolución del modelo existente
+
++
+
+Documentación
+
++
+
+Commit Git
