@@ -244,43 +244,280 @@ Permitiendo determinar:
 
 Archivo:
 
-modulo_produccion_model.dart
+lib/models/activos/modulo_produccion_model.dart
+
+
+Clase:
+
+ModuloProduccion
+
+
+Responsabilidad:
+
+Representar los módulos productivos que forman parte del Activo Agro.
+
+
+
+## Estado actual
+
+
+Campos implementados:
+
+
+- dominio;
+- actividad;
+- descripcion;
+- superficie;
+- unidad;
+- datos.
+
 
 
 Estado:
 
-✅ Base implementada
+✅ Implementado
 
 
-Representa:
 
-- módulos productivos;
-- actividades.
+## Capacidad actual
 
 
-Pendiente:
+El modelo permite representar:
 
 
-Agregar trazabilidad:
+- actividad productiva principal;
+- actividades complementarias;
+- superficie afectada;
+- unidad de medición;
+- información adicional adaptable.
 
 
-- ciclos productivos;
-- historial;
-- evolución;
-- capacidad actual;
-- capacidad futura;
-- expansión proyectada.
+
+Ejemplos:
+
+
+Agricultura
+
+- cultivo;
+- hectáreas;
+- rendimiento;
+- campaña.
+
+
+Ganadería
+
+- especie;
+- cantidad de animales;
+- sistema productivo;
+- capacidad.
+
+
+Vitivinicultura
+
+- variedad;
+- superficie implantada;
+- producción esperada.
+
+
+
+---
+
+# Compatibilidad histórica
+
+
+El modelo mantiene compatibilidad con estructuras anteriores:
+
+
+Campo antiguo:
+
+tipoProduccion
+
+
+Migración:
+
+
+tipoProduccion
+
+↓
+
+dominio
+
++
+
+actividad
 
 
 
 Objetivo:
 
 
-Representar la realidad productiva del activo.
+Permitir evolucionar sin perder información existente.
 
 
 
 ---
+
+# Evolución Producción V8
+
+
+Objetivo:
+
+
+Transformar el módulo productivo desde una descripción estática hacia un registro histórico y evolutivo del activo.
+
+
+
+## Información futura requerida
+
+
+El módulo deberá incorporar:
+
+
+## Ciclos productivos
+
+
+Registrar:
+
+
+- fecha inicio;
+- fecha finalización;
+- campaña;
+- producción obtenida;
+- observaciones.
+
+
+
+## Capacidad productiva
+
+
+Registrar:
+
+
+- capacidad actual;
+- capacidad máxima estimada;
+- recursos disponibles;
+- limitantes productivas.
+
+
+
+## Historial productivo
+
+
+Permitir conocer:
+
+
+- qué se produjo;
+- cuándo;
+- evolución histórica;
+- cambios realizados;
+- mejoras implementadas.
+
+
+
+## Expansión productiva
+
+
+Registrar:
+
+
+- superficie disponible;
+- inversiones necesarias;
+- ampliaciones proyectadas;
+- objetivos futuros.
+
+
+
+## Información técnica profesional
+
+
+Futuro:
+
+
+Relacionar:
+
+
+Profesional
+
+↓
+
+Intervención técnica
+
+↓
+
+Módulo productivo
+
+↓
+
+Historial
+
+
+
+---
+
+# Relación con Economía
+
+
+La producción será fuente de información para el módulo económico:
+
+
+Producción actual
+
+↓
+
+Capacidad futura
+
+↓
+
+Necesidad de inversión
+
+↓
+
+Proyección económica
+
+
+
+Objetivo:
+
+
+Permitir que un inversor comprenda la relación entre:
+
+
+- capacidad productiva;
+- inversión requerida;
+- crecimiento esperado.
+
+
+
+---
+
+# Conclusión Producción
+
+
+ModuloProduccion posee una base correcta para evolucionar hacia Plan Maestro V8.
+
+
+No requiere crear:
+
+
+modulo_produccion_model_v2.dart
+
+
+
+La evolución debe realizarse sobre:
+
+
+modulo_produccion_model.dart
+
+
+
+Próxima evolución:
+
+
+- ciclos productivos;
+- historial;
+- capacidad futura;
+- expansión;
+- validación profesional.
 
 # 5. Economía
 
