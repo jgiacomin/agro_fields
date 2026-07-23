@@ -6,17 +6,21 @@ Proyecto:
 
 Agro Fields
 
+
 Arquitectura:
 
 V8.0
 
+
 Último cierre técnico:
 
-22/07/2026
+23/07/2026
+
 
 Último commit:
 
-e1b45a8
+ef874cb
+
 
 Objetivo:
 
@@ -34,6 +38,7 @@ Continuar la evolución del ecosistema Agro Fields manteniendo:
 # Módulo principal
 
 ## ActivoAgroV2
+
 
 Archivo:
 
@@ -65,7 +70,30 @@ Criterio definido:
 
 No crear ActivoAgroV3.
 
+
 Continuar evolución sobre ActivoAgroV2.
+
+
+---
+
+# Actualización 23/07/2026
+
+
+ActivoAgroV2 incorpora evolución inicial de:
+
+
+- ubicación territorial avanzada;
+- participantes;
+- historial;
+- versión del modelo;
+- trazabilidad de creación;
+- relación Campo → Activo Agro.
+
+
+Objetivo:
+
+
+Transformar el Activo Agro desde una publicación hacia una entidad digital productiva trazable.
 
 
 ---
@@ -74,6 +102,7 @@ Continuar evolución sobre ActivoAgroV2.
 
 
 ## Economía
+
 
 Archivo:
 
@@ -97,9 +126,15 @@ Incorporado:
 - responsable declaración.
 
 
+Objetivo futuro:
+
+Relacionar producción, inversión y expansión del activo.
+
+
 ---
 
 ## Ubicación
+
 
 Archivo:
 
@@ -112,6 +147,7 @@ Estado:
 
 
 Incorporado:
+
 
 Jerarquía territorial:
 
@@ -133,12 +169,19 @@ Municipio / Localidad
 
 Objetivo:
 
-Preparar restricciones legales por jurisdicción.
+
+Preparar:
+
+- análisis legal;
+- restricciones territoriales;
+- expansión internacional;
+- evaluación por jurisdicción.
 
 
 ---
 
 ## Producción
+
 
 Archivo:
 
@@ -152,6 +195,7 @@ Estado:
 
 Base existente:
 
+
 - dominio;
 - actividad;
 - descripción;
@@ -160,17 +204,20 @@ Base existente:
 - datos.
 
 
-Pendiente:
+Evolución pendiente:
+
 
 - ciclos productivos;
 - historial;
+- capacidad futura;
 - expansión;
-- capacidad futura.
+- validación profesional.
 
 
 ---
 
 ## Confianza
+
 
 Archivo:
 
@@ -184,6 +231,7 @@ Estado:
 
 Base existente:
 
+
 - nivel general;
 - identidad;
 - documentación;
@@ -193,17 +241,20 @@ Base existente:
 - observaciones.
 
 
-Pendiente:
+Evolución pendiente:
+
 
 - factores oficiales;
+- cálculo multidimensional;
 - profesionales;
 - auditorías;
-- historial verificaciones.
+- historial de verificaciones.
 
 
 ---
 
 ## Documentación
+
 
 Archivo:
 
@@ -217,6 +268,7 @@ Estado:
 
 Base existente:
 
+
 - documentos;
 - certificaciones;
 - permisos;
@@ -224,17 +276,20 @@ Base existente:
 - observaciones.
 
 
-Pendiente:
+Evolución pendiente:
 
-- validación documental;
-- profesionales;
+
+- metadata documental;
 - vencimientos;
-- trazabilidad.
+- validación profesional;
+- evidencia verificable;
+- trazabilidad documental.
 
 
 ---
 
 ## Servicio
+
 
 Archivo:
 
@@ -248,6 +303,7 @@ Estado:
 
 Funciones actuales:
 
+
 - crear activo;
 - obtener activo;
 - listar activos;
@@ -259,66 +315,199 @@ Funciones actuales:
 - actualizar confianza.
 
 
+Evolución futura:
+
+
+- generación automática de historial;
+- control de permisos;
+- auditoría de modificaciones;
+- eventos profesionales.
+
+
 ---
 
-# Próximos módulos pendientes
+# Evolución Jornada 23/07/2026
+
+
+## Conversión Campo → Activo Agro
+
+
+Archivo:
+
+campo_to_activo_service.dart
+
+
+Estado:
+
+✅ Evolucionado
+
+
+Incorpora:
+
+
+- ubicación completa;
+- economía inicial;
+- propietario como participante;
+- historial de creación;
+- estado de publicación;
+- versión del modelo.
+
+
+Objetivo:
+
+
+Transformar registros productivos existentes en activos digitales trazables.
+
+
+---
+
+## Creación manual de Activo Agro
+
+
+Archivo:
+
+crear_activo_agro_screen.dart
+
+
+Estado:
+
+✅ Actualizado
+
+
+Incorpora:
+
+
+- país;
+- departamento;
+- código postal;
+- historial inicial;
+- información económica ampliada;
+- metadatos de versión.
+
+
+Flujo validado:
+
+
+Usuario propietario
+
+↓
+
+Crear Activo Agro
+
+↓
+
+Guardar
+
+↓
+
+Visualizar
+
+↓
+
+Publicar
+
+
+---
+
+# Evolución de módulos del Activo Agro V2
 
 
 ## 1. Participantes
+
 
 Archivo:
 
 participante_activo_model.dart
 
 
-Analizar:
+Estado:
 
-- productores;
-- propietarios;
-- inversores;
+🟢 Base implementada
+
+
+Incorporado:
+
+
+- propietario;
+- usuario relacionado;
+- estado de participación;
+- fecha de ingreso.
+
+
+Evolución pendiente:
+
+
 - profesionales;
-- operadores.
+- inversores;
+- permisos;
+- validaciones;
+- intervenciones.
 
 
 Objetivo:
 
-Representar ecosistema humano alrededor del activo.
+
+Representar el ecosistema humano alrededor del activo.
 
 
 ---
 
 ## 2. Historial
 
+
 Archivo:
 
 historial_activo_model.dart
 
 
-Analizar:
+Estado:
 
-- creación;
-- modificación;
-- auditoría;
-- intervención profesional;
-- cambio productivo;
-- inversión.
+🟢 Base implementada
+
+
+Incorporado:
+
+
+- eventoId;
+- tipoEvento;
+- descripción;
+- usuario responsable;
+- fecha.
+
+
+Evolución pendiente:
+
+
+- eventos productivos;
+- eventos económicos;
+- auditorías;
+- validaciones profesionales;
+- eventos legales.
 
 
 Objetivo:
 
-Convertir el historial en trazabilidad completa.
+
+Convertir el historial en trazabilidad completa del activo.
 
 
 ---
 
 ## 3. Evaluación de confianza
 
+
 Archivo:
 
 evaluacion_confianza_model.dart
 
 
+Estado:
+
+🟡 Pendiente auditoría
+
+
 Analizar:
+
 
 - índice;
 - factores;
@@ -327,16 +516,45 @@ Analizar:
 - evidencias.
 
 
+Evolución esperada:
+
+
+Información
+
+↓
+
+Evidencia
+
+↓
+
+Factor de confianza
+
+↓
+
+Evaluación
+
+↓
+
+Índice de confianza del activo
+
+
 ---
 
 ## 4. Madurez del activo
+
 
 Archivo:
 
 madurez_activo_model.dart
 
 
+Estado:
+
+🟡 Pendiente auditoría
+
+
 Analizar:
+
 
 - etapa productiva;
 - nivel tecnológico;
@@ -344,9 +562,18 @@ Analizar:
 - preparación para inversión.
 
 
+Objetivo:
+
+
+Determinar el grado de desarrollo del activo.
+
+
 ---
 
-## 5. Marco legal internacional
+# Nuevos módulos futuros
+
+
+## Marco legal internacional
 
 
 Estado:
@@ -355,6 +582,7 @@ Estado:
 
 
 Crear módulo para:
+
 
 - jurisdicción;
 - restricciones;
@@ -365,14 +593,15 @@ Crear módulo para:
 
 Resultado:
 
+
 - permitido;
-- requiere revisión;
+- requiere revisión profesional;
 - restringido.
 
 
 ---
 
-## 6. Inteligencia Artificial
+## Inteligencia Artificial
 
 
 Estado:
@@ -382,11 +611,56 @@ Estado:
 
 Aplicaciones:
 
+
 - análisis documental;
-- detección inconsistencias;
-- recomendación;
-- evaluación riesgo;
-- soporte inversor.
+- detección de inconsistencias;
+- recomendaciones;
+- evaluación de riesgo;
+- asistencia al inversor.
+
+
+Criterio:
+
+
+La IA interpreta información existente.
+
+
+No reemplaza validaciones profesionales.
+
+
+---
+
+# Cierre técnico Jornada 23/07/2026
+
+
+Estado alcanzado:
+
+
+✅ ActivoAgroV2 consolidado como entidad principal
+
+✅ Campo convertido en Activo Agro trazable
+
+✅ Ubicación territorial ampliada
+
+✅ Participantes iniciales operativos
+
+✅ Historial inicial operativo
+
+✅ Creación manual actualizada
+
+✅ Conversión automática actualizada
+
+✅ Documentación técnica sincronizada
+
+
+Próxima etapa:
+
+
+- índice de confianza;
+- evolución productiva;
+- marco legal;
+- red profesional;
+- trazabilidad económica.
 
 
 ---
@@ -419,11 +693,44 @@ Commit Git
 
 Continuar desde:
 
-1. participante_activo_model.dart
 
-2. historial_activo_model.dart
-
-3. evaluacion_confianza_model.dart
+## 1. evaluacion_confianza_model.dart
 
 
-Mantener arquitectura modular sin romper compatibilidad.
+Analizar:
+
+
+- factores de confianza;
+- cálculo de índice;
+- evidencias;
+- responsables;
+- integración con historial.
+
+
+---
+
+## 2. modulo_produccion_model.dart
+
+
+Analizar:
+
+
+- ciclos productivos;
+- historial productivo;
+- capacidad futura;
+- expansión;
+- intervenciones técnicas.
+
+
+---
+
+## 3. madurez_activo_model.dart
+
+
+Analizar:
+
+
+- etapa del activo;
+- preparación para inversión;
+- nivel tecnológico;
+- evolución del proyecto.
