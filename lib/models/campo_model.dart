@@ -9,11 +9,16 @@ class Campo {
   final String tipoRelacion;
 
   // Datos del campo
-  final String nombre;
+  final String pais;
   final String provincia;
+  final String departamento;
   final String localidad;
+  final String codigoPostal;
+
+  final String nombre;
   final double hectareas;
   final String descripcion;
+  
 
   // Estado comercial
   final String estadoPublicacion;
@@ -27,17 +32,22 @@ class Campo {
 
 
   Campo({
-    required this.campoId,
+  required this.campoId,
 
-    required this.propietarioId,
-    required this.publicadorId,
-    required this.tipoRelacion,
+  required this.propietarioId,
+  required this.publicadorId,
+  required this.tipoRelacion,
 
-    required this.nombre,
-    required this.provincia,
-    required this.localidad,
-    required this.hectareas,
-    required this.descripcion,
+  required this.pais,
+  required this.provincia,
+  required this.departamento,
+  required this.localidad,
+  required this.codigoPostal,
+
+  required this.nombre,
+  required this.hectareas,
+  required this.descripcion,
+
 
     required this.estadoPublicacion,
 
@@ -50,34 +60,39 @@ class Campo {
 
   factory Campo.fromMap(Map<String, dynamic> map, String id) {
     return Campo(
-      campoId: id,
+  campoId: id,
 
-      propietarioId: map['propietarioId'] ?? '',
-      publicadorId: map['publicadorId'] ?? '',
-      tipoRelacion: map['tipoRelacion'] ?? 'propietario',
+  propietarioId: map['propietarioId'] ?? '',
+  publicadorId: map['publicadorId'] ?? '',
+  tipoRelacion: map['tipoRelacion'] ?? 'propietario',
 
-      nombre: map['nombre'] ?? '',
-      provincia: map['provincia'] ?? '',
-      localidad: map['localidad'] ?? '',
+  nombre: map['nombre'] ?? '',
 
-      hectareas: (map['hectareas'] ?? 0).toDouble(),
+  pais: map['pais'] ?? '',
+  provincia: map['provincia'] ?? '',
+  departamento: map['departamento'] ?? '',
+  localidad: map['localidad'] ?? '',
+  codigoPostal: map['codigoPostal'] ?? '',
 
-      descripcion: map['descripcion'] ?? '',
+  hectareas: (map['hectareas'] ?? 0).toDouble(),
 
-      estadoPublicacion:
-          map['estadoPublicacion'] ?? 'disponible',
+  descripcion: map['descripcion'] ?? '',
 
-      verificado:
-          map['verificado'] ?? false,
+  estadoPublicacion:
+      map['estadoPublicacion'] ?? 'disponible',
 
-      hashCampo:
-          map['hashCampo'] ?? '',
+  verificado:
+      map['verificado'] ?? false,
 
-      fechaCreacion:
-          map['fechaCreacion'] != null
-              ? (map['fechaCreacion'] as Timestamp).toDate()
-              : DateTime.now(),
-    );
+  hashCampo:
+      map['hashCampo'] ?? '',
+
+  fechaCreacion:
+      map['fechaCreacion'] != null
+          ? (map['fechaCreacion'] as Timestamp).toDate()
+          : DateTime.now(),
+);
+
   }
 
 
@@ -92,8 +107,14 @@ class Campo {
 
 
       'nombre': nombre,
+      
+      'pais': pais,
 
       'provincia': provincia,
+
+      'departamento': departamento,
+
+       'codigoPostal': codigoPostal,
 
       'localidad': localidad,
 
@@ -115,15 +136,21 @@ class Campo {
 
 
   static String generateHash({
-    required String nombre,
-    required String provincia,
-    required String localidad,
-    required double hectareas,
-  }) {
+  required String nombre,
+  required String pais,
+  required String provincia,
+  required String departamento,
+  required String localidad,
+  required double hectareas,
+}) 
+{
 
-    return '${nombre.trim().toLowerCase()}|'
-        '${provincia.trim().toLowerCase()}|'
-        '${localidad.trim().toLowerCase()}|'
-        '${hectareas.toString()}';
-  }
+  return '${nombre.trim().toLowerCase()}|'
+      '${pais.trim().toLowerCase()}|'
+      '${provincia.trim().toLowerCase()}|'
+      '${departamento.trim().toLowerCase()}|'
+      '${localidad.trim().toLowerCase()}|'
+      '${hectareas.toString()}';
+}
+
 }

@@ -36,6 +36,8 @@ class _CrearCampoScreenState
   final nombreController =
       TextEditingController();
 
+  final paisController =
+    TextEditingController();
 
   final provinciaController =
       TextEditingController();
@@ -43,6 +45,14 @@ class _CrearCampoScreenState
 
   final localidadController =
       TextEditingController();
+
+  
+  final departamentoController =
+    TextEditingController();
+
+
+  final codigoPostalController =
+    TextEditingController();
 
 
   final hectareasController =
@@ -63,9 +73,15 @@ class _CrearCampoScreenState
 
     nombreController.dispose();
 
-    provinciaController.dispose();
+    paisController.dispose();
+
+     provinciaController.dispose();
 
     localidadController.dispose();
+
+    departamentoController.dispose();
+
+    codigoPostalController.dispose();
 
     hectareasController.dispose();
 
@@ -119,7 +135,8 @@ class _CrearCampoScreenState
       final nombre =
           nombreController.text.trim();
 
-
+      final pais =
+           paisController.text.trim();
 
       final provincia =
           provinciaController.text.trim();
@@ -131,6 +148,16 @@ class _CrearCampoScreenState
 
 
 
+
+      final departamento =
+           departamentoController.text.trim();
+
+
+      final codigoPostal =
+          codigoPostalController.text.trim();
+
+
+    
 
       final hectareas =
           double.tryParse(
@@ -148,17 +175,22 @@ class _CrearCampoScreenState
 
 
       final hash =
-          Campo.generateHash(
+    Campo.generateHash(
 
-            nombre: nombre,
+      nombre: nombre,
 
-            provincia: provincia,
+      pais: pais,
 
-            localidad: localidad,
+      provincia: provincia,
 
-            hectareas: hectareas,
+      departamento: departamento,
 
-          );
+      localidad: localidad,
+
+      hectareas: hectareas,
+
+    );
+
 
 
 
@@ -185,19 +217,33 @@ class _CrearCampoScreenState
 
 
         nombre:
-            nombre,
+    nombre,
 
 
-        provincia:
-            provincia,
+     pais:
+       pais,
 
 
-        localidad:
-            localidad,
+       provincia:
+         provincia,
 
 
-        hectareas:
-            hectareas,
+      departamento:
+        departamento,
+
+
+          localidad:
+           localidad,
+
+
+      codigoPostal:
+         codigoPostal,
+
+
+         hectareas:
+          hectareas,
+
+
 
 
         descripcion:
@@ -418,6 +464,32 @@ class _CrearCampoScreenState
               ),
 
 
+             TextFormField(
+
+  controller:
+  paisController,
+
+  decoration:
+
+  const InputDecoration(
+    labelText:
+    'País',
+  ),
+
+  validator: (v) {
+
+    if(v == null ||
+       v.trim().isEmpty){
+
+      return 'Ingrese país';
+
+    }
+
+    return null;
+
+  },
+
+),
 
 
 
@@ -458,6 +530,34 @@ class _CrearCampoScreenState
 
 
 
+
+           TextFormField(
+  controller: departamentoController,
+
+  decoration: const InputDecoration(
+    labelText: 'Departamento / Estado',
+  ),
+
+  validator: (v) {
+    if (v == null || v.trim().isEmpty) {
+      return 'Ingrese departamento o estado';
+    }
+
+    return null;
+  },
+
+),
+
+
+
+             TextFormField(
+  controller: codigoPostalController,
+
+  decoration: const InputDecoration(
+    labelText: 'Código postal',
+  ),
+
+),
 
 
 

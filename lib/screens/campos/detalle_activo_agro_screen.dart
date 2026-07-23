@@ -410,14 +410,15 @@ class DetalleActivoAgroScreen extends StatelessWidget {
                       ),
 
 
-                      child:
+                    child:
 
-                      Text(
+                    Text(
 
-                        "• ${participante.nombre} "
-                        "(${participante.rol})",
+                     "• Usuario: ${participante.usuarioId} "
+                  "(${participante.rol})",
 
-                      ),
+                  ),
+
 
                     );
 

@@ -67,26 +67,31 @@ class HistorialActivo {
 
   Map<String,dynamic> toMap(){
 
-    return {
+  return {
 
-      'tipoEvento':
-      tipoEvento,
-
-
-      'descripcion':
-      descripcion,
+    'eventoId':
+    eventoId,
 
 
-      'usuarioId':
-      usuarioId,
+    'tipoEvento':
+    tipoEvento,
 
 
-      'fecha':
-      fecha,
+    'descripcion':
+    descripcion,
 
-    };
 
-  }
+    'usuarioId':
+    usuarioId,
+
+
+    'fecha':
+    fecha,
+
+  };
+
+}
+
 
 
 }

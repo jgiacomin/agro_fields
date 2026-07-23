@@ -12,6 +12,9 @@ import '../models/activos/economia_activo_model.dart';
 import '../models/activos/documentacion_activo_model.dart';
 import '../models/activos/evaluacion_confianza_model.dart';
 import '../models/activos/madurez_activo_model.dart';
+import '../models/activos/historial_activo_model.dart';
+import '../models/activos/participante_activo_model.dart';
+
 
 
 
@@ -52,27 +55,73 @@ class CampoToActivoService {
 
       ubicacion:
 
-      UbicacionActivo(
+UbicacionActivo(
 
-        pais:
-        'Argentina',
+  pais:
+      campo.pais,
 
-        provincia:
-        campo.provincia,
+  provincia:
+      campo.provincia,
 
-        localidad:
-        campo.localidad,
 
-        latitud:
-        0,
+  departamento:
+      campo.departamento,
 
-        longitud:
-        0,
 
-        superficie:
-        campo.hectareas,
+  localidad:
+      campo.localidad,
 
-      ),
+
+  codigoPostal:
+      campo.codigoPostal,
+
+
+  latitud:
+      0,
+
+
+  longitud:
+      0,
+
+
+  superficie:
+      campo.hectareas,
+
+
+
+  tipoZona:
+      'rural',
+
+
+  zonaHoraria:
+      'America/Argentina/Buenos_Aires',
+
+
+  accesoCaminos:
+      '',
+
+
+  descripcionEntorno:
+      '',
+
+
+  disponibilidadServicios:
+      '',
+
+
+  jurisdiccionLegal:
+      '',
+
+
+  regionProductiva:
+      campo.provincia,
+
+
+  monedaLocal:
+      'ARS',
+
+),
+
 
 
 
@@ -132,6 +181,38 @@ class CampoToActivoService {
 
 
       EconomiaActivo(
+
+                objetivoProyecto:
+        '',
+
+
+        etapaProyecto:
+        'inicial',
+
+
+        inversionEsperada:
+        0,
+
+
+        capacidadActual:
+        '',
+
+
+        capacidadProyectada:
+        '',
+
+
+        riesgosIdentificados:
+        '',
+
+
+        origenInformacion:
+        'productor',
+
+
+        responsableDeclaracion:
+        campo.propietarioId,
+
 
         valorSolicitado:
         0,
@@ -299,7 +380,24 @@ class CampoToActivoService {
 
 
       participantes:
-      [],
+[
+  ParticipanteActivo(
+
+    usuarioId:
+    campo.propietarioId,
+
+    rol:
+    'propietario',
+
+    estado:
+    'activo',
+
+    fechaIngreso:
+    campo.fechaCreacion,
+
+  ),
+],
+
 
 
 
@@ -312,6 +410,24 @@ class CampoToActivoService {
       creadorId:
       campo.publicadorId,
 
+            publicadorId:
+      campo.publicadorId,
+
+
+      tipoRelacionPropietario:
+      'propietario',
+
+
+      estadoPublicacion:
+      campo.estadoPublicacion,
+
+
+      visible:
+      campo.estadoPublicacion == 'publicado',
+
+
+      versionDatos:
+      ActivoAgroV2.modeloVersion,
 
 
 
@@ -333,7 +449,27 @@ class CampoToActivoService {
 
 
       historial:
-      [],
+[
+  HistorialActivo(
+
+    eventoId:
+    'creacion_${campo.campoId}',
+
+    tipoEvento:
+    'creacion',
+
+    descripcion:
+    'Activo generado desde Campo',
+
+    usuarioId:
+    campo.publicadorId,
+
+    fecha:
+    campo.fechaCreacion,
+
+  ),
+],
+
 
 
 

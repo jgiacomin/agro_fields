@@ -475,24 +475,31 @@ class ActivoAgroV2 {
 
   static DateTime _leerFecha(dynamic valor){
 
-    if(valor is Timestamp){
+  if(valor is Timestamp){
 
-      return valor.toDate();
-
-    }
-
-
-    if(valor is DateTime){
-
-      return valor;
-
-    }
-
-
-    return DateTime.now();
+    return valor.toDate();
 
   }
 
+
+  if(valor is DateTime){
+
+    return valor;
+
+  }
+
+
+  if(valor is String){
+
+    return DateTime.tryParse(valor)
+        ?? DateTime.now();
+
+  }
+
+
+  return DateTime.now();
+
+}
 
 
 

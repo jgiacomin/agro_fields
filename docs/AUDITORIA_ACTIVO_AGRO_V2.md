@@ -14,7 +14,7 @@ V8.0
 
 Fecha auditoría:
 
-22/07/2026
+23/07/2026
 
 
 Objetivo:
@@ -1793,3 +1793,292 @@ Analizar servicios complementarios:
 
 
 Mantener evolución sobre servicios existentes sin crear versiones paralelas.
+
+---
+
+# 15. Actualización Jornada 23/07/2026 — Evolución Activo Agro V2
+
+## Estado
+
+Durante la jornada se validó la evolución del Activo Agro desde un registro productivo hacia una entidad digital trazable dentro del ecosistema Agro Fields V8.
+
+
+## Cambios incorporados
+
+
+### Ubicación territorial avanzada
+
+Archivo:
+
+lib/models/activos/ubicacion_activo_model.dart
+
+
+La estructura territorial incorpora:
+
+- país;
+- provincia;
+- departamento;
+- localidad;
+- código postal;
+- región productiva;
+- jurisdicción legal;
+- zona horaria;
+- moneda local.
+
+
+Objetivo:
+
+Preparar el Activo Agro para análisis territorial, marco legal internacional y expansión geográfica.
+
+
+Estado:
+
+✅ Incorporado
+
+
+
+---
+
+# Historial del Activo
+
+
+Archivo:
+
+lib/models/activos/historial_activo_model.dart
+
+
+Se incorporó la identificación de eventos mediante:
+
+
+- eventoId;
+- tipoEvento;
+- descripción;
+- usuario responsable;
+- fecha.
+
+
+Estado:
+
+✅ Incorporado
+
+
+Impacto:
+
+Cada Activo Agro comienza a conservar una línea temporal verificable.
+
+
+---
+
+# Participantes del Activo
+
+
+Archivo:
+
+lib/models/activos/participante_activo_model.dart
+
+
+Se incorporó la relación inicial entre activo y participantes.
+
+
+Actualmente permite registrar:
+
+- propietario;
+- usuario relacionado;
+- estado;
+- fecha de ingreso.
+
+
+Estado:
+
+✅ Incorporado
+
+
+Evolución futura:
+
+Integración con:
+
+- profesionales;
+- auditores;
+- inversores;
+- especialistas técnicos.
+
+
+---
+
+# Conversión Campo → Activo Agro
+
+
+Archivo:
+
+lib/services/campo_to_activo_service.dart
+
+
+La generación automática del activo ahora incorpora:
+
+
+- ubicación completa;
+- información económica inicial;
+- participante propietario;
+- historial de creación;
+- estado de publicación;
+- versión del modelo.
+
+
+Estado:
+
+✅ Actualizado
+
+
+Resultado:
+
+El Campo deja de ser únicamente una publicación comercial y pasa a formar parte del núcleo Activo Agro.
+
+
+---
+
+# Creación manual de Activo Agro
+
+
+Archivo:
+
+lib/screens/campos/crear_activo_agro_screen.dart
+
+
+Se actualizó el flujo de creación incorporando:
+
+
+- país;
+- departamento;
+- código postal;
+- historial inicial;
+- versión del modelo;
+- datos económicos ampliados.
+
+
+Estado:
+
+✅ Actualizado
+
+
+Flujo validado:
+
+
+Usuario propietario
+
+↓
+
+Crear Activo Agro
+
+↓
+
+Guardar
+
+↓
+
+Visualizar activo
+
+↓
+
+Publicación
+
+
+---
+
+# Datos de prueba
+
+
+Archivo:
+
+lib/models/activos/activo_agro_test_data.dart
+
+
+Se actualizaron datos de prueba para soportar:
+
+
+- nueva ubicación;
+- nueva economía;
+- nuevos estados;
+- versión del modelo.
+
+
+Estado:
+
+✅ Actualizado
+
+
+
+---
+
+# Evaluación general actualización
+
+
+La arquitectura mantiene compatibilidad con Plan Maestro V8.
+
+
+No se requiere:
+
+
+activo_agro_model_v3.dart
+
+
+La evolución continúa sobre:
+
+
+activo_agro_model_v2.dart
+
+
+y módulos asociados.
+
+
+---
+
+# Próximos puntos de auditoría
+
+
+Continuar análisis:
+
+
+1. modulo_produccion_model.dart
+
+Pendiente:
+
+- ciclos productivos;
+- historial productivo;
+- capacidad futura.
+
+
+2. economia_activo_model.dart
+
+Pendiente:
+
+- trazabilidad económica;
+- seguimiento de inversión.
+
+
+3. Servicios complementarios:
+
+- confianza_activo_service.dart;
+- inversion_service.dart;
+- chat_service.dart.
+
+
+Mantener metodología:
+
+
+Código
+
++
+
+Auditoría
+
++
+
+Bitácora
+
++
+
+Roadmap
+
++
+
+Commit Git

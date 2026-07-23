@@ -12,11 +12,10 @@ import '../../models/activos/confianza_activo_model.dart';
 import '../../models/activos/economia_activo_model.dart';
 import '../../models/activos/documentacion_activo_model.dart';
 import '../../models/activos/evaluacion_confianza_model.dart';
+import '../../models/activos/historial_activo_model.dart';
+
 
 import '../../services/activo_agro_service_v2.dart';
-
-
-
 
 
 
@@ -36,8 +35,6 @@ class CrearActivoAgroScreen extends StatefulWidget {
 
 
 
-
-
 class _CrearActivoAgroScreenState
     extends State<CrearActivoAgroScreen> {
 
@@ -51,8 +48,11 @@ class _CrearActivoAgroScreenState
 
 
 
-
   final nombreController =
+      TextEditingController();
+
+
+  final paisController =
       TextEditingController();
 
 
@@ -60,7 +60,15 @@ class _CrearActivoAgroScreenState
       TextEditingController();
 
 
+  final departamentoController =
+      TextEditingController();
+
+
   final localidadController =
+      TextEditingController();
+
+
+  final codigoPostalController =
       TextEditingController();
 
 
@@ -78,17 +86,20 @@ class _CrearActivoAgroScreenState
 
 
 
-
-
-
   @override
-  void dispose(){
+  void dispose() {
 
     nombreController.dispose();
 
+    paisController.dispose();
+
     provinciaController.dispose();
 
+    departamentoController.dispose();
+
     localidadController.dispose();
+
+    codigoPostalController.dispose();
 
     superficieController.dispose();
 
@@ -97,7 +108,6 @@ class _CrearActivoAgroScreenState
     super.dispose();
 
   }
-
 
 
 
@@ -126,7 +136,6 @@ class _CrearActivoAgroScreenState
 
 
 
-
     try {
 
 
@@ -147,8 +156,21 @@ class _CrearActivoAgroScreenState
 
 
 
+
+      final ahora =
+          DateTime.now();
+
+
+
+
+
       final nombre =
           nombreController.text.trim();
+
+
+
+      final pais =
+          paisController.text.trim();
 
 
 
@@ -157,35 +179,54 @@ class _CrearActivoAgroScreenState
 
 
 
+      final departamento =
+          departamentoController.text.trim();
+
+
+
       final localidad =
           localidadController.text.trim();
 
 
 
+      final codigoPostal =
+          codigoPostalController.text.trim();
+
+
+
+
+
 
       var superficieTexto =
-    superficieController.text
-        .toLowerCase()
-        .trim();
+          superficieController.text
+              .toLowerCase()
+              .trim();
 
 
-superficieTexto = superficieTexto
-    .replaceAll("hectáreas", "")
-    .replaceAll("hectareas", "")
-    .replaceAll("hectárea", "")
-    .replaceAll("hectarea", "")
-    .replaceAll("has", "")
-    .replaceAll("ha", "")
-    .trim();
+
+      superficieTexto =
+          superficieTexto
+              .replaceAll("hectáreas", "")
+              .replaceAll("hectareas", "")
+              .replaceAll("hectárea", "")
+              .replaceAll("hectarea", "")
+              .replaceAll("has", "")
+              .replaceAll("ha", "")
+              .trim();
 
 
-superficieTexto = superficieTexto
-    .replaceAll(".", "")
-    .replaceAll(",", ".");
+
+      superficieTexto =
+          superficieTexto
+              .replaceAll(".", "")
+              .replaceAll(",", ".");
 
 
-final superficie =
-    double.tryParse(superficieTexto) ?? 0;
+
+      final superficie =
+          double.tryParse(superficieTexto) ?? 0;
+
+
 
 
 
@@ -193,14 +234,6 @@ final superficie =
       final descripcion =
           descripcionController.text.trim();
 
-
-
-
-
-
-
-      final ahora =
-          DateTime.now();
 
 
 
@@ -221,58 +254,33 @@ final superficie =
 
 
 
-
       final activo = ActivoAgroV2(
 
-
-
         activoId:
-
-        ahora
-            .millisecondsSinceEpoch
-            .toString(),
-
-
-
+            ahora.millisecondsSinceEpoch.toString(),
 
 
 
         nombre:
-
-        nombre,
-
-
-
+            nombre,
 
 
 
         descripcion:
-
-        descripcion,
-
-
-
+            descripcion,
 
 
 
         tipoActivo:
-
-        TipoActivo.agricola,
-
+            TipoActivo.agricola,
 
 
 
-
-
-        categorias:[
-
+        categorias:
+        [
           'produccion',
           'agro',
-
         ],
-
-
-
 
 
 
@@ -281,304 +289,269 @@ final superficie =
 
         UbicacionActivo(
 
-
           pais:
-
-          'Argentina',
-
+              pais,
 
 
           provincia:
+              provincia,
 
-          provincia,
 
+          departamento:
+              departamento,
 
 
           localidad:
+              localidad,
 
-          localidad,
 
+          codigoPostal:
+              codigoPostal,
 
 
           latitud:
-
-          0,
-
+              0,
 
 
           longitud:
-
-          0,
-
+              0,
 
 
           superficie:
+              superficie,
 
-          superficie,
+
+          tipoZona:
+              'rural',
+
+
+          zonaHoraria:
+              'America/Argentina/Buenos_Aires',
+
+
+          accesoCaminos:
+              '',
+
+
+          descripcionEntorno:
+              '',
+
+
+          disponibilidadServicios:
+              '',
+
+
+          jurisdiccionLegal:
+              '',
+
+
+          regionProductiva:
+              provincia,
+
+
+          monedaLocal:
+              'ARS',
 
         ),
 
 
 
+          producciones:
+          [
 
+            ModuloProduccion(
 
+              actividad:
+                  'agricultura',
 
+              dominio:
+                  'agropecuario',
 
-        producciones:[
+              descripcion:
+                  'Producción inicial',
 
+              datos:
+              {},
 
-          ModuloProduccion(
-
-            actividad:
-
-            'agricultura',
-
-
-            dominio:
-
-            'agropecuario',
-
-
-            descripcion:
-
-            'Producción inicial',
-
-
-            datos:{},
-
-
-          ),
-
-
-        ],
-
-
-
-
-
-
-
-        economia:
-
-        EconomiaActivo.inicial(),
-
-
-
-
-
-
-
-        documentacion:
-
-        DocumentacionActivo.inicial(),
-
-
-
-
-
-
-
-        confianza:
-
-        ConfianzaActivo(
-
-
-          nivelGeneral:
-
-          0,
-
-
-
-          identidadVerificada:
-
-          false,
-
-
-
-          documentacionCompleta:
-
-          false,
-
-
-
-          cantidadEvidencias:
-
-          0,
-
-
-
-          informacionProductivaCompleta:
-
-          false,
-
-
-
-          participantesVerificados:
-
-          false,
-
-
-
-          ultimaVerificacion:
-
-          ahora,
-
-
-
-          observaciones:
-
-          'Activo creado pendiente de validación',
-
-
-        ),
-
-
-
-
-
-
-
-        evaluacion:
-
-        EvaluacionConfianza.inicial(),
-
-
-
-
-
-
-
-        madurez:
-
-        MadurezActivo(
-
-
-          porcentaje:
-
-          0,
-
-
-
-          faltantes:[
-
-
-            'Documentación',
-
-
-            'Producción',
-
-
-            'Evidencias',
-
+            ),
 
           ],
 
 
-        ),
+
+
+          economia:
+
+              EconomiaActivo.inicial(),
+
+
+
+
+          documentacion:
+
+              DocumentacionActivo.inicial(),
+
+
+
+
+          confianza:
+
+          ConfianzaActivo(
+
+            nivelGeneral:
+                0,
+
+
+            identidadVerificada:
+                false,
+
+
+            documentacionCompleta:
+                false,
+
+
+            cantidadEvidencias:
+                0,
+
+
+            informacionProductivaCompleta:
+                false,
+
+
+            participantesVerificados:
+                false,
+
+
+            ultimaVerificacion:
+                ahora,
+
+
+            observaciones:
+                'Activo creado pendiente de validación',
+
+          ),
+
+
+
+
+          evaluacion:
+
+              EvaluacionConfianza.inicial(),
+
+
+
+
+          madurez:
+
+          MadurezActivo(
+
+            porcentaje:
+                0,
+
+
+            faltantes:
+            [
+              'Documentación',
+              'Producción',
+              'Evidencias',
+            ],
+
+          ),
+
+
+
+
+          participantes:
+              [],
 
 
 
 
 
-
-
-        participantes:[],
-
-
+          propietarioId:
+              user.uid,
 
 
 
+          creadorId:
+              user.uid,
 
 
 
-        propietarioId:
+          publicadorId:
+              user.uid,
 
+
+
+          tipoRelacionPropietario:
+              'propietario',
+
+
+
+
+          estado:
+              EstadoActivo.borrador,
+
+
+
+          estadoPublicacion:
+              'borrador',
+
+
+
+
+          visible:
+              false,
+
+
+
+          versionDatos:
+              ActivoAgroV2.modeloVersion,
+
+
+
+
+          historial:
+
+[
+  HistorialActivo(
+
+    eventoId:
+        ahora.millisecondsSinceEpoch.toString(),
+
+    tipoEvento:
+        'creacion',
+
+    descripcion:
+        'Activo Agro creado pendiente de validación',
+
+    usuarioId:
         user.uid,
 
-
-
-        creadorId:
-
-        user.uid,
-
-
-
-        publicadorId:
-
-        user.uid,
-
-
-
-        tipoRelacionPropietario:
-
-        'propietario',
-
-
-
-
-
-
-
-        estado:
-
-        EstadoActivo.borrador,
-
-
-
-        estadoPublicacion:
-
-        'borrador',
-
-
-
-        visible:
-
-        false,
-
-
-
-        versionDatos:
-
-        1,
-
-
-
-
-
-
-
-        historial:[],
-
-
-
-
-
-
-
-        hashActivo:
-
-        hashActivo,
-
-
-
-
-
-
-
-        fechaCreacion:
-
+    fecha:
         ahora,
 
+  ),
+],
 
 
 
 
 
+          hashActivo:
+              hashActivo,
 
-        ultimaActualizacion:
 
-        ahora,
 
+
+          fechaCreacion:
+              ahora,
+
+
+
+
+          ultimaActualizacion:
+              ahora,
 
 
       );
@@ -588,23 +561,39 @@ final superficie =
 
 
 
+      debugPrint('ANTES DE GUARDAR ACTIVO');
+
+      debugPrint(activo.toString());
 
 
-    
 
-       debugPrint('ANTES DE GUARDAR ACTIVO');
-debugPrint(activo.toString());
+      final mapa =
+          activo.toMap();
 
-final mapa = activo.toMap();
 
-debugPrint('MAPA GENERADO CORRECTAMENTE');
-debugPrint(mapa.toString());
 
-await _activoService.crearActivo(
-  activo,
-);
+      debugPrint(
+          'MAPA GENERADO CORRECTAMENTE'
+      );
 
-debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
+
+      debugPrint(
+          mapa.toString()
+      );
+
+
+
+
+      await _activoService.crearActivo(
+        activo,
+      );
+
+
+
+
+      debugPrint(
+          'ACTIVO GUARDADO CORRECTAMENTE'
+      );
 
 
 
@@ -621,20 +610,15 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
 
 
-
-
       ScaffoldMessenger.of(context)
           .showSnackBar(
-
 
         const SnackBar(
 
           content:
 
           Text(
-
             'Activo Agro creado correctamente',
-
           ),
 
         ),
@@ -643,13 +627,7 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
 
 
-
-
-
-
       Navigator.pop(context);
-
-
 
 
 
@@ -659,71 +637,52 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
     catch(e, stack){
 
 
-  debugPrint(
-    '==============================',
-  );
-
-  debugPrint(
-    'ERROR CREANDO ACTIVO:',
-  );
-
-  debugPrint(
-    e.toString(),
-  );
+      debugPrint(
+        'ERROR CREANDO ACTIVO:',
+      );
 
 
-  debugPrint(
-    'STACK:',
-  );
-
-  debugPrint(
-    stack.toString(),
-  );
+      debugPrint(
+        e.toString(),
+      );
 
 
-  debugPrint(
-    '==============================',
-  );
+      debugPrint(
+        stack.toString(),
+      );
 
 
 
 
-  if(!mounted){
+      if(!mounted){
 
-    return;
+        return;
 
-  }
-
-
+      }
 
 
 
-  ScaffoldMessenger.of(context)
-      .showSnackBar(
 
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
 
-    SnackBar(
+        SnackBar(
 
-      content:
+          content:
 
-      Text(
+          Text(
+            'Error creando activo: $e',
+          ),
 
-        'Error creando activo: $e',
+        ),
 
-      ),
+      );
 
-    ),
-
-  );
-
-
-
-}
+    }
 
 
 
     finally{
-
 
 
       if(mounted){
@@ -740,9 +699,7 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
     }
 
 
-
   }
-
 
 
 
@@ -757,8 +714,6 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
     return Scaffold(
 
-
-
       appBar:
 
       AppBar(
@@ -766,14 +721,10 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
         title:
 
         const Text(
-
           'Crear Activo Agro',
-
         ),
 
       ),
-
-
 
 
 
@@ -787,17 +738,12 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
 
 
-
-
         child:
 
         Form(
 
           key:
-
-          _formKey,
-
-
+              _formKey,
 
 
 
@@ -805,7 +751,8 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
           ListView(
 
-            children:[
+            children:
+            [
 
 
 
@@ -814,29 +761,23 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
               TextFormField(
 
                 controller:
-
-                nombreController,
-
+                    nombreController,
 
 
                 decoration:
-
                 const InputDecoration(
 
                   labelText:
-
-                  'Nombre del activo',
+                      'Nombre del activo',
 
                 ),
 
 
 
+                validator:(v){
 
-                validator:(value){
-
-
-                  if(value == null ||
-                      value.trim().isEmpty){
+                  if(v == null ||
+                      v.trim().isEmpty){
 
                     return 'Ingrese nombre';
 
@@ -853,35 +794,52 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
 
 
+              TextFormField(
+
+                controller:
+                    paisController,
+
+
+                decoration:
+                const InputDecoration(
+
+                  labelText:
+                      'País',
+
+                ),
+
+              ),
+
+
+
+
 
               TextFormField(
 
                 controller:
-
-                provinciaController,
-
+                    provinciaController,
 
 
                 decoration:
-
                 const InputDecoration(
 
                   labelText:
-
-                  'Provincia',
+                      'Provincia',
 
                 ),
 
 
-                validator:(value){
 
-                  if(value == null ||
-                      value.trim().isEmpty){
+                validator:(v){
+
+                  if(v == null ||
+                      v.trim().isEmpty){
 
                     return 'Ingrese provincia';
 
                   }
 
+
                   return null;
 
                 },
@@ -892,41 +850,21 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
 
 
-
               TextFormField(
 
                 controller:
-
-                localidadController,
-
+                    departamentoController,
 
 
                 decoration:
-
                 const InputDecoration(
 
                   labelText:
-
-                  'Localidad',
+                      'Departamento / Estado',
 
                 ),
 
-
-                validator:(value){
-
-                  if(value == null ||
-                      value.trim().isEmpty){
-
-                    return 'Ingrese localidad';
-
-                  }
-
-                  return null;
-
-                },
-
               ),
-
 
 
 
@@ -935,84 +873,85 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
               TextFormField(
 
                 controller:
+                    localidadController,
 
-                superficieController,
 
+                decoration:
+                const InputDecoration(
+
+                  labelText:
+                      'Localidad',
+
+                ),
+
+              ),
+
+
+
+
+
+              TextFormField(
+
+                controller:
+                    codigoPostalController,
+
+
+                decoration:
+                const InputDecoration(
+
+                  labelText:
+                      'Código postal',
+
+                ),
+
+              ),
+
+
+
+
+
+              TextFormField(
+
+                controller:
+                    superficieController,
 
 
                 keyboardType:
-
-                TextInputType.number,
-
+                    TextInputType.number,
 
 
                 decoration:
-
                 const InputDecoration(
 
                   labelText:
-
-                  'Superficie (hectáreas)',
+                      'Superficie hectáreas',
 
                 ),
 
 
-               validator: (value) {
 
-  debugPrint("========== SUPERFICIE ==========");
-  debugPrint("Valor recibido: '$value'");
+                validator:(v){
 
-
-  var texto = (value ?? "")
-      .toLowerCase()
-      .trim();
-
-
-  texto = texto
-      .replaceAll("hectáreas", "")
-      .replaceAll("hectareas", "")
-      .replaceAll("hectárea", "")
-      .replaceAll("hectarea", "")
-      .replaceAll("has", "")
-      .replaceAll("ha", "")
-      .trim();
+                  final valor =
+                  double.tryParse(
+                    (v ?? '')
+                        .replaceAll(',', '.'),
+                  );
 
 
-  texto = texto
-      .replaceAll(".", "")
-      .replaceAll(",", ".");
+                  if(valor == null ||
+                      valor <= 0){
+
+                    return 'Ingrese superficie válida';
+
+                  }
 
 
-  debugPrint("Texto preparado:");
-  debugPrint(texto);
+                  return null;
 
+                },
 
-  final superficie =
-      double.tryParse(texto);
-
-
-  debugPrint("Resultado parse:");
-  debugPrint(superficie.toString());
-
-  debugPrint("===============================");
-
-
-
-  if(superficie == null || superficie <= 0){
-
-    return 'Ingrese una superficie válida';
-
-  }
-
-
-  return null;
-
-},
-
-),
-
-
-
+              ),
 
 
 
@@ -1021,24 +960,18 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
               TextFormField(
 
                 controller:
-
-                descripcionController,
-
+                    descripcionController,
 
 
                 maxLines:
-
-                3,
-
+                    3,
 
 
                 decoration:
-
                 const InputDecoration(
 
                   labelText:
-
-                  'Descripción',
+                      'Descripción',
 
                 ),
 
@@ -1050,11 +983,7 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
 
               const SizedBox(
-
-                height:
-
-                24,
-
+                height: 24,
               ),
 
 
@@ -1064,15 +993,11 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
               ElevatedButton(
 
-
                 onPressed:
 
                 loading
-
                     ? null
-
                     : guardarActivo,
-
 
 
 
@@ -1084,25 +1009,12 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
                 const SizedBox(
 
-                  height:
+                  height:20,
 
-                  20,
-
-
-                  width:
-
-                  20,
-
+                  width:20,
 
                   child:
-
-                  CircularProgressIndicator(
-
-                    strokeWidth:
-
-                    2,
-
-                  ),
+                  CircularProgressIndicator(),
 
                 )
 
@@ -1110,15 +1022,10 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
                     :
 
                 const Text(
-
                   'Crear Activo Agro',
-
                 ),
 
-
-
               ),
-
 
 
 
@@ -1130,12 +1037,10 @@ debugPrint('ACTIVO GUARDADO CORRECTAMENTE');
 
       ),
 
-
     );
 
 
   }
-
 
 
 }

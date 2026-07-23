@@ -43,21 +43,59 @@ class ActivoAgroTestData {
 
 
       ubicacion:
-      UbicacionActivo(
 
-        pais: "Argentina",
+UbicacionActivo(
 
-        provincia: "Buenos Aires",
+  pais:
+  "Argentina",
 
-        localidad: "Ensenada",
+  provincia:
+  "Buenos Aires",
 
-        latitud: -34.86,
+  departamento:
+  "",
 
-        longitud: -57.91,
+  localidad:
+  "Ensenada",
 
-        superficie: 5,
+  codigoPostal:
+  "",
 
-      ),
+  latitud:
+  -34.86,
+
+  longitud:
+  -57.91,
+
+  superficie:
+  5,
+
+
+  tipoZona:
+  "rural",
+
+  zonaHoraria:
+  "America/Argentina/Buenos_Aires",
+
+  accesoCaminos:
+  "",
+
+  descripcionEntorno:
+  "",
+
+  disponibilidadServicios:
+  "",
+
+  jurisdiccionLegal:
+  "",
+
+  regionProductiva:
+  "Buenos Aires",
+
+  monedaLocal:
+  "ARS",
+
+),
 
 
 
@@ -96,7 +134,31 @@ class ActivoAgroTestData {
 
       economia:
       EconomiaActivo(
+        
+        objetivoProyecto:
+"Producción avícola",
 
+etapaProyecto:
+"inicial",
+
+inversionEsperada:
+0,
+
+capacidadActual:
+"5000 aves",
+
+capacidadProyectada:
+"",
+
+riesgosIdentificados:
+"",
+
+origenInformacion:
+"productor",
+
+responsableDeclaracion:
+"usuario_test_001",
+  
         valorSolicitado:0,
 
         moneda:"USD",
@@ -215,10 +277,25 @@ class ActivoAgroTestData {
 
       propietarioId: 'usuario_test_001',
 
-      creadorId: 'usuario_test_001',
+creadorId: 'usuario_test_001',
 
-      estado:
-      EstadoActivo.borrador,
+publicadorId: 'usuario_test_001',
+
+tipoRelacionPropietario:
+'propietario',
+
+estadoPublicacion:
+'borrador',
+
+visible:
+false,
+
+versionDatos:
+ActivoAgroV2.modeloVersion,
+
+estado:
+EstadoActivo.borrador,
+
 
 
       historial:
