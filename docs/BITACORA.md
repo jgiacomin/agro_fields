@@ -1346,3 +1346,193 @@ Agro Fields dispone de:
 Próximo objetivo:
 
 Transformar el Activo Agro desde un registro publicado hacia una entidad con participantes, historial y trazabilidad integral.
+
+---
+
+# Jornada 23/07/2026 — Validación Activo Agro V2 y evolución hacia ecosistema V8
+
+
+
+## Objetivo del día
+
+Validar el funcionamiento del flujo inicial de creación y publicación de Activos Agro dentro del rol propietario, verificando la integración entre usuario, activo, publicación e información territorial.
+
+El objetivo fue confirmar que la base actual permite evolucionar desde una plataforma de publicaciones hacia una infraestructura digital de confianza del ecosistema agropecuario.
+
+---
+
+# Desarrollo realizado
+
+## Validación funcional
+
+Se realizó prueba del flujo como usuario propietario.
+
+Flujo validado:
+
+Usuario dueño
+
+↓
+
+Crear Activo Agro
+
+↓
+
+Guardar activo
+
+↓
+
+Mis activos / publicar campo
+
+↓
+
+Visualización del activo creado
+
+↓
+
+Estado publicado correctamente
+
+
+Se confirmó la generación del activo y la integración con la pantalla de gestión del propietario.
+
+---
+
+# Evolución técnica del Activo Agro V2
+
+Durante la jornada se revisaron los cambios pendientes en los modelos y servicios principales.
+
+
+## Ubicación avanzada
+
+Se incorporó una estructura territorial más completa:
+
+- país;
+- provincia;
+- departamento;
+- localidad;
+- código postal;
+- región productiva;
+- jurisdicción legal.
+
+
+Objetivo:
+
+Preparar el activo para trazabilidad territorial e integración futura del marco legal internacional.
+
+---
+
+## Historial del Activo
+
+Se incorporó identificación de eventos mediante:
+
+- eventoId;
+- tipo de evento;
+- descripción;
+- usuario responsable;
+- fecha.
+
+
+Objetivo:
+
+Que cada activo pueda conservar una historia digital verificable.
+
+---
+
+## Participantes del Activo
+
+Se incorporó la estructura inicial de participantes:
+
+- propietario;
+- usuario relacionado;
+- estado de participación;
+- fecha de ingreso.
+
+
+Objetivo:
+
+Preparar la evolución hacia un ecosistema donde participen:
+
+- productores;
+- propietarios;
+- profesionales;
+- inversores.
+
+---
+
+## Conversión Campo → Activo Agro
+
+Se actualizó el servicio:
+
+campo_to_activo_service.dart
+
+
+La conversión ahora incorpora:
+
+- ubicación ampliada;
+- economía inicial;
+- participante propietario;
+- historial de creación;
+- estado de publicación;
+- versión del modelo.
+
+
+El Campo deja de ser solamente un registro comercial y comienza a transformarse en un Activo Agro trazable.
+
+---
+
+# Relación con Plan Maestro V8
+
+Los avances realizados corresponden a los siguientes conceptos:
+
+## Activo Agro como núcleo
+
+El activo representa una unidad digital productiva.
+
+## Confianza
+
+Se incorpora historial y participantes como base de respaldo.
+
+## Trazabilidad integral
+
+Se prepara la estructura para:
+
+- producción;
+- economía;
+- documentación;
+- profesionales;
+- auditoría.
+
+---
+
+# Estado actual del proyecto
+
+Agro Fields cuenta con:
+
+✅ Creación de Activo Agro V2
+✅ Publicación desde usuario propietario
+✅ Conversión Campo → Activo Agro mediante servicio
+✅ Ubicación territorial avanzada
+✅ Historial inicial
+✅ Participantes iniciales
+✅ Arquitectura documentada V8
+✅ Control histórico mediante Git
+
+
+---
+
+# Próximo paso
+
+Continuar auditoría y actualización documental:
+
+1. Actualizar AUDITORIA_ACTIVO_AGRO_V2.md.
+2. Actualizar ROADMAP_V8.md.
+3. Revisar modelos restantes del núcleo Activo Agro.
+4. Preparar siguiente etapa:
+
+- Marco Legal Internacional.
+- Red Profesional Agro Fields.
+- Trazabilidad Productiva.
+- Trazabilidad Económica.
+- Inteligencia Artificial Agro Fields.
+
+---
+
