@@ -203,3 +203,32 @@ Toda operación crítica deberá registrar:
 Ejemplo:
 
 Usuario:
+
+
+Acción:
+
+
+
+Fecha:
+
+---
+
+# 7. Seguridad futura
+
+Preparado para:
+
+- autenticación avanzada;
+- organizaciones;
+- equipos de trabajo;
+- permisos delegados;
+- control granular de acceso.
+
+---
+
+# 8. Estado actual
+
+Este documento define la arquitectura futura del ecosistema.
+
+No modifica el alcance actual del MVP.
+
+Su objetivo es establecer una base segura, escalable y preparada para crecimiento futuro.
