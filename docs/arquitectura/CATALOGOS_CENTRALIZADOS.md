@@ -4,22 +4,15 @@
 
 **Documento:** Motor de Catálogos Centralizados  
 **Versión:** 1.0  
-**Estado:** En definición  
+**Estado:** En definición
 
 ---
 
 # 1. Objetivo
 
-Definir una arquitectura de catálogos centralizados que permita administrar información estructurada del ecosistema Agro Fields V8 de forma consistente, escalable y reutilizable.
+Definir un sistema centralizado de catálogos que permita mantener información estructurada, consistente y reutilizable en todo el ecosistema Agro Fields V8.
 
-Los catálogos tienen como objetivo:
-
-- evitar valores duplicados dentro del código;
-- mejorar la calidad de datos;
-- permitir búsquedas eficientes;
-- facilitar análisis estadísticos;
-- preparar la información para inteligencia artificial futura;
-- permitir adaptación por país y mercado.
+Los catálogos evitarán datos escritos directamente en código y permitirán evolución del sistema sin modificar la lógica principal.
 
 ---
 
@@ -32,229 +25,189 @@ Los valores utilizados por la plataforma no deben estar escritos directamente en
 Ejemplo:
 
 Incorrecto:
+Ejemplo:
 
----
+Incorrecto:
+
+Un módulo guarda:
+
+"Campo agrícola"
+
+Otro módulo guarda:
+
+"Campo Agricola"
+
+Otro módulo guarda:
+
+"Campo"
+
+Resultado:
+
+- datos duplicados;
+- búsquedas inconsistentes;
+- dificultad para análisis.
+
+Correcto:
+
+Todos los módulos consumen el mismo catálogo centralizado.
 
 ## 2.2 Configuración desacoplada
 
-Los catálogos deben poder evolucionar sin modificar constantemente el código principal.
+Los valores de los catálogos no deben estar fijos dentro de las pantallas o modelos.
 
-Permite:
-
-- agregar nuevas categorías;
-- incorporar países;
-- adaptar mercados;
-- actualizar clasificaciones;
-- mantener datos históricos.
+La aplicación debe poder incorporar nuevos valores sin necesidad de publicar una nueva versión.
 
 ---
 
-# 3. Catálogo de tipos de activos
+# 3. Catálogos principales
 
-## 3.1 Activos agrícolas
+---
 
-Ejemplos:
+# 3.1 Tipos de activos agropecuarios
+
+## Agrícolas
 
 - Campo agrícola.
+- Chacra.
+- Quinta.
+- Plantación.
+- Invernadero.
+- Vivero.
+- Huerta productiva.
+
+## Ganaderos
+
+- Campo ganadero.
+- Feedlot.
+- Cabaña ganadera.
+- Tambo.
+- Granja ganadera.
+
+## Mixtos
+
 - Campo mixto.
-- Campo experimental.
-- Producción extensiva.
-- Producción intensiva.
+- Establecimiento agropecuario integral.
+
+## Forestales
+
+- Forestación.
+- Bosque productivo.
+- Vivero forestal.
+
+## Especializados
+
+- Viñedo.
+- Olivar.
+- Frutícola.
+- Apícola.
+- Avícola.
+- Porcícola.
+- Cunícola.
+- Acuicultura.
+
+## Producciones alternativas
+
+- Criadero de chinchillas.
+- Criadero de ranas toro.
+- Criadero de peces.
+- Piscicultura.
+- Salmonicultura.
+- Truchicultura.
+- Producción de hongos.
+- Producción de lombrices.
+- Otros emprendimientos productivos.
 
 ---
 
-## 3.2 Activos ganaderos
+# 3.2 Actividades productivas
 
-Ejemplos:
+## Agricultura
 
-- Cría bovina.
-- Invernada.
-- Feedlot.
-- Tambo.
+- Soja.
+- Maíz.
+- Trigo.
+- Girasol.
+- Algodón.
+- Arroz.
+- Cebada.
+- Sorgo.
+- Maní.
+- Caña de azúcar.
+
+## Ganadería
+
+- Bovinos carne.
+- Bovinos leche.
 - Ovinos.
 - Caprinos.
 - Porcinos.
 - Equinos.
-
----
-
-## 3.3 Activos avícolas
-
-Ejemplos:
-
-- Granja avícola.
-- Producción de huevos.
-- Pollos parrilleros.
-- Incubadora.
-- Reproductoras.
-
-Datos específicos futuros:
-
-- cantidad de aves;
-- capacidad instalada;
-- automatización;
-- ciclos productivos.
-
----
-
-## 3.4 Acuicultura
-
-Ejemplos:
-
-- Criadero de truchas.
-- Criadero de salmones.
-- Piscicultura.
-- Tilapia.
-- Camarones.
-- Otras especies acuáticas.
-
-Datos específicos futuros:
-
-- capacidad de estanques;
-- volumen de agua;
-- calidad del agua;
-- ciclos productivos.
-
----
-
-## 3.5 Producciones especiales
-
-Ejemplos:
-
-- Criadero de chinchillas.
-- Cunicultura.
-- Rana toro.
-- Apicultura.
-- Caracoles.
-- Hongos.
-- Viveros.
-- Hidroponía.
-
----
-
-## 3.6 Forestales
-
-Ejemplos:
-
-- Forestación.
-- Bosques implantados.
-- Producción maderera.
-- Viveros forestales.
-
----
-
-## 3.7 Producciones frutícolas y regionales
-
-Ejemplos:
-
-- Viñedos.
-- Olivares.
-- Frutales.
-- Nogales.
-- Pecanes.
-- Cítricos.
-
----
-
-# 4. Catálogo de actividades productivas
-
-Valores principales:
-
-- Agricultura.
-- Ganadería.
 - Avicultura.
-- Acuicultura.
-- Forestal.
-- Frutícola.
-- Vitivinícola.
-- Hortícola.
+
+## Especialidades
+
+- Vitivinicultura.
+- Fruticultura.
+- Olivicultura.
 - Apicultura.
-- Producciones alternativas.
-- Agroindustria.
+- Acuicultura.
+- Forestación.
 
 ---
 
-# 5. Catálogo de cultivos
+# 3.3 Tipos de operación
 
-Ejemplos:
-
-## Cereales
-
-- Trigo.
-- Maíz.
-- Arroz.
-- Cebada.
-
-## Oleaginosas
-
-- Soja.
-- Girasol.
-- Colza.
-
-## Cultivos regionales
-
-- Algodón.
-- Yerba mate.
-- Caña de azúcar.
-
-## Frutales
-
-- Vid.
-- Olivo.
-- Nogal.
-- Pecán.
+- Venta.
+- Alquiler.
+- Arrendamiento.
+- Inversión.
+- Asociación productiva.
+- Permuta.
+- Participación societaria.
+- Búsqueda de inversor.
 
 ---
 
-# 6. Catálogo de especies animales
+# 3.4 Estados del activo
 
-## Bovinos
-
-- Carne.
-- Leche.
-
-## Ovinos
-
-- Carne.
-- Lana.
-
-## Avícolas
-
-- Pollos.
-- Gallinas ponedoras.
-
-## Acuícolas
-
-- Trucha.
-- Salmón.
-- Tilapia.
-
-## Especiales
-
-- Chinchilla.
-- Conejos.
-- Rana toro.
+- Disponible.
+- Reservado.
+- En negociación.
+- Vendido.
+- Alquilado.
+- Suspendido.
+- Archivado.
 
 ---
 
-# 7. Catálogo de ubicación
+# 3.5 Características productivas
 
-Incluye:
-
-- Países.
-- Provincias.
-- Estados.
-- Departamentos.
-- Regiones productivas.
-- Zonas agroecológicas.
+- Riego.
+- Electricidad.
+- Galpones.
+- Corrales.
+- Silos.
+- Caminos internos.
+- Vivienda.
+- Maquinaria.
+- Instalaciones productivas.
+- Automatización.
 
 ---
 
-# 8. Catálogo económico
+# 3.6 Ubicaciones
 
-Incluye:
+Debe permitir adaptación internacional:
 
-## Monedas
+- País.
+- Provincia/Estado.
+- Departamento/Municipio.
+- Localidad.
+- Zona productiva.
+
+---
+
+# 3.7 Monedas
 
 Ejemplos:
 
@@ -262,94 +215,86 @@ Ejemplos:
 - USD.
 - EUR.
 - BRL.
-
-## Unidades
-
-Ejemplos:
-
-- Hectáreas.
-- Acres.
-- Metros cuadrados.
-
-## Tipos de operación
-
-- Venta.
-- Alquiler.
-- Arrendamiento.
-- Asociación.
-- Inversión.
+- CLP.
+- UYU.
 
 ---
 
-# 9. Catálogo de profesionales
+# 3.8 Unidades
 
-Ejemplos:
+Superficie:
+
+- Hectáreas.
+- Acres.
+
+Producción:
+
+- Toneladas.
+- Kilogramos.
+- Litros.
+- Cabezas.
+- Unidades.
+
+---
+
+# 3.9 Profesiones y participantes
 
 - Ingeniero agrónomo.
 - Veterinario.
 - Arquitecto.
 - Contador.
 - Abogado.
-- Técnico agropecuario.
-- Consultor ambiental.
+- Tasador rural.
+- Corredor inmobiliario.
+- Productor.
+- Inversor.
+- Empresa.
 
 ---
 
-# 10. Catálogo de estados operativos
+# 4. Arquitectura futura
 
-Ejemplos:
+Los catálogos podrán almacenarse en:
 
-- Borrador.
-- Disponible.
-- Publicado.
-- En evaluación.
-- Reservado.
-- En negociación.
-- Vendido.
-- Cerrado.
+- Firestore.
+- Servicios externos.
+- Panel administrativo.
+
+Estructura prevista:
 
 ---
 
-# 11. Arquitectura prevista
+### 2) Agregar al final la relación con IA
 
-Modelo conceptual:
+Porque es uno de los motivos principales del catálogo.
 
+Al final:
+
+```md
 ---
 
-# 12. Evolución futura
+# 5. Relación con Inteligencia Artificial
 
-Los catálogos podrán evolucionar hacia:
-
-- gestión dinámica;
-- administración remota;
-- configuración por país;
-- versionado histórico;
-- reglas específicas por mercado.
-
----
-
-# 13. Relación con Inteligencia Artificial
-
-La calidad de los catálogos permitirá:
+La estructura de catálogos permitirá:
 
 - clasificación automática de activos;
-- mejores búsquedas;
-- comparación entre oportunidades;
+- búsquedas inteligentes;
+- comparación de oportunidades;
 - análisis productivo;
-- recomendaciones;
-- evaluación de confianza.
+- recomendaciones futuras;
+- evaluación de confianza del activo.
 
 ---
 
-# 14. Estado actual
+# 6. Estado actual
 
-Este documento define la arquitectura futura del ecosistema.
+Este documento define la arquitectura futura del sistema.
 
 No modifica el alcance actual del MVP.
 
-Su objetivo es asegurar que Agro Fields V8 pueda crecer manteniendo:
+Su objetivo es asegurar:
 
-- calidad de información;
+- calidad de datos;
 - consistencia;
 - escalabilidad;
 - trazabilidad.
