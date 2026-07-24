@@ -136,3 +136,84 @@ La arquitectura contempla como pilares futuros:
 Este documento permanecerá en evolución junto con Agro Fields V8.
 
 Toda decisión arquitectónica importante deberá mantener coherencia con los principios definidos aquí.
+---
+
+# Documentos Arquitectónicos Relacionados
+
+La arquitectura base será complementada progresivamente con documentos específicos para cada área estratégica del ecosistema.
+
+## Internacionalización y Regionalización
+
+Documento futuro:
+
+`INTERNACIONALIZACION_I18N_L10N.md`
+
+Define:
+
+- Idiomas soportados.
+- Configuración regional.
+- Monedas.
+- Unidades de superficie.
+- Formatos de fecha y números.
+- Adaptación por país.
+
+---
+
+## Motor de Catálogos
+
+Documento futuro:
+
+`CATALOGOS_CENTRALIZADOS.md`
+
+Define:
+
+- Tipos de activos.
+- Cultivos.
+- Actividades productivas.
+- Profesiones.
+- Estados operativos.
+- Configuraciones reutilizables.
+
+---
+
+## Roles y Permisos
+
+Documento futuro:
+
+`ROLES_Y_PERMISOS.md`
+
+Define:
+
+- Tipos de usuarios.
+- Accesos.
+- Responsabilidades.
+- Seguridad del ecosistema.
+
+---
+
+## Configuración y Parámetros
+
+Documento futuro:
+
+`CONFIGURACION_PARAMETROS.md`
+
+Define:
+
+- Valores configurables.
+- Reglas del sistema.
+- Variables de negocio.
+
+---
+
+## Integraciones Futuras
+
+Documento futuro:
+
+`INTEGRACIONES_API.md`
+
+Define:
+
+- Preparación para servicios externos.
+- Organismos.
+- Datos agropecuarios.
+- Sistemas complementarios.
