@@ -734,3 +734,37 @@ Analizar:
 - preparación para inversión;
 - nivel tecnológico;
 - evolución del proyecto.
+---
+
+# Arquitectura Base del Ecosistema Agro Fields V8
+
+## Estado
+
+Iniciado - En evolución
+
+## Objetivo
+
+Definir y documentar los principios arquitectónicos que permitirán la evolución de Agro Fields V8 como ecosistema escalable, modular y preparado para crecimiento futuro.
+
+## Alcance Arquitectónico
+
+Esta línea de trabajo establece las bases para:
+
+- Modularidad del sistema.
+- Separación de responsabilidades.
+- Configuración desacoplada del código.
+- Internacionalización (i18n).
+- Regionalización (l10n).
+- Catálogos centralizados.
+- Roles y permisos.
+- Parámetros configurables.
+- Auditoría y trazabilidad.
+- Preparación para integraciones futuras.
+
+## Criterio de implementación
+
+La arquitectura base no modifica el alcance del MVP actual.
+
+Su incorporación tiene como objetivo evitar decisiones estructurales que dificulten la evolución futura del ecosistema.
+
+La implementación será progresiva acompañando el desarrollo de los módulos principales.
