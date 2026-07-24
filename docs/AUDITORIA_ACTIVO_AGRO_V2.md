@@ -2082,3 +2082,35 @@ Roadmap
 +
 
 Commit Git
+---
+
+# Registro Arquitectónico — 24/07/2026
+
+## Incorporación de Arquitectura Base del Ecosistema Agro Fields V8
+
+Se incorpora el documento:
+
+`docs/arquitectura/ARQUITECTURA_BASE_ECOSISTEMA.md`
+
+como referencia arquitectónica principal para la evolución del ecosistema Agro Fields V8.
+
+Esta decisión establece una base común para futuras implementaciones y define principios relacionados con:
+
+- Modularidad.
+- Escalabilidad.
+- Separación de responsabilidades.
+- Configuración desacoplada del código.
+- Internacionalización (i18n).
+- Regionalización (l10n).
+- Catálogos centralizados.
+- Roles y permisos.
+- Auditoría y trazabilidad.
+- Preparación para integraciones futuras.
+
+Esta incorporación no modifica el alcance funcional del MVP actual.
+
+Su objetivo es asegurar que las próximas etapas de desarrollo evolucionen sobre una arquitectura consistente, mantenible y preparada para crecimiento futuro.
+
+Commit asociado:
+
+`aa04194 - Define arquitectura base del ecosistema Agro Fields V8`
