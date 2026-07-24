@@ -263,6 +263,114 @@ Los catálogos podrán almacenarse en:
 Estructura prevista:
 
 ---
+---
+
+# 5. Catálogo de cultivos
+
+El sistema deberá contemplar cultivos productivos clasificados por categoría.
+
+## Cereales
+
+- Trigo.
+- Maíz.
+- Arroz.
+- Cebada.
+- Sorgo.
+
+## Oleaginosas
+
+- Soja.
+- Girasol.
+- Colza.
+- Maní.
+
+## Cultivos regionales
+
+- Algodón.
+- Yerba mate.
+- Caña de azúcar.
+
+## Frutales
+
+- Vid.
+- Olivo.
+- Nogal.
+- Pecán.
+- Cítricos.
+
+---
+
+# 6. Catálogo de especies animales
+
+## Bovinos
+
+- Carne.
+- Leche.
+
+## Ovinos
+
+- Carne.
+- Lana.
+
+## Avícolas
+
+- Pollos parrilleros.
+- Gallinas ponedoras.
+- Reproductoras.
+
+## Acuícolas
+
+- Trucha.
+- Salmón.
+- Tilapia.
+- Camarones.
+
+## Producciones especiales
+
+- Chinchilla.
+- Conejos.
+- Rana toro.
+
+---
+
+# 7. Evolución futura
+
+Los catálogos podrán evolucionar hacia:
+
+- gestión dinámica;
+- administración desde panel interno;
+- configuración por país;
+- versionado histórico;
+- reglas específicas por mercado;
+- auditoría de cambios.
+
+---
+
+# 8. Relación con Inteligencia Artificial
+
+La calidad y consistencia de los catálogos permitirá:
+
+- clasificación automática de activos;
+- búsquedas inteligentes;
+- comparación entre oportunidades;
+- análisis productivo;
+- recomendaciones futuras;
+- evaluación de confianza del activo.
+
+---
+
+# 9. Estado actual
+
+Este documento define la arquitectura futura del ecosistema.
+
+No modifica el alcance actual del MVP.
+
+Su objetivo es asegurar:
+
+- calidad de datos;
+- consistencia;
+- escalabilidad;
+- trazabilidad.
 
 ### 2) Agregar al final la relación con IA
 
