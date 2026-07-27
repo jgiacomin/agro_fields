@@ -183,3 +183,67 @@ Fecha:
 401 Unauthorized
 403 Forbidden
 500 Internal Server Error
+# 9. Relación con Ecosistema Agro Fields V8
+
+La arquitectura API Backend funciona como capa de comunicación entre las aplicaciones y los servicios internos del ecosistema.
+
+No reemplaza las entidades principales del modelo de datos.
+
+El núcleo continúa siendo:
+
+Activo Agro V2
+
+La API permite exponer capacidades del ecosistema mediante servicios seguros y versionados.
+
+Flujo conceptual:
+
+Aplicaciones V8
+
+↓
+
+API Backend
+
+↓
+
+Servicios de Dominio
+
+↓
+
+Activo Agro V2
+
+↓
+
+Datos / Auditoría / Gobernanza
+
+↓
+
+IA / Analytics / Blockchain / Marketplace
+
+
+La API será el punto de integración para:
+
+- Aplicación móvil.
+- Panel administrativo.
+- Servicios externos.
+- Automatizaciones futuras.
+- Integraciones empresariales.
+# 10. Evolución futura
+
+Preparado para:
+
+- arquitectura basada en microservicios;
+- eventos distribuidos;
+- integración con terceros;
+- APIs públicas controladas;
+- automatización inteligente;
+- servicios orientados a IA.
+
+---
+
+# 11. Estado actual
+
+Esta arquitectura define la capa API futura del ecosistema Agro Fields V8.
+
+No modifica el alcance actual del MVP.
+
+Su objetivo es establecer una base segura y escalable para la comunicación entre módulos, aplicaciones y servicios.
