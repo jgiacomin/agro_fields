@@ -262,8 +262,68 @@ Preparado para:
 - integraciones externas.
 
 ---
+# 14. Relación con el Ecosistema Agro Fields V8
 
-# 14. Estado actual
+El modelo comercial no reemplaza el núcleo operativo del ecosistema.
+
+El núcleo de Agro Fields continúa siendo:
+
+Activo Agro V2
+
+El modelo comercial utiliza las capacidades generadas por las diferentes capas de la plataforma para crear servicios, oportunidades y fuentes de ingresos.
+
+Flujo conceptual:
+
+Activo Agro V2
+
+↓
+
+Datos Productivos
+
+↓
+
+Digital Twin
+
+↓
+
+Gobernanza y Auditoría
+
+↓
+
+IA / Analytics
+
+↓
+
+Marketplace
+
+↓
+
+Servicios Comerciales
+
+↓
+
+Suscripciones
+
+↓
+
+Oportunidades de Inversión
+
+↓
+
+Generación de Valor Económico
+
+
+Las líneas comerciales se apoyan en:
+
+- Información validada de activos.
+- Herramientas digitales para productores.
+- Inteligencia productiva.
+- Servicios profesionales.
+- Conexión entre oferta y demanda.
+- Capacidades empresariales.
+
+# 15. Estado actual
+
 
 Este documento define la arquitectura comercial futura del ecosistema Agro Fields V8.
 
