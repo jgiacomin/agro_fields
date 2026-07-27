@@ -19,11 +19,22 @@ para construir una visión completa, actualizada y predictiva del ecosistema agr
 
 # 2. Concepto Digital Twin Agro
 
-Un Digital Twin es una réplica digital de un activo físico que evoluciona mediante datos reales.
+Un Digital Twin es una representación digital dinámica de un activo físico que evoluciona mediante datos reales.
 
-Modelo:
+Dentro de Agro Fields, el Digital Twin no reemplaza al Activo Agro V2.
 
----
+El Activo Agro V2 continúa siendo la identidad principal del ecosistema.
+
+El Digital Twin funciona como una representación dinámica que incorpora:
+
+- estado productivo;
+- evolución temporal;
+- datos IoT;
+- información geoespacial;
+- modelos productivos;
+- indicadores económicos;
+- análisis mediante IA.
+
 
 # 3. Representación Digital del Campo
 
@@ -115,3 +126,31 @@ Estado actualizado IoT
     |
     ↓
  IA / Analytics
+
+ # Relación con el Ecosistema Agro Fields V8
+
+El Digital Twin se integra como una capa de representación dinámica sobre el Activo Agro V2.
+
+Flujo conceptual:
+
+Campo físico
+
+↓
+
+Activo Agro V2
+
+↓
+
+Digital Twin
+
+↓
+
+Datos IoT + GIS + Producción + Economía
+
+↓
+
+IA / Analytics
+
+↓
+
+Decisiones y seguimiento del activo
