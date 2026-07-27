@@ -810,6 +810,12 @@ Próxima etapa:
 - red profesional;
 - trazabilidad económica.
 
+- auditoría y trazabilidad integral;
+- historial de eventos del Activo Agro;
+- evidencias verificables;
+- seguimiento de intervenciones profesionales;
+- preparación para certificaciones futuras.
+
 
 ---
 

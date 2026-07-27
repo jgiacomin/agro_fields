@@ -87,7 +87,7 @@ Reglas fundamentales:
 
 \- Cada cambio importante debe quedar documentado mediante bitácora.
 
-
+\-  La auditoría registra eventos y cambios relevantes sin alterar la separación principal de responsabilidades.
 
 
 
