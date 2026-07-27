@@ -53,7 +53,59 @@ La plataforma debe soportar:
 - Múltiples países.
 - Diferentes proveedores IoT.
 
----
+## 2.4Relación con el Ecosistema Agro Fields V8
+
+La arquitectura IoT no reemplaza el modelo principal del ecosistema.
+
+El núcleo de Agro Fields continúa siendo:
+
+Activo Agro V2
+
+Los dispositivos IoT funcionan como fuentes de información física que alimentan la evolución del activo.
+
+Flujo conceptual:
+
+Campo físico
+
+↓
+
+Sensores IoT
+
+↓
+
+Datos capturados
+
+↓
+
+Gobernanza de Datos
+
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+Activo Agro V2
+
+↓
+
+Digital Twin
+
+↓
+
+IA / Analytics
+
+↓
+
+Decisiones operativas
+
+↓
+
+Confianza del Mercado
+
+
+Los datos provenientes de dispositivos IoT deben pasar por procesos de validación, calidad y trazabilidad antes de incorporarse al historial del Activo Agro.
+
 
 # 3. Arquitectura general IoT
 Sensores suelo
