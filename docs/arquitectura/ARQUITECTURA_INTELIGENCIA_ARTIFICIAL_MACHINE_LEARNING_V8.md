@@ -50,7 +50,70 @@ Las recomendaciones deben incluir:
 
 Ejemplo:
 
----
+## 2.4 Relación con el Ecosistema Agro Fields V8
+
+La arquitectura de Inteligencia Artificial y Machine Learning no reemplaza el modelo principal del ecosistema.
+
+El núcleo de Agro Fields continúa siendo:
+
+Activo Agro V2
+
+La inteligencia artificial utiliza información generada por las diferentes capas del ecosistema para producir análisis, predicciones y recomendaciones.
+
+Flujo conceptual:
+
+Activo Agro V2
+
+↓
+
+Datos productivos
+
+↓
+
+IoT
+
+↓
+
+Digital Twin
+
+↓
+
+Big Data / Data Lake
+
+↓
+
+Gobernanza de Datos
+
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+Modelos IA / Machine Learning
+
+↓
+
+Predicciones
+
+↓
+
+Recomendaciones inteligentes
+
+↓
+
+Mejor toma de decisiones
+
+
+La IA no reemplaza:
+
+- profesionales agropecuarios;
+- análisis técnicos;
+- decisiones legales;
+- decisiones financieras.
+
+Su función es aumentar la capacidad de análisis y comprensión del ecosistema.
+
 
 # 3. Arquitectura general IA
           FUENTES DE DATOS
