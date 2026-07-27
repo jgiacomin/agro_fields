@@ -2,7 +2,10 @@
 
 ## 1. Objetivo
 
-La arquitectura Blockchain y Trazabilidad Agro V8 permite registrar, validar y proteger la historia completa de los activos agrícolas mediante tecnología de registros distribuidos.
+La arquitectura Blockchain y Trazabilidad Agro V8 define una capacidad tecnológica futura para registrar, validar y proteger evidencias críticas del ecosistema Agro Fields mediante tecnologías de registros distribuidos.
+
+Su objetivo no es reemplazar el modelo de datos principal, sino complementar la trazabilidad existente del Activo Agro V2 mediante mecanismos de certificación, verificación e integridad de información.
+
 
 El objetivo es crear confianza entre:
 
@@ -20,30 +23,76 @@ garantizando información verificable, transparente e inmutable.
 # 2. Visión General
 
 La trazabilidad conecta todo el ciclo productivo:
+
+
 Producción Física
 
-  ↓
+↓
 
-Datos IoT
+Activo Agro V2
 
-  ↓
+↓
 
-Blockchain Agro
+Datos Productivos + Evidencias
 
-  ↓
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+IoT / Digital Twin
+
+↓
+
+Blockchain Agro (certificación y verificación)
+
+↓
 
 Certificaciones
 
-  ↓
+↓
 
 Marketplace / Inversión
+
 ↓
+
 Consumidor Final
 
 ---
 
 
-Blockchain funciona como una capa de confianza sobre los datos generados por el ecosistema Agro Fields.
+Blockchain funciona como una capa tecnológica complementaria de certificación e integridad sobre datos y evidencias generadas por el ecosistema Agro Fields.
+Confianza Agro Fields
+
+=
+
+Información
+
++
+
+Evidencias
+
++
+
+Profesionales
+
++
+
+Historial
+
++
+
+Auditoría
+
++
+
+Validaciones externas
+
++
+
+Tecnologías de certificación
+
 
 ---
 
@@ -176,7 +225,31 @@ La identidad digital permite vincular:
 - Evidencias.
 - Eventos blockchain.
 
+La identidad digital del Activo Agro tiene como origen el modelo ActivoAgroV2.
+
+Blockchain puede utilizarse para certificar determinados eventos o evidencias, pero no reemplaza la identidad principal almacenada en Agro Fields.
+
 ---
+1. Objetivo
+
+2. Visión General
+
+3. Principios Blockchain Agro
+
+4. Casos de Uso
+
+5. Identidad Digital del Activo
+
+6. Relación con el Ecosistema Agro Fields V8  ← aquí
+
+7. Registro de Eventos del Activo
+
+8. Integración IoT / Digital Twin
+
+9. Relación con Confianza Agro Fields
+
+10. Integración futura y evolución
+
 
 ## 5.1 Modelo de Identidad Digital
 
@@ -351,3 +424,46 @@ Esta estructura conecta mejor con:
 Queda como una pieza central del ecosistema Agro Fields V8.
 
 Este queda más alineado con los documentos anteriores que ya venimos armando (Big Data, IA, IoT, Digital Twin, Gobernanza y Marketplace).
+
+El registro blockchain depende previamente de procesos de validación, gobernanza y auditoría de datos.
+# 6. Relación con el Ecosistema Agro Fields V8
+
+La arquitectura Blockchain no reemplaza el modelo principal del ecosistema.
+
+El núcleo de Agro Fields continúa siendo:
+
+Activo Agro V2
+
+La blockchain funciona como una capacidad tecnológica complementaria para certificación, integridad y verificación de eventos relevantes.
+
+Flujo conceptual:
+
+Campo físico
+
+↓
+
+Activo Agro V2
+
+↓
+
+Historial Productivo
+
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+Digital Twin
+
+↓
+
+IA / Analytics
+
+↓
+
+Blockchain (certificación y verificación)
+
+↓
+
+Confianza del Mercado
