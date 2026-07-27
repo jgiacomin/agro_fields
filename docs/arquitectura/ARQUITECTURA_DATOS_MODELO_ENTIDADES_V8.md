@@ -358,8 +358,82 @@ Preparado para:
 - procesamiento en tiempo real.
 
 ---
+# 22. Relación con el Ecosistema Agro Fields V8
 
-# 22. Estado actual
+El modelo de datos establece la estructura central del ecosistema.
+
+La entidad principal es:
+
+Activo Agro V2
+
+A partir de esta entidad se relacionan los diferentes dominios de información:
+
+Usuario
+
+↓
+
+Organización
+
+↓
+
+Campo
+
+↓
+
+Activo Agro V2
+
+↓
+
+Producción
+
+↓
+
+Economía
+
+↓
+
+Documentación
+
+↓
+
+Eventos
+
+↓
+
+Auditoría
+
+↓
+
+Analytics / IA / Marketplace
+
+
+El modelo permite que cada activo mantenga:
+
+- identidad propia;
+- historial productivo;
+- información económica;
+- documentos asociados;
+- eventos registrados;
+- análisis inteligentes;
+- disponibilidad comercial.
+
+
+Las capas tecnológicas del ecosistema consumen este modelo:
+
+- IoT genera información asociada al activo.
+- Big Data almacena y procesa históricos.
+- Digital Twin representa su evolución.
+- Gobernanza controla calidad y acceso.
+- Auditoría registra cambios.
+- Blockchain certifica eventos relevantes.
+- IA y Analytics generan conocimiento.
+- Marketplace utiliza información validada para oportunidades comerciales.
+
+
+El modelo de entidades funciona como núcleo común de información para todo Agro Fields V8.
+
+
+# 23. Estado actual
 
 Esta arquitectura define el modelo conceptual futuro del ecosistema Agro Fields V8.
 
