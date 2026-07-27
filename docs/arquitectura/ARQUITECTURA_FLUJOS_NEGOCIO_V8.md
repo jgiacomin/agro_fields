@@ -187,8 +187,63 @@ Preparado para:
 - inteligencia artificial avanzada.
 
 ---
+# 15. Relación con el Ecosistema Agro Fields V8
 
-# 15. Estado actual
+Los flujos de negocio representan la coordinación operativa entre los diferentes módulos del ecosistema.
+
+El núcleo continúa siendo:
+
+Activo Agro V2
+
+Los procesos utilizan las capacidades transversales de la plataforma:
+
+- Datos productivos.
+- Identidad digital.
+- Documentación.
+- Gobernanza.
+- Auditoría.
+- Inteligencia.
+- Comercialización.
+
+Flujo general:
+
+Usuario
+
+↓
+
+Aplicaciones Agro Fields
+
+↓
+
+Flujos de Negocio
+
+↓
+
+Activo Agro V2
+
+↓
+
+Servicios del Ecosistema
+
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+Resultados Operativos / Comerciales
+
+
+Cada cambio relevante genera:
+
+- actualización de estado;
+- evento del sistema;
+- registro de auditoría;
+- actualización de información relacionada.
+
+Esto permite mantener una visión completa de la evolución de cada activo, usuario y operación dentro del ecosistema.
+
+# 16. Estado actual
 
 Este documento define la arquitectura futura.
 
