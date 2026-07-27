@@ -65,6 +65,13 @@ Contiene:
 - historial;
 - auditoría.
 
+La auditoría forma parte de la trazabilidad integral del Activo Agro.
+
+Su objetivo es conservar la historicidad del activo mediante el registro de eventos relevantes, participantes, modificaciones y evidencias asociadas.
+
+No reemplaza el historial del activo.
+
+Lo complementa permitiendo reconstruir la evolución completa de la entidad digital productiva.
 
 Criterio definido:
 
@@ -244,11 +251,22 @@ Base existente:
 Evolución pendiente:
 
 
+Evolución pendiente:
+
 - factores oficiales;
 - cálculo multidimensional;
-- profesionales;
+- evidencias asociadas;
+- responsables de validación;
+- profesionales participantes;
 - auditorías;
 - historial de verificaciones.
+
+Criterio:
+
+El Índice de Confianza no determina rentabilidad ni garantiza resultados económicos.
+
+Evalúa el nivel de información, respaldo, trazabilidad e historial disponible sobre un Activo Agro.
+
 
 
 ---
@@ -483,10 +501,16 @@ Evolución pendiente:
 - auditorías;
 - validaciones profesionales;
 - eventos legales.
+- eventos documentales;
+- cambios de estado del activo;
+- modificaciones relevantes;
+- evidencias asociadas.
+
 
 
 Objetivo:
 
+Convertir el historial en la línea de tiempo verificable del Activo Agro.
 
 Convertir el historial en trazabilidad completa del activo.
 
@@ -537,6 +561,9 @@ Evaluación
 
 Índice de confianza del activo
 
+La evaluación utiliza información histórica y evidencias disponibles.
+
+No representa una recomendación financiera ni una garantía de inversión.
 
 ---
 
@@ -571,6 +598,102 @@ Determinar el grado de desarrollo del activo.
 ---
 
 # Nuevos módulos futuros
+
+# Evolución de módulos del Activo Agro V2
+
+## 1. Participantes
+
+...
+
+## 2. Historial
+
+...
+
+## 3. Evaluación de confianza
+
+...
+
+## 4. Madurez del activo
+
+...
+
+
+---
+
+# Auditoría y Trazabilidad Agro Fields
+
+Estado:
+
+🟢 Arquitectura definida
+
+🟡 Implementación progresiva
+
+
+Objetivo:
+
+Crear una capa transversal de auditoría que permita registrar la evolución completa del ecosistema Agro Fields.
+
+
+La auditoría permitirá:
+
+- registrar eventos importantes;
+- identificar usuario responsable;
+- conservar historial de cambios;
+- asociar evidencias;
+- mantener versiones de información;
+- reconstruir la evolución del Activo Agro.
+
+
+Integración:
+
+La capa de Auditoría y Trazabilidad será utilizada por:
+
+- Activos Agro;
+- Producción;
+- Economía;
+- Documentación;
+- Profesionales;
+- Inversiones;
+- Chat;
+- Futuras integraciones.
+
+
+Relación con confianza:
+
+La confianza del ecosistema se construye mediante:
+
+Información
+
++
+
+Evidencias
+
++
+
+Profesionales
+
++
+
+Historial
+
++
+
+Auditoría
+
+
+Futuro:
+
+Certificado de Trazabilidad Agro Fields.
+
+
+Criterio:
+
+La auditoría no reemplaza el historial del activo.
+
+El historial representa la evolución del negocio.
+
+La auditoría registra quién, cuándo y cómo ocurrió cada cambio.
+
 
 
 ## Marco legal internacional
@@ -627,7 +750,32 @@ La IA interpreta información existente.
 
 No reemplaza validaciones profesionales.
 
+Certificado de Trazabilidad Agro Fields
+Estado:
 
+🔜 Futuro
+
+Objetivo:
+
+Crear una capacidad de certificación digital basada en la historia verificable del Activo Agro.
+
+Podrá considerar:
+
+historial del activo;
+auditorías registradas;
+documentación disponible;
+evidencias asociadas;
+participación profesional;
+evolución productiva.
+Finalidad:
+
+Demostrar que la información de un activo u operación posee un historial trazable dentro del ecosistema Agro Fields.
+
+No representa:
+
+certificación estatal;
+garantía económica;
+validación financiera.
 ---
 
 # Cierre técnico Jornada 23/07/2026
@@ -924,12 +1072,16 @@ Evolución productiva:
 
 ## Prioridad 3
 
+Prioridad 3
+
 Infraestructura:
 
 - servicios backend;
 - eventos;
+- auditoría y trazabilidad;
 - permisos;
 - integraciones.
+
 
 ---
 

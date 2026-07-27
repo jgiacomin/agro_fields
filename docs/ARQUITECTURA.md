@@ -40,36 +40,25 @@ Agro Fields utiliza una arquitectura orientada a separación de responsabilidade
 
 
 
-La estructura principal es:
-
-
-
 Screen
 
-
-
 ↓
-
-
 
 Service
 
-
-
 ↓
-
-
 
 Model
 
-
-
 ↓
-
-
 
 Firebase
 
+
++
+  
+Core / Auditoría y Trazabilidad
+(capa transversal)
 
 
 
@@ -151,6 +140,20 @@ Ubicación:
 lib/core/
 
 
+core/audit
+
+Responsabilidad:
+
+Gestionar la auditoría transversal del ecosistema.
+
+Registra:
+
+- eventos;
+- responsables;
+- cambios;
+- versiones;
+- evidencias;
+- trazabilidad histórica.
 
 
 
@@ -378,7 +381,10 @@ El Activo Agro incluye:
 
 \- historial;
 
+
 \- participantes.
+
+\- auditoría.
 
 
 
@@ -1410,49 +1416,32 @@ Construir una plataforma donde:
 
 Datos
 
-
-
-\+
-
-
++
 
 Profesionales
 
-
-
-\+
-
-
++
 
 Tecnología
 
-
-
-\+
-
-
++
 
 IA
 
-
-
-\+
-
-
++
 
 Trazabilidad
 
++
 
+Auditoría
 
-\+
-
-
++
 
 Marco legal
 
+generen confianza
 
-
-generen confianza para conectar oportunidades agropecuarias con inversores.
 
 
 
@@ -1707,6 +1696,12 @@ Historial
 
 
 Actualizaciones
+
+
+\+
+
+Auditoría
+
 
 
 
@@ -2542,8 +2537,194 @@ Registro histórico
 
 La trazabilidad permite reconstruir la evolución del activo.
 
+22.1 Arquitectura de Auditoría y Trazabilidad (Audit Trail)
+Objetivo
+La auditoría es una capa transversal del ecosistema Agro Fields destinada a registrar eventos relevantes y conservar la evolución histórica de los activos, operaciones e interacciones.
 
+Su objetivo es fortalecer la confianza entre las partes mediante información verificable.
 
+Principio arquitectónico
+La auditoría no representa un módulo comercial independiente.
+
+Es una capacidad de infraestructura utilizada por diferentes componentes del ecosistema:
+
+Activos Agro.
+Inversiones.
+Negociaciones.
+Chat.
+Profesionales.
+Documentación.
+Reportes.
+Funcionamiento
+Los servicios generan eventos de auditoría cuando ocurre una acción relevante.
+
+Ejemplo:
+
+Actualización de activo
+
+↓
+
+Servicio correspondiente
+
+↓
+
+Registro Audit Event
+
+↓
+
+Historial del Activo Agro
+
+Información registrada
+Cada evento podrá contener:
+
+identificador del evento;
+usuario responsable;
+rol;
+fecha y hora;
+módulo involucrado;
+acción realizada;
+elemento afectado;
+estado anterior;
+estado nuevo;
+referencia histórica.
+Versionado
+La información relevante no debe perderse mediante reemplazos directos.
+
+Cada cambio importante genera un nuevo registro histórico.
+
+Ejemplos:
+
+Nueva documentación
+
+↓
+
+Evento de auditoría
+
+↓
+
+Historial documental
+
+Cambio productivo
+
+↓
+
+Evento de auditoría
+
+↓
+
+Evolución productiva del activo
+
+Arquitectura futura
+Ubicación propuesta:
+
+lib/core/audit/
+
+Componentes:
+
+AuditEvent
+Modelo que representa un evento histórico.
+
+AuditService
+Servicio central encargado de registrar eventos.
+
+AuditRepository
+Persistencia y consulta de eventos.
+
+AuditTypes
+Clasificación de eventos.
+
+Ejemplos:
+
+creación;
+modificación;
+publicación;
+validación;
+negociación;
+inversión;
+intervención profesional.
+AuditLogger
+Registro uniforme desde los servicios.
+
+Regla fundamental
+Ningún módulo debe escribir directamente en auditoría.
+
+Todos los registros deben pasar por AuditService.
+
+Beneficios:
+
+consistencia;
+menor duplicación;
+mantenimiento simplificado;
+evolución futura.
+22.2 Certificado de Trazabilidad Agro Fields
+Concepto futuro
+Agro Fields podrá generar un Certificado de Trazabilidad asociado a un Activo Agro cuando exista suficiente información histórica verificable.
+
+El certificado representa:
+
+historial registrado;
+trazabilidad de modificaciones;
+documentación asociada;
+participación profesional;
+evidencias disponibles.
+El certificado no representa:
+garantía de rentabilidad;
+valuación financiera;
+recomendación de inversión;
+garantía productiva.
+Relación dentro del ecosistema
+Activo Agro V2
+
+↓
+
+Historial
+
+↓
+
+Auditoría
+
+↓
+
+Evidencias
+
+↓
+
+Índice de Confianza
+
+↓
+
+Certificado de Trazabilidad Agro Fields
+
+Sobre el punto donde aparece Blockchain
+En este archivo no aparece, lo cual está correcto.
+
+Mantendría esa decisión.
+
+No agregaría Blockchain porque no forma parte del diseño actual.
+
+La confianza de Agro Fields está basada en:
+
+Información
+
++
+
+Evidencias
+
++
+
+Profesionales
+
++
+
+Historial
+
++
+
+Auditoría
+
++
+
+IA como asistencia
 
 
 

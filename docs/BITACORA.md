@@ -1593,3 +1593,26 @@ Se consolida la arquitectura integral de Agro Fields V8 cubriendo:
 - Monetización
 
 La documentación queda preparada como base para la implementación de la plataforma completa.
+Fecha:
+27/07/2026
+
+Cambio:
+Incorporación de Arquitectura de Auditoría y Trazabilidad V8.
+
+Objetivo:
+Crear una capa transversal para registrar la evolución del ecosistema Agro Fields.
+
+Impacto:
+- Activo Agro V2.
+- Historial.
+- Índice de Confianza.
+- Futuras integraciones.
+
+Archivos documentales:
+- ARQUITECTURA.md
+- ROADMAP_V8.md
+- ARQUITECTURA_AUDITORIA_TRAZABILIDAD_V8.md
+
+Estado:
+Arquitectura definida.
+Implementación futura progresiva.

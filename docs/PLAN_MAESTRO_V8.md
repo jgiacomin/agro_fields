@@ -114,6 +114,98 @@ objetivos futuros
 
 Trazabilidad Económica
 
+El sistema debe permitir registrar:
+
+inversión inicial;
+costos productivos;
+ingresos esperados;
+proyección económica;
+rentabilidad estimada;
+supuestos utilizados;
+riesgos identificados.
+Importante:
+
+Agro Fields no promete rentabilidad.
+
+Agro Fields organiza información para que pueda ser analizada.
+
+Trazabilidad de Expansión
+Para productores/criadores que buscan capital:
+
+El activo podrá presentar:
+
+situación actual;
+capacidad actual;
+plan de crecimiento;
+inversión necesaria;
+destino del capital;
+producción esperada futura.
+Ejemplo:
+
+Criador:
+
+"Actualmente posee 500 madres.
+
+Busca inversión para llegar a 1.500 madres."
+
+El inversor podrá visualizar:
+
+objetivo;
+plazo estimado;
+recursos necesarios;
+escenarios productivos.
+
+Historicidad y Auditoría del Activo Agro
+La auditoría forma parte de la trazabilidad integral y permite conocer trazabilidad del Activo Agro se construye mediante un historial verificable de su evolución.
+
+La auditoría forma parte de la trazabilidad integral y permite conocer:
+
+qué ocurrió;
+cuándo ocurrió;
+quién participó;
+qué información fue modificada;
+qué evidencia respalda cada cambio.
+Cada evento relevante podrá registrar:
+
+activo relacionado;
+usuario responsable;
+rol dentro del ecosistema;
+fecha;
+acción realizada;
+información anterior y nueva cuando corresponda;
+documentación o evidencia asociada.
+La auditoría no reemplaza el historial del activo.
+
+Lo fortalece permitiendo reconstruir la evolución completa de la realidad productiva.
+
+Flujo:
+
+Información
+
+↓
+
+Evidencias
+
+↓
+
+Historial
+
+↓
+
+Auditoría
+
+↓
+
+Trazabilidad
+
+↓
+
+Confianza entre partes
+
+El objetivo es que productores, profesionales, inversores y demás participantes puedan comprender la evolución del activo mediante información organizada y verificable.
+
+
+
 
 
 El sistema debe permitir registrar:
@@ -229,6 +321,16 @@ profesionales
 actualizaciones
 
 trazabilidad
+auditoría.
+La confianza del activo se construye mediante la calidad, evolución y verificabilidad de la información disponible.
+
+El índice representa el nivel de respaldo existente sobre el activo.
+
+No representa:
+
+garantía de rentabilidad;
+recomendación financiera;
+valuación económica.
 
 9\. Inteligencia Artificial Agro Fields
 
@@ -253,10 +355,24 @@ comparar oportunidades
 generar preguntas para profesionales
 
 asistir en análisis inicial
+analizar evolución histórica del activo;
+detectar inconsistencias entre información registrada y actualizaciones.
+La IA podrá utilizar información proveniente de:
+
+historial;
+auditoría;
+documentación;
+producción;
+evaluaciones profesionales.
 
 
 
 La IA no reemplaza profesionales.
+No valida información por sí misma.
+
+Su función es asistir el análisis utilizando información existente.
+
+
 
 
 
@@ -541,6 +657,8 @@ Evolucionar archivos existentes.
 Firebase solamente mediante servicios.
 
 Pantallas sin acceso directo a datos.
+La trazabilidad debe mantenerse como capacidad transversal del ecosistema.
+Los módulos deben conservar historial de cambios relevantes del dominio.
 
 16\. Roadmap
 
@@ -565,18 +683,30 @@ chat
 confianza inicial
 
 Próxima evolución
+trazabilidad productiva;
+trazabilidad económica;
+historial avanzado del activo;
+auditoría y registro de eventos;
+evaluación de confianza;
+profesionales;
+IA;
+legal internacional;
+inversiones.
+Evolución futura
+Certificado de Trazabilidad Agro Fields.
 
-trazabilidad productiva
+Capacidad futura basada en:
 
-trazabilidad económica
+historial del activo;
+evidencias registradas;
+auditoría;
+participación profesional;
+nivel de confianza.
+Objetivo:
 
-profesionales
+Permitir demostrar que un activo u operación posee una evolución histórica verificable dentro del ecosistema Agro Fields.
 
-IA
 
-legal internacional
-
-inversiones
 
 17\. Visión final
 
