@@ -45,7 +45,69 @@ La arquitectura debe soportar:
 - Usuarios globales.
 - Múltiples países.
 
----
+# 2.5 Relación con el Ecosistema Agro Fields V8
+
+La arquitectura Analytics & Business Intelligence no reemplaza el modelo principal del ecosistema.
+
+El núcleo de Agro Fields continúa siendo:
+
+Activo Agro V2
+
+Analytics utiliza información proveniente de las diferentes capas del ecosistema para generar indicadores, análisis y conocimiento estratégico.
+
+Flujo conceptual:
+
+Activo Agro V2
+
+↓
+
+Datos productivos
+
+↓
+
+IoT
+
+↓
+
+Digital Twin
+
+↓
+
+Big Data / Data Lake
+
+↓
+
+Gobernanza de Datos
+
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+Analytics & Business Intelligence
+
+↓
+
+KPIs
+
+↓
+
+Reportes
+
+↓
+
+Predicciones
+
+↓
+
+Decisiones estratégicas
+
+
+Analytics no modifica la información original del activo.
+
+Su función es transformar datos confiables en información útil para productores, administradores, profesionales e inversores.
+
 
 # 3. Arquitectura general Analytics
  DATA INGESTION
