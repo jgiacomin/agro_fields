@@ -13,7 +13,23 @@ Su objetivo es garantizar:
 - Integridad.
 - Uso responsable de la información.
 
----
+---Dentro de Agro Fields, la Gobernanza de Datos funciona como una capa transversal del ecosistema.
+
+No reemplaza los modelos principales.
+
+El núcleo continúa siendo:
+
+Activo Agro V2
+
+La gobernanza permite asegurar:
+
+- calidad de información;
+- origen de datos;
+- permisos;
+- consistencia;
+- trazabilidad;
+- uso responsable.
+
 
 # 2. Principios de Gobernanza
 
@@ -232,3 +248,34 @@ Dato autorizado
 "fecha":"2026-07-24"
 }
 
+# Relación con el Ecosistema Agro Fields V8
+
+La Gobernanza de Datos acompaña todo el ciclo de vida del Activo Agro.
+
+Flujo conceptual:
+
+Datos Productivos
+
+↓
+
+Activo Agro V2
+
+↓
+
+Gobernanza de Datos
+
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+Digital Twin
+
+↓
+
+IA / Analytics
+
+↓
+
+Información confiable para decisiones
