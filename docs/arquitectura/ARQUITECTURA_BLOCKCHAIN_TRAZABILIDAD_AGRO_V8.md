@@ -426,6 +426,7 @@ Queda como una pieza central del ecosistema Agro Fields V8.
 Este queda más alineado con los documentos anteriores que ya venimos armando (Big Data, IA, IoT, Digital Twin, Gobernanza y Marketplace).
 
 El registro blockchain depende previamente de procesos de validación, gobernanza y auditoría de datos.
+
 # 6. Relación con el Ecosistema Agro Fields V8
 
 La arquitectura Blockchain no reemplaza el modelo principal del ecosistema.
