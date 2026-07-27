@@ -59,7 +59,67 @@ Consumo analítico
 
 Permitiendo optimización de costos y rendimiento.
 
----
+## 2.4 Relación con el Ecosistema Agro Fields V8
+
+La arquitectura Big Data y Data Lake no reemplaza el modelo principal del ecosistema.
+
+El núcleo de Agro Fields continúa siendo:
+
+Activo Agro V2
+
+La plataforma de datos permite almacenar, organizar y analizar la información generada por los diferentes componentes del ecosistema.
+
+Flujo conceptual:
+
+Fuentes de datos
+
+↓
+
+IoT
+
+↓
+
+Producción
+
+↓
+
+Documentación
+
+↓
+
+Economía del Activo
+
+↓
+
+Eventos del sistema
+
+↓
+
+Data Lake Agro
+
+↓
+
+Gobernanza de Datos
+
+↓
+
+Auditoría y Trazabilidad
+
+↓
+
+Data Warehouse
+
+↓
+
+Analytics / IA / BI
+
+↓
+
+Activo Agro V2 enriquecido
+
+
+El Data Lake conserva la información histórica y operativa, mientras que el Activo Agro V2 mantiene la representación principal del activo productivo dentro del ecosistema.
+
 
 # 3. Arquitectura general Big Data
 Firebase
