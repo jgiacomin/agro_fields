@@ -1616,3 +1616,53 @@ Archivos documentales:
 Estado:
 Arquitectura definida.
 Implementación futura progresiva.
+# Bitácora Técnica Agro Fields V8
+
+...
+
+---
+
+# Jornada 27/07/2026
+
+## Módulo
+Evaluación de Confianza
+
+## Estado
+✅ Finalizado
+
+### Implementaciones
+
+- Consolidación de FactorConfianza.
+- Consolidación de EvaluacionConfianza.
+- Implementación de generación automática de evaluación.
+- Cálculo inicial por factores:
+  - Documental
+  - Productivo
+  - Económico
+  - Legal
+  - Profesional
+- Integración con ActivoAgroServiceV2.
+- Persistencia de EvaluacionConfianza.
+- Integración en ActivoAgroV2.
+- Visualización en detalle_activo_agro_screen.dart.
+
+## Validación
+
+- Flutter compila correctamente.
+- Firestore integrado.
+- Compatibilidad con ActivoAgroV2 mantenida.
+
+## Próxima etapa
+
+Prioridad 1:
+
+- Historial automático del Activo Agro.
+- Auditoría transversal.
+- Registro de eventos.
+- Evidencias asociadas.
+- Preparación para Certificado de Trazabilidad Agro Fields.
+
+## Commit
+
+Pendiente.
+

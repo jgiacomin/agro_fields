@@ -298,7 +298,8 @@ La información publicada en Marketplace puede incorporar:
 
 El objetivo es que cada oportunidad comercial tenga respaldo en datos verificables del ecosistema Agro Fields.
 
-# 14. Estado actual
+# 15. Estado actual
+
 
 Este documento define la arquitectura futura del marketplace del ecosistema Agro Fields V8.
 
