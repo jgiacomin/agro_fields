@@ -240,6 +240,63 @@ Preparado para:
 - integraciones externas.
 
 ---
+# 14. Relación con el Ecosistema Agro Fields V8
+
+El Marketplace no reemplaza el modelo principal del ecosistema.
+
+El núcleo de Agro Fields continúa siendo:
+
+Activo Agro V2
+
+El Marketplace funciona como una capa comercial que utiliza información validada del activo para facilitar oportunidades, publicaciones y conexiones entre participantes.
+
+Flujo conceptual:
+
+Activo Agro V2
+
+↓
+
+Datos Productivos
+
+↓
+
+Digital Twin
+
+↓
+
+Gobernanza y Auditoría
+
+↓
+
+Certificaciones
+
+↓
+
+Marketplace
+
+↓
+
+Oportunidades Comerciales
+
+↓
+
+Inversión / Operaciones
+
+↓
+
+Confianza del Mercado
+
+
+La información publicada en Marketplace puede incorporar:
+
+- Datos productivos validados.
+- Historial del activo.
+- Certificaciones.
+- Evidencias documentales.
+- Indicadores económicos.
+- Información analítica.
+
+El objetivo es que cada oportunidad comercial tenga respaldo en datos verificables del ecosistema Agro Fields.
 
 # 14. Estado actual
 
