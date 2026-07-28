@@ -1,4 +1,7 @@
 import '../models/activos/activo_agro_model_v2.dart';
+import '../models/activos/evaluacion_confianza_model.dart';
+import '../models/activos/factor_confianza_model.dart';
+
 
 
 class ConfianzaActivoService {
@@ -142,6 +145,135 @@ class ConfianzaActivoService {
   }
 
 
+  EvaluacionConfianza generarEvaluacion(
+      ActivoAgroV2 activo) {
+
+
+    final FactorConfianza documental =
+    FactorConfianza(
+      nivel:
+      activo.documentacion.documentacionCompleta
+          ? 90
+          : 40,
+
+      descripcion:
+      "Estado documental del activo",
+
+      evidencias: [],
+
+      fechaActualizacion:
+      DateTime.now(),
+    );
+        final FactorConfianza productivo =
+    FactorConfianza(
+      nivel:
+      activo.producciones.isNotEmpty
+          ? 80
+          : 30,
+
+      descripcion:
+      "Estado de información productiva del activo",
+
+      evidencias: [],
+
+      fechaActualizacion:
+      DateTime.now(),
+    );
+    final FactorConfianza economico =
+    FactorConfianza(
+      nivel:
+      activo.economia.valorSolicitado > 0 ||
+      activo.economia.capitalRequerido > 0
+          ? 70
+          : 30,
+
+      descripcion:
+      "Nivel de información económica del activo",
+
+      evidencias: [],
+
+      fechaActualizacion:
+      DateTime.now(),
+    );
+    final FactorConfianza legal =
+    FactorConfianza(
+      nivel:
+      activo.documentacion.documentacionCompleta
+          ? 60
+          : 20,
+
+      descripcion:
+      "Nivel de información legal disponible del activo",
+
+      evidencias: [],
+
+      fechaActualizacion:
+      DateTime.now(),
+    );
+    final FactorConfianza profesional =
+    FactorConfianza(
+      nivel:
+      activo.participantes.isNotEmpty
+          ? 50
+          : 0,
+
+      descripcion:
+      "Participación de personas relacionadas con el activo",
+
+      evidencias: [],
+
+      fechaActualizacion:
+      DateTime.now(),
+    );
+    final int nivelGeneral =
+    (
+      documental.nivel +
+      productivo.nivel +
+      economico.nivel +
+      legal.nivel +
+      profesional.nivel
+    ) ~/ 5;
+
+
+    return EvaluacionConfianza(
+
+      nivelGeneral:
+      nivelGeneral,
+
+      documental:
+      documental,
+
+      productivo:
+      productivo,
+
+      economico:
+      economico,
+
+      legal:
+      legal,
+
+      profesional:
+      profesional,
+
+      fortalezas: [],
+
+      pendientes: [],
+
+      resumen:
+      nivelTexto(nivelGeneral),
+
+      responsable:
+      "Sistema Agro Fields",
+
+      fechaEvaluacion:
+      DateTime.now(),
+
+    );
+
+
+
+   
+  }
 
 
 

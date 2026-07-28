@@ -15,6 +15,35 @@ import 'participante_activo_model.dart';
 import 'historial_activo_model.dart';
 
 
+
+/// Modelo principal del ecosistema Agro Fields.
+///
+/// Representa un Activo Agro Digital.
+/// 
+/// Evoluciona desde la primera versión del MVP.
+/// No crear nuevos archivos de versión.
+/// Las mejoras deben incorporarse aquí.
+///
+/// Responsabilidades:
+/// - identidad del activo
+/// - ubicación
+/// - producción
+/// - economía
+/// - documentación
+/// - confianza
+/// - historial
+/// - auditoría
+///
+/// Historial:
+/// 79e7095
+/// Creación inicial del repositorio.
+/// 
+/// Evolución:
+/// - incorporación de trazabilidad.
+/// - participantes.
+/// - evaluación de confianza.
+/// - auditoría futura.
+
 class ActivoAgroV2 {
 
   static const int modeloVersion = 2;
@@ -112,7 +141,18 @@ class ActivoAgroV2 {
 
 
 
-  // Historial
+  /// Historial de eventos del Activo Agro.
+  ///
+  /// Representa la evolución del activo:
+  /// - creación;
+  /// - modificaciones;
+  /// - producción;
+  /// - economía;
+  /// - documentación;
+  /// - validaciones.
+  ///
+  /// No reemplaza la auditoría.
+  /// Complementa la trazabilidad del negocio.
   final List<HistorialActivo> historial;
 
 
@@ -123,6 +163,10 @@ class ActivoAgroV2 {
 
 
   final int versionDatos;
+
+  /// Datos adicionales de contexto del evento.
+  /// Permite extender trazabilidad sin modificar estructura base.
+   final Map<String,dynamic>? datos;
 
 
   final DateTime fechaCreacion;
@@ -181,6 +225,8 @@ class ActivoAgroV2 {
     required this.hashActivo,
 
     required this.versionDatos,
+    
+    this.datos,
 
     required this.fechaCreacion,
 
@@ -453,6 +499,13 @@ class ActivoAgroV2 {
       map['versionDatos'] ?? 1,
 
 
+      datos:
+
+     map['datos'] != null
+    ? Map<String,dynamic>.from(map['datos'])
+    : null,
+
+
 
       fechaCreacion:
 
@@ -601,6 +654,9 @@ class ActivoAgroV2 {
       versionDatos,
 
 
+      'datos':
+       datos,
+
       'fechaCreacion':
       Timestamp.fromDate(fechaCreacion),
 
@@ -650,6 +706,10 @@ class ActivoAgroV2 {
 
     bool? visible,
 
+    List<HistorialActivo>? historial,
+
+    Map<String,dynamic>? datos,
+
   }){
 
 
@@ -697,11 +757,13 @@ class ActivoAgroV2 {
       visible:
       visible ?? this.visible,
 
-      historial: historial,
+     historial: historial ?? this.historial,
 
       hashActivo: hashActivo,
 
       versionDatos: versionDatos,
+
+      datos: datos ?? this.datos,
 
       fechaCreacion: fechaCreacion,
 

@@ -356,10 +356,46 @@ class DetalleActivoAgroScreen extends StatelessWidget {
 
             Text(
 
-              "Nivel general: "
-                  "${activo.confianza.nivelGeneral}%",
+  "Nivel general: "
+      "${activo.confianza.nivelGeneral}%",
 
-            ),
+),
+
+const SizedBox(
+  height:10,
+),
+
+Text(
+  "Evaluación: ${activo.evaluacion.nivelGeneral}%",
+),
+
+const SizedBox(
+  height: 8,
+),
+Text(
+  "Documental: ${activo.evaluacion.documental.estado} "
+  "(${activo.evaluacion.documental.nivel}%)",
+),
+Text(
+  "Productivo: ${activo.evaluacion.productivo.estado} "
+  "(${activo.evaluacion.productivo.nivel}%)",
+),
+
+Text(
+  "Económico: ${activo.evaluacion.economico.estado} "
+  "(${activo.evaluacion.economico.nivel}%)",
+),
+
+Text(
+  "Legal: ${activo.evaluacion.legal.estado} "
+  "(${activo.evaluacion.legal.nivel}%)",
+),
+
+Text(
+  "Profesional: ${activo.evaluacion.profesional.estado} "
+  "(${activo.evaluacion.profesional.nivel}%)",
+),
+
 
             const Divider(
               height:30,

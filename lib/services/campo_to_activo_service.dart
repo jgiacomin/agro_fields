@@ -14,6 +14,8 @@ import '../models/activos/evaluacion_confianza_model.dart';
 import '../models/activos/madurez_activo_model.dart';
 import '../models/activos/historial_activo_model.dart';
 import '../models/activos/participante_activo_model.dart';
+import 'package:agro_fields/models/activos/factor_confianza_model.dart';
+
 
 
 
@@ -331,7 +333,22 @@ UbicacionActivo(
 
         nivelGeneral:
         campo.verificado ? 50 : 0,
+         
 
+         documental:
+      FactorConfianza.inicial(),
+
+      productivo:
+      FactorConfianza.inicial(),
+
+      economico:
+      FactorConfianza.inicial(),
+
+      legal:
+      FactorConfianza.inicial(),
+
+      profesional:
+      FactorConfianza.inicial(),
 
         fortalezas:
         [
@@ -348,6 +365,9 @@ UbicacionActivo(
 
         resumen:
         'Evaluación inicial',
+
+         responsable:
+        "Sistema",
 
 
         fechaEvaluacion:
@@ -463,6 +483,9 @@ UbicacionActivo(
 
     usuarioId:
     campo.publicadorId,
+
+      moduloOrigen:
+     'campo',
 
     fecha:
     campo.fechaCreacion,

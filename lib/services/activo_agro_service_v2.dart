@@ -2,6 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/activos/activo_agro_model_v2.dart';
 import '../models/activos/confianza_activo_model.dart';
+import '../models/activos/evaluacion_confianza_model.dart';
+import '../models/activos/historial_activo_model.dart';
+import 'confianza_activo_service.dart';
+
+
 
 
 
@@ -15,57 +20,127 @@ class ActivoAgroServiceV2 {
   final String coleccion =
       'activos_agro';
 
+final ConfianzaActivoService _confianzaService =
+      ConfianzaActivoService();
 
 
 
+// =====================================================
+// GENERAR EVENTO DE HISTORIAL
+// =====================================================
+
+HistorialActivo _crearEventoHistorial({
+  required String tipoEvento,
+  required String descripcion,
+  required String usuarioId,
+  required String moduloOrigen,
+    }) 
+   
+    {
+
+  return HistorialActivo(
+
+    eventoId:
+    DateTime.now()
+        .millisecondsSinceEpoch
+        .toString(),
+
+    tipoEvento:
+    tipoEvento,
+
+    descripcion:
+    descripcion,
+
+    usuarioId:
+    usuarioId,
+
+    moduloOrigen:
+    moduloOrigen,
+
+    fecha:
+    DateTime.now(),
+
+  );
+
+}
 
   // =====================================================
   // CREAR ACTIVO
   // =====================================================
 
   Future<String> crearActivo(
-      ActivoAgroV2 activo,
-      ) async {
+    ActivoAgroV2 activo,
+    ) async {
 
 
-    final existente = await _db
-        .collection(coleccion)
-        .where(
-          'hashActivo',
-          isEqualTo: activo.hashActivo,
-        )
-        .limit(1)
-        .get();
-
-
-
-    if(existente.docs.isNotEmpty){
-
-      throw Exception(
-        'Ya existe un activo similar registrado',
-      );
-
-    }
+  final existente = await _db
+      .collection(coleccion)
+      .where(
+        'hashActivo',
+        isEqualTo: activo.hashActivo,
+      )
+      .limit(1)
+      .get();
 
 
 
-    final doc = _db
-        .collection(coleccion)
-        .doc(activo.activoId);
+  if(existente.docs.isNotEmpty){
 
-
-
-    await doc.set(
-      activo.toMap(),
+    throw Exception(
+      'Ya existe un activo similar registrado',
     );
-
-
-
-    return doc.id;
 
   }
 
 
+
+  final doc = _db
+      .collection(coleccion)
+      .doc(activo.activoId);
+
+
+
+  final historialInicial = _crearEventoHistorial(
+
+    tipoEvento:
+    'creacion_activo',
+
+    descripcion:
+    'Creación inicial del Activo Agro',
+
+    usuarioId:
+    activo.propietarioId,
+
+    moduloOrigen:
+    'activo',
+
+  );
+
+
+
+  final activoConHistorial = activo.copyWith(
+
+    historial: [
+
+      ...activo.historial,
+
+      historialInicial,
+
+    ],
+
+  );
+
+
+
+  await doc.set(
+    activoConHistorial.toMap(),
+  );
+
+
+
+  return doc.id;
+
+}
 
 
 
@@ -262,71 +337,155 @@ class ActivoAgroServiceV2 {
 
 
 
-  // =====================================================
-  // PUBLICAR ACTIVO
-  // =====================================================
+ // =====================================================
+// PUBLICAR ACTIVO
+// =====================================================
 
-  Future<void> publicarActivo(
-      String activoId,
-      ) async {
-
-
-    await _db
-        .collection(coleccion)
-        .doc(activoId)
-        .update({
-
-      'estadoPublicacion':
-      'publicado',
+Future<void> publicarActivo(
+    String activoId,
+    ) async {
 
 
-      'visible':
-      true,
+  final activo =
+      await obtenerActivoPorId(activoId);
 
 
-      'ultimaActualizacion':
-      Timestamp.now(),
+  if(activo == null){
 
-    });
-
+    throw Exception(
+      'Activo no encontrado',
+    );
 
   }
 
 
 
+  final evento =
+      _crearEventoHistorial(
 
+    tipoEvento:
+    'publicacion_activo',
+
+    descripcion:
+    'El Activo Agro fue publicado',
+
+    usuarioId:
+    activo.publicadorId,
+
+    moduloOrigen:
+    'activo',
+
+  );
+
+
+
+  final activoActualizado =
+      activo.copyWith(
+
+    estadoPublicacion:
+    'publicado',
+
+    visible:
+    true,
+
+    historial: [
+
+      ...activo.historial,
+
+      evento,
+
+    ],
+
+  );
+
+
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+
+    activoActualizado.toMap(),
+
+  );
+
+
+}
 
   // =====================================================
-  // PAUSAR ACTIVO
-  // =====================================================
+// PAUSAR ACTIVO
+// =====================================================
 
-  Future<void> pausarActivo(
-      String activoId,
-      ) async {
-
-
-    await _db
-        .collection(coleccion)
-        .doc(activoId)
-        .update({
-
-      'estadoPublicacion':
-      'pausado',
+Future<void> pausarActivo(
+    String activoId,
+    ) async {
 
 
-      'visible':
-      false,
+  final activo =
+      await obtenerActivoPorId(activoId);
 
 
-      'ultimaActualizacion':
-      Timestamp.now(),
+  if(activo == null){
 
-    });
-
+    throw Exception(
+      'Activo no encontrado',
+    );
 
   }
 
 
+
+  final evento =
+      _crearEventoHistorial(
+
+    tipoEvento:
+    'pausa_activo',
+
+    descripcion:
+    'El Activo Agro fue pausado',
+
+    usuarioId:
+    activo.publicadorId,
+
+    moduloOrigen:
+    'activo',
+
+  );
+
+
+
+  final activoActualizado =
+      activo.copyWith(
+
+    estadoPublicacion:
+    'pausado',
+
+    visible:
+    false,
+
+    historial: [
+
+      ...activo.historial,
+
+      evento,
+
+    ],
+
+  );
+
+
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+
+    activoActualizado.toMap(),
+
+  );
+
+
+}
 
 
 
@@ -335,21 +494,51 @@ class ActivoAgroServiceV2 {
   // =====================================================
 
   Future<void> actualizarActivo(
-      ActivoAgroV2 activo,
-      ) async {
+    ActivoAgroV2 activo,
+    ) async {
 
 
-    await _db
-        .collection(coleccion)
-        .doc(activo.activoId)
-        .update(
+  final evento = _crearEventoHistorial(
 
-      activo.toMap(),
+    tipoEvento:
+    'actualizacion_activo',
 
-    );
+    descripcion:
+    'Actualización general del Activo Agro',
+
+    usuarioId:
+    activo.creadorId,
+
+    moduloOrigen:
+    'activo',
+
+  );
 
 
-  }
+  final activoActualizado = activo.copyWith(
+
+    historial: [
+
+      ...activo.historial,
+
+      evento,
+
+    ],
+
+  );
+
+
+  await _db
+      .collection(coleccion)
+      .doc(activo.activoId)
+      .update(
+
+    activoActualizado.toMap(),
+
+  );
+
+
+}
 
 
 
@@ -381,6 +570,105 @@ class ActivoAgroServiceV2 {
 
 
   }
+  
+  // =====================================================
+  // ACTUALIZAR EVALUACIÓN DE CONFIANZA
+  // =====================================================
+
+  Future<void> actualizarEvaluacionConfianza(
+    String activoId,
+    EvaluacionConfianza evaluacion,
+) async {
+
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+
+    throw Exception(
+      'Activo no encontrado',
+    );
+
+  }
+
+  final evento =
+      _crearEventoHistorial(
+
+    tipoEvento:
+    'evaluacion_confianza',
+
+    descripcion:
+    'Se actualizó la evaluación de confianza',
+
+    usuarioId:
+    activo.creadorId,
+
+    moduloOrigen:
+    'confianza',
+
+  );
+
+  final activoActualizado =
+      activo.copyWith(
+
+    evaluacion:
+    evaluacion,
+
+    historial: [
+
+      ...activo.historial,
+
+      evento,
+
+    ],
+
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+
+    activoActualizado.toMap(),
+
+  );
+
+}
+
+   // =====================================================
+  // EVALUAR ACTIVO AGRO
+  // =====================================================
+
+  Future<void> evaluarActivo(
+      String activoId,
+      ) async {
+
+    final activo =
+        await obtenerActivoPorId(activoId);
+
+
+    if(activo == null){
+
+      throw Exception(
+        'Activo no encontrado',
+      );
+
+    }
+
+
+    final evaluacion =
+        _confianzaService
+            .generarEvaluacion(activo);
+
+
+    await actualizarEvaluacionConfianza(
+      activoId,
+      evaluacion,
+    );
+
+  }
+
+
 
 
 }

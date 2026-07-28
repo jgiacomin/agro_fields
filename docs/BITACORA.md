@@ -1666,3 +1666,393 @@ Prioridad 1:
 
 Pendiente.
 
+---
+
+# Jornada 27/07/2026 — Consolidación Sistema de Confianza Activo Agro V2
+
+## Objetivo del día
+
+Completar la primera versión funcional del sistema de evaluación de confianza del Activo Agro.
+
+El objetivo fue transformar la confianza desde un valor informativo simple hacia un sistema compuesto por factores verificables.
+
+---
+
+# Desarrollo realizado
+
+## Sistema de factores de confianza
+
+Se consolidó el modelo:
+
+- FactorConfianza
+- EvaluacionConfianza
+
+Cada factor contiene:
+
+- nivel;
+- descripción;
+- evidencias;
+- fecha de actualización.
+
+---
+
+## Generación automática de evaluación
+
+Se implementó:
+
+ConfianzaActivoService.generarEvaluacion()
+
+El sistema genera automáticamente:
+
+- Factor documental.
+- Factor productivo.
+- Factor económico.
+- Factor legal.
+- Factor profesional.
+
+Cada componente aporta información específica sobre el nivel de confianza del activo.
+
+---
+
+## Integración con Activo Agro V2
+
+La evaluación quedó integrada dentro de:
+
+lib/models/activos/activo_agro_model_v2.dart
+
+Manteniendo la arquitectura:
+
+Pantalla
+↓
+Servicio
+↓
+Modelo
+↓
+Firebase
+
+
+---
+
+## Visualización
+
+Se incorporó la visualización inicial dentro de:
+
+detalle_activo_agro_screen.dart
+
+Mostrando:
+
+- nivel general de confianza;
+- información asociada al activo.
+
+---
+
+# Validación técnica
+
+Resultado:
+
+✅ Flutter compila correctamente.
+
+✅ Modelos serializan correctamente.
+
+✅ Firebase mantiene compatibilidad.
+
+✅ ActivoAgroV2 continúa funcionando sin romper estructura existente.
+
+---
+
+# Decisión arquitectónica
+
+Se mantiene la evolución sobre modelos existentes.
+
+No se crean versiones paralelas.
+
+El sistema de confianza será una capa transversal del ecosistema Agro Fields.
+
+---
+
+# Próxima etapa técnica
+
+Prioridad:
+
+## Auditoría y trazabilidad del Activo Agro
+
+Implementar:
+
+- generación automática de eventos;
+- historial de modificaciones;
+- registro de responsables;
+- evidencias asociadas;
+- trazabilidad documental.
+
+Objetivo:
+
+Construir la base para un futuro Certificado de Trazabilidad Agro Fields.
+
+---
+
+# Commit pendiente
+
+Registrar cambios actuales mediante Git.
+
+---
+
+# Jornada 28/07/2026
+
+## Módulo
+
+Historial y Auditoría del Activo Agro V2
+
+
+## Objetivo del día
+
+Iniciar la evolución del sistema de trazabilidad del Activo Agro mediante eventos asociados a cambios relevantes del ecosistema.
+
+
+El objetivo es transformar el historial actual en una línea temporal verificable que permita reconstruir la evolución productiva, económica, documental y profesional del activo.
+
+
+---
+
+# Estado inicial
+
+
+Actualmente Agro Fields cuenta con:
+
+
+- HistorialActivo implementado.
+- Evaluación de Confianza operativa.
+- Participantes iniciales.
+- Arquitectura de Auditoría y Trazabilidad definida.
+
+
+---
+
+# Desarrollo planificado
+
+
+## Historial del Activo
+
+
+Archivo:
+
+
+lib/models/activos/historial_activo_model.dart
+
+
+Estado:
+
+
+🟡 En evolución
+
+
+Objetivo:
+
+
+Convertir el historial actual en la línea temporal verificable del Activo Agro.
+
+
+Mantener:
+
+
+- eventoId;
+- tipoEvento;
+- descripción;
+- usuario responsable;
+- fecha.
+
+
+Preparar evolución futura:
+
+
+- eventos productivos;
+- eventos económicos;
+- eventos documentales;
+- intervenciones profesionales;
+- evidencias asociadas;
+- cambios relevantes del activo.
+
+
+---
+
+## Servicio Activo Agro
+
+
+Archivo:
+
+
+lib/services/activo_agro_service_v2.dart
+
+
+Objetivo:
+
+
+Incorporar generación automática de eventos ante operaciones importantes.
+
+
+Eventos previstos:
+
+
+- creación del activo;
+- publicación;
+- actualización;
+- evaluación de confianza;
+- cambios relevantes.
+
+
+---
+
+# Decisión arquitectónica
+
+
+Se mantiene la arquitectura:
+
+
+Pantalla
+
+↓
+
+Servicio
+
+↓
+
+Modelo
+
+↓
+
+Firebase
+
+
+Reglas:
+
+
+- No crear modelos paralelos.
+- No crear ActivoAgroV3.
+- Evolucionar ActivoAgroV2.
+- Mantener documentación sincronizada.
+- Registrar cambios mediante Git.
+
+
+---
+
+# Relación con Arquitectura V8
+
+
+La evolución del historial forma parte de la capa transversal de:
+
+
+- auditoría;
+- trazabilidad;
+- confianza;
+- gobernanza de datos.
+
+
+El historial representa la evolución del negocio.
+
+
+La auditoría registra:
+
+
+- quién;
+- cuándo;
+- qué cambio ocurrió.
+
+
+---
+
+# Próximo paso técnico
+
+
+Implementar primera capa de eventos automáticos del Activo Agro.
+
+
+Archivos involucrados:
+
+
+- historial_activo_model.dart
+- activo_agro_model_v2.dart
+- activo_agro_service_v2.dart
+
+
+---
+
+# Commit esperado
+
+
+feat: agregar trazabilidad automática del activo agro
+
+# Bitácora de Desarrollo
+
+## Fecha
+28/07/2026
+
+## Objetivo de la jornada
+
+Implementar el sistema de historial del Activo Agro y dejar el proyecto compilando sin errores.
+
+---
+
+## Trabajo realizado
+
+### Modelo ActivoAgroV2
+
+- Se agregó `List<HistorialActivo> historial`.
+- Se actualizó constructor.
+- Se actualizó `copyWith`.
+- Se actualizó `fromMap`.
+- Se actualizó `toMap`.
+
+### Historial
+
+Se implementó el modelo `HistorialActivo` con:
+
+- eventoId
+- tipoEvento
+- descripcion
+- usuarioId
+- moduloOrigen
+- fecha
+
+### Servicio ActivoAgroServiceV2
+
+Se implementó:
+
+- `_crearEventoHistorial()`
+
+Se registran automáticamente eventos en:
+
+- creación
+- actualización
+- publicación
+- pausa
+
+### Sistema de confianza
+
+Se agregó:
+
+- `actualizarEvaluacionConfianza()`
+
+---
+
+## Estado del proyecto
+
+flutter analyze
+
+Errores: 0
+
+Warnings: 0
+
+Infos: 17
+
+Todos los infos corresponden únicamente a `print()` de desarrollo.
+
+---
+
+## Próxima jornada
+
+Integrar historial automático en:
+
+- Economía
+- Producción
+- Documentación
+
+Continuar con los módulos del Activo Agro.

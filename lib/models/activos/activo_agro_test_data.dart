@@ -11,6 +11,9 @@ import 'economia_activo_model.dart';
 import 'documentacion_activo_model.dart';
 import 'evaluacion_confianza_model.dart';
 
+import 'package:agro_fields/models/activos/factor_confianza_model.dart';
+
+
 class ActivoAgroTestData {
 
 
@@ -236,6 +239,21 @@ responsableDeclaracion:
 
         nivelGeneral:20,
 
+        documental:
+      FactorConfianza.inicial(),
+
+      productivo:
+      FactorConfianza.inicial(),
+
+      economico:
+      FactorConfianza.inicial(),
+
+      legal:
+      FactorConfianza.inicial(),
+
+      profesional:
+      FactorConfianza.inicial(),
+
         fortalezas:
         [
           "Producción definida"
@@ -249,6 +267,9 @@ responsableDeclaracion:
 
         resumen:
         "Activo inicial",
+
+        responsable:
+      "Sistema",
 
         fechaEvaluacion:
         DateTime.now(),

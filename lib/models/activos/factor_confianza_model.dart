@@ -1,266 +1,157 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'factor_confianza_model.dart';
+
+class FactorConfianza {
+
+  final int nivel;
+
+  final String descripcion;
+
+  final List<String> evidencias;
+
+  final DateTime fechaActualizacion;
 
 
-class EvaluacionConfianza {
+  FactorConfianza({
 
+    required this.nivel,
 
-  final int nivelGeneral;
+    required this.descripcion,
 
+    required this.evidencias,
 
-  final FactorConfianza documental;
-
-
-  final FactorConfianza productivo;
-
-
-  final FactorConfianza economico;
-
-
-  final FactorConfianza legal;
-
-
-  final FactorConfianza profesional;
-
-
-  final List<String> fortalezas;
-
-
-  final List<String> pendientes;
-
-
-  final String resumen;
-
-
-  final String responsable;
-
-
-  final DateTime fechaEvaluacion;
-
-
-
-  EvaluacionConfianza({
-
-    required this.nivelGeneral,
-
-    required this.documental,
-
-    required this.productivo,
-
-    required this.economico,
-
-    required this.legal,
-
-    required this.profesional,
-
-    required this.fortalezas,
-
-    required this.pendientes,
-
-    required this.resumen,
-
-    required this.responsable,
-
-    required this.fechaEvaluacion,
+    required this.fechaActualizacion,
 
   });
 
 
+  factory FactorConfianza.fromMap(
+      Map<String, dynamic> map) {
 
-  factory EvaluacionConfianza.fromMap(
-      Map<String,dynamic> map){
+    return FactorConfianza(
 
+      nivel: map['nivel'] ?? 0,
 
-    return EvaluacionConfianza(
+      descripcion: map['descripcion'] ?? '',
 
-      nivelGeneral:
-      map['nivelGeneral'] ?? 0,
+      evidencias:
+          List<String>.from(
+            map['evidencias'] ?? [],
+          ),
 
+      fechaActualizacion:
 
-      documental:
-      FactorConfianza.fromMap(
-        map['documental'] ?? {}
-      ),
+          map['fechaActualizacion'] is Timestamp
 
+              ? (map['fechaActualizacion'] as Timestamp)
+                  .toDate()
 
-      productivo:
-      FactorConfianza.fromMap(
-        map['productivo'] ?? {}
-      ),
+              : map['fechaActualizacion'] is DateTime
 
+                  ? map['fechaActualizacion']
 
-      economico:
-      FactorConfianza.fromMap(
-        map['economico'] ?? {}
-      ),
-
-
-      legal:
-      FactorConfianza.fromMap(
-        map['legal'] ?? {}
-      ),
-
-
-      profesional:
-      FactorConfianza.fromMap(
-        map['profesional'] ?? {}
-      ),
-
-
-
-      fortalezas:
-      List<String>.from(
-        map['fortalezas'] ?? []
-      ),
-
-
-
-      pendientes:
-      List<String>.from(
-        map['pendientes'] ?? []
-      ),
-
-
-
-      resumen:
-      map['resumen'] ?? '',
-
-
-
-      responsable:
-      map['responsable'] ?? '',
-
-
-
-      fechaEvaluacion:
-      map['fechaEvaluacion'] is Timestamp
-          ? (map['fechaEvaluacion'] as Timestamp).toDate()
-          : map['fechaEvaluacion'] is DateTime
-              ? map['fechaEvaluacion']
-              : DateTime.now(),
+                  : DateTime.now(),
 
     );
 
   }
 
 
-
-
-
-  Map<String,dynamic> toMap(){
-
+  Map<String, dynamic> toMap() {
 
     return {
 
+      'nivel': nivel,
 
-      'nivelGeneral':
-      nivelGeneral,
+      'descripcion': descripcion,
 
+      'evidencias': evidencias,
 
-      'documental':
-      documental.toMap(),
-
-
-      'productivo':
-      productivo.toMap(),
-
-
-      'economico':
-      economico.toMap(),
-
-
-      'legal':
-      legal.toMap(),
-
-
-      'profesional':
-      profesional.toMap(),
-
-
-
-      'fortalezas':
-      fortalezas,
-
-
-
-      'pendientes':
-      pendientes,
-
-
-
-      'resumen':
-      resumen,
-
-
-
-      'responsable':
-      responsable,
-
-
-
-      'fechaEvaluacion':
-      fechaEvaluacion,
+      'fechaActualizacion': fechaActualizacion,
 
     };
 
   }
 
 
+  factory FactorConfianza.inicial() {
 
+    return FactorConfianza(
 
+      nivel: 0,
 
+      descripcion: '',
 
-  factory EvaluacionConfianza.inicial(){
+      evidencias: [],
 
-
-    return EvaluacionConfianza(
-
-
-      nivelGeneral: 0,
-
-
-      documental:
-      FactorConfianza.inicial(),
-
-
-      productivo:
-      FactorConfianza.inicial(),
-
-
-      economico:
-      FactorConfianza.inicial(),
-
-
-      legal:
-      FactorConfianza.inicial(),
-
-
-      profesional:
-      FactorConfianza.inicial(),
-
-
-
-      fortalezas: [],
-
-
-      pendientes: [],
-
-
-      resumen: '',
-
-
-      responsable: '',
-
-
-      fechaEvaluacion:
-      DateTime.now(),
-
+      fechaActualizacion: DateTime.now(),
 
     );
-
 
   }
 
 
+  FactorConfianza copyWith({
+
+    int? nivel,
+
+    String? descripcion,
+
+    List<String>? evidencias,
+
+    DateTime? fechaActualizacion,
+
+  }) {
+
+    return FactorConfianza(
+
+      nivel: nivel ?? this.nivel,
+
+      descripcion: descripcion ?? this.descripcion,
+
+      evidencias: evidencias ?? this.evidencias,
+
+      fechaActualizacion:
+          fechaActualizacion ?? this.fechaActualizacion,
+
+    );
+
+  }
+
+
+  bool get aprobado {
+
+    return nivel >= 70;
+
+  }
+
+
+  String get estado {
+
+    if (nivel >= 90) {
+
+      return 'Excelente';
+
+    }
+
+
+    if (nivel >= 70) {
+
+      return 'Bueno';
+
+    }
+
+
+    if (nivel >= 40) {
+
+      return 'Regular';
+
+    }
+
+
+    return 'Bajo';
+
+  }
+
 }
+

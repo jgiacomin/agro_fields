@@ -1,6 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
+
+
+/// Modelo de historial del Activo Agro.
+///
+/// Representa eventos asociados a la evolución
+/// de una entidad productiva dentro de Agro Fields V8.
+///
+/// Complementa la trazabilidad del activo.
+/// No reemplaza la auditoría.
+///
+/// Evolución:
+/// - 79e7095 creación inicial del repositorio.
+/// - V8 incorporación de trazabilidad del Activo Agro.
+/// - incorporación de módulo origen del evento.
+
 class HistorialActivo {
 
 
@@ -11,6 +26,8 @@ class HistorialActivo {
   final String descripcion;
 
   final String usuarioId;
+
+  final String moduloOrigen;
 
   final DateTime fecha;
 
@@ -25,6 +42,8 @@ class HistorialActivo {
     required this.descripcion,
 
     required this.usuarioId,
+
+    required this.moduloOrigen,
 
     required this.fecha,
 
@@ -51,6 +70,9 @@ class HistorialActivo {
 
       usuarioId:
       map['usuarioId'] ?? '',
+
+      moduloOrigen:
+      map['moduloOrigen'] ?? 'activo',
 
 
       fecha:
@@ -84,6 +106,8 @@ class HistorialActivo {
     'usuarioId':
     usuarioId,
 
+    'moduloOrigen':
+     moduloOrigen,
 
     'fecha':
     fecha,

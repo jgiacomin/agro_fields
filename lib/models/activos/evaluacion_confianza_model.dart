@@ -5,39 +5,27 @@ import 'factor_confianza_model.dart';
 
 class EvaluacionConfianza {
 
-
   final int nivelGeneral;
-
 
   final FactorConfianza documental;
 
-
   final FactorConfianza productivo;
-
 
   final FactorConfianza economico;
 
-
   final FactorConfianza legal;
-
 
   final FactorConfianza profesional;
 
-
   final List<String> fortalezas;
-
 
   final List<String> pendientes;
 
-
   final String resumen;
-
 
   final String responsable;
 
-
   final DateTime fechaEvaluacion;
-
 
 
   EvaluacionConfianza({
@@ -69,76 +57,76 @@ class EvaluacionConfianza {
 
 
   factory EvaluacionConfianza.fromMap(
-      Map<String,dynamic> map){
-
+      Map<String, dynamic> map) {
 
     return EvaluacionConfianza(
 
       nivelGeneral:
-      map['nivelGeneral'] ?? 0,
+          map['nivelGeneral'] ?? 0,
 
 
       documental:
-      FactorConfianza.fromMap(
-        map['documental'] ?? {}
-      ),
+          FactorConfianza.fromMap(
+            map['documental'] ?? {},
+          ),
 
 
       productivo:
-      FactorConfianza.fromMap(
-        map['productivo'] ?? {}
-      ),
+          FactorConfianza.fromMap(
+            map['productivo'] ?? {},
+          ),
 
 
       economico:
-      FactorConfianza.fromMap(
-        map['economico'] ?? {}
-      ),
+          FactorConfianza.fromMap(
+            map['economico'] ?? {},
+          ),
 
 
       legal:
-      FactorConfianza.fromMap(
-        map['legal'] ?? {}
-      ),
+          FactorConfianza.fromMap(
+            map['legal'] ?? {},
+          ),
 
 
       profesional:
-      FactorConfianza.fromMap(
-        map['profesional'] ?? {}
-      ),
-
+          FactorConfianza.fromMap(
+            map['profesional'] ?? {},
+          ),
 
 
       fortalezas:
-      List<String>.from(
-        map['fortalezas'] ?? []
-      ),
-
+          List<String>.from(
+            map['fortalezas'] ?? [],
+          ),
 
 
       pendientes:
-      List<String>.from(
-        map['pendientes'] ?? []
-      ),
-
+          List<String>.from(
+            map['pendientes'] ?? [],
+          ),
 
 
       resumen:
-      map['resumen'] ?? '',
-
+          map['resumen'] ?? '',
 
 
       responsable:
-      map['responsable'] ?? '',
-
+          map['responsable'] ?? '',
 
 
       fechaEvaluacion:
-      map['fechaEvaluacion'] is Timestamp
-          ? (map['fechaEvaluacion'] as Timestamp).toDate()
-          : map['fechaEvaluacion'] is DateTime
-              ? map['fechaEvaluacion']
-              : DateTime.now(),
+
+          map['fechaEvaluacion'] is Timestamp
+
+              ? (map['fechaEvaluacion'] as Timestamp)
+                  .toDate()
+
+              : map['fechaEvaluacion'] is DateTime
+
+                  ? map['fechaEvaluacion']
+
+                  : DateTime.now(),
 
     );
 
@@ -147,60 +135,52 @@ class EvaluacionConfianza {
 
 
 
-
-  Map<String,dynamic> toMap(){
-
+  Map<String, dynamic> toMap() {
 
     return {
 
-
       'nivelGeneral':
-      nivelGeneral,
+          nivelGeneral,
 
 
       'documental':
-      documental.toMap(),
+          documental.toMap(),
 
 
       'productivo':
-      productivo.toMap(),
+          productivo.toMap(),
 
 
       'economico':
-      economico.toMap(),
+          economico.toMap(),
 
 
       'legal':
-      legal.toMap(),
+          legal.toMap(),
 
 
       'profesional':
-      profesional.toMap(),
-
+          profesional.toMap(),
 
 
       'fortalezas':
-      fortalezas,
-
+          fortalezas,
 
 
       'pendientes':
-      pendientes,
-
+          pendientes,
 
 
       'resumen':
-      resumen,
-
+          resumen,
 
 
       'responsable':
-      responsable,
-
+          responsable,
 
 
       'fechaEvaluacion':
-      fechaEvaluacion,
+          fechaEvaluacion,
 
     };
 
@@ -210,35 +190,31 @@ class EvaluacionConfianza {
 
 
 
-
-  factory EvaluacionConfianza.inicial(){
-
+  factory EvaluacionConfianza.inicial() {
 
     return EvaluacionConfianza(
-
 
       nivelGeneral: 0,
 
 
       documental:
-      FactorConfianza.inicial(),
+          FactorConfianza.inicial(),
 
 
       productivo:
-      FactorConfianza.inicial(),
+          FactorConfianza.inicial(),
 
 
       economico:
-      FactorConfianza.inicial(),
+          FactorConfianza.inicial(),
 
 
       legal:
-      FactorConfianza.inicial(),
+          FactorConfianza.inicial(),
 
 
       profesional:
-      FactorConfianza.inicial(),
-
+          FactorConfianza.inicial(),
 
 
       fortalezas: [],
@@ -254,13 +230,12 @@ class EvaluacionConfianza {
 
 
       fechaEvaluacion:
-      DateTime.now(),
-
+          DateTime.now(),
 
     );
 
-
   }
+
 
 
 }

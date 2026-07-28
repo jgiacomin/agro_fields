@@ -513,7 +513,8 @@ class _CrearActivoAgroScreenState
 
           historial:
 
-[
+        [
+
   HistorialActivo(
 
     eventoId:
@@ -527,6 +528,9 @@ class _CrearActivoAgroScreenState
 
     usuarioId:
         user.uid,
+
+        moduloOrigen:
+     'activo',
 
     fecha:
         ahora,

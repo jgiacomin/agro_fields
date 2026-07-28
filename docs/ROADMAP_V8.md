@@ -1231,3 +1231,57 @@ y las demás capacidades agregan:
 - confianza;
 - conectividad;
 - valor económico.
+# Roadmap Agro Fields
+
+## Estado general
+
+### Fase 1 — Núcleo del Activo Agro
+
+- [x] Modelo ActivoAgroV2
+- [x] Firestore
+- [x] Serialización
+- [x] CRUD
+- [x] Historial
+- [x] Sistema de Confianza
+
+Estado: 100%
+
+---
+
+### Fase 2 — Módulos
+
+- [ ] Producción
+- [ ] Economía
+- [ ] Documentación
+- [ ] Participantes
+- [ ] Validaciones
+
+Estado aproximado: 40%
+
+---
+
+### Fase 3 — Automatización
+
+- [ ] Historial automático
+- [ ] Auditoría
+- [ ] Reglas de negocio
+- [ ] Eventos
+- [ ] Notificaciones
+
+---
+
+### Fase 4 — Marketplace
+
+- [ ] Publicación
+- [ ] Búsqueda
+- [ ] Ranking
+- [ ] Reputación
+- [ ] Compra/Venta
+
+---
+
+## Objetivo inmediato
+
+Finalizar los módulos funcionales del Activo Agro.
+
+Después comenzar el Marketplace.
