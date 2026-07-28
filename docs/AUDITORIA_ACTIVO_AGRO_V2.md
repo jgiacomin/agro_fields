@@ -2193,3 +2193,78 @@ Siguiente etapa:
 ## Conclusión
 
 La documentación técnica del ecosistema Agro Fields V8 queda consolidada como referencia oficial para el desarrollo, las pruebas, las futuras auditorías y la evolución del producto.
+
+# Auditoría Técnica - Jornada Historial Activo Agro
+
+Fecha:
+2026-07-28
+
+## Cambios auditados
+
+### ActivoAgroV2
+- Se incorpora trazabilidad interna mediante HistorialActivo.
+- El activo ahora registra eventos de negocio sin reemplazar la auditoría técnica.
+- Se mantiene separación entre:
+  - historial funcional del activo;
+  - auditoría del sistema.
+
+### Eventos registrados
+
+- creación_activo
+- actualizacion_activo
+- publicacion_activo
+- pausa_activo
+
+Cada evento contiene:
+
+- eventoId
+- tipoEvento
+- descripcion
+- usuarioId
+- moduloOrigen
+- fecha
+
+
+## Servicios actualizados
+
+ActivoAgroServiceV2:
+
+- crearActivo()
+  - genera evento inicial de creación.
+
+- actualizarActivo()
+  - agrega evento de modificación.
+
+- publicarActivo()
+  - registra publicación y cambia visibilidad.
+
+- pausarActivo()
+  - registra pausa y cambia visibilidad.
+
+- actualizarConfianza()
+  - actualiza sistema de confianza.
+
+- actualizarEvaluacionConfianza()
+  - actualiza evaluación de confianza.
+
+
+## Estado del análisis
+
+flutter analyze:
+
+Resultado:
+Sin errores.
+
+Pendientes:
+- reemplazar prints por sistema de logging.
+- revisión de pruebas automatizadas.
+- validación integral Firebase.
+
+
+## Próxima jornada
+
+1. Revisar auditoría global.
+2. Validar flujo completo:
+   Campo → Activo Agro → Historial → Confianza.
+3. Revisar pantallas que consumen ActivoAgroV2.
+4. Continuar evolución del roadmap.
