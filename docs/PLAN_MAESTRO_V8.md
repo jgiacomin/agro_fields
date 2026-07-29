@@ -20,7 +20,13 @@ Usuario
 
 ↓
 
-Productor / Propietario / Inversor / Profesional
+Actores del Ecosistema
+
+(Productor / Propietario / Profesional / Inversor / Empresa)
+
+↓
+
+Campo
 
 ↓
 
@@ -28,11 +34,23 @@ Activo Agro V2
 
 ↓
 
-Información + Evidencias + Profesionales + IA
+Datos Productivos + Economía + Documentación
 
 ↓
 
-Índice de Confianza
+Historial + Auditoría + Evidencias
+
+↓
+
+Índice de Confianza Agro Fields
+
+↓
+
+IA + Analytics
+
+↓
+
+Marketplace
 
 ↓
 
@@ -40,7 +58,7 @@ Negociación
 
 ↓
 
-Inversión
+Inversión / Operaciones
 
 
 
@@ -58,6 +76,31 @@ No es una publicación.
 
 Es una representación digital trazable de una realidad productiva.
 
+Activo Agro V2
+
+↓
+
+Información estructurada
+
+↓
+
+Evidencias
+
+↓
+
+Historial
+
+↓
+
+Auditoría
+
+↓
+
+Confianza
+
+↓
+
+Servicios del Ecosistema
 
 
 Incluye:
@@ -692,7 +735,14 @@ profesionales;
 IA;
 legal internacional;
 inversiones.
+Marketplace.
+
 Evolución futura
+Digital Twin;
+Analytics avanzado;
+certificaciones digitales;
+integraciones externas;
+servicios empresariales
 Certificado de Trazabilidad Agro Fields.
 
 Capacidad futura basada en:
@@ -1139,3 +1189,46 @@ de confianza agropecuaria:
 
 Estos componentes no reemplazan el modelo existente,
 sino que amplían la capacidad del ecosistema.
+
+
+## 20.1 Evolución del concepto de Activo Agro
+
+El Activo Agro V2 evoluciona desde una entidad digital productiva hacia una memoria digital verificable del ecosistema agropecuario.
+
+No representa solamente:
+
+- superficie;
+- ubicación;
+- producción;
+- valor económico.
+
+Representa la evolución histórica de una realidad productiva mediante:
+
+- datos;
+- evidencias;
+- profesionales;
+- eventos;
+- auditorías;
+- inteligencia artificial;
+- trazabilidad.
+
+##  20.2 Nuevo eje estratégico: Memoria Digital Agropecuaria
+
+El principal diferenciador de Agro Fields es la construcción de una memoria digital del activo.
+
+Esta memoria permite responder:
+
+- qué ocurrió;
+- cuándo ocurrió;
+- quién participó;
+- qué evidencia existe;
+- cómo evolucionó el activo.
+
+La confianza surge de la acumulación histórica de información verificable.
+
+## 20.3 Fase futura: Valorización Inteligente del Activo
+Agro Fields podrá evolucionar hacia una capa de análisis y valorización basada en información histórica.
+
+No reemplaza una tasación profesional.
+
+Su objetivo es organizar información para facilitar análisis comparativos.

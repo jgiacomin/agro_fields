@@ -376,3 +376,104 @@ Permite mantener un registro completo de la evolución del ecosistema:
 - decisiones
 
 transformando la plataforma en un sistema confiable, verificable y preparado para escalar globalmente.
+
+---
+
+# Evolución V8.X - Auditoría como capa transversal del ecosistema
+
+## Objetivo
+
+La auditoría se consolida como una capacidad transversal de Agro Fields V8 destinada a registrar la evolución completa del ecosistema.
+
+Su función es conservar trazabilidad sobre cambios relevantes, participantes, evidencias y modificaciones realizadas dentro de los diferentes módulos.
+
+
+## Principio arquitectónico
+
+La auditoría no reemplaza el historial del activo.
+
+El historial representa:
+
+- evolución productiva;
+- evolución económica;
+- acontecimientos del activo;
+- cambios relevantes del negocio.
+
+
+La auditoría representa:
+
+- quién realizó el cambio;
+- cuándo ocurrió;
+- desde qué módulo;
+- qué información fue modificada;
+- qué evidencia respalda la modificación.
+
+
+## Modelo conceptual
+
+Usuario
+
+↓
+
+Módulo del ecosistema
+
+↓
+
+Evento
+
+↓
+
+Auditoría
+
+↓
+
+Historial del Activo Agro
+
+↓
+
+Confianza
+
+
+## Eventos auditables futuros
+
+La capa de auditoría podrá registrar eventos provenientes de:
+
+- Activo Agro V2;
+- Producción;
+- Economía;
+- Documentación;
+- Participantes;
+- Profesionales;
+- Marketplace;
+- Inversiones;
+- Inteligencia Artificial;
+- Integraciones externas.
+
+
+## Información mínima de un evento
+
+Cada evento podrá contener:
+
+- identificador del evento;
+- activo relacionado;
+- usuario responsable;
+- organización;
+- módulo origen;
+- tipo de evento;
+- fecha;
+- descripción;
+- información anterior;
+- información nueva;
+- evidencia asociada.
+
+
+## Objetivo estratégico
+
+Convertir Agro Fields en un ecosistema donde cada activo pueda reconstruir su evolución histórica mediante información organizada, verificable y trazable.
+
+
+## Estado
+
+Esta evolución define la arquitectura futura de eventos y auditoría del ecosistema Agro Fields V8.X.
+
+La implementación será progresiva acompañando la evolución del Activo Agro V2.
