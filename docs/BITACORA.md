@@ -2061,126 +2061,383 @@ Continuar con los módulos del Activo Agro.
 
 # Registro: Evolución del Ecosistema Agro Fields V8
 
-**Fecha:** 2026/08/29  
-**Versión:** V8  
-**Tipo de cambio:** Evolución arquitectónica  
-**Estado:** Incorporado a planificación estratégica
+# BITACORA AGRO FIELDS V8
+
+## Registro de evolución del ecosistema
 
 ---
 
-# Descripción
+# Jornada 28/07/2026
 
-Se incorpora una evolución conceptual del proyecto Agro Fields V8, ampliando la visión desde una aplicación de gestión productiva hacia un ecosistema digital agropecuario.
+## Estado
 
-El núcleo del sistema continúa siendo:
+✅ Evolución documental V8 consolidada
 
-**Activo Agro V2**
+## Objetivo
 
-A partir de esta entidad se proyectan nuevas capas del ecosistema:
+Continuar la construcción del ecosistema Agro Fields V8 manteniendo el principio central:
 
-- datos productivos;
-- confianza;
-- auditoría;
-- trazabilidad;
-- inteligencia;
-- oportunidades comerciales.
+> El Activo Agro V2 es la entidad digital trazable sobre la cual evolucionan todas las capacidades del ecosistema.
 
 ---
 
-# Motivo del cambio
+# Cambios realizados
 
-Se identificó la necesidad de reforzar la diferenciación estratégica de Agro Fields.
+## 1. Evolución del Plan Maestro V8
 
-La plataforma no debe limitarse al registro operativo de campos, sino evolucionar hacia un sistema donde cada activo productivo pueda contar con:
+Se amplía la visión estratégica del ecosistema incorporando:
 
-- identidad digital;
-- información estructurada;
-- historial;
+- trazabilidad integral del Activo Agro;
+- trazabilidad productiva;
+- trazabilidad económica;
+- trazabilidad de expansión;
+- auditoría como capa transversal;
+- evolución hacia Activo Agro Inteligente.
+
+---
+
+# 2. Diferenciación estratégica Agro Fields V8
+
+Se consolidan nuevos diferenciales:
+
+- sistema de confianza basado en evidencias;
+- historial verificable del activo;
+- auditoría completa de modificaciones;
+- memoria digital del activo;
+- preparación para valoración objetiva;
+- integración futura con inteligencia artificial.
+
+Agro Fields no se plantea únicamente como marketplace.
+
+Se define como:
+
+> Infraestructura Digital de Confianza para el Ecosistema Agropecuario.
+
+---
+
+# 3. Evolución del concepto Activo Agro V2
+
+El activo deja de representar solamente una publicación comercial.
+
+Pasa a representar:
+
+- identidad productiva;
+- historia;
+- producción;
+- economía;
 - documentación;
-- validaciones;
-- eventos auditables;
-- capacidad de análisis;
-- integración comercial futura.
+- participantes;
+- evidencias;
+- auditoría;
+- evolución futura.
+
+Modelo conceptual:
+
+Campo físico
+
+↓
+
+Activo Agro V2
+
+↓
+
+Datos + Eventos + Documentos
+
+↓
+
+Gobernanza y Auditoría
+
+↓
+
+IA / Analytics / Digital Twin
+
+↓
+
+Mercado e Inversión
 
 ---
 
-# Cambios incorporados en arquitectura
+# 4. Evolución de confianza
 
-Se agregan definiciones futuras relacionadas con:
+Se consolida el criterio del Índice de Confianza Agro Fields.
 
-- Marketplace del ecosistema;
-- Modelo comercial;
-- Búsqueda e indexación;
-- Modelo de datos y entidades.
+El índice:
 
-Estas incorporaciones establecen una base escalable sin modificar la implementación actual del MVP.
+NO representa:
 
----
+- garantía de rentabilidad;
+- recomendación financiera;
+- valuación económica.
 
-# Impacto en el sistema actual
+Representa:
 
-No se modifican:
-
-- modelos existentes;
-- servicios actuales;
-- flujos funcionales;
-- estructura operativa implementada.
-
-La incorporación corresponde a una evolución de arquitectura y planificación.
+- calidad de información;
+- respaldo documental;
+- evidencias disponibles;
+- historial verificable;
+- participación profesional.
 
 ---
 
-# Regla aplicada
+# 5. Inteligencia Artificial Agro Fields
 
-Se mantiene el criterio de desarrollo:
+Se define la IA como capa asistencial.
 
-Los cambios arquitectónicos solamente se incorporan cuando representan una mejora real del ecosistema.
+Funciones futuras:
 
-Se priorizan modificaciones que:
+- análisis documental;
+- resumen de información técnica;
+- detección de inconsistencias;
+- comparación de activos;
+- asistencia a inversores;
+- generación de preguntas para profesionales.
 
-- aumenten capacidad futura;
-- mejoren escalabilidad;
-- fortalezcan la propuesta de valor;
-- mantengan compatibilidad con el sistema actual.
+Criterio:
 
-No se agregan componentes únicamente por tendencia tecnológica.
+La IA interpreta información existente.
 
----
-
-# Nueva visión consolidada
-
-Agro Fields V8 se proyecta como una infraestructura digital donde cada activo agropecuario puede convertirse en una unidad:
-
-- identificable;
-- verificable;
-- trazable;
-- analizable;
-- comercializable.
+No reemplaza profesionales ni validaciones.
 
 ---
 
-# Próximos puntos de evolución
+# 6. Evolución Profesional
 
-Pendientes de desarrollo progresivo:
+Se incorpora como línea futura:
 
-- integración entre Activo Agro V2 y Marketplace;
-- auditoría transversal del ecosistema;
-- gobernanza de datos;
-- evolución del sistema de confianza;
-- Digital Twin;
-- IA aplicada a activos;
-- Analytics productivo y comercial.
+Red Profesional Agro Fields.
+
+Participantes:
+
+- ingenieros agrónomos;
+- veterinarios;
+- abogados;
+- escribanos;
+- contadores;
+- tasadores;
+- especialistas financieros.
+
+Cada intervención deberá quedar asociada a:
+
+- identidad profesional;
+- especialidad;
+- fecha;
+- activo relacionado;
+- evidencia generada.
 
 ---
 
-# Estado
+# 7. Marco legal internacional
 
-Arquitectura definida.
+Se incorpora como evolución futura:
 
-Implementación:
-Pendiente según roadmap.
+Sistema preparado para:
 
-Impacto actual:
-Sin cambios sobre el MVP operativo.
+- países;
+- provincias/estados;
+- municipios;
+- restricciones territoriales;
+- documentación requerida;
+- validaciones legales.
+
+Objetivo:
+
+Acompañar la trazabilidad legal previa a operaciones.
 
 ---
+
+# 8. Evolución Marketplace y Modelo Comercial
+
+El marketplace se consolida como una capa comercial del ecosistema.
+
+No reemplaza el núcleo.
+
+Utiliza:
+
+- activos validados;
+- información productiva;
+- confianza;
+- historial;
+- documentación.
+
+Preparado para:
+
+- oportunidades;
+- inversión;
+- servicios profesionales;
+- publicaciones;
+- modelos comerciales futuros.
+
+---
+
+# 9. Arquitectura integral V8
+
+Se consolidan las capas:
+
+## Núcleo
+
+Activo Agro V2
+
+## Datos
+
+Modelo de entidades
+
+## Información
+
+Producción  
+Economía  
+Documentación
+
+## Confianza
+
+Gobernanza  
+Auditoría  
+Historial
+
+## Inteligencia
+
+IA  
+Analytics  
+Big Data  
+Digital Twin
+
+## Mercado
+
+Marketplace  
+Modelo Comercial  
+Inversión
+
+---
+
+# 10. Nueva línea estratégica
+
+## Valorización y Mercado Inteligente Agro
+
+Objetivo:
+
+Transformar activos registrados en oportunidades agro analizadas.
+
+Incluye futuras capacidades:
+
+- motor de valorización;
+- comparación de activos;
+- ranking de oportunidades;
+- búsqueda avanzada;
+- perfiles de inversores.
+
+---
+
+# Estado actual del proyecto
+
+## Completado
+
+✅ Plan Maestro V8 actualizado
+
+✅ Roadmap V8 actualizado
+
+✅ Arquitectura Marketplace definida
+
+✅ Arquitectura Modelo Comercial definida
+
+✅ Arquitectura Datos y Entidades definida
+
+✅ Arquitectura Búsqueda e Indexación definida
+
+✅ Base de trazabilidad definida
+
+---
+
+# Próximas etapas técnicas
+
+## Prioridad 1
+
+Evaluación de Confianza
+
+Archivo:
+
+evaluacion_confianza_model.dart
+
+Objetivos:
+
+- factores;
+- cálculo;
+- evidencias;
+- responsables;
+- integración historial.
+
+
+---
+
+## Prioridad 2
+
+Evolución Productiva
+
+Archivo:
+
+modulo_produccion_model.dart
+
+Objetivos:
+
+- ciclos productivos;
+- historial;
+- capacidad futura;
+- expansión;
+- validaciones profesionales.
+
+
+---
+
+## Prioridad 3
+
+Auditoría y Eventos
+
+Objetivos:
+
+- eventos automáticos;
+- registro de cambios;
+- evidencias;
+- trazabilidad completa.
+
+
+---
+
+# Regla de evolución V8
+
+Cada cambio debe mantener:
+
+Modelo Dart
+
++
+
+Arquitectura
+
++
+
+Auditoría
+
++
+
+Bitácora
+
++
+
+Roadmap
+
++
+
+Commit Git
+
+
+---
+
+# Cierre
+
+Agro Fields V8 continúa evolucionando desde una aplicación productiva hacia un ecosistema digital agropecuario basado en:
+
+- información organizada;
+- confianza;
+- trazabilidad;
+- conocimiento profesional;
+- inteligencia aplicada;
+- conexión entre producción e inversión.
+
+El objetivo final es construir una memoria digital verificable del ecosistema agropecuario.
