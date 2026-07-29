@@ -1285,3 +1285,111 @@ Estado aproximado: 40%
 Finalizar los módulos funcionales del Activo Agro.
 
 Después comenzar el Marketplace.
+# Agro Fields V8
+# Roadmap de Jornada
+
+## Fecha
+
+28/07/2026
+
+
+# Módulo
+
+Historial y Auditoría del Activo Agro V2
+
+
+---
+
+# Objetivo de la jornada
+
+Iniciar la evolución del sistema de trazabilidad del Activo Agro mediante eventos asociados a cambios relevantes del ecosistema.
+
+Transformar el historial actual en una línea temporal verificable que permita reconstruir la evolución del activo.
+
+
+---
+
+# Objetivo arquitectónico
+
+Convertir el Activo Agro en una entidad digital con memoria propia.
+
+
+El activo debe poder responder:
+
+- qué ocurrió;
+- cuándo ocurrió;
+- quién participó;
+- qué módulo generó el cambio.
+
+
+---
+
+# Alcance de la jornada
+
+
+## 1. Evolución del HistorialActivo
+
+
+Archivo:
+
+lib/models/activos/historial_activo_model.dart
+
+
+Objetivo:
+
+Implementar la primera capa de eventos del Activo Agro.
+
+
+Estado esperado:
+
+Historial capaz de registrar:
+
+
+- eventoId;
+- tipoEvento;
+- descripción;
+- usuario responsable;
+- módulo origen;
+- fecha.
+
+
+Resultado:
+
+Base para la trazabilidad integral futura.
+
+
+---
+
+# 2. Integración con ActivoAgroV2
+
+
+Archivo:
+
+lib/models/activos/activo_agro_model_v2.dart
+
+
+Objetivo:
+
+Incorporar historial dentro del núcleo del activo.
+
+
+Acciones:
+
+
+Agregar:
+
+```dart
+List<HistorialActivo> historial
+## Fase: Valorización y Mercado Inteligente Agro
+
+Objetivo:
+
+Transformar activos registrados en oportunidades agro analizadas.
+
+Incluye:
+
+- motor de valorización
+- comparación de activos
+- ranking de oportunidades
+- búsqueda avanzada
+- perfiles de inversores

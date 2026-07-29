@@ -57,6 +57,11 @@ La plataforma busca aportar:
 - análisis comparativo;
 - evaluación de activos.
 
+- acceso a activos con historial verificable;
+- indicadores de confianza;
+- información respaldada por evidencias;
+- reducción de incertidumbre en decisiones.
+
 ---
 
 ## Para profesionales
@@ -103,6 +108,10 @@ Funciones adicionales:
 - análisis avanzados;
 - reportes especializados;
 - herramientas de gestión.
+- evaluación avanzada de activos;
+- indicadores de confianza;
+- auditorías digitales;
+- trazabilidad ampliada.
 
 ---
 
@@ -125,6 +134,27 @@ Modelos futuros:
 - integraciones;
 - reportes corporativos;
 - soluciones personalizadas.
+
+---
+
+## Servicios basados en confianza y datos
+
+Nuevas líneas comerciales derivadas del ecosistema:
+
+- certificación digital de activos;
+- reportes de due diligence agropecuario;
+- análisis para inversores;
+- acceso a indicadores productivos;
+- validaciones especializadas;
+- herramientas analíticas empresariales.
+
+Estos servicios utilizan información generada por:
+
+- Activo Agro V2;
+- auditoría;
+- documentación;
+- evaluaciones de confianza;
+- analítica del ecosistema.
 
 ---
 
@@ -210,6 +240,8 @@ El modelo comercial se integra con el marketplace mediante:
 - promoción de oportunidades;
 - servicios especializados;
 - acuerdos comerciales.
+- publicaciones respaldadas por activos verificados;
+- herramientas de análisis para participantes.
 
 ---
 
@@ -330,3 +362,20 @@ Este documento define la arquitectura comercial futura del ecosistema Agro Field
 No modifica el alcance actual del MVP.
 
 Su objetivo es establecer una base escalable para la evolución económica y comercial de la plataforma.
+
+# 15.1 Diferenciador económico del ecosistema
+
+Agro Fields no basa su modelo comercial únicamente en exposición de publicaciones.
+
+El valor económico surge de transformar información agropecuaria dispersa en activos digitales estructurados, verificables y auditables.
+
+La generación de valor se apoya en:
+
+- calidad de datos;
+- trazabilidad;
+- confianza;
+- análisis;
+- conexión entre actores;
+- reducción de riesgo comercial.
+
+Esto permite evolucionar desde un marketplace tradicional hacia una infraestructura digital agropecuaria.

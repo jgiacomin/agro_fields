@@ -22,6 +22,22 @@ La búsqueda debe ser:
 - escalable;
 - consistente;
 - preparada para grandes volúmenes de datos.
+## Principio de búsqueda basada en conocimiento del activo
+
+La búsqueda del ecosistema no se limita a coincidencias de texto.
+
+Debe considerar:
+
+- características productivas;
+- ubicación;
+- historial del activo;
+- nivel de confianza;
+- documentación disponible;
+- indicadores económicos;
+- relaciones dentro del ecosistema.
+
+El objetivo es encontrar oportunidades relevantes,
+no únicamente registros coincidentes.
 
 ---
 
@@ -65,6 +81,24 @@ Filtros:
 
 ---
 
+## 3.4 Búsqueda por confianza y validación
+
+Permite filtrar activos según:
+
+- nivel de confianza;
+- estado de verificación;
+- cantidad de evidencias;
+- documentación disponible;
+- fecha de última evaluación;
+- historial de auditoría.
+
+Ejemplos:
+
+- activos con documentación completa;
+- activos evaluados recientemente;
+- oportunidades con mayor nivel de confianza.
+---
+
 # 4. Indexación
 
 Los índices permitirán:
@@ -74,6 +108,20 @@ Los índices permitirán:
 - ordenamientos;
 - búsquedas frecuentes.
 
+## Índices del ecosistema
+
+Los índices deberán contemplar entidades relacionadas:
+
+- Activo Agro V2;
+- propietario;
+- ubicación;
+- producción;
+- documentación;
+- evaluaciones;
+- publicaciones comerciales;
+- historial.
+
+La indexación debe mantener la relación entre datos operativos y oportunidades comerciales.
 ---
 
 # 5. Geolocalización
@@ -95,10 +143,49 @@ Preparado para:
 - recomendaciones;
 - inteligencia artificial;
 - comparación automática de activos.
+- búsqueda semántica;
+- ranking de oportunidades;
+- sugerencias según perfil del usuario;
+- detección de activos similares;
+- análisis predictivo.
 
 ---
+# 7. Relación con el Ecosistema Agro Fields V8
 
-# 7. Estado actual
+El motor de búsqueda utiliza información generada por las diferentes capas del ecosistema.
+
+Flujo conceptual:
+
+Activo Agro V2
+
+↓
+
+Datos Productivos
+
+↓
+
+Digital Twin
+
+↓
+
+Auditoría y Confianza
+
+↓
+
+Indexación
+
+↓
+
+Búsqueda
+
+↓
+
+Marketplace / Analytics / Servicios
+
+
+La búsqueda se convierte en una capa transversal que permite descubrir conocimiento dentro del ecosistema.
+
+# 8. Estado actual
 
 Este documento define la arquitectura futura.
 

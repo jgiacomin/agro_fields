@@ -2947,3 +2947,53 @@ El verdadero valor del ecosistema es:
 
 Confianza construida mediante información verificable.
 
+
+## Capa de Valorización y Mercado de Activos Agro
+
+### Objetivo
+
+Evolucionar Agro Fields desde un sistema de registro de activos agropecuarios hacia una plataforma de identificación, evaluación, valorización y conexión de oportunidades agro.
+
+El activo agro no será representado solamente por superficie o ubicación, sino por un conjunto de atributos verificables:
+
+- capacidad productiva
+- disponibilidad de recursos
+- infraestructura
+- documentación
+- historial
+- nivel de confianza
+- potencial económico
+
+
+### Diferencial estratégico
+
+Los sistemas tradicionales muestran propiedades rurales.
+
+Agro Fields representa activos agro productivos con información estructurada y trazabilidad.
+
+
+Flujo:
+
+Tierra
+ ↓
+Campo
+ ↓
+Activo Agro
+ ↓
+Activo Verificado
+ ↓
+Activo Valorizado
+ ↓
+Activo con oportunidad de mercado
+
+
+### Evolución futura
+
+Esta capa permitirá:
+
+- búsqueda avanzada de activos
+- comparación entre activos
+- estimación de valor
+- conexión entre propietarios e inversores
+- análisis de oportunidades productivas
+

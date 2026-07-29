@@ -11,7 +11,7 @@ import 'economia_activo_model.dart';
 import 'documentacion_activo_model.dart';
 import 'evaluacion_confianza_model.dart';
 
-import 'package:agro_fields/models/activos/factor_confianza_model.dart';
+import 'factor_confianza_model.dart';
 
 
 class ActivoAgroTestData {

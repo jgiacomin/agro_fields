@@ -31,6 +31,19 @@ class HistorialActivo {
 
   final DateTime fecha;
 
+  /// Entidad relacionada con el evento.
+/// Ejemplo:
+/// produccion, documento, inversion, profesional.
+final String? entidadRelacionada;
+
+/// Identificador de la entidad relacionada.
+/// Permite vincular el evento con otro registro.
+final String? referenciaId;
+
+/// Información adicional del evento.
+/// Permite extender trazabilidad sin modificar estructura.
+final Map<String,dynamic>? datosEvento;
+
 
 
   HistorialActivo({
@@ -46,6 +59,12 @@ class HistorialActivo {
     required this.moduloOrigen,
 
     required this.fecha,
+
+    this.entidadRelacionada,
+
+    this.referenciaId,
+
+    this.datosEvento,
 
   });
 
@@ -80,6 +99,19 @@ class HistorialActivo {
           ? (map['fecha'] as Timestamp).toDate()
           : DateTime.now(),
 
+
+                entidadRelacionada:
+      map['entidadRelacionada'],
+
+      referenciaId:
+      map['referenciaId'],
+
+      datosEvento:
+      map['datosEvento'] != null
+          ? Map<String,dynamic>.from(
+              map['datosEvento'],
+            )
+          : null,
     );
 
   }
@@ -108,6 +140,15 @@ class HistorialActivo {
 
     'moduloOrigen':
      moduloOrigen,
+
+     'entidadRelacionada':
+      entidadRelacionada,
+
+     'referenciaId':
+     referenciaId,
+
+     'datosEvento':
+      datosEvento,
 
     'fecha':
     fecha,

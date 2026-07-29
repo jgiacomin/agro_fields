@@ -544,32 +544,78 @@ Future<void> pausarActivo(
 
 
 
-  // =====================================================
-  // ACTUALIZAR SISTEMA DE CONFIANZA
-  // =====================================================
+ // =====================================================
+// ACTUALIZAR SISTEMA DE CONFIANZA
+// =====================================================
 
-  Future<void> actualizarConfianza(
-      String activoId,
-      ConfianzaActivo confianza,
-      ) async {
-
-
-    await _db
-        .collection(coleccion)
-        .doc(activoId)
-        .update({
-
-      'confianza':
-      confianza.toMap(),
+Future<void> actualizarConfianza(
+    String activoId,
+    ConfianzaActivo confianza,
+    ) async {
 
 
-      'ultimaActualizacion':
-      Timestamp.now(),
+  final activo =
+      await obtenerActivoPorId(activoId);
 
-    });
 
+  if(activo == null){
+
+    throw Exception(
+      'Activo no encontrado',
+    );
 
   }
+
+
+
+  final evento =
+      _crearEventoHistorial(
+
+    tipoEvento:
+    'actualizacion_confianza',
+
+    descripcion:
+    'Se actualizó el sistema de confianza del Activo Agro',
+
+    usuarioId:
+    activo.creadorId,
+
+    moduloOrigen:
+    'confianza',
+
+  );
+
+
+
+  final activoActualizado =
+      activo.copyWith(
+
+    confianza:
+    confianza,
+
+    historial: [
+
+      ...activo.historial,
+
+      evento,
+
+    ],
+
+  );
+
+
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+
+    activoActualizado.toMap(),
+
+  );
+
+
+}
   
   // =====================================================
   // ACTUALIZAR EVALUACIÓN DE CONFIANZA

@@ -97,6 +97,7 @@ Puede incluir:
 - infraestructura;
 - unidades productivas.
 
+
 ## Información asociada
 
 - identificación;
@@ -105,6 +106,11 @@ Puede incluir:
 - confianza;
 - documentación;
 - historial.
+- evidencias;
+- versión del activo;
+- indicadores de calidad de información;
+- nivel de madurez;
+- relaciones comerciales.
 
 Relación:
 
@@ -196,7 +202,36 @@ Relación:
 Una entidad puede tener múltiples documentos.
 
 ---
+# 12.1 Entidad Evidencia
 
+Representa información utilizada para validar características del ecosistema.
+
+Una evidencia puede respaldar:
+
+- identidad del activo;
+- producción;
+- documentación;
+- estado operativo;
+- evaluaciones de confianza.
+
+Incluye:
+
+- tipo de evidencia;
+- origen;
+- responsable;
+- fecha;
+- ubicación;
+- archivos asociados;
+- resultado de validación;
+- nivel de confianza asociado.
+
+Ejemplos:
+
+- fotografías georreferenciadas;
+- inspecciones;
+- certificados;
+- mediciones productivas;
+- verificaciones externas.
 # 13. Entidad Evento
 
 Representa acciones ocurridas dentro del sistema.
@@ -228,6 +263,30 @@ Debe almacenar:
 Ejemplo:
 
 ---
+# 14.1 Entidad Confianza
+
+Representa el nivel de confiabilidad de la información asociada a una entidad.
+
+Puede evaluar:
+
+- identidad;
+- documentación;
+- producción;
+- economía;
+- legal;
+- profesional.
+
+Incluye:
+
+- nivel general;
+- factores evaluados;
+- evidencias utilizadas;
+- fecha de evaluación;
+- responsable;
+- historial de cambios.
+
+La confianza no reemplaza los datos originales,
+sino que representa una evaluación sobre su calidad y validación.
 
 # 15. Entidad Inteligencia Artificial
 
@@ -251,6 +310,14 @@ Un usuario puede pertenecer a:
 - una organización;
 - múltiples organizaciones.
 
+## Activo Agro - Confianza
+
+Un activo posee evaluaciones de confianza generadas mediante:
+
+- datos internos;
+- documentación;
+- evidencias;
+- verificaciones externas.
 ---
 
 ## Organización - Campo
@@ -313,6 +380,15 @@ Especialmente:
 - inversiones;
 - documentos.
 
+Las modificaciones importantes del Activo Agro V2 no deben sobrescribir información histórica.
+
+Cada evolución relevante debe permitir reconstruir:
+
+- estado anterior;
+- usuario responsable;
+- fecha;
+- motivo del cambio;
+- evidencia asociada.
 ---
 
 # 19. Preparación para inteligencia artificial
@@ -384,7 +460,7 @@ Activo Agro V2
 
 ↓
 
-Producción
+Datos Productivos
 
 ↓
 
@@ -392,7 +468,11 @@ Economía
 
 ↓
 
-Documentación
+Documentación + Evidencias
+
+↓
+
+Confianza
 
 ↓
 
@@ -404,8 +484,15 @@ Auditoría
 
 ↓
 
-Analytics / IA / Marketplace
+Digital Twin
 
+↓
+
+Analytics / IA
+
+↓
+
+Marketplace / Inversión
 
 El modelo permite que cada activo mantenga:
 

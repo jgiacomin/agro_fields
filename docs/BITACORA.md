@@ -2056,3 +2056,131 @@ Integrar historial automático en:
 - Documentación
 
 Continuar con los módulos del Activo Agro.
+
+---
+
+# Registro: Evolución del Ecosistema Agro Fields V8
+
+**Fecha:** 2026/08/29  
+**Versión:** V8  
+**Tipo de cambio:** Evolución arquitectónica  
+**Estado:** Incorporado a planificación estratégica
+
+---
+
+# Descripción
+
+Se incorpora una evolución conceptual del proyecto Agro Fields V8, ampliando la visión desde una aplicación de gestión productiva hacia un ecosistema digital agropecuario.
+
+El núcleo del sistema continúa siendo:
+
+**Activo Agro V2**
+
+A partir de esta entidad se proyectan nuevas capas del ecosistema:
+
+- datos productivos;
+- confianza;
+- auditoría;
+- trazabilidad;
+- inteligencia;
+- oportunidades comerciales.
+
+---
+
+# Motivo del cambio
+
+Se identificó la necesidad de reforzar la diferenciación estratégica de Agro Fields.
+
+La plataforma no debe limitarse al registro operativo de campos, sino evolucionar hacia un sistema donde cada activo productivo pueda contar con:
+
+- identidad digital;
+- información estructurada;
+- historial;
+- documentación;
+- validaciones;
+- eventos auditables;
+- capacidad de análisis;
+- integración comercial futura.
+
+---
+
+# Cambios incorporados en arquitectura
+
+Se agregan definiciones futuras relacionadas con:
+
+- Marketplace del ecosistema;
+- Modelo comercial;
+- Búsqueda e indexación;
+- Modelo de datos y entidades.
+
+Estas incorporaciones establecen una base escalable sin modificar la implementación actual del MVP.
+
+---
+
+# Impacto en el sistema actual
+
+No se modifican:
+
+- modelos existentes;
+- servicios actuales;
+- flujos funcionales;
+- estructura operativa implementada.
+
+La incorporación corresponde a una evolución de arquitectura y planificación.
+
+---
+
+# Regla aplicada
+
+Se mantiene el criterio de desarrollo:
+
+Los cambios arquitectónicos solamente se incorporan cuando representan una mejora real del ecosistema.
+
+Se priorizan modificaciones que:
+
+- aumenten capacidad futura;
+- mejoren escalabilidad;
+- fortalezcan la propuesta de valor;
+- mantengan compatibilidad con el sistema actual.
+
+No se agregan componentes únicamente por tendencia tecnológica.
+
+---
+
+# Nueva visión consolidada
+
+Agro Fields V8 se proyecta como una infraestructura digital donde cada activo agropecuario puede convertirse en una unidad:
+
+- identificable;
+- verificable;
+- trazable;
+- analizable;
+- comercializable.
+
+---
+
+# Próximos puntos de evolución
+
+Pendientes de desarrollo progresivo:
+
+- integración entre Activo Agro V2 y Marketplace;
+- auditoría transversal del ecosistema;
+- gobernanza de datos;
+- evolución del sistema de confianza;
+- Digital Twin;
+- IA aplicada a activos;
+- Analytics productivo y comercial.
+
+---
+
+# Estado
+
+Arquitectura definida.
+
+Implementación:
+Pendiente según roadmap.
+
+Impacto actual:
+Sin cambios sobre el MVP operativo.
+
+---

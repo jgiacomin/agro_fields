@@ -2268,3 +2268,16 @@ Pendientes:
    Campo → Activo Agro → Historial → Confianza.
 3. Revisar pantallas que consumen ActivoAgroV2.
 4. Continuar evolución del roadmap.
+## Auditoría evolutiva del activo
+
+El Activo Agro deja de ser únicamente un registro productivo
+y pasa a representar una entidad verificable dentro del ecosistema.
+
+Nuevas capacidades:
+
+- Evidencias asociadas.
+- Historial de cambios.
+- Evaluación de confianza.
+- Responsable de modificaciones.
+- Estado de validación.
+- Preparación para auditorías externas.

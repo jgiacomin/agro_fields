@@ -105,6 +105,13 @@ Información documental:
 - certificados;
 - historial.
 
+Vinculación con ecosistema:
+
+- activoAgroId;
+- versión del activo;
+- nivel de confianza;
+- fecha última evaluación;
+- evidencias disponibles.
 ---
 
 # 5. Búsqueda e inteligencia
@@ -165,6 +172,24 @@ El marketplace deberá incorporar mecanismos para mejorar la confianza:
 - validación documental.
 
 ---
+# 8.1 Modelo de confianza basado en Activo Agro V2
+
+El Marketplace no utiliza únicamente información declarativa del usuario.
+
+Cada publicación puede estar respaldada por un Activo Agro V2 con:
+
+- identidad del activo;
+- propietario registrado;
+- historial de modificaciones;
+- evaluación de confianza;
+- evidencias asociadas;
+- documentación disponible;
+- indicadores productivos;
+- trazabilidad de verificaciones.
+
+La confianza comercial se construye a partir de la calidad y trazabilidad de la información del activo.
+
+El objetivo es diferenciar Agro Fields de marketplaces tradicionales donde la información depende exclusivamente de la declaración del anunciante.
 
 # 9. Negociaciones
 
@@ -205,6 +230,8 @@ Componentes futuros:
 - notificaciones;
 - pagos;
 - auditoría.
+- integración con Activo Agro V2;
+- motor de confianza y validación.
 
 Integración con:
 
@@ -306,3 +333,18 @@ Este documento define la arquitectura futura del marketplace del ecosistema Agro
 No modifica el alcance actual del MVP.
 
 Su objetivo es establecer una base escalable para conectar oportunidades, actores y servicios del sector agropecuario.
+
+# 16. Diferenciador estratégico
+
+El Marketplace Agro Fields se diferencia de plataformas tradicionales al utilizar activos agropecuarios estructurados y verificables como base de las oportunidades comerciales.
+
+La publicación deja de ser únicamente un anuncio y pasa a representar una oportunidad respaldada por:
+
+- datos productivos;
+- trazabilidad histórica;
+- evaluación de confianza;
+- documentación;
+- evidencia;
+- información económica.
+
+Esto permite construir un mercado basado en transparencia, reducción de incertidumbre y mejor toma de decisiones.

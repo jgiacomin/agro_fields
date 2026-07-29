@@ -20,6 +20,7 @@ import 'package:agro_fields/models/activos/factor_confianza_model.dart';
 
 
 
+
 class CampoToActivoService {
 
 
