@@ -2196,88 +2196,104 @@ La documentación técnica del ecosistema Agro Fields V8 queda consolidada como 
 
 # Auditoría Técnica - Jornada Historial Activo Agro
 
-Fecha:
-2026-07-28
+---
 
-## Cambios auditados
+# Cierre Auditoría Evolutiva Agro Fields V8
+## Jornada 28/07/2026
 
-### ActivoAgroV2
-- Se incorpora trazabilidad interna mediante HistorialActivo.
-- El activo ahora registra eventos de negocio sin reemplazar la auditoría técnica.
-- Se mantiene separación entre:
-  - historial funcional del activo;
-  - auditoría del sistema.
+## Consolidación del modelo de trazabilidad
 
-### Eventos registrados
+El Activo Agro V2 evoluciona desde un registro productivo hacia una entidad digital trazable dentro del ecosistema Agro Fields.
 
-- creación_activo
-- actualizacion_activo
-- publicacion_activo
-- pausa_activo
+La trazabilidad se construye mediante la integración de:
 
-Cada evento contiene:
-
-- eventoId
-- tipoEvento
-- descripcion
-- usuarioId
-- moduloOrigen
-- fecha
+- información del activo;
+- evidencias asociadas;
+- historial funcional;
+- auditoría técnica;
+- participantes responsables;
+- evaluación de confianza.
 
 
-## Servicios actualizados
+## Diferencia entre Historial y Auditoría
 
-ActivoAgroServiceV2:
+### Historial del Activo
 
-- crearActivo()
-  - genera evento inicial de creación.
+Representa la evolución funcional del activo:
 
-- actualizarActivo()
-  - agrega evento de modificación.
-
-- publicarActivo()
-  - registra publicación y cambia visibilidad.
-
-- pausarActivo()
-  - registra pausa y cambia visibilidad.
-
-- actualizarConfianza()
-  - actualiza sistema de confianza.
-
-- actualizarEvaluacionConfianza()
-  - actualiza evaluación de confianza.
+- cambios productivos;
+- evolución económica;
+- eventos del ciclo de vida;
+- publicaciones;
+- modificaciones relevantes.
 
 
-## Estado del análisis
+### Auditoría del Sistema
 
-flutter analyze:
+Representa la trazabilidad técnica de las acciones:
 
-Resultado:
-Sin errores.
+- usuario responsable;
+- fecha;
+- módulo origen;
+- información modificada;
+- valores anteriores;
+- valores nuevos;
+- evidencias asociadas.
 
-Pendientes:
-- reemplazar prints por sistema de logging.
-- revisión de pruebas automatizadas.
-- validación integral Firebase.
+
+## Modelo conceptual
+
+Acción
+
+↓
+
+Evento de dominio
+
+↓
+
+Auditoría
+
+↓
+
+Historial del Activo
+
+↓
+
+Índice de Confianza
 
 
-## Próxima jornada
+## Evolución futura de eventos
 
-1. Revisar auditoría global.
-2. Validar flujo completo:
-   Campo → Activo Agro → Historial → Confianza.
-3. Revisar pantallas que consumen ActivoAgroV2.
-4. Continuar evolución del roadmap.
-## Auditoría evolutiva del activo
+La arquitectura queda preparada para incorporar:
 
-El Activo Agro deja de ser únicamente un registro productivo
-y pasa a representar una entidad verificable dentro del ecosistema.
+- eventos productivos;
+- eventos económicos;
+- eventos documentales;
+- validaciones profesionales;
+- eventos legales;
+- eventos de inversión;
+- operaciones comerciales.
 
-Nuevas capacidades:
 
-- Evidencias asociadas.
-- Historial de cambios.
-- Evaluación de confianza.
-- Responsable de modificaciones.
-- Estado de validación.
-- Preparación para auditorías externas.
+## Estado alcanzado
+
+✅ HistorialActivo integrado al Activo Agro V2.
+
+✅ Eventos iniciales implementados.
+
+✅ Servicios principales generan trazabilidad.
+
+✅ Separación definida entre historial funcional y auditoría técnica.
+
+✅ Base preparada para auditoría integral del ecosistema.
+
+
+## Próxima evolución
+
+Continuar con:
+
+1. Evaluación de confianza.
+2. Factores de confianza.
+3. Evidencias verificables.
+4. Integración con profesionales.
+5. Auditoría transversal del ecosistema.
