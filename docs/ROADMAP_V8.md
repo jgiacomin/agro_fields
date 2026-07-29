@@ -1393,3 +1393,226 @@ Incluye:
 - ranking de oportunidades
 - búsqueda avanzada
 - perfiles de inversores
+
+---
+
+# Evolución Estratégica Agro Fields V8.X
+
+## Nueva etapa: Inteligencia de Mercado y Valorización Agro
+
+## Objetivo
+
+Transformar los Activos Agro registrados en oportunidades analizadas mediante información histórica, productiva, económica y documental.
+
+Esta evolución busca ampliar el ecosistema desde una plataforma de registro y gestión hacia una infraestructura digital de confianza para análisis agropecuario.
+
+---
+
+# Fase 5 — Inteligencia de Mercado Agro
+
+## Estado
+
+🔜 Futuro
+
+
+## Objetivo
+
+Crear capacidades para analizar activos agropecuarios utilizando información validada dentro del ecosistema.
+
+
+## Capacidades futuras
+
+### Motor de análisis de activos
+
+Permitirá:
+
+- comparar activos;
+- analizar evolución histórica;
+- identificar características productivas;
+- visualizar capacidad de expansión;
+- generar indicadores.
+
+
+---
+
+### Búsqueda avanzada de oportunidades
+
+Preparada para:
+
+- filtros productivos;
+- ubicación geográfica;
+- características económicas;
+- tipo de actividad;
+- nivel de confianza;
+- estado del activo.
+
+
+---
+
+### Ranking de oportunidades
+
+Permitirá organizar activos según:
+
+- información disponible;
+- nivel de confianza;
+- características productivas;
+- objetivos del inversor;
+- criterios configurables.
+
+
+---
+
+### Perfiles de inversores
+
+Preparado para:
+
+- intereses productivos;
+- ubicación;
+- tipo de inversión;
+- preferencias;
+- objetivos.
+
+
+---
+
+# Nuevo flujo estratégico
+
+Activo Agro V2
+
+↓
+
+Información Productiva
+
+↓
+
+Historial
+
+↓
+
+Auditoría
+
+↓
+
+Confianza
+
+↓
+
+Analytics
+
+↓
+
+Valorización Inteligente
+
+↓
+
+Marketplace
+
+↓
+
+Inversión
+
+
+---
+
+# Criterio de valorización
+
+Agro Fields no determina:
+
+- precio definitivo;
+- rentabilidad garantizada;
+- recomendación financiera.
+
+
+La plataforma organiza información verificable para facilitar análisis y toma de decisiones entre participantes.
+
+
+---
+
+# Relación con el ecosistema
+
+Esta evolución utiliza las capacidades existentes:
+
+- Activo Agro V2;
+- Historial;
+- Auditoría;
+- Documentación;
+- Confianza;
+- Producción;
+- Economía;
+- IA;
+- Analytics;
+- Marketplace.
+
+
+---
+
+# Diferenciador estratégico
+
+Agro Fields no funciona únicamente como un marketplace agropecuario.
+
+El diferencial es construir una memoria digital del activo que permita comprender:
+
+- qué ocurrió;
+- cuándo ocurrió;
+- quién participó;
+- qué evidencia existe;
+- cómo evolucionó.
+
+
+---
+
+# Próxima implementación técnica
+
+Prioridades actuales:
+
+1. Evaluación de confianza:
+   - factores;
+   - evidencias;
+   - responsables;
+   - cálculo de índice.
+
+2. Evolución productiva:
+   - ciclos productivos;
+   - historial;
+   - capacidad futura;
+   - expansión.
+
+3. Auditoría integral:
+   - eventos;
+   - trazabilidad;
+   - evidencias.
+
+4. Inteligencia futura:
+   - análisis;
+   - recomendaciones;
+   - comparación de activos.
+
+---
+
+# Regla V8
+
+Cada evolución debe mantener:
+
+Modelo
+
++
+
+Arquitectura
+
++
+
+Auditoría
+
++
+
+Bitácora
+
++
+
+Roadmap
+
++
+
+Commit Git
+
+---
