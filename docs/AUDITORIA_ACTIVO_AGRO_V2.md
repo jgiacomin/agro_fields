@@ -2199,6 +2199,7 @@ La documentación técnica del ecosistema Agro Fields V8 queda consolidada como 
 ---
 
 # Cierre Auditoría Evolutiva Agro Fields V8
+
 ## Jornada 28/07/2026
 
 ## Consolidación del modelo de trazabilidad

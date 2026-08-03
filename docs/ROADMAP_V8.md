@@ -1231,6 +1231,8 @@ y las demás capacidades agregan:
 - confianza;
 - conectividad;
 - valor económico.
+
+
 # Roadmap Agro Fields
 
 ## Estado general
@@ -1285,12 +1287,11 @@ Estado aproximado: 40%
 Finalizar los módulos funcionales del Activo Agro.
 
 Después comenzar el Marketplace.
+
 # Agro Fields V8
 # Roadmap de Jornada
 
-## Fecha
-
-28/07/2026
+## Fecha 28/07/2026
 
 
 # Módulo
