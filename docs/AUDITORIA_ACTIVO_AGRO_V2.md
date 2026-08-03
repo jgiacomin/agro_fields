@@ -2340,3 +2340,53 @@ Relaciones futuras:
 - Producción;
 - Analytics;
 - Marketplace.
+---
+
+# Evolución Modelo Madurez Activo V8
+
+## Fecha
+03/08/2026
+
+## Módulo
+
+Madurez del Activo Agro V2
+
+## Archivo modificado
+
+lib/models/activos/madurez_activo_model.dart
+
+## Cambio realizado
+
+Se amplía el modelo de madurez del activo incorporando nuevos atributos:
+
+- etapa del activo;
+- nivel tecnológico;
+- preparación para inversión.
+
+## Objetivo
+
+Permitir representar la evolución del Activo Agro V2 dentro del ecosistema Agro Fields V8 considerando su estado de desarrollo, incorporación tecnológica y nivel de preparación futura.
+
+## Impacto arquitectónico
+
+El modelo queda preparado para integrarse con:
+
+- Evaluación de Confianza;
+- Producción;
+- Analytics;
+- Marketplace.
+
+## Compatibilidad
+
+Se mantiene compatibilidad con información existente mediante valores por defecto en la carga desde Firestore.
+
+## Estado
+
+Modelo:
+✅ Actualizado
+
+Auditoría:
+✅ Registrada
+
+Pendiente:
+Evolución futura del historial de madurez.

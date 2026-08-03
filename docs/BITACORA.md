@@ -2506,3 +2506,39 @@ Auditoría:
 
 Pendiente:
 Integración progresiva con nuevas capacidades productivas.
+
+Fecha:
+03/08/2026
+
+Módulo:
+Madurez del Activo Agro V2
+
+Cambio:
+Evolución del modelo incorporando etapa,
+nivel tecnológico y preparación para inversión.
+
+Objetivo:
+Representar la evolución del activo dentro del ecosistema V8.
+
+Estado:
+Modelo actualizado.
+Preparado para futuras integraciones.
+
+Módulo:
+Madurez Activo V2
+
+Estado:
+Modelo base evolucionado.
+
+Avances:
+✅ porcentaje de madurez
+✅ faltantes
+✅ etapa del activo
+✅ nivel tecnológico
+✅ preparación para inversión
+
+Próximos pasos:
+- historial de evolución del activo;
+- eventos de madurez;
+- integración con confianza;
+- preparación para analytics.
