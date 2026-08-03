@@ -2441,3 +2441,22 @@ Agro Fields V8 continúa evolucionando desde una aplicación productiva hacia un
 - conexión entre producción e inversión.
 
 El objetivo final es construir una memoria digital verificable del ecosistema agropecuario.
+Fecha: 03/08/2026
+
+Módulo:
+Evaluación de Confianza Activo Agro V2
+
+Cambio:
+Se incorpora modelo de confianza basado en factores,
+evidencias y responsables.
+
+Objetivo:
+Crear una capa verificable para medir la confiabilidad
+del activo productivo.
+
+Impacto:
+Sin modificación del MVP actual.
+
+Estado:
+Modelo implementado.
+Integración en evolución.
