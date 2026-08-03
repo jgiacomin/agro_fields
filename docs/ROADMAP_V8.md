@@ -1637,3 +1637,43 @@ Próximos pasos:
 - historial productivo
 - capacidad futura
 - intervenciones técnicas
+---
+
+# Evolución Madurez Activo V8
+
+## Módulo
+
+Madurez del Activo Agro V2
+
+## Estado
+
+Modelo base actualizado.
+
+## Avances realizados
+
+Se incorpora una capa de evolución del activo considerando:
+
+- porcentaje de madurez;
+- faltantes identificados;
+- etapa del activo;
+- nivel tecnológico;
+- preparación para inversión.
+
+## Objetivo
+
+Permitir representar el grado de evolución y organización del Activo Agro dentro del ecosistema Agro Fields V8.
+
+## Integraciones futuras
+
+Preparado para relacionarse con:
+
+- Evaluación de Confianza;
+- Producción;
+- Analytics;
+- Marketplace.
+
+## Próximas evoluciones
+
+- historial de madurez;
+- eventos de evolución;
+- indicadores avanzados.
