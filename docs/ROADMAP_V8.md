@@ -1617,3 +1617,23 @@ Roadmap
 Commit Git
 
 ---
+
+Fase:
+Evolución técnica Activo Agro V2
+
+Módulo:
+Producción
+
+Estado:
+Modelo base actualizado
+
+Avances:
+✅ identidad del módulo
+✅ relación con Activo Agro V2
+✅ compatibilidad Firestore
+
+Próximos pasos:
+- ciclos productivos
+- historial productivo
+- capacidad futura
+- intervenciones técnicas
