@@ -2298,3 +2298,16 @@ Continuar con:
 3. Evidencias verificables.
 4. Integración con profesionales.
 5. Auditoría transversal del ecosistema.
+
+Módulo:
+ModuloProduccion
+
+Cambio:
+Se incorpora identidad propia y relación con Activo Agro V2.
+
+Estado:
+Modelo productivo base evolucionado.
+
+Impacto:
+Preparación para ciclos productivos,
+historial y capacidad futura.

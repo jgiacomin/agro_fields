@@ -1,20 +1,21 @@
 class ModuloProduccion {
 
+  /// Identificador del módulo productivo
+  final String? id;
+
+  /// Referencia al Activo Agro V2
+  final String? activoAgroId;
+
 
   final String dominio;
 
-
   final String actividad;
-
 
   final String descripcion;
 
-
   final double? superficie;
 
-
   final String? unidad;
-
 
   final Map<String,dynamic> datos;
 
@@ -23,26 +24,23 @@ class ModuloProduccion {
 
   ModuloProduccion({
 
+  this.id,
 
-    required this.dominio,
+  this.activoAgroId,
 
+  required this.dominio,
 
-    required this.actividad,
+  required this.actividad,
 
+  required this.descripcion,
 
-    required this.descripcion,
+  this.superficie,
 
+  this.unidad,
 
-    this.superficie,
+  required this.datos,
 
-
-    this.unidad,
-
-
-    required this.datos,
-
-
-  });
+});
 
 
 
@@ -57,6 +55,12 @@ class ModuloProduccion {
     return ModuloProduccion(
 
 
+
+          id:
+  map['id'],
+
+  activoAgroId:
+  map['activoAgroId'],
 
       // Compatibilidad con versión anterior
 
@@ -161,7 +165,11 @@ class ModuloProduccion {
 
     return {
 
+      'id':
+      id,
 
+    'activoAgroId':
+     activoAgroId,
 
       'dominio':
 
