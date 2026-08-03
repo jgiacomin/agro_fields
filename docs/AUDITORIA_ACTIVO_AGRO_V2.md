@@ -2311,3 +2311,32 @@ Modelo productivo base evolucionado.
 Impacto:
 Preparación para ciclos productivos,
 historial y capacidad futura.
+Módulo:
+Madurez del Activo Agro V2
+
+Archivo:
+lib/models/activos/madurez_activo_model.dart
+
+Cambio:
+Se amplía el modelo de madurez incorporando:
+- etapa del activo;
+- nivel tecnológico;
+- preparación para inversión.
+
+Objetivo:
+Representar la evolución del activo productivo dentro
+del ecosistema Agro Fields V8.
+
+Impacto:
+El modelo permite diferenciar el grado de desarrollo,
+organización e incorporación tecnológica del activo.
+
+Compatibilidad:
+Mantiene compatibilidad con registros existentes
+mediante valores por defecto en fromMap.
+
+Relaciones futuras:
+- Evaluación de Confianza;
+- Producción;
+- Analytics;
+- Marketplace.

@@ -4,12 +4,24 @@ class MadurezActivo {
 
   final List<String> faltantes;
 
+  final String etapa;
+
+  final String nivelTecnologico;
+
+  final String preparacionInversion;
+
 
   MadurezActivo({
 
     required this.porcentaje,
 
     required this.faltantes,
+
+    required this.etapa,
+      
+    required this.nivelTecnologico,
+
+    required this.preparacionInversion,
 
   });
 
@@ -28,6 +40,12 @@ class MadurezActivo {
         map['faltantes'] ?? [],
       ),
 
+      etapa: map['etapa'] ?? '',
+
+      nivelTecnologico: map['nivelTecnologico'] ?? '',
+
+      preparacionInversion: map['preparacionInversion'] ?? '',
+
     );
 
   }
@@ -42,6 +60,15 @@ class MadurezActivo {
 
       'faltantes':
       faltantes,
+
+      'etapa': 
+      etapa,
+
+      'nivelTecnologico': 
+      nivelTecnologico,
+
+     'preparacionInversion': 
+     preparacionInversion,
 
     };
 
