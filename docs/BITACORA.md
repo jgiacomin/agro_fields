@@ -2542,3 +2542,518 @@ Próximos pasos:
 - eventos de madurez;
 - integración con confianza;
 - preparación para analytics.
+
+# Bitácora Agro Fields
+## Ficha Maestra del Activo Agro V1.0
+
+Fecha: 11/08/2026
+Versión arquitectura: V8.0
+Commit base: 79e7095
+
+---
+
+## 1. Objetivo
+
+Definir la primera especificación funcional de la Ficha Maestra del
+Activo Agro, utilizando como fuente principal la evidencia obtenida
+durante las entrevistas realizadas con actores reales del ecosistema
+agropecuario.
+
+El objetivo no es construir todavía una nueva funcionalidad de software,
+sino transformar los problemas detectados en una definición concreta
+del producto.
+
+---
+
+## 2. Problema identificado
+
+Las entrevistas y observaciones de mercado muestran un patrón:
+
+> Para evaluar un campo o proyecto agropecuario, la información necesaria
+> se encuentra dispersa y resulta difícil obtenerla, verificarla,
+> relacionarla y comprenderla.
+
+La información actualmente puede encontrarse en:
+
+- WhatsApp;
+- documentos;
+- Excel;
+- inmobiliarias;
+- profesionales;
+- organismos públicos;
+- sistemas propios;
+- publicaciones en redes sociales;
+- relevamientos territoriales;
+- imágenes y mapas.
+
+Esto dificulta:
+
+- analizar oportunidades;
+- comprender el valor de un activo;
+- verificar información;
+- conocer antecedentes;
+- detectar restricciones;
+- reducir incertidumbre;
+- tomar decisiones con mayor velocidad.
+
+---
+
+## 3. Hipótesis de producto
+
+Agro Fields transformará un campo o proyecto agropecuario real en un
+Activo Agro digital estructurado.
+
+Flujo:
+
+Campo real
+↓
+Activo Agro
+↓
+Información estructurada
+↓
+Evidencias
+↓
+Validaciones
+↓
+Evaluación
+↓
+Oportunidad
+↓
+Inversor / comprador / productor
+
+El centro del producto no será la publicación comercial.
+
+El centro será la representación digital de la realidad productiva.
+
+---
+
+# 4. Ficha Maestra del Activo Agro
+
+## 4.1 Identidad
+
+### MVP
+
+- identificador único;
+- nombre o referencia del activo;
+- ubicación;
+- provincia/estado;
+- localidad;
+- coordenadas;
+- superficie total;
+- superficie productiva;
+- tipo de activo;
+- propietario o responsable.
+
+---
+
+## 4.2 Información productiva
+
+### MVP
+
+- actividad productiva;
+- agricultura;
+- ganadería;
+- actividad mixta;
+- aptitud productiva;
+- información de suelos;
+- superficie utilizada;
+- infraestructura;
+- mejoras;
+- situación de arrendamiento.
+
+### Segunda etapa
+
+- historial productivo;
+- cultivos históricos;
+- rotaciones;
+- receptividad ganadera;
+- capacidad productiva;
+- capacidad de expansión.
+
+### Futuro
+
+- análisis satelital;
+- NDVI histórico;
+- clasificación automática de cultivos;
+- humedad;
+- zonas altas y bajas;
+- permanencia de agua;
+- variables meteorológicas;
+- modelos productivos avanzados.
+
+---
+
+## 4.3 Información legal y normativa
+
+### MVP
+
+- jurisdicción;
+- documentación disponible;
+- restricciones conocidas;
+- normativa identificada;
+- permisos;
+- organismos involucrados;
+- distancias relevantes;
+- estado de revisión.
+
+### Segunda etapa
+
+- análisis territorial;
+- normativa provincial/estatal;
+- normativa municipal/local;
+- compatibilidad preliminar con proyectos;
+- alertas regulatorias.
+
+### Futuro
+
+Motor de análisis legal territorial:
+
+País
+↓
+Provincia / Estado
+↓
+Departamento
+↓
+Municipio / Localidad
+↓
+Operación
+↓
+Condiciones aplicables
+
+Agro Fields no reemplaza asesoramiento jurídico.
+
+---
+
+## 4.4 Documentación
+
+### MVP
+
+Cada documento deberá registrar:
+
+- tipo;
+- descripción;
+- fecha;
+- fuente;
+- estado;
+- evidencia asociada;
+- observaciones.
+
+La documentación no será solamente un archivo adjunto.
+
+Deberá formar parte de la trazabilidad del Activo Agro.
+
+---
+
+## 4.5 Evidencias
+
+### MVP
+
+Cada información relevante debería poder responder:
+
+> ¿De dónde salió este dato?
+
+Se podrá registrar:
+
+- fuente;
+- responsable;
+- fecha;
+- documento;
+- informe;
+- evidencia;
+- estado de validación.
+
+Estados iniciales:
+
+- declarado;
+- documentado;
+- validado;
+- pendiente;
+- requiere revisión.
+
+---
+
+## 4.6 Historial
+
+### MVP
+
+Registrar eventos relevantes del activo:
+
+- cambios de información;
+- nueva documentación;
+- modificaciones productivas;
+- validaciones;
+- intervenciones profesionales;
+- cambios de estado;
+- cambios comerciales relevantes.
+
+La información histórica no deberá perderse mediante reemplazos
+irreversibles.
+
+---
+
+## 4.7 Información económica
+
+### MVP
+
+- operación: venta / alquiler / proyecto;
+- precio solicitado;
+- moneda;
+- precio por hectárea;
+- superficie ofrecida;
+- modalidad;
+- plazo;
+- condiciones;
+- características declaradas que explican el precio.
+
+### Principio
+
+Agro Fields no determinará inicialmente un "precio correcto".
+
+No se presentará una valuación automática como verdad.
+
+El objetivo será proporcionar:
+
+> información y evidencias que permitan comprender y fundamentar
+> el valor solicitado.
+
+---
+
+## 4.8 Confianza
+
+El Activo Agro deberá permitir distinguir entre:
+
+🟢 Información validada
+
+🟡 Información declarada
+
+⚪ Información pendiente
+
+La confianza deberá construirse mediante:
+
+- información;
+- documentación;
+- evidencias;
+- profesionales;
+- historial;
+- actualizaciones;
+- auditoría.
+
+El Índice de Confianza no representa:
+
+- rentabilidad garantizada;
+- valuación financiera;
+- recomendación de inversión.
+
+---
+
+# 5. Evidencia obtenida durante la validación
+
+## Octavio
+Perfil: ingeniero agrónomo + propietario.
+
+Problemas detectados:
+
+- necesidad de mapas de aptitud de suelos;
+- necesidad de información técnica.
+
+## Claudio
+Perfil: propietario.
+
+Problema detectado:
+
+- dificultad relacionada con la confianza y presentación de la
+  información del activo.
+
+## Marti Aldo Brout
+Perfil: inmobiliaria rural con amplia experiencia.
+
+Problemas detectados:
+
+- documentación;
+- determinación del destino productivo;
+- valoración;
+- parámetros productivos;
+- mejoras;
+- arrendamiento;
+- necesidad de profesionalizar la relación con inversores.
+
+## Rita
+Perfil: martillera y corredora.
+
+Problemas detectados:
+
+- normativa;
+- permisos;
+- restricciones territoriales;
+- falta de información oficial organizada;
+- diferencias entre organismos;
+- dificultad para determinar viabilidad de proyectos;
+- riesgo de tomar decisiones sin conocer restricciones.
+
+## Hugo
+Perfil: productor y vendedor.
+
+Problemas detectados:
+
+- utilización de múltiples canales de venta;
+- intermediarios;
+- venta directa;
+- dificultad para ordenar el proceso comercial.
+
+---
+
+# 6. Evidencia adicional de mercado
+
+Se observaron publicaciones de grupos y canales comerciales donde
+aparecen oportunidades expresadas principalmente mediante texto libre.
+
+Ejemplos de información encontrada:
+
+- cantidad de hectáreas;
+- actividad propuesta;
+- precio por hectárea;
+- ubicación;
+- cultivos;
+- aptitud;
+- capacidad ganadera;
+- instalaciones;
+- mejoras;
+- accesos;
+- condiciones comerciales.
+
+También se observaron servicios independientes que ofrecen:
+
+- análisis de imágenes satelitales;
+- detección de permanencia de agua;
+- clasificación histórica de cultivos;
+- NDVI;
+- infrarrojo;
+- radares espaciales;
+- estaciones meteorológicas;
+- cartas de suelo;
+- delimitación de zonas altas y bajas.
+
+Esto refuerza la hipótesis de que existe información valiosa,
+pero actualmente se encuentra fragmentada entre diferentes actores y
+servicios.
+
+---
+
+# 7. Principio estratégico
+
+Agro Fields no será inicialmente solamente un portal de campos.
+
+La hipótesis estratégica es construir una infraestructura de
+información para activos agropecuarios.
+
+El portal de oportunidades será una posible aplicación de esa
+infraestructura.
+
+Conceptualmente:
+
+Información
++
+Evidencias
++
+Profesionales
++
+Historial
++
+Contexto territorial
++
+Contexto económico
+=
+Activo Agro evaluable
+
+---
+
+# 8. MVP definido
+
+La primera versión funcional de la Ficha Maestra deberá concentrarse
+en:
+
+1. Identidad;
+2. ubicación;
+3. superficie;
+4. actividad;
+5. aptitud productiva;
+6. infraestructura;
+7. situación comercial;
+8. documentación;
+9. normativa;
+10. evidencias;
+11. historial;
+12. estado de validación;
+13. precio solicitado;
+14. información faltante.
+
+Función transversal prioritaria:
+
+> Detectar qué información está disponible y qué información falta
+> para evaluar el Activo Agro.
+
+---
+
+# 9. Relación con la arquitectura V8
+
+La Ficha Maestra no reemplaza el modelo Activo Agro V2.
+
+Lo desarrolla funcionalmente.
+
+La implementación futura deberá respetar:
+
+Screen
+↓
+Service
+↓
+Model
+↓
+Firebase
+
+con:
+
+Core / Auditoría / Trazabilidad
+
+como capa transversal.
+
+No se crearán modelos paralelos innecesarios.
+
+Se evolucionará la arquitectura existente.
+
+---
+
+# 10. Próximo paso
+
+Antes de implementar código:
+
+1. revisar cada campo de la Ficha Maestra;
+2. clasificarlo como MVP / Segunda etapa / Futuro;
+3. definir qué datos pertenecen al Activo Agro V2;
+4. identificar qué datos requieren modelos especializados;
+5. definir estados de validación;
+6. definir estructura de evidencias;
+7. definir eventos de auditoría;
+8. recién después implementar Model → Service → Firebase → Screen.
+
+---
+
+## Conclusión
+
+La primera etapa de validación permitió detectar un problema recurrente:
+
+> La información necesaria para comprender un activo agropecuario está
+> dispersa, tiene diferentes niveles de confiabilidad y requiere múltiples
+> consultas para poder ser relacionada.
+
+La Ficha Maestra del Activo Agro constituye la primera traducción de ese
+problema hacia una especificación concreta de producto.
+
+Agro Fields pasa así de:
+
+"publicar campos"
+
+a:
+
+"estructurar, documentar y contextualizar Activos Agro".
+
+Esta definición será utilizada como base para el diseño del MVP.
