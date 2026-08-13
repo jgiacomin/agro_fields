@@ -2390,3 +2390,140 @@ Auditoría:
 
 Pendiente:
 Evolución futura del historial de madurez.
+
+# Auditoría Técnica Agro Fields V8
+
+## Fecha
+
+13/08/2026
+
+## Módulo
+
+Madurez del Activo Agro V2
+
+## Antecedente
+
+Evolución del modelo de Madurez del Activo Agro V2 realizada durante la evolución de la arquitectura V8.
+
+## Archivo involucrado
+
+lib/models/activos/madurez_activo_model.dart
+
+## Cambio auditado
+
+Se amplió el modelo de madurez del activo incorporando:
+
+- etapa del activo;
+- nivel tecnológico;
+- preparación para inversión.
+
+## Objetivo
+
+Permitir representar la evolución del Activo Agro V2 dentro del ecosistema Agro Fields V8 considerando:
+
+- estado de desarrollo;
+- incorporación tecnológica;
+- nivel de preparación futura.
+
+## Impacto arquitectónico
+
+El modelo queda preparado para integrarse progresivamente con:
+
+- Evaluación de Confianza;
+- Producción;
+- Analytics;
+- Mercado.
+
+## Compatibilidad
+
+Se mantiene compatibilidad con la información existente mediante valores por defecto durante la carga desde Firestore.
+
+## Estado de implementación
+
+Modelo: ✅ Actualizado
+
+Compatibilidad Firestore: ✅ Mantenida
+
+Auditoría: ✅ Registrada
+
+Historial de madurez: 🔜 Pendiente
+
+## Trazabilidad
+
+La evolución deberá mantenerse relacionada con:
+
+- Modelo;
+- Arquitectura;
+- Auditoría;
+- Bitácora;
+- Roadmap;
+- Commit Git.
+
+## Próxima evolución
+
+Implementar historial de madurez para registrar:
+
+- cambios de etapa;
+- evolución del nivel tecnológico;
+- cambios en preparación para inversión;
+- fecha del cambio;
+- responsable;
+- evento asociado.
+
+---
+
+# Auditoría del cierre de jornada — 13/08/2026
+
+## Funcionalidad validada
+
+Flujo de solicitudes de contacto y conversaciones entre comprador y propietario.
+
+## Resultado
+
+✅ Solicitud de contacto funcionando.
+
+✅ Creación de conversación funcionando.
+
+✅ Comprador puede acceder a la conversación.
+
+✅ Propietario puede responder.
+
+✅ Mensajes almacenados correctamente en Firestore.
+
+✅ Listado de conversaciones funcionando.
+
+✅ Envío mediante botón funcionando.
+
+✅ Envío mediante Enter implementado.
+
+## Correcciones realizadas
+
+Se detectaron conversaciones duplicadas generadas durante pruebas anteriores.
+
+Se realizó limpieza de datos de prueba en Firestore antes de validar nuevamente el flujo.
+
+Posteriormente se verificó nuevamente el circuito comprador → propietario → conversación.
+
+## Resultado final
+
+El flujo de comunicación fue validado correctamente.
+
+## Documentación relacionada
+
+- `docs/BITACORA.md`
+- `docs/ROADMAP_V8.md`
+- `docs/AUDITORIA_V8.md`
+
+## Estado de cierre
+
+🟢 Jornada técnica validada.
+
+🟢 Documentación actualizada.
+
+🟢 Código sincronizado con Git.
+
+🟢 Roadmap actualizado.
+
+🟢 Bitácora cerrada.
+
+🟢 Auditoría registrada.
