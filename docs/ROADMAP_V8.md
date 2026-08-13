@@ -1677,3 +1677,112 @@ Preparado para relacionarse con:
 - historial de madurez;
 - eventos de evolución;
 - indicadores avanzados.
+# 🗺️ ROADMAP AGRO FIELDS
+
+## Versión
+V8.X
+
+## Fecha de actualización
+13/08/2026
+
+## Arquitectura base
+V8.0
+
+## Principio estratégico
+
+Agro Fields evoluciona desde una plataforma de publicación y contacto
+hacia una infraestructura digital de información para Activos Agro.
+
+El objetivo no es solamente publicar campos.
+
+El objetivo es:
+
+> estructurar, documentar, relacionar, validar y contextualizar
+> información de activos agropecuarios reales.
+
+---
+
+# 1. Visión del producto
+
+Campo real
+↓
+Activo Agro
+↓
+Información estructurada
+↓
+Documentación
+↓
+Evidencias
+↓
+Validaciones
+↓
+Confianza
+↓
+Oportunidad
+↓
+Comprador / Inversor / Productor
+
+---
+
+# 2. Estado actual
+
+## 🟢 Funcional
+
+Actualmente el sistema cuenta con:
+
+- Activo Agro V2;
+- creación y gestión de activos;
+- información productiva;
+- información económica;
+- documentación;
+- confianza inicial;
+- madurez del activo;
+- solicitudes de contacto;
+- aceptación de solicitudes;
+- creación de conversaciones;
+- chat comprador ↔ propietario;
+- mensajes persistidos en Firebase;
+- listado de conversaciones;
+- información real del activo dentro del chat;
+- información real del participante;
+- historial y auditoría como base arquitectónica.
+
+---
+
+# 3. Etapa actual — Contacto y Conversación
+
+## Estado
+
+🟢 Funcional / consolidación
+
+El sistema ya permite:
+
+Comprador
+↓
+Oportunidad
+↓
+Solicitud de contacto
+↓
+Propietario acepta
+↓
+Conversación
+↓
+Mensaje
+↓
+Respuesta
+
+---
+
+## Próximas tareas inmediatas
+
+### Unicidad de conversaciones
+
+Garantizar que no puedan existir conversaciones duplicadas para la
+misma relación:
+
+```text
+campoId
++
+propietarioId
++
+interesadoId
