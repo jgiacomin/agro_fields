@@ -279,17 +279,23 @@ responsableDeclaracion:
 
 
       madurez:
-      MadurezActivo(
+MadurezActivo(
 
-        porcentaje:30,
+  porcentaje: 30,
 
-        faltantes:
-        [
-          "Permisos",
-          "Evidencias"
-        ],
+  faltantes:
+  [
+    "Permisos",
+    "Evidencias"
+  ],
 
-      ),
+  etapa: "inicial",
+
+  nivelTecnologico: "bajo",
+
+  preparacionInversion: "inicial",
+
+),
 
 
 

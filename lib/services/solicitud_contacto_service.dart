@@ -16,57 +16,58 @@ class SolicitudContactoService {
 
 
 
+/// 🤝 Crear solicitud de contacto
+Future<void> crearSolicitud(
+  SolicitudContacto solicitud,
+) async {
 
-  /// 🤝 Crear solicitud de contacto
-  Future<void> crearSolicitud(
-      SolicitudContacto solicitud,
-  ) async {
+  // Verificar si ya existe una solicitud
+  // para este campo + interesado.
+  final existente = await _firestore
+      .collection(collection)
+      .where(
+        'campoId',
+        isEqualTo: solicitud.campoId,
+      )
+      .where(
+        'interesadoId',
+        isEqualTo: solicitud.interesadoId,
+      )
+      .where(
+        'propietarioId',
+        isEqualTo: solicitud.propietarioId,
+      )
+      .limit(1)
+      .get();
 
+  if (existente.docs.isNotEmpty) {
+    throw Exception(
+      'Ya existe una solicitud para este activo',
+    );
+  }
 
-    final doc =
-        _firestore
-            .collection(collection)
-            .doc();
+  final doc = _firestore
+      .collection(collection)
+      .doc();
 
+  final solicitudConId = SolicitudContacto(
+    solicitudId: doc.id,
+    campoId: solicitud.campoId,
+    interesadoId: solicitud.interesadoId,
+    propietarioId: solicitud.propietarioId,
+    tipoInteres: solicitud.tipoInteres,
+    estado: solicitud.estado,
+    chatId: solicitud.chatId,
+    fechaCreacion: solicitud.fechaCreacion,
+  );
 
-
-    final solicitudConId =
-        SolicitudContacto(
-
-          solicitudId:
-              doc.id,
-
-          campoId:
-              solicitud.campoId,
-
-          interesadoId:
-              solicitud.interesadoId,
-
-          propietarioId:
-              solicitud.propietarioId,
-
-          tipoInteres:
-              solicitud.tipoInteres,
-
-          estado:
-              solicitud.estado,
-
-          chatId:
-              solicitud.chatId,
-
-          fechaCreacion:
-              solicitud.fechaCreacion,
-
-        );
-
+  
 
 
     await doc.set(
-      solicitudConId.toMap(),
-    );
-
-
-  }
+    solicitudConId.toMap(),
+  );
+}
 
 
 
@@ -84,9 +85,13 @@ class SolicitudContactoService {
     return _firestore
     .collection(collection)
     .where(
-      'propietarioId',
-      isEqualTo: propietarioId,
-    )
+  'propietarioId',
+  isEqualTo: propietarioId,
+)
+.where(
+  'estado',
+  isEqualTo: 'pendiente',
+)
     .snapshots()
 
         .map(

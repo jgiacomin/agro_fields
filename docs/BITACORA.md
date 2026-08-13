@@ -3057,3 +3057,156 @@ a:
 "estructurar, documentar y contextualizar Activos Agro".
 
 Esta definición será utilizada como base para el diseño del MVP.
+# 📘 BITÁCORA AGRO FIELDS
+
+## Fecha
+13/08/2026
+
+## Estado de la jornada
+🟢 JORNADA CERRADA — FLUJO DE CHAT FUNCIONAL
+
+---
+
+# 1. Trabajo realizado hoy
+
+## Chat y solicitudes de contacto
+
+Se completó y verificó el flujo principal de contacto entre comprador y
+propietario.
+
+### Flujo probado
+
+Comprador
+↓
+Visualización de oportunidad
+↓
+Solicitud de contacto
+↓
+Aceptación por propietario
+↓
+Creación de conversación
+↓
+Ingreso al chat
+↓
+Envío de mensajes
+↓
+Recepción de mensajes
+
+El flujo fue probado con usuarios diferentes y permitió confirmar que
+ambos participantes pueden acceder correctamente a la conversación.
+
+---
+
+# 2. Correcciones realizadas
+
+## SolicitudContactoService
+
+Se corrigieron errores de estructura y métodos faltantes.
+
+Se verificó la existencia de:
+
+- crearSolicitud();
+- obtenerSolicitudesPropietario();
+- obtenerSolicitudesInteresado();
+- actualizarEstadoSolicitud();
+
+También se corrigieron errores relacionados con el constructor y
+la estructura interna del servicio.
+
+---
+
+# 3. ChatService
+
+Se trabajó sobre:
+
+- creación de salas;
+- participantes;
+- mensajes;
+- lectura de mensajes;
+- listado de conversaciones;
+- información asociada al Activo Agro.
+
+La estructura de los chats utiliza:
+
+- campoId;
+- propietarioId;
+- interesadoId;
+- participantes;
+- estado;
+- fechaCreacion.
+
+Los mensajes se almacenan dentro de:
+
+chats/{chatId}/mensajes
+
+---
+
+# 4. ChatPreview
+
+Se implementó el listado de conversaciones con información real
+del activo y del usuario.
+
+El sistema intenta obtener la información del activo desde:
+
+1. Campos V1
+2. Activos Agro V2
+
+Esto permite que una conversación pueda mostrar información real
+del activo asociado.
+
+También se obtiene información del otro participante mediante
+UserService.
+
+---
+
+# 5. Prueba de base de datos
+
+Se detectaron registros históricos generados durante pruebas
+anteriores que producían conversaciones duplicadas.
+
+Se decidió limpiar las colecciones de datos de prueba:
+
+- activos_agro
+- campos
+- usuarios
+
+La colección `chats` se utilizó para verificar el comportamiento
+real del nuevo flujo.
+
+Luego de limpiar los datos de prueba se volvió a ejecutar el flujo.
+
+Resultado:
+
+🟢 El comprador puede iniciar el proceso correctamente.
+
+🟢 El propietario puede aceptar la solicitud.
+
+🟢 Se crea la conversación.
+
+🟢 El comprador puede ingresar al chat.
+
+🟢 El propietario puede responder.
+
+🟢 Ambos participantes pueden intercambiar mensajes.
+
+---
+
+# 6. Envío de mensajes
+
+Se verificó el envío de mensajes mediante el botón de envío.
+
+También se preparó el comportamiento del campo de texto para permitir
+el envío mediante la tecla Enter.
+
+Archivo involucrado:
+
+lib/screens/chat/chat_screen.dart
+
+---
+
+# 7. Flutter Analyze
+
+Resultado final:
+
+```text
+16 issues found.

@@ -441,22 +441,30 @@ class _CrearActivoAgroScreenState
 
 
 
-          madurez:
+         madurez:
 
-          MadurezActivo(
+MadurezActivo(
 
-            porcentaje:
-                0,
+  porcentaje:
+      0,
 
+  faltantes:
+  [
+    'Documentación',
+    'Producción',
+    'Evidencias',
+  ],
 
-            faltantes:
-            [
-              'Documentación',
-              'Producción',
-              'Evidencias',
-            ],
+  etapa:
+      'inicial',
 
-          ),
+  nivelTecnologico:
+      'bajo',
+
+  preparacionInversion:
+      'inicial',
+
+),
 
 
 

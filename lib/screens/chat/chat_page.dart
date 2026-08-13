@@ -219,7 +219,7 @@ class ChatPage extends StatelessWidget {
                     Text(
 
 
-                      '🌱 ${chat.campo.nombre}',
+                      '🌱 ${chat.nombreActivo}',
 
 
 
@@ -260,7 +260,7 @@ class ChatPage extends StatelessWidget {
 
                         Text(
 
-                          '📍 ${chat.campo.provincia}',
+                          '📍 ${chat.provincia}',
 
                         ),
 
@@ -268,7 +268,7 @@ class ChatPage extends StatelessWidget {
 
                         Text(
 
-                          '📐 ${chat.campo.hectareas} hectáreas',
+                          '📐 ${chat.hectareas} hectáreas',
 
                         ),
 

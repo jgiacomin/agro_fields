@@ -380,21 +380,30 @@ UbicacionActivo(
 
 
 
-      madurez:
+     madurez:
 
+MadurezActivo(
 
-      MadurezActivo(
+  porcentaje:
+  campo.verificado ? 50 : 10,
 
-        porcentaje:
-        campo.verificado ? 50 : 10,
+  faltantes:
+  [
+    'Documentación'
+  ],
 
+  etapa:
+  campo.verificado
+      ? 'validado'
+      : 'inicial',
 
-        faltantes:
-        [
-          'Documentación'
-        ],
+  nivelTecnologico:
+  'bajo',
 
-      ),
+  preparacionInversion:
+  'inicial',
+
+),
 
 
 

@@ -134,7 +134,49 @@ class _DashboardScreenState
 
   }
 
+Future<void> cerrarSesion() async {
+  final confirmar = await showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Cerrar sesión'),
+        content: const Text(
+          '¿Querés cerrar la sesión actual?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Cerrar sesión'),
+          ),
+        ],
+      );
+    },
+  );
 
+  if (confirmar != true) {
+    return;
+  }
+
+  await FirebaseAuth.instance.signOut();
+
+  final usuario = FirebaseAuth.instance.currentUser;
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        usuario == null
+            ? 'SESIÓN CERRADA'
+            : 'SIGUE LOGUEADO: ${usuario.email}',
+      ),
+    ),
+  );
+}
 
 
 
@@ -145,17 +187,19 @@ class _DashboardScreenState
     return Scaffold(
 
 
-      appBar: AppBar(
-
-        title:
-        const Text(
-          "Agro Fields",
-        ),
-
-
-        centerTitle:true,
-
-      ),
+     appBar: AppBar(
+  title: const Text(
+    "Agro Fields",
+  ),
+  centerTitle: true,
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.logout),
+      tooltip: 'Cerrar sesión',
+      onPressed: cerrarSesion,
+    ),
+  ],
+),
 
 
 

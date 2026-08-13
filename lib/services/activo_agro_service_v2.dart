@@ -4,6 +4,7 @@ import '../models/activos/activo_agro_model_v2.dart';
 import '../models/activos/confianza_activo_model.dart';
 import '../models/activos/evaluacion_confianza_model.dart';
 import '../models/activos/historial_activo_model.dart';
+import '../models/activos/estado_activo.dart';
 import 'confianza_activo_service.dart';
 
 
@@ -380,15 +381,18 @@ Future<void> publicarActivo(
 
 
   final activoActualizado =
-      activo.copyWith(
+    activo.copyWith(
 
-    estadoPublicacion:
-    'publicado',
+  estado:
+  EstadoActivo.publicado,
 
-    visible:
-    true,
+  estadoPublicacion:
+  'publicado',
 
-    historial: [
+  visible:
+  true,
+
+  historial: [
 
       ...activo.historial,
 
@@ -457,11 +461,9 @@ Future<void> pausarActivo(
   final activoActualizado =
       activo.copyWith(
 
-    estadoPublicacion:
-    'pausado',
-
-    visible:
-    false,
+    estado: EstadoActivo.pausado,
+estadoPublicacion: 'pausado',
+visible: false,
 
     historial: [
 

@@ -98,14 +98,15 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
 
                 Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Escribir mensaje...',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
+  child: TextField(
+    controller: _controller,
+    onSubmitted: (_) => enviarMensaje(),
+    decoration: const InputDecoration(
+      hintText: 'Escribir mensaje...',
+      border: OutlineInputBorder(),
+    ),
+  ),
+),
 
                 const SizedBox(width: 8),
 
