@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../core/audit/audit_service.dart';
+import '../core/audit/audit_type.dart';
+
 import '../models/activos/activo_agro_model_v2.dart';
 import '../models/activos/confianza_activo_model.dart';
 import '../models/activos/evaluacion_confianza_model.dart';
@@ -23,6 +26,9 @@ class ActivoAgroServiceV2 {
 
 final ConfianzaActivoService _confianzaService =
       ConfianzaActivoService();
+
+      final AuditService _auditService =
+    AuditService();
 
 
 
@@ -134,12 +140,26 @@ HistorialActivo _crearEventoHistorial({
 
 
   await doc.set(
-    activoConHistorial.toMap(),
-  );
+  activoConHistorial.toMap(),
+);
 
+await _auditService.registrar(
+  activoId: activo.activoId,
+  usuarioId: activo.creadorId,
+  tipo: AuditType.creacion,
+  modulo: 'activo',
+  accion: 'crear_activo',
+  elementoAfectado: activo.activoId,
+  referencia: doc.id,
+  datos: {
+    'nombre': activo.nombre,
+    'tipoActivo': activo.tipoActivo.name,
+    'hashActivo': activo.hashActivo,
+    'modeloVersion': ActivoAgroV2.modeloVersion,
+  },
+);
 
-
-  return doc.id;
+return doc.id;
 
 }
 
@@ -343,77 +363,62 @@ HistorialActivo _crearEventoHistorial({
 // =====================================================
 
 Future<void> publicarActivo(
-    String activoId,
-    ) async {
-
-
+  String activoId,
+) async {
   final activo =
       await obtenerActivoPorId(activoId);
 
-
-  if(activo == null){
-
+  if (activo == null) {
     throw Exception(
       'Activo no encontrado',
     );
-
   }
-
-
 
   final evento =
       _crearEventoHistorial(
-
     tipoEvento:
-    'publicacion_activo',
-
+        'publicacion_activo',
     descripcion:
-    'El Activo Agro fue publicado',
-
+        'El Activo Agro fue publicado',
     usuarioId:
-    activo.publicadorId,
-
+        activo.publicadorId,
     moduloOrigen:
-    'activo',
-
+        'activo',
   );
-
-
 
   final activoActualizado =
-    activo.copyWith(
-
-  estado:
-  EstadoActivo.publicado,
-
-  estadoPublicacion:
-  'publicado',
-
-  visible:
-  true,
-
-  historial: [
-
+      activo.copyWith(
+    estado:
+        EstadoActivo.publicado,
+    estadoPublicacion:
+        'publicado',
+    visible:
+        true,
+    historial: [
       ...activo.historial,
-
       evento,
-
     ],
-
   );
-
-
 
   await _db
       .collection(coleccion)
       .doc(activoId)
       .update(
-
     activoActualizado.toMap(),
-
   );
 
-
+  await _auditService.registrar(
+    activoId: activoId,
+    usuarioId: activo.publicadorId,
+    tipo: AuditType.publicacion,
+    modulo: 'activo',
+    accion: 'publicar_activo',
+    elementoAfectado: activoId,
+    estadoAnterior:
+        activo.estadoPublicacion,
+    estadoNuevo: 'publicado',
+    referencia: activoId,
+  );
 }
 
   // =====================================================
@@ -421,129 +426,109 @@ Future<void> publicarActivo(
 // =====================================================
 
 Future<void> pausarActivo(
-    String activoId,
-    ) async {
-
-
+  String activoId,
+) async {
   final activo =
       await obtenerActivoPorId(activoId);
 
-
-  if(activo == null){
-
+  if (activo == null) {
     throw Exception(
       'Activo no encontrado',
     );
-
   }
-
-
 
   final evento =
       _crearEventoHistorial(
-
     tipoEvento:
-    'pausa_activo',
-
+        'pausa_activo',
     descripcion:
-    'El Activo Agro fue pausado',
-
+        'El Activo Agro fue pausado',
     usuarioId:
-    activo.publicadorId,
-
+        activo.publicadorId,
     moduloOrigen:
-    'activo',
-
+        'activo',
   );
-
-
 
   final activoActualizado =
       activo.copyWith(
-
-    estado: EstadoActivo.pausado,
-estadoPublicacion: 'pausado',
-visible: false,
-
+    estado:
+        EstadoActivo.pausado,
+    estadoPublicacion:
+        'pausado',
+    visible:
+        false,
     historial: [
-
       ...activo.historial,
-
       evento,
-
     ],
-
   );
-
-
 
   await _db
       .collection(coleccion)
       .doc(activoId)
       .update(
-
     activoActualizado.toMap(),
-
   );
 
-
+  await _auditService.registrar(
+    activoId: activoId,
+    usuarioId: activo.publicadorId,
+    tipo: AuditType.pausa,
+    modulo: 'activo',
+    accion: 'pausar_activo',
+    elementoAfectado: activoId,
+    estadoAnterior:
+        activo.estadoPublicacion,
+    estadoNuevo: 'pausado',
+    referencia: activoId,
+  );
 }
-
-
 
   // =====================================================
   // ACTUALIZAR ACTIVO COMPLETO
   // =====================================================
 
   Future<void> actualizarActivo(
-    ActivoAgroV2 activo,
-    ) async {
-
-
+  ActivoAgroV2 activo,
+) async {
   final evento = _crearEventoHistorial(
-
     tipoEvento:
-    'actualizacion_activo',
-
+        'actualizacion_activo',
     descripcion:
-    'Actualización general del Activo Agro',
-
+        'Actualización general del Activo Agro',
     usuarioId:
-    activo.creadorId,
-
+        activo.creadorId,
     moduloOrigen:
-    'activo',
-
+        'activo',
   );
 
-
-  final activoActualizado = activo.copyWith(
-
+  final activoActualizado =
+      activo.copyWith(
     historial: [
-
       ...activo.historial,
-
       evento,
-
     ],
-
   );
-
 
   await _db
       .collection(coleccion)
       .doc(activo.activoId)
       .update(
-
     activoActualizado.toMap(),
-
   );
 
-
+  await _auditService.registrar(
+    activoId: activo.activoId,
+    usuarioId: activo.creadorId,
+    tipo: AuditType.modificacion,
+    modulo: 'activo',
+    accion: 'actualizar_activo',
+    elementoAfectado:
+        activo.activoId,
+    referencia:
+        activo.activoId,
+  );
 }
-
-
-
 
 
  // =====================================================
@@ -551,138 +536,114 @@ visible: false,
 // =====================================================
 
 Future<void> actualizarConfianza(
-    String activoId,
-    ConfianzaActivo confianza,
-    ) async {
-
-
-  final activo =
-      await obtenerActivoPorId(activoId);
-
-
-  if(activo == null){
-
-    throw Exception(
-      'Activo no encontrado',
-    );
-
-  }
-
-
-
-  final evento =
-      _crearEventoHistorial(
-
-    tipoEvento:
-    'actualizacion_confianza',
-
-    descripcion:
-    'Se actualizó el sistema de confianza del Activo Agro',
-
-    usuarioId:
-    activo.creadorId,
-
-    moduloOrigen:
-    'confianza',
-
-  );
-
-
-
-  final activoActualizado =
-      activo.copyWith(
-
-    confianza:
-    confianza,
-
-    historial: [
-
-      ...activo.historial,
-
-      evento,
-
-    ],
-
-  );
-
-
-
-  await _db
-      .collection(coleccion)
-      .doc(activoId)
-      .update(
-
-    activoActualizado.toMap(),
-
-  );
-
-
-}
-  
-  // =====================================================
-  // ACTUALIZAR EVALUACIÓN DE CONFIANZA
-  // =====================================================
-
-  Future<void> actualizarEvaluacionConfianza(
-    String activoId,
-    EvaluacionConfianza evaluacion,
+  String activoId,
+  ConfianzaActivo confianza,
 ) async {
-
   final activo =
       await obtenerActivoPorId(activoId);
 
   if (activo == null) {
-
     throw Exception(
       'Activo no encontrado',
     );
-
   }
 
   final evento =
       _crearEventoHistorial(
-
     tipoEvento:
-    'evaluacion_confianza',
-
+        'actualizacion_confianza',
     descripcion:
-    'Se actualizó la evaluación de confianza',
-
+        'Se actualizó el sistema de confianza del Activo Agro',
     usuarioId:
-    activo.creadorId,
-
+        activo.creadorId,
     moduloOrigen:
-    'confianza',
-
+        'confianza',
   );
 
   final activoActualizado =
       activo.copyWith(
-
-    evaluacion:
-    evaluacion,
-
+    confianza:
+        confianza,
     historial: [
-
       ...activo.historial,
-
       evento,
-
     ],
-
   );
 
   await _db
       .collection(coleccion)
       .doc(activoId)
       .update(
-
     activoActualizado.toMap(),
-
   );
 
+  await _auditService.registrar(
+    activoId: activoId,
+    usuarioId: activo.creadorId,
+    tipo: AuditType.actualizacionConfianza,
+    modulo: 'confianza',
+    accion: 'actualizar_confianza',
+    elementoAfectado: activoId,
+    referencia: activoId,
+  );
 }
+  
+  // =====================================================
+// ACTUALIZAR EVALUACIÓN DE CONFIANZA
+// =====================================================
 
+Future<void> actualizarEvaluacionConfianza(
+  String activoId,
+  EvaluacionConfianza evaluacion,
+) async {
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  final evento =
+      _crearEventoHistorial(
+    tipoEvento:
+        'evaluacion_confianza',
+    descripcion:
+        'Se actualizó la evaluación de confianza',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'confianza',
+  );
+
+  final activoActualizado =
+      activo.copyWith(
+    evaluacion:
+        evaluacion,
+    historial: [
+      ...activo.historial,
+      evento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  await _auditService.registrar(
+    activoId: activoId,
+    usuarioId: activo.creadorId,
+    tipo: AuditType.evaluacionConfianza,
+    modulo: 'confianza',
+    accion: 'evaluar_confianza',
+    elementoAfectado: activoId,
+    referencia: activoId,
+  );
+}
    // =====================================================
   // EVALUAR ACTIVO AGRO
   // =====================================================

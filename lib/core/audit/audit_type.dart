@@ -1,0 +1,16 @@
+enum AuditType {
+  creacion,
+  modificacion,
+  publicacion,
+  pausa,
+  validacion,
+  actualizacionConfianza,
+  evaluacionConfianza,
+  documentacion,
+  produccion,
+  economia,
+  intervencionProfesional,
+  negociacion,
+  inversion,
+  cambioEstado,
+}
