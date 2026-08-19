@@ -1232,3 +1232,249 @@ Agro Fields podrá evolucionar hacia una capa de análisis y valorización basad
 No reemplaza una tasación profesional.
 
 Su objetivo es organizar información para facilitar análisis comparativos.
+## 20.3 Legajo Digital Histórico del Activo
+
+Agro Fields evoluciona el concepto de historial hacia un
+Legajo Digital Histórico del Activo.
+
+El legajo representa la historia estructurada y trazable
+de un Activo Agro a lo largo de su ciclo de vida.
+
+No constituye únicamente un registro de eventos.
+
+Permite reconstruir la evolución del activo a través del tiempo.
+
+El sistema podrá organizar:
+
+- identidad del activo;
+- ubicación histórica;
+- propietarios y participantes;
+- actividad productiva;
+- producciones realizadas;
+- infraestructura;
+- mejoras;
+- documentación;
+- permisos;
+- situación económica;
+- inversiones;
+- intervenciones profesionales;
+- verificaciones;
+- cambios de estado;
+- publicaciones;
+- operaciones;
+- incidencias;
+- evidencias;
+- auditorías;
+- cambios normativos aplicables;
+- actualizaciones tecnológicas;
+- eventos ambientales cuando corresponda.
+
+El objetivo es poder reconstruir:
+
+qué era el activo;
+qué ocurrió;
+qué cambió;
+cuándo cambió;
+quién intervino;
+qué documentación respaldó el cambio;
+qué evidencia existe;
+qué normativa era aplicable;
+y cuál es su situación actual.
+## 20.4 Línea de Tiempo del Activo
+
+El Legajo Digital Histórico deberá permitir visualizar
+la evolución del activo mediante una línea de tiempo.
+
+Ejemplo:
+
+Año 1
+Activo creado
+↓
+Año 2
+Cambio de propietario
+↓
+Año 3
+Nueva producción
+↓
+Año 4
+Incorporación de infraestructura
+↓
+Año 5
+Intervención profesional
+↓
+Año 6
+Nueva inversión
+↓
+Año 7
+Cambio normativo
+↓
+Año 8
+Nueva verificación
+↓
+Situación actual
+
+Cada acontecimiento relevante podrá estar asociado a:
+
+- fecha;
+- usuario;
+- rol;
+- tipo de evento;
+- información anterior;
+- información nueva;
+- evidencia;
+- documentación;
+- profesional interviniente;
+- fuente;
+- nivel de verificación;
+- normativa relacionada.
+## 20.5 Evolución y Formación del Valor del Activo
+
+El valor de un Activo Agro no deberá analizarse únicamente
+a partir de su situación actual.
+
+Agro Fields podrá organizar información histórica que permita
+comprender cómo evolucionó el activo y qué elementos
+contribuyeron a su situación presente.
+
+Podrán analizarse:
+
+- evolución productiva;
+- mejoras realizadas;
+- inversiones;
+- infraestructura incorporada;
+- capacidad productiva;
+- estabilidad histórica;
+- documentación disponible;
+- participación profesional;
+- cumplimiento normativo;
+- evidencias;
+- evolución económica;
+- riesgos;
+- cambios relevantes.
+
+Esta información podrá servir como base para análisis
+comparativos y futuras herramientas de valorización.
+
+Agro Fields no determina por sí mismo el valor económico
+del activo ni reemplaza una tasación profesional.
+
+Su función es construir una base de información histórica,
+estructurada y verificable que permita realizar análisis
+más fundamentados.
+## 20.6 Trazabilidad Normativa del Activo
+
+El Legajo Digital Histórico podrá incorporar la normativa
+aplicable al activo durante su ciclo de vida.
+
+El sistema deberá permitir relacionar:
+
+- normativa;
+- jurisdicción;
+- fecha de vigencia;
+- fecha de modificación;
+- fecha de derogación;
+- requisito;
+- permiso;
+- restricción;
+- obligación;
+- documentación requerida;
+- activo afectado.
+
+De esta forma podrá reconstruirse no solamente la historia
+productiva y económica del activo, sino también el contexto
+normativo bajo el cual operó.
+
+La plataforma podrá detectar cambios relevantes en la
+normativa aplicable y señalar posibles impactos sobre
+el activo.
+
+Agro Fields no sustituye asesoramiento jurídico profesional.
+
+La función del sistema es identificar, organizar y
+trazar la información normativa aplicable.
+## 20.7 Evolución Tecnológica del Activo
+
+La trazabilidad del activo podrá registrar la incorporación
+de tecnologías que modifiquen su capacidad productiva,
+operativa o de gestión.
+
+Ejemplos:
+
+- sensores;
+- riego;
+- maquinaria;
+- energía renovable;
+- software;
+- monitoreo satelital;
+- automatización;
+- infraestructura tecnológica;
+- sistemas de gestión;
+- nuevas técnicas productivas.
+
+Cada incorporación podrá registrar:
+
+- fecha;
+- tecnología;
+- proveedor;
+- finalidad;
+- inversión;
+- impacto esperado;
+- impacto observado;
+- evidencia;
+- profesional interviniente.
+
+Esto permitirá analizar la evolución tecnológica
+del activo a lo largo del tiempo.
+La arquitectura conceptual podría evolucionar a:
+
+                    ACTIVO AGRO
+                    INTELIGENTE
+                         │
+                         ▼
+              ┌─────────────────────┐
+              │ LEGAJO DIGITAL      │
+              │ HISTÓRICO           │
+              └─────────────────────┘
+                         │
+       ┌─────────────────┼─────────────────┐
+       ▼                 ▼                 ▼
+     DATOS            EVIDENCIAS        EVENTOS
+       │                 │                 │
+       └─────────────────┼─────────────────┘
+                         ▼
+                    HISTORIAL
+                         │
+                         ▼
+                    AUDITORÍA
+                         │
+          ┌──────────────┼──────────────┐
+          ▼              ▼              ▼
+      NORMATIVA      PROFESIONALES   TECNOLOGÍA
+          │              │              │
+          └──────────────┼──────────────┘
+                         ▼
+                    TRAZABILIDAD
+                         │
+                         ▼
+                     CONFIANZA
+                         │
+                         ▼
+                  ANÁLISIS / IA
+                         │
+                         ▼
+                VALORIZACIÓN FUTURA
+8. Y lo más importante: no rompemos lo que ya hicimos
+
+Esto se monta sobre lo existente:
+
+ActivoAgroV2
+HistorialActivo
+Auditoría
+Evidencias
+EvaluaciónConfianza
+MadurezActivo
+Documentación
+Participantes
+Profesionales
+Normativa
+futuras integraciones
