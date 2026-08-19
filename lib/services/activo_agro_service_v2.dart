@@ -116,7 +116,7 @@ HistorialActivo _crearEventoHistorial({
     'Creación inicial del Activo Agro',
 
     usuarioId:
-    activo.propietarioId,
+    activo.creadorId,
 
     moduloOrigen:
     'activo',
@@ -416,10 +416,13 @@ Future<void> publicarActivo(
     elementoAfectado: activoId,
     estadoAnterior:
         activo.estadoPublicacion,
-    estadoNuevo: 'publicado',
-    referencia: activoId,
+    estadoNuevo:
+        'publicado',
+    referencia:
+        activoId,
   );
 }
+
 
   // =====================================================
 // PAUSAR ACTIVO
@@ -617,23 +620,47 @@ Future<void> actualizarEvaluacionConfianza(
         'confianza',
   );
 
-  final activoActualizado =
-      activo.copyWith(
-    evaluacion:
-        evaluacion,
-    historial: [
-      ...activo.historial,
-      evento,
-    ],
-  );
+final confianzaActualizada =
+    activo.confianza.copyWith(
+  nivelGeneral:
+      evaluacion.nivelGeneral,
+  ultimaVerificacion:
+      DateTime.now(),
+);
 
-  await _db
-      .collection(coleccion)
-      .doc(activoId)
-      .update(
-    activoActualizado.toMap(),
-  );
+// =====================================================
+// CALCULAR MADUREZ
+// =====================================================
 
+final madurezActualizada =
+    _confianzaService.calcularMadurez(
+  activo,
+);
+
+// =====================================================
+// ACTUALIZAR ACTIVO
+// =====================================================
+
+final activoActualizado =
+    activo.copyWith(
+  evaluacion:
+      evaluacion,
+  confianza:
+      confianzaActualizada,
+  madurez:
+      madurezActualizada,
+  historial: [
+    ...activo.historial,
+    evento,
+  ],
+);
+
+await _db
+    .collection(coleccion)
+    .doc(activoId)
+    .update(
+  activoActualizado.toMap(),
+);
   await _auditService.registrar(
     activoId: activoId,
     usuarioId: activo.creadorId,

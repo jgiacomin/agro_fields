@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../models/activos/activo_agro_model_v2.dart';
+import '../../services/activo_agro_service_v2.dart';
 
 
 
-class DetalleActivoAgroScreen extends StatelessWidget {
+class DetalleActivoAgroScreen extends StatefulWidget {
 
 
   final ActivoAgroV2 activo;
@@ -19,12 +20,88 @@ class DetalleActivoAgroScreen extends StatelessWidget {
 
   });
 
+@override
+State<DetalleActivoAgroScreen> createState() =>
+    _DetalleActivoAgroScreenState();
+}
 
+class _DetalleActivoAgroScreenState
+    extends State<DetalleActivoAgroScreen> {
 
+  final ActivoAgroServiceV2 _activoService =
+      ActivoAgroServiceV2();
 
+  late ActivoAgroV2 activo;
 
+  bool evaluando = false;
+  Future<void> evaluarActivo() async {
+  if (evaluando) {
+    return;
+  }
+
+  setState(() {
+    evaluando = true;
+  });
+
+  try {
+    await _activoService.evaluarActivo(
+      activo.activoId,
+    );
+
+    final actualizado =
+        await _activoService.obtenerActivoPorId(
+      activo.activoId,
+    );
+
+    if (actualizado == null) {
+      throw Exception(
+        'No se pudo recuperar el activo actualizado',
+      );
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      activo = actualizado;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Evaluación de confianza realizada correctamente',
+        ),
+      ),
+    );
+  } catch (e) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Error evaluando activo: $e',
+        ),
+      ),
+    );
+  } finally {
+    if (mounted) {
+      setState(() {
+        evaluando = false;
+      });
+    }
+  }
+}
 
   @override
+  void initState() {
+    super.initState();
+
+    activo = widget.activo;
+  }
+     @override
   Widget build(BuildContext context) {
 
 
@@ -395,7 +472,32 @@ Text(
   "Profesional: ${activo.evaluacion.profesional.estado} "
   "(${activo.evaluacion.profesional.nivel}%)",
 ),
+        const SizedBox(
+  height: 16,
+),
 
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton.icon(
+    onPressed: evaluando
+        ? null
+        : evaluarActivo,
+    icon: evaluando
+        ? const SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          )
+        : const Icon(Icons.analytics),
+    label: Text(
+      evaluando
+          ? 'Evaluando...'
+          : 'Evaluar confianza',
+    ),
+  ),
+),
 
             const Divider(
               height:30,
@@ -579,9 +681,6 @@ Text(
 
 
   }
-
-
-
 
 
 

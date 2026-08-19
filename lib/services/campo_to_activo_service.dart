@@ -16,520 +16,296 @@ import '../models/activos/historial_activo_model.dart';
 import '../models/activos/participante_activo_model.dart';
 import 'package:agro_fields/models/activos/factor_confianza_model.dart';
 
-
-
-
-
-
 class CampoToActivoService {
-
-
-  ActivoAgroV2 convertir(Campo campo){
-
-
+  ActivoAgroV2 convertir(Campo campo) {
     return ActivoAgroV2(
+      activoId: campo.campoId,
 
+      nombre: campo.nombre,
 
-      activoId:
-      campo.campoId,
+      descripcion: campo.descripcion,
 
+      tipoActivo: TipoActivo.otro,
 
-      nombre:
-      campo.nombre,
+      categorias: ['campo', 'agropecuario'],
 
+      ubicacion: UbicacionActivo(
+        pais: campo.pais,
 
-      descripcion:
-      campo.descripcion,
+        provincia: campo.provincia,
 
+        departamento: campo.departamento,
 
+        localidad: campo.localidad,
 
-      tipoActivo:
-      TipoActivo.otro,
+        codigoPostal: campo.codigoPostal,
 
+        latitud: 0,
 
+        longitud: 0,
 
-      categorias:
-      [
-        'campo',
-        'agropecuario',
-      ],
+        superficie: campo.hectareas,
 
+        tipoZona: 'rural',
 
+        zonaHoraria: 'America/Argentina/Buenos_Aires',
 
-      ubicacion:
+        accesoCaminos: '',
 
-UbicacionActivo(
+        descripcionEntorno: '',
 
-  pais:
-      campo.pais,
+        disponibilidadServicios: '',
 
-  provincia:
-      campo.provincia,
+        jurisdiccionLegal: '',
 
+        regionProductiva: campo.provincia,
 
-  departamento:
-      campo.departamento,
+        monedaLocal: 'ARS',
+      ),
 
-
-  localidad:
-      campo.localidad,
-
-
-  codigoPostal:
-      campo.codigoPostal,
-
-
-  latitud:
-      0,
-
-
-  longitud:
-      0,
-
-
-  superficie:
-      campo.hectareas,
-
-
-
-  tipoZona:
-      'rural',
-
-
-  zonaHoraria:
-      'America/Argentina/Buenos_Aires',
-
-
-  accesoCaminos:
-      '',
-
-
-  descripcionEntorno:
-      '',
-
-
-  disponibilidadServicios:
-      '',
-
-
-  jurisdiccionLegal:
-      '',
-
-
-  regionProductiva:
-      campo.provincia,
-
-
-  monedaLocal:
-      'ARS',
-
-),
-
-
-
-
-
-      producciones:
-
-
-      [
-
-
+      producciones: [
         ModuloProduccion(
+          dominio: 'agropecuario',
 
-          dominio:
-          'agropecuario',
+          actividad: 'agricultura',
 
+          descripcion: 'Producción inicial',
 
-          actividad:
-          'agricultura',
+          superficie: campo.hectareas,
 
+          unidad: 'hectáreas',
 
-          descripcion:
-          'Producción inicial',
+          datos: {
+            'capacidadProductiva': '',
 
+            'infraestructura': [],
 
-          superficie:
-          campo.hectareas,
-
-
-          unidad:
-          'hectáreas',
-
-
-          datos:
-          {
-
-            'capacidadProductiva':
-            '',
-
-            'infraestructura':
-            [],
-
-            'equipamiento':
-            [],
-
+            'equipamiento': [],
           },
-
-
-        )
-
-
+        ),
       ],
 
+      economia: EconomiaActivo(
+        objetivoProyecto: '',
 
+        etapaProyecto: 'inicial',
 
+        inversionEsperada: 0,
 
-      economia:
+        capacidadActual: '',
 
+        capacidadProyectada: '',
 
-      EconomiaActivo(
+        riesgosIdentificados: '',
 
-                objetivoProyecto:
-        '',
+        origenInformacion: 'productor',
 
+        responsableDeclaracion: campo.propietarioId,
 
-        etapaProyecto:
-        'inicial',
+        valorSolicitado: 0,
 
+        moneda: 'USD',
 
-        inversionEsperada:
-        0,
+        tipoOperacion: '',
 
+        capitalRequerido: 0,
 
-        capacidadActual:
-        '',
+        ingresosEstimados: '',
 
+        costosEstimados: '',
 
-        capacidadProyectada:
-        '',
+        rentabilidadDeclarada: '',
 
+        periodoEvaluacion: '',
 
-        riesgosIdentificados:
-        '',
+        datosEconomicos: {},
 
-
-        origenInformacion:
-        'productor',
-
-
-        responsableDeclaracion:
-        campo.propietarioId,
-
-
-        valorSolicitado:
-        0,
-
-        moneda:
-        'USD',
-
-        tipoOperacion:
-        '',
-
-        capitalRequerido:
-        0,
-
-        ingresosEstimados:
-        '',
-
-        costosEstimados:
-        '',
-
-        rentabilidadDeclarada:
-        '',
-
-        periodoEvaluacion:
-        '',
-
-        datosEconomicos:
-        {},
-
-        fechaActualizacion:
-        DateTime.now(),
-
+        fechaActualizacion: DateTime.now(),
       ),
 
+      documentacion: DocumentacionActivo(
+        documentacionCompleta: false,
 
+        documentos: [],
 
+        certificaciones: [],
 
+        permisos: [],
 
-      documentacion:
+        archivos: [],
 
+        observaciones: '',
 
-      DocumentacionActivo(
-
-        documentacionCompleta:
-        false,
-
-        documentos:
-        [],
-
-        certificaciones:
-        [],
-
-        permisos:
-        [],
-
-        archivos:
-        [],
-
-        observaciones:
-        '',
-
-        fechaActualizacion:
-        DateTime.now(),
-
+        fechaActualizacion: DateTime.now(),
       ),
 
+      confianza: ConfianzaActivo(
+        nivelGeneral: campo.verificado ? 50 : 0,
 
+        // =====================================================
+        // IDENTIDAD
+        // =====================================================
+        identidadVerificada: campo.verificado,
 
+        // =====================================================
+        // DOCUMENTACIÓN
+        // =====================================================
+        documentacionCompleta: false,
 
+        nivelDocumentacion: 0,
 
-      confianza:
+        // =====================================================
+        // EVIDENCIAS
+        // =====================================================
+        cantidadEvidencias: 0,
 
+        nivelEvidencias: 0,
 
-      ConfianzaActivo(
+        // =====================================================
+        // PRODUCCIÓN
+        // =====================================================
+        informacionProductivaCompleta: false,
 
-        nivelGeneral:
-        campo.verificado ? 50 : 0,
+        nivelProduccion: 0,
 
+        // =====================================================
+        // INFRAESTRUCTURA
+        // =====================================================
+        nivelInfraestructura: 0,
 
-        identidadVerificada:
-        campo.verificado,
+        infraestructuraVerificada: false,
 
+        cantidadInfraestructuras: 0,
 
-        documentacionCompleta:
-        false,
+        // =====================================================
+        // TECNOLOGÍA
+        // =====================================================
+        nivelTecnologia: 0,
 
+        tecnologiaVerificada: false,
 
-        cantidadEvidencias:
-        0,
+        cantidadTecnologias: 0,
 
+        // =====================================================
+        // INVERSIÓN
+        // =====================================================
+        nivelInversion: 0,
 
-        informacionProductivaCompleta:
-        false,
+        inversionDeclarada: false,
 
+        inversionVerificada: false,
 
-        participantesVerificados:
-        false,
+        montoInversionDeclarada: 0,
 
+        monedaInversion: 'USD',
 
-        ultimaVerificacion:
-        DateTime.now(),
+        // =====================================================
+        // PARTICIPANTES
+        // =====================================================
+        participantesVerificados: false,
 
+        // =====================================================
+        // GOBERNANZA
+        // =====================================================
+        nivelGobernanza: 0,
 
-        observaciones:
-        '',
+        // =====================================================
+        // CONTROL
+        // =====================================================
+        ultimaVerificacion: DateTime.now(),
 
+        ultimaEvaluacion: DateTime.now(),
+
+        observaciones: '',
       ),
 
+      evaluacion: EvaluacionConfianza(
+        nivelGeneral: campo.verificado ? 50 : 0,
 
+        documental: FactorConfianza.inicial(),
 
+        productivo: FactorConfianza.inicial(),
 
+        economico: FactorConfianza.inicial(),
 
-      evaluacion:
+        legal: FactorConfianza.inicial(),
 
+        profesional: FactorConfianza.inicial(),
 
-      EvaluacionConfianza(
+        fortalezas: ['Campo registrado'],
 
-        nivelGeneral:
-        campo.verificado ? 50 : 0,
-         
+        pendientes: ['Documentación', 'Verificación'],
 
-         documental:
-      FactorConfianza.inicial(),
+        resumen: 'Evaluación inicial',
 
-      productivo:
-      FactorConfianza.inicial(),
+        responsable: "Sistema",
 
-      economico:
-      FactorConfianza.inicial(),
-
-      legal:
-      FactorConfianza.inicial(),
-
-      profesional:
-      FactorConfianza.inicial(),
-
-        fortalezas:
-        [
-          'Campo registrado'
-        ],
-
-
-        pendientes:
-        [
-          'Documentación',
-          'Verificación'
-        ],
-
-
-        resumen:
-        'Evaluación inicial',
-
-         responsable:
-        "Sistema",
-
-
-        fechaEvaluacion:
-        DateTime.now(),
-
+        fechaEvaluacion: DateTime.now(),
       ),
 
+      madurez: MadurezActivo(
+        porcentaje: campo.verificado ? 50 : 10,
 
+        faltantes: ['Documentación'],
 
+        etapa: campo.verificado ? 'validado' : 'inicial',
 
+        nivelTecnologico: 'bajo',
 
-     madurez:
+        preparacionInversion: 'inicial',
+      ),
 
-MadurezActivo(
+      participantes: [
+        ParticipanteActivo(
+          usuarioId: campo.propietarioId,
 
-  porcentaje:
-  campo.verificado ? 50 : 10,
+          rol: 'propietario',
 
-  faltantes:
-  [
-    'Documentación'
-  ],
+          estado: 'activo',
 
-  etapa:
-  campo.verificado
-      ? 'validado'
-      : 'inicial',
+          fechaIngreso: campo.fechaCreacion,
+        ),
+      ],
 
-  nivelTecnologico:
-  'bajo',
+      propietarioId: campo.propietarioId,
 
-  preparacionInversion:
-  'inicial',
+      creadorId: campo.publicadorId,
 
-),
+      publicadorId: campo.publicadorId,
 
+      tipoRelacionPropietario: 'propietario',
 
+      estadoPublicacion: campo.estadoPublicacion,
 
+      visible: campo.estadoPublicacion == 'publicado',
 
+      versionDatos: ActivoAgroV2.modeloVersion,
 
-      participantes:
-[
-  ParticipanteActivo(
+      estado: campo.estadoPublicacion == 'publicado'
+          ? EstadoActivo.publicado
+          : EstadoActivo.borrador,
 
-    usuarioId:
-    campo.propietarioId,
+      historial: [
+        HistorialActivo(
+          eventoId: 'creacion_${campo.campoId}',
 
-    rol:
-    'propietario',
+          tipoEvento: 'creacion',
 
-    estado:
-    'activo',
+          descripcion: 'Activo generado desde Campo',
 
-    fechaIngreso:
-    campo.fechaCreacion,
+          usuarioId: campo.publicadorId,
 
-  ),
-],
+          moduloOrigen: 'campo',
 
+          fecha: campo.fechaCreacion,
+        ),
+      ],
 
+      hashActivo: campo.hashCampo,
 
+      fechaCreacion: campo.fechaCreacion,
 
-
-      propietarioId:
-      campo.propietarioId,
-
-
-
-      creadorId:
-      campo.publicadorId,
-
-            publicadorId:
-      campo.publicadorId,
-
-
-      tipoRelacionPropietario:
-      'propietario',
-
-
-      estadoPublicacion:
-      campo.estadoPublicacion,
-
-
-      visible:
-      campo.estadoPublicacion == 'publicado',
-
-
-      versionDatos:
-      ActivoAgroV2.modeloVersion,
-
-
-
-      estado:
-
-
-      campo.estadoPublicacion == 'publicado'
-
-      ?
-
-      EstadoActivo.publicado
-
-      :
-
-      EstadoActivo.borrador,
-
-
-
-
-
-      historial:
-[
-  HistorialActivo(
-
-    eventoId:
-    'creacion_${campo.campoId}',
-
-    tipoEvento:
-    'creacion',
-
-    descripcion:
-    'Activo generado desde Campo',
-
-    usuarioId:
-    campo.publicadorId,
-
-      moduloOrigen:
-     'campo',
-
-    fecha:
-    campo.fechaCreacion,
-
-  ),
-],
-
-
-
-
-
-
-      hashActivo:
-      campo.hashCampo,
-
-
-
-
-
-      fechaCreacion:
-      campo.fechaCreacion,
-
-
-
-
-
-      ultimaActualizacion:
-      DateTime.now(),
-
-
+      ultimaActualizacion: DateTime.now(),
     );
-
-
   }
-
-
 }

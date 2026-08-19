@@ -13,338 +13,254 @@ import 'evaluacion_confianza_model.dart';
 
 import 'factor_confianza_model.dart';
 
-
 class ActivoAgroTestData {
-
-
-  static ActivoAgroV2 crearGranjaAvicola(){
-
-
+  static ActivoAgroV2 crearGranjaAvicola() {
     return ActivoAgroV2(
-
       activoId: "test_001",
 
+      nombre: "Granja Avícola Los Tilos",
 
-      nombre:
-      "Granja Avícola Los Tilos",
+      descripcion: "Producción de huevos con sistema semi intensivo",
 
+      tipoActivo: TipoActivo.avicola,
 
-      descripcion:
-      "Producción de huevos con sistema semi intensivo",
+      categorias: ["huevos", "avicultura", "produccion animal"],
 
+      ubicacion: UbicacionActivo(
+        pais: "Argentina",
 
-      tipoActivo:
-      TipoActivo.avicola,
+        provincia: "Buenos Aires",
 
+        departamento: "",
 
-      categorias:
-      [
-        "huevos",
-        "avicultura",
-        "produccion animal"
-      ],
+        localidad: "Ensenada",
 
+        codigoPostal: "",
 
-      ubicacion:
+        latitud: -34.86,
 
-UbicacionActivo(
+        longitud: -57.91,
 
-  pais:
-  "Argentina",
+        superficie: 5,
 
-  provincia:
-  "Buenos Aires",
+        tipoZona: "rural",
 
-  departamento:
-  "",
+        zonaHoraria: "America/Argentina/Buenos_Aires",
 
-  localidad:
-  "Ensenada",
+        accesoCaminos: "",
 
-  codigoPostal:
-  "",
+        descripcionEntorno: "",
 
-  latitud:
-  -34.86,
+        disponibilidadServicios: "",
 
-  longitud:
-  -57.91,
+        jurisdiccionLegal: "",
 
-  superficie:
-  5,
+        regionProductiva: "Buenos Aires",
 
+        monedaLocal: "ARS",
+      ),
 
-  tipoZona:
-  "rural",
-
-  zonaHoraria:
-  "America/Argentina/Buenos_Aires",
-
-  accesoCaminos:
-  "",
-
-  descripcionEntorno:
-  "",
-
-  disponibilidadServicios:
-  "",
-
-  jurisdiccionLegal:
-  "",
-
-  regionProductiva:
-  "Buenos Aires",
-
-  monedaLocal:
-  "ARS",
-
-),
-
-
-
-      producciones:
-      [
-
+      producciones: [
         ModuloProduccion(
+          dominio: "produccion animal",
 
-  dominio:
-  "produccion animal",
+          actividad: "Gallinas ponedoras",
 
-  actividad:
-  "Gallinas ponedoras",
+          descripcion: "Producción de huevos frescos",
 
-  descripcion:
-  "Producción de huevos frescos",
+          datos: {
+            "cantidadAves": 5000,
 
-  datos:
-  {
+            "sistema": "semi intensivo",
 
-    "cantidadAves":5000,
-
-    "sistema":
-    "semi intensivo",
-
-    "produccionDiaria":
-    "3500 huevos"
-
-  },
-
-)
-
+            "produccionDiaria": "3500 huevos",
+          },
+        ),
       ],
 
+      economia: EconomiaActivo(
+        objetivoProyecto: "Producción avícola",
 
+        etapaProyecto: "inicial",
 
-      economia:
-      EconomiaActivo(
-        
-        objetivoProyecto:
-"Producción avícola",
+        inversionEsperada: 0,
 
-etapaProyecto:
-"inicial",
+        capacidadActual: "5000 aves",
 
-inversionEsperada:
-0,
+        capacidadProyectada: "",
 
-capacidadActual:
-"5000 aves",
+        riesgosIdentificados: "",
 
-capacidadProyectada:
-"",
+        origenInformacion: "productor",
 
-riesgosIdentificados:
-"",
+        responsableDeclaracion: "usuario_test_001",
 
-origenInformacion:
-"productor",
+        valorSolicitado: 0,
 
-responsableDeclaracion:
-"usuario_test_001",
-  
-        valorSolicitado:0,
+        moneda: "USD",
 
-        moneda:"USD",
+        tipoOperacion: "",
 
-        tipoOperacion:"",
+        capitalRequerido: 0,
 
-        capitalRequerido:0,
+        ingresosEstimados: "",
 
-        ingresosEstimados:"",
+        costosEstimados: "",
 
-        costosEstimados:"",
+        rentabilidadDeclarada: "",
 
-        rentabilidadDeclarada:"",
+        periodoEvaluacion: "",
 
-        periodoEvaluacion:"",
+        datosEconomicos: {},
 
-        datosEconomicos:{},
-
-        fechaActualizacion:
-        DateTime.now(),
-
+        fechaActualizacion: DateTime.now(),
       ),
 
+      documentacion: DocumentacionActivo(
+        documentacionCompleta: false,
 
+        documentos: [],
 
-      documentacion:
-      DocumentacionActivo(
+        certificaciones: [],
 
-        documentacionCompleta:false,
+        permisos: [],
 
-        documentos:[],
+        archivos: [],
 
-        certificaciones:[],
+        observaciones: "Activo nuevo",
 
-        permisos:[],
-
-        archivos:[],
-
-        observaciones:"Activo nuevo",
-
-        fechaActualizacion:
-        DateTime.now(),
-
+        fechaActualizacion: DateTime.now(),
       ),
 
+      confianza: ConfianzaActivo(
+        nivelGeneral: 65,
 
+        // =====================================================
+        // IDENTIDAD
+        // =====================================================
+        identidadVerificada: true,
 
-      confianza:
-      ConfianzaActivo(
+        // =====================================================
+        // DOCUMENTACIÓN
+        // =====================================================
+        documentacionCompleta: true,
+        nivelDocumentacion: 80,
 
-        nivelGeneral:20,
+        // =====================================================
+        // EVIDENCIAS
+        // =====================================================
+        cantidadEvidencias: 6,
+        nivelEvidencias: 70,
 
-        identidadVerificada:false,
+        // =====================================================
+        // PRODUCCIÓN
+        // =====================================================
+        informacionProductivaCompleta: true,
+        nivelProduccion: 75,
 
-        documentacionCompleta:false,
+        // =====================================================
+        // INFRAESTRUCTURA
+        // =====================================================
+        nivelInfraestructura: 70,
+        infraestructuraVerificada: true,
+        cantidadInfraestructuras: 3,
 
-        cantidadEvidencias:0,
+        // =====================================================
+        // TECNOLOGÍA
+        // =====================================================
+        nivelTecnologia: 60,
+        tecnologiaVerificada: true,
+        cantidadTecnologias: 2,
 
-        informacionProductivaCompleta:true,
+        // =====================================================
+        // INVERSIÓN
+        // =====================================================
+        nivelInversion: 55,
+        inversionDeclarada: true,
+        inversionVerificada: false,
+        montoInversionDeclarada: 150000,
+        monedaInversion: "USD",
 
-        participantesVerificados:false,
+        // =====================================================
+        // PARTICIPANTES
+        // =====================================================
+        participantesVerificados: true,
 
-        ultimaVerificacion:
-        DateTime.now(),
+        // =====================================================
+        // GOBERNANZA
+        // =====================================================
+        nivelGobernanza: 40,
 
-        observaciones:
-        "Activo creado",
+        // =====================================================
+        // CONTROL
+        // =====================================================
+        ultimaVerificacion: DateTime.now(),
+        ultimaEvaluacion: DateTime.now(),
 
+        observaciones: 'Activo de prueba con confianza evolucionada',
       ),
 
+      evaluacion: EvaluacionConfianza(
+        nivelGeneral: 20,
 
+        documental: FactorConfianza.inicial(),
 
-      evaluacion:
-      EvaluacionConfianza(
+        productivo: FactorConfianza.inicial(),
 
-        nivelGeneral:20,
+        economico: FactorConfianza.inicial(),
 
-        documental:
-      FactorConfianza.inicial(),
+        legal: FactorConfianza.inicial(),
 
-      productivo:
-      FactorConfianza.inicial(),
+        profesional: FactorConfianza.inicial(),
 
-      economico:
-      FactorConfianza.inicial(),
+        fortalezas: ["Producción definida"],
 
-      legal:
-      FactorConfianza.inicial(),
+        pendientes: ["Documentación", "Verificación"],
 
-      profesional:
-      FactorConfianza.inicial(),
+        resumen: "Activo inicial",
 
-        fortalezas:
-        [
-          "Producción definida"
-        ],
+        responsable: "Sistema",
 
-        pendientes:
-        [
-          "Documentación",
-          "Verificación"
-        ],
-
-        resumen:
-        "Activo inicial",
-
-        responsable:
-      "Sistema",
-
-        fechaEvaluacion:
-        DateTime.now(),
-
+        fechaEvaluacion: DateTime.now(),
       ),
 
+      madurez: MadurezActivo(
+        porcentaje: 30,
 
+        faltantes: ["Permisos", "Evidencias"],
 
-      madurez:
-MadurezActivo(
+        etapa: "inicial",
 
-  porcentaje: 30,
+        nivelTecnologico: "bajo",
 
-  faltantes:
-  [
-    "Permisos",
-    "Evidencias"
-  ],
+        preparacionInversion: "inicial",
+      ),
 
-  etapa: "inicial",
-
-  nivelTecnologico: "bajo",
-
-  preparacionInversion: "inicial",
-
-),
-
-
-
-      participantes:
-      [],
+      participantes: [],
 
       propietarioId: 'usuario_test_001',
 
-creadorId: 'usuario_test_001',
+      creadorId: 'usuario_test_001',
 
-publicadorId: 'usuario_test_001',
+      publicadorId: 'usuario_test_001',
 
-tipoRelacionPropietario:
-'propietario',
+      tipoRelacionPropietario: 'propietario',
 
-estadoPublicacion:
-'borrador',
+      estadoPublicacion: 'borrador',
 
-visible:
-false,
+      visible: false,
 
-versionDatos:
-ActivoAgroV2.modeloVersion,
+      versionDatos: ActivoAgroV2.modeloVersion,
 
-estado:
-EstadoActivo.borrador,
+      estado: EstadoActivo.borrador,
 
+      historial: [],
 
+      hashActivo: "hash_test_001",
 
-      historial:
-      [],
+      fechaCreacion: DateTime.now(),
 
-
-
-      hashActivo:
-      "hash_test_001",
-
-
-
-      fechaCreacion:
-      DateTime.now(),
-
-
-
-      ultimaActualizacion:
-      DateTime.now(),
-
+      ultimaActualizacion: DateTime.now(),
     );
-
   }
-
 }
