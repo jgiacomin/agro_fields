@@ -476,3 +476,425 @@ La arquitectura IA & Machine Learning V8 convierte Agro Fields en una plataforma
 - Incrementar rentabilidad.
 
 La inteligencia artificial será una capa transversal que potenciará todo el ecosistema Agro Fields.
+---
+
+# 20. IA sobre el Digital Twin
+
+La Inteligencia Artificial utilizará el Digital Twin como una de las principales fuentes de contexto histórico y operativo del Activo Agro.
+
+El Digital Twin podrá aportar:
+
+- estado actual del activo;
+- evolución histórica;
+- producción;
+- capacidad productiva;
+- infraestructura;
+- tecnología;
+- inversiones;
+- economía;
+- evidencias;
+- indicadores;
+- eventos;
+- información IoT;
+- información geoespacial.
+
+Esto permitirá que los modelos analicen no solamente datos aislados, sino la evolución completa del activo.
+
+Flujo:
+
+Activo Agro V2
+      ↓
+Digital Twin
+      ↓
+Historial + Estado actual
+      ↓
+Feature Engineering
+      ↓
+Machine Learning / IA
+      ↓
+Predicción / Riesgo / Recomendación
+
+---
+
+# 21. Inteligencia sobre Inversiones
+
+La IA podrá analizar las inversiones realizadas sobre cada activo.
+
+Podrá relacionar:
+
+- inversión;
+- infraestructura incorporada;
+- tecnología incorporada;
+- capacidad productiva;
+- producción posterior;
+- costos;
+- ingresos;
+- rentabilidad;
+- valorización.
+
+Ejemplo:
+
+```text
+Inversión tecnológica
+        ↓
+Cambio en infraestructura
+        ↓
+Cambio en capacidad productiva
+        ↓
+Producción observada
+        ↓
+Resultado económico
+        ↓
+Evaluación del impacto
+22. Recomendaciones de Inversión
+
+La IA podrá analizar el estado del activo y sugerir posibles áreas de inversión.
+
+Ejemplos:
+
+infraestructura;
+maquinaria;
+tecnología;
+sensores;
+riego;
+almacenamiento;
+conectividad;
+automatización.
+
+Una recomendación deberá considerar:
+
+información disponible;
+historial;
+capacidad productiva;
+situación económica;
+riesgos;
+evidencia disponible;
+nivel de confianza.
+
+La IA no ejecuta automáticamente una inversión.
+
+Su función es asistir el análisis y presentar alternativas.
+
+23. Predicción de Capacidad Productiva
+
+Los modelos podrán estimar cómo determinados cambios podrían afectar la capacidad productiva.
+
+Ejemplo:
+
+Estado actual
+      ↓
+Simulación de inversión
+      ↓
+Nueva infraestructura
+      ↓
+Nueva capacidad estimada
+      ↓
+Producción proyectada
+      ↓
+Resultado económico estimado
+
+Esta capacidad permitirá utilizar el Digital Twin como base para simulaciones productivas.
+
+24. IA y Calidad de Datos
+
+La IA también podrá colaborar con la gobernanza y calidad de datos.
+
+Podrá detectar:
+
+datos incompletos;
+inconsistencias;
+valores atípicos;
+duplicaciones;
+cambios inesperados;
+información posiblemente desactualizada.
+
+Los resultados deberán diferenciarse claramente entre:
+
+dato original;
+dato calculado;
+predicción;
+recomendación;
+alerta.
+
+La IA nunca debe sobrescribir silenciosamente el dato original.
+
+25. IA y Confianza del Activo
+
+Los modelos podrán utilizar los indicadores de confianza como contexto para sus análisis.
+
+Por ejemplo:
+
+Dato
+ ↓
+Fuente
+ ↓
+Evidencia
+ ↓
+Nivel de confianza
+ ↓
+Modelo IA
+ ↓
+Resultado
+
+Una predicción basada en información incompleta o de baja confianza deberá reflejar dicha condición.
+
+La confianza del dato debe ser considerada como parte del contexto del modelo.
+
+26. Trazabilidad de Predicciones
+
+Toda predicción o recomendación relevante deberá poder registrar:
+
+modelo utilizado;
+versión del modelo;
+fecha;
+datos utilizados;
+variables principales;
+resultado;
+nivel de confianza;
+usuario o proceso que solicitó el análisis.
+
+Esto permitirá reconstruir cómo se obtuvo un resultado.
+
+La predicción debe ser auditable.
+
+27. Separación entre Datos y Predicciones
+
+La arquitectura debe mantener separados:
+
+DATOS ORIGINALES
+       ↓
+DATOS PROCESADOS
+       ↓
+FEATURES
+       ↓
+PREDICCIÓN
+       ↓
+RECOMENDACIÓN
+
+Una predicción nunca debe reemplazar el dato original.
+
+Los resultados generados por IA deben identificarse como información derivada.
+
+28. Evaluación de Modelos
+
+Cada modelo deberá poder ser evaluado mediante métricas apropiadas.
+
+Ejemplos:
+
+precisión;
+error;
+recall;
+F1;
+MAE;
+RMSE;
+rendimiento productivo;
+tasa de falsas alertas.
+
+Las métricas dependerán del tipo de modelo y caso de uso.
+
+Los modelos que pierdan rendimiento deberán poder ser detectados y revisados.
+
+29. Versionado de Modelos
+
+Cada modelo deberá mantener:
+
+identificador;
+versión;
+fecha de creación;
+fecha de publicación;
+métricas;
+datos de entrenamiento;
+estado;
+responsable;
+historial de modificaciones.
+
+Una nueva versión del modelo no debe eliminar la trazabilidad de versiones anteriores.
+
+Esto permite reproducir resultados históricos.
+
+30. IA Predictiva e IA Generativa
+
+Agro Fields podrá utilizar diferentes tipos de inteligencia artificial.
+
+IA Predictiva
+
+Orientada a:
+
+producción;
+riesgos;
+precios;
+demanda;
+rendimiento;
+mantenimiento;
+valorización.
+IA Generativa
+
+Orientada a:
+
+explicación de indicadores;
+generación de informes;
+asistencia al usuario;
+resumen de información;
+interacción conversacional;
+interpretación de resultados.
+
+Ambas capas deberán utilizar información proveniente de fuentes controladas.
+
+31. Asistente Agro AI y Activo Agro
+
+El futuro Asistente Agro AI podrá consultar el contexto del Activo Agro y su Digital Twin.
+
+Ejemplo:
+
+Usuario:
+
+"¿Cómo evolucionó este activo durante los últimos años?"
+
+El sistema podrá analizar:
+
+producción;
+inversiones;
+infraestructura;
+tecnología;
+economía;
+evidencias;
+eventos;
+indicadores.
+
+Y generar una explicación basada en información registrada.
+
+Las respuestas deberán distinguir entre:
+
+información registrada;
+cálculo;
+predicción;
+recomendación.
+32. IA para Inversores
+
+La IA podrá generar análisis sobre oportunidades de inversión.
+
+Podrá evaluar:
+
+capacidad productiva;
+evolución histórica;
+infraestructura;
+tecnología;
+inversiones;
+economía;
+riesgos;
+nivel de confianza;
+proyecciones.
+
+El objetivo es facilitar el análisis sin reemplazar la evaluación financiera o profesional.
+
+33. IA para Productores
+
+La IA podrá ayudar al productor mediante:
+
+alertas;
+análisis productivos;
+recomendaciones;
+predicciones;
+comparación histórica;
+detección de anomalías;
+planificación.
+
+La información deberá presentarse de manera comprensible y accionable.
+
+34. Gobernanza de Inteligencia Artificial
+
+La utilización de IA deberá respetar los principios de:
+
+trazabilidad;
+explicabilidad;
+seguridad;
+control de acceso;
+calidad de datos;
+supervisión humana;
+versionado;
+auditoría.
+
+Las decisiones críticas no deberán depender exclusivamente de una predicción automática.
+
+35. Arquitectura integrada de Inteligencia
+
+La arquitectura completa queda conceptualmente:
+
+                         ACTIVO AGRO V2
+                                |
+                                ↓
+                         DIGITAL TWIN
+                                |
+        ------------------------------------------------
+        |              |             |                |
+    Producción      Economía    Infraestructura   Tecnología
+        |              |             |                |
+        ------------------------------------------------
+                                |
+                    Documentación / Evidencias
+                                |
+                         Gobernanza / Calidad
+                                |
+                         Historial / Auditoría
+                                |
+                         Datos IoT / GIS
+                                |
+                         DATA PLATFORM
+                                |
+                         FEATURE ENGINEERING
+                                |
+                    MACHINE LEARNING / IA
+                                |
+             --------------------------------
+             |              |               |
+        Predicciones     Anomalías     Simulaciones
+             |              |               |
+             --------------------------------
+                                |
+                       RECOMENDACIONES
+                                |
+                    Productores / Inversores
+36. Principio de Supervisión Humana
+
+La Inteligencia Artificial debe funcionar como sistema de asistencia y análisis.
+
+Las decisiones que impliquen consecuencias:
+
+económicas;
+legales;
+productivas críticas;
+contractuales;
+financieras;
+
+deberán poder ser revisadas por usuarios autorizados y profesionales correspondientes.
+
+La IA recomienda.
+
+El usuario responsable decide.
+
+37. Estado Actual
+
+La arquitectura de Inteligencia Artificial y Machine Learning constituye una capa futura y transversal del ecosistema Agro Fields V8.
+
+Su evolución se apoya en:
+
+Activo Agro V2;
+Digital Twin;
+producción;
+economía;
+inversiones;
+infraestructura;
+tecnología;
+documentación;
+evidencias;
+gobernanza;
+calidad de datos;
+auditoría;
+IoT;
+información geoespacial.
+
+El objetivo es construir una inteligencia agropecuaria trazable, explicable y basada en información histórica confiable.
+
+La arquitectura no modifica el alcance actual del MVP.
+
+Las capacidades avanzadas de IA serán incorporadas progresivamente según la evolución tecnológica y de negocio del ecosistema.
