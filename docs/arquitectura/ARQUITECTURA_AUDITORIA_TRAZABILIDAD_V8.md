@@ -136,7 +136,151 @@ Activo Agro:
 Permite conocer toda la evolución del activo.
 
 ---
+# 7.1 Legajo Digital Histórico del Activo Agro
 
+El Legajo Digital Histórico constituye la memoria estructurada del Activo Agro.
+
+No representa únicamente el estado actual del activo.
+
+Representa su evolución a través del tiempo.
+
+El legajo permite reconstruir:
+
+- qué era el activo;
+- quiénes participaron;
+- dónde estuvo ubicado;
+- qué actividades productivas desarrolló;
+- qué inversiones recibió;
+- qué modificaciones tuvo;
+- qué documentación existió;
+- qué profesionales intervinieron;
+- qué verificaciones fueron realizadas;
+- qué normativa le fue aplicable;
+- qué cambios normativos afectaron al activo;
+- qué evidencias respaldan cada acontecimiento.
+
+## Principio
+
+El valor informativo del activo aumenta a medida que acumula
+información histórica estructurada, evidencias y verificaciones.
+
+Agro Fields no determina automáticamente el valor económico del activo.
+
+Construye la memoria digital que permite analizar su evolución.
+
+## Línea temporal
+
+El legajo podrá reconstruir períodos históricos:
+
+Año / período
+↓
+Estado del activo
+↓
+Producción
+↓
+Participantes
+↓
+Documentación
+↓
+Intervenciones profesionales
+↓
+Eventos
+↓
+Cambios normativos
+↓
+Evidencias
+↓
+Verificaciones
+
+## Evolución de personas y organizaciones
+
+Cuando corresponda y respetando la privacidad y normativa aplicable,
+las relaciones del activo podrán mantener historial de:
+
+- propietarios;
+- productores;
+- administradores;
+- profesionales;
+- organizaciones;
+- participantes.
+
+La finalidad no es crear un historial personal ajeno al activo,
+sino conservar la trazabilidad de las relaciones relevantes del activo.
+
+## Evolución normativa
+
+El legajo deberá permitir asociar:
+
+- normativa aplicable;
+- jurisdicción;
+- fecha de vigencia;
+- cambios normativos;
+- requisitos;
+- permisos;
+- restricciones;
+- impacto potencial sobre el activo;
+- acciones de adecuación realizadas.
+
+El sistema deberá diferenciar:
+
+- normativa vigente;
+- normativa histórica;
+- normativa modificada;
+- normativa derogada;
+- requisitos pendientes de adecuación.
+
+## Evolución tecnológica
+
+El activo también podrá registrar:
+
+- tecnologías incorporadas;
+- mejoras productivas;
+- infraestructura;
+- sensores;
+- sistemas de gestión;
+- automatizaciones;
+- actualizaciones tecnológicas.
+
+Esto permitirá analizar cómo evolucionó la capacidad productiva
+y tecnológica del activo.
+
+## Valor histórico del activo
+
+La acumulación de información verificable puede convertirse en un
+componente diferencial del activo dentro del ecosistema.
+
+Un activo con:
+
+- historial extenso;
+- documentación respaldada;
+- evidencias;
+- verificaciones;
+- intervenciones profesionales;
+- trazabilidad productiva;
+- trazabilidad económica;
+- cumplimiento normativo;
+- evolución tecnológica;
+
+posee una mayor capacidad informativa para ser analizado.
+
+Agro Fields no convierte automáticamente esta información en una
+valuación económica.
+
+La utiliza para construir una base objetiva para análisis posteriores.
+
+## Principio fundamental
+
+El estado actual muestra dónde está el activo.
+
+El historial muestra cómo llegó hasta allí.
+
+La trazabilidad permite demostrarlo.
+
+La auditoría permite reconstruir quién y cuándo registró cada cambio.
+
+La evidencia permite respaldarlo.
+
+La confianza surge de la combinación de estas capas.
 # 8. Auditoría de usuarios
 
 Información registrada:
