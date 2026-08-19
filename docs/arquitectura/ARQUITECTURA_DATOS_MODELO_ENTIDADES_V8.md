@@ -390,6 +390,17 @@ Cada evolución relevante debe permitir reconstruir:
 - motivo del cambio;
 - evidencia asociada.
 ---
+# 18.1 Legajo Digital Histórico del Activo Agro
+
+Activo Agro V2
+        ↓
+Legajo Digital Histórico
+        ↓
+Datos + Evidencias + Documentos + Eventos + Auditoría
+        ↓
+Evolución temporal
+        ↓
+Confianza + Madurez + Trazabilidad
 
 # 19. Preparación para inteligencia artificial
 
