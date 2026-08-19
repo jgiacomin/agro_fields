@@ -3210,3 +3210,94 @@ Resultado final:
 
 ```text
 16 issues found.
+# BITÁCORA — AGRO_FIELDS
+
+## 2026-08-19 — Jornada: Consolidación de Confianza y Madurez de Activos
+
+### Objetivo de la jornada
+
+Ampliar y consolidar el sistema de evaluación de confianza y madurez de `ActivoAgroV2`, manteniendo el proyecto funcionando y dejando los cambios versionados en Git.
+
+---
+
+### Trabajo realizado
+
+#### 1. Modelo `ConfianzaActivo`
+
+Se amplió el modelo para contemplar información adicional relacionada con la confianza del activo:
+
+- Identidad
+- Documentación
+- Evidencias
+- Producción
+- Infraestructura
+- Tecnología
+- Inversión
+- Participantes
+- Gobernanza
+- Control y evaluación
+
+También se incorporaron:
+
+- `copyWith()`
+- `fromMap()`
+- `toMap()`
+- helpers para conversión compatible de:
+  - `int`
+  - `double`
+  - `DateTime`
+  - `Timestamp`
+
+#### 2. Servicio `ConfianzaActivoService`
+
+Se amplió el servicio para manejar dos conceptos:
+
+**Confianza**
+- cálculo del nivel general
+- factores documental, productivo, económico, legal y profesional
+- fortalezas
+- pendientes
+- resumen textual
+
+**Madurez**
+- porcentaje de madurez
+- campos faltantes
+- etapa:
+  - inicial
+  - desarrollo
+  - maduro
+- nivel tecnológico:
+  - bajo
+  - medio
+  - alto
+- preparación para inversión:
+  - inicial
+  - media
+  - avanzada
+
+#### 3. Conversión Campo → Activo
+
+Se incorporaron y ajustaron cambios relacionados con la transformación de un campo en `ActivoAgroV2`.
+
+Se agregó el test:
+
+`test/campo_to_activo_test.dart`
+
+#### 4. Pantallas y servicios
+
+Se ajustaron:
+
+- `crear_activo_agro_screen.dart`
+- `detalle_activo_agro_screen.dart`
+- `activo_agro_service_v2.dart`
+- `campo_to_activo_service.dart`
+
+#### 5. Tests
+
+Se actualizaron los tests existentes y se agregó el test específico para Campo → Activo.
+
+Validación ejecutada:
+
+```text
+flutter test
+00:01 +2: All tests passed!
