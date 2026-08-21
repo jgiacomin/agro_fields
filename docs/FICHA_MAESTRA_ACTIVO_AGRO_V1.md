@@ -1104,3 +1104,478 @@ Una vez aprobado este documento:
 🟡 Pendiente de implementación MVP.
 
 🔵 Valorización y análisis avanzado: etapas posteriores.
+
+---
+
+# 35.1 Expediente Digital Permanente
+
+La Ficha Maestra forma parte del Expediente Digital Permanente del Activo Agro.
+
+El Expediente Digital constituye la memoria estructurada del activo a través del tiempo.
+
+No debe confundirse:
+
+Publicación ≠ Expediente
+
+La publicación representa una situación comercial determinada.
+
+El Expediente conserva la información histórica y evolutiva del activo aunque este deje de estar publicado.
+
+El Activo Agro podrá encontrarse en diferentes estados comerciales sin perder su identidad ni su expediente.
+
+Estados conceptuales:
+
+- borrador;
+- activo;
+- publicado;
+- pausado;
+- no disponible;
+- archivado.
+
+El archivado no implica eliminación del expediente.
+
+---
+
+# 35.2 Ciclo de vida del Expediente
+
+El ciclo conceptual será:
+
+CREACIÓN
+
+↓
+
+BORRADOR
+
+↓
+
+ACTIVO
+
+↓
+
+PUBLICACIÓN
+
+↓
+
+PAUSA / NO DISPONIBLE
+
+↓
+
+ARCHIVADO
+
+↓
+
+REACTIVACIÓN
+
+↓
+
+ACTUALIZACIÓN
+
+↓
+
+REEVALUACIÓN
+
+↓
+
+NUEVA PUBLICACIÓN
+
+Cuando un activo vuelva a estar disponible, Agro Fields deberá poder recuperar su expediente existente.
+
+No deberá ser necesario crear un nuevo activo únicamente porque haya terminado una publicación anterior.
+
+Esto permite conservar:
+
+- identidad;
+- historial;
+- documentación;
+- evidencias;
+- inversiones;
+- mejoras;
+- intervenciones;
+- evaluaciones;
+- publicaciones anteriores;
+- cambios de estado.
+
+---
+
+# 35.3 Actualización y vigencia de la información
+
+La Ficha Maestra representa un activo vivo.
+
+Los datos pueden cambiar con el tiempo.
+
+El sistema deberá permitir actualizar, entre otros:
+
+- infraestructura;
+- tecnología;
+- inversiones;
+- producción;
+- capacidad productiva;
+- superficie;
+- información económica;
+- documentación;
+- permisos;
+- información de suelo;
+- información hídrica;
+- participantes;
+- otros datos relevantes.
+
+Una actualización no deberá eliminar silenciosamente el dato anterior cuando este posea valor histórico.
+
+Conceptualmente:
+
+DATO ANTERIOR
+
+↓
+
+ACTUALIZACIÓN
+
+↓
+
+QUIÉN
+
+↓
+
+CUÁNDO
+
+↓
+
+QUÉ CAMBIÓ
+
+↓
+
+FUENTE / EVIDENCIA
+
+↓
+
+NUEVO ESTADO
+
+Cada dato relevante podrá asociarse con:
+
+- fecha de incorporación;
+- fecha de actualización;
+- fuente;
+- evidencia;
+- responsable;
+- estado de verificación;
+- vigencia.
+
+Estados conceptuales de vigencia:
+
+- vigente / verificado;
+- vigente / informado;
+- requiere actualización;
+- desactualizado;
+- sin información disponible.
+
+Regla:
+
+> Dato desconocido no significa dato cero.
+
+---
+
+# 35.4 Modelo de Suelo del Activo Agro
+
+El suelo constituye un componente estructural de la Ficha Maestra y del Expediente Digital.
+
+No deberá representarse únicamente como un texto descriptivo.
+
+El modelo deberá permitir registrar información técnica, territorial y productiva del suelo.
+
+## Contexto
+
+Podrá registrar:
+
+- país;
+- región;
+- ubicación;
+- superficie asociada;
+- fecha del dato.
+
+## Clasificación original
+
+Deberá conservarse:
+
+- sistema de clasificación;
+- clase o categoría;
+- subclase, cuando corresponda;
+- unidad o tipo;
+- descripción;
+- fuente;
+- referencia utilizada.
+
+Agro Fields no deberá imponer la clasificación de un único país como clasificación universal.
+
+La clasificación original del país deberá conservarse.
+
+Cuando exista una correspondencia técnicamente válida, podrá asociarse una referencia internacional.
+
+Ejemplo:
+
+PAÍS
+
+↓
+
+SISTEMA LOCAL / NACIONAL
+
+↓
+
+CLASIFICACIÓN ORIGINAL
+
+↓
+
+REFERENCIA INTERNACIONAL
+
+↓
+
+APTITUD PRODUCTIVA
+
+Como referencia internacional podrá contemplarse WRB (World Reference Base), sin reemplazar la clasificación original.
+
+## Propiedades del suelo
+
+Según disponibilidad, podrán registrarse:
+
+- textura;
+- profundidad;
+- drenaje;
+- pH;
+- salinidad;
+- materia orgánica;
+- fertilidad;
+- nutrientes;
+- pedregosidad;
+- retención de agua;
+- erosión;
+- limitaciones;
+- otras propiedades relevantes.
+
+## Aptitud por cultivo
+
+La Ficha Maestra deberá poder relacionar información del suelo con diferentes cultivos.
+
+Conceptualmente:
+
+SUELO
+
+↓
+
+CULTIVO
+
+↓
+
+APTITUD
+
+↓
+
+LIMITACIONES
+
+↓
+
+FUENTE / EVIDENCIA
+
+Ejemplo conceptual:
+
+- Soja → Alta
+- Maíz → Alta
+- Trigo → Media
+- Vid → Baja
+
+Estos valores no deberán ser inventados por la interfaz.
+
+Cuando una aptitud sea informada o calculada por Agro Fields, deberá existir una metodología, fuente y/o evidencia que permita explicar su origen.
+
+---
+
+# 35.5 Suelo y evolución histórica
+
+La información de suelo también deberá formar parte de la trazabilidad del activo.
+
+Una actualización de información de suelo podrá registrar:
+
+- dato anterior;
+- nuevo dato;
+- fecha;
+- fuente;
+- responsable;
+- evidencia;
+- motivo de actualización.
+
+Esto permitirá conservar la evolución de la información sin perder registros anteriores.
+
+---
+
+# 35.6 Expediente como servicio
+
+El Expediente Digital Permanente constituye una capacidad independiente de la publicación comercial.
+
+Conceptualmente:
+
+ACTIVO AGRO
+
+│
+
+├── PUBLICACIÓN
+
+│
+
+└── EXPEDIENTE DIGITAL
+
+      ├── Datos
+
+      ├── Documentos
+
+      ├── Evidencias
+
+      ├── Historial
+
+      ├── Actualizaciones
+
+      ├── Evaluaciones
+
+      ├── Confianza
+
+      ├── Madurez
+
+      └── Auditoría
+
+El usuario podrá mantener y actualizar el expediente incluso cuando el activo no se encuentre publicado.
+
+Esta capacidad podrá constituir en el futuro un servicio de mantenimiento y gestión del Expediente Digital.
+
+Las condiciones comerciales y el modelo de suscripción serán definidos posteriormente.
+
+---
+
+# 35.7 Integración con Confianza y Madurez
+
+La evolución del Expediente Digital deberá relacionarse con los mecanismos existentes de Confianza, Madurez e Historial.
+
+Conceptualmente:
+
+DATOS
+
+↓
+
+EVIDENCIAS
+
+↓
+
+HISTORIAL
+
+↓
+
+TRAZABILIDAD
+
+↓
+
+CONFIANZA
+
+↓
+
+MADUREZ
+
+Una actualización relevante podrá generar un nuevo evento histórico.
+
+Cuando corresponda, una modificación de información podrá requerir una nueva evaluación de Confianza y/o Madurez.
+
+La Ficha Maestra no deberá calcular indicadores directamente.
+
+Los cálculos deberán permanecer centralizados en los servicios correspondientes.
+
+---
+
+# 35.8 Internacionalización
+
+La Ficha Maestra deberá formar parte de una única aplicación internacional.
+
+Agro Fields no desarrollará una Ficha Maestra independiente para cada idioma.
+
+Principio:
+
+AGRO FIELDS
+
+        │
+
+   ┌────┴────┐
+
+   │         │
+
+Español   English
+
+   │         │
+
+   └── MISMO SISTEMA ──┘
+
+La internacionalización deberá contemplar:
+
+- textos;
+- estados;
+- mensajes;
+- terminología técnica;
+- fechas;
+- números;
+- monedas;
+- unidades;
+- clasificación de suelos;
+- documentación.
+
+La terminología deberá gestionarse mediante una capa centralizada de internacionalización.
+
+Los textos críticos no deberán quedar dispersos dentro del código.
+
+La información técnica original del activo no deberá modificarse únicamente por cambiar el idioma de visualización.
+
+---
+
+# 35.9 Principios de la Ficha Maestra actualizada
+
+La evolución de la Ficha Maestra deberá mantener los siguientes principios:
+
+- El Activo Agro tiene identidad propia.
+- La publicación no es el expediente.
+- El expediente permanece aunque el activo deje de publicarse.
+- Archivar no significa eliminar.
+- Reactivar no significa crear un activo duplicado.
+- Los datos pueden evolucionar.
+- Las actualizaciones deben ser trazables.
+- La información histórica debe conservarse.
+- Dato desconocido no significa cero.
+- La fuente forma parte del valor del dato.
+- La evidencia forma parte del valor del dato.
+- La clasificación local del suelo debe conservarse.
+- La referencia internacional complementa y no reemplaza la clasificación original.
+- La aptitud por cultivo debe ser explicable.
+- Confianza y Madurez deben derivarse de reglas de negocio centralizadas.
+- La Ficha Maestra no debe duplicar la lógica de los servicios.
+- El mismo sistema debe funcionar en español e inglés.
+
+---
+
+# 35.10 Estado de esta evolución
+
+La Ficha Maestra incorpora conceptualmente:
+
+- Expediente Digital Permanente;
+- ciclo de vida;
+- archivado;
+- reactivación;
+- actualización de información;
+- vigencia de datos;
+- modelo de suelo;
+- aptitud por cultivo;
+- clasificación local e internacional;
+- integración con historial;
+- integración con Confianza;
+- integración con Madurez;
+- internacionalización.
+
+Pendiente de etapas posteriores:
+
+- matriz Ficha Maestra vs. ActivoAgroV2;
+- definición definitiva del modelo de datos;
+- revisión de Firestore;
+- implementación técnica;
+- pruebas;
+- actualización de arquitectura relacionada;
+- actualización de trazabilidad;
+- actualización de auditoría.
