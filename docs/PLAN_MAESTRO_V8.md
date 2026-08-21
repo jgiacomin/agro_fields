@@ -1478,3 +1478,400 @@ Participantes
 Profesionales
 Normativa
 futuras integraciones
+
+🗂️ NUEVA CAPACIDAD — EXPEDIENTE DIGITAL PERMANENTE DEL ACTIVO AGRO
+Objetivo
+
+Agro Fields no debe considerar al Activo Agro únicamente como una publicación comercial.
+
+El sistema debe mantener un Expediente Digital Permanente del Activo Agro, capaz de conservar, organizar, actualizar y relacionar la información del activo a través del tiempo.
+
+El expediente constituye la memoria digital del activo.
+
+La publicación comercial es solamente una representación temporal de esa información.
+
+Principio fundamental
+
+El Activo Agro puede dejar de estar publicado sin dejar de existir dentro de Agro Fields.
+
+Por lo tanto:
+
+Publicación ≠ Expediente
+
+Un activo puede estar:
+
+publicado;
+pausado;
+no disponible;
+archivado;
+
+y su expediente continúa existiendo de acuerdo con las reglas de conservación y acceso definidas por el sistema.
+
+Ciclo de vida del expediente
+
+El expediente debe contemplar conceptualmente:
+
+CREACIÓN
+   ↓
+BORRADOR
+   ↓
+ACTIVO
+   ↓
+PUBLICACIÓN
+   ↓
+PAUSA / NO DISPONIBLE
+   ↓
+ARCHIVADO
+   ↓
+REACTIVACIÓN
+   ↓
+ACTUALIZACIÓN
+   ↓
+REEVALUACIÓN
+   ↓
+NUEVA PUBLICACIÓN
+
+El archivado no implica eliminación del expediente.
+
+La reactivación debe recuperar el expediente histórico existente y permitir actualizar la información que haya perdido vigencia.
+
+📁 Contenido del Expediente Digital
+
+El expediente puede contener y relacionar:
+
+Identidad del activo.
+Propiedad y titularidad.
+Ubicación.
+Superficie.
+Características físicas.
+Suelo.
+Agua.
+Clima.
+Producción.
+Capacidad productiva.
+Infraestructura.
+Tecnología.
+Inversiones.
+Información económica.
+Documentación.
+Evidencias.
+Permisos y cumplimiento.
+Participantes.
+Historial.
+Evaluaciones.
+Confianza.
+Madurez.
+Auditoría.
+Publicaciones anteriores.
+Estados del activo.
+
+El expediente debe permitir que la información evolucione sin perder los registros históricos anteriores.
+
+🔄 Actualización y evolución del activo
+
+El Activo Agro debe ser considerado un activo digital vivo y evolutivo.
+
+El usuario podrá actualizar, cuando corresponda:
+
+tecnología incorporada;
+infraestructura;
+inversiones realizadas;
+producción;
+capacidad productiva;
+superficie;
+información económica;
+documentación;
+permisos;
+información de suelo;
+información hídrica;
+participantes;
+otros datos relevantes.
+
+Cada actualización deberá conservar la trazabilidad correspondiente.
+
+Conceptualmente:
+
+DATO ANTERIOR
+      ↓
+ACTUALIZACIÓN
+      ↓
+QUIÉN
+      ↓
+CUÁNDO
+      ↓
+QUÉ CAMBIÓ
+      ↓
+FUENTE / EVIDENCIA
+      ↓
+NUEVO ESTADO
+
+El objetivo no es reemplazar silenciosamente la historia, sino permitir que el sistema conozca cómo evolucionó el activo.
+
+🕒 Vigencia de la información
+
+La existencia de un dato no significa necesariamente que continúe vigente.
+
+Cuando corresponda, la información deberá poder asociarse con:
+
+fecha de incorporación;
+fecha de actualización;
+fuente;
+evidencia;
+estado de verificación;
+vigencia;
+responsable de la actualización.
+
+El sistema deberá poder distinguir conceptualmente entre:
+
+🟢 Vigente / verificado
+
+🟡 Vigente / informado
+
+🟠 Requiere actualización
+
+🔴 Desactualizado
+
+⚪ Sin información disponible
+
+Dato desconocido no significa dato cero.
+
+🔁 Reactivación de un activo
+
+Cuando un activo archivado vuelva a estar disponible, Agro Fields no deberá requerir necesariamente la creación de un nuevo activo.
+
+El sistema deberá permitir:
+
+EXPEDIENTE EXISTENTE
+
+↓
+
+REVISIÓN DE VIGENCIA
+
+↓
+
+ACTUALIZACIÓN DE DATOS
+
+↓
+
+REEVALUACIÓN
+
+↓
+
+NUEVA PUBLICACIÓN
+
+Esto permite conservar la identidad histórica del activo y evitar duplicaciones innecesarias.
+
+🌱 MODELO DE SUELO DEL ACTIVO AGRO
+
+El suelo forma parte estructural del Expediente Digital del Activo.
+
+Agro Fields debe representar el suelo como información productiva y territorial, no solamente como una descripción.
+
+El modelo deberá poder contemplar:
+
+Contexto
+País.
+Región.
+Ubicación.
+Superficie asociada.
+Fecha del dato.
+Clasificación original
+Sistema de clasificación.
+Clase / categoría.
+Subclase, cuando exista.
+Unidad o tipo correspondiente.
+Descripción.
+Fuente.
+Referencia internacional
+
+Cuando exista una correspondencia técnicamente válida, podrá incorporarse una referencia internacional como WRB (World Reference Base).
+
+La referencia internacional no deberá reemplazar ni borrar la clasificación original.
+
+Propiedades
+
+Según disponibilidad:
+
+textura;
+profundidad;
+drenaje;
+pH;
+salinidad;
+materia orgánica;
+fertilidad;
+nutrientes;
+pedregosidad;
+retención de agua;
+erosión;
+limitaciones;
+otras propiedades relevantes.
+Aptitud por cultivo
+
+El sistema deberá poder relacionar el suelo con diferentes cultivos:
+
+SUELO
+  ↓
+CULTIVO
+  ↓
+APTITUD
+  ↓
+LIMITACIONES
+  ↓
+FUENTE / EVIDENCIA
+
+Ejemplo conceptual:
+
+Soja    → Alta
+Maíz    → Alta
+Trigo   → Media
+Vid     → Baja
+
+Estos valores no deberán ser inventados por la interfaz.
+
+Cuando la aptitud sea calculada o informada por Agro Fields, deberá existir una metodología y/o evidencia que permita explicar su origen.
+
+🌎 Modelo internacional de suelo
+
+Agro Fields no deberá imponer la clasificación de un único país como clasificación universal.
+
+El sistema debe poder conservar:
+
+PAÍS
+   ↓
+SISTEMA LOCAL / NACIONAL
+   ↓
+CLASIFICACIÓN ORIGINAL
+   ↓
+REFERENCIA INTERNACIONAL
+   ↓
+APTITUD PRODUCTIVA AGRO FIELDS
+
+Esto permitirá que el modelo pueda evolucionar internacionalmente sin perder la información técnica original de cada país.
+
+📊 Datos como valor del expediente
+
+El valor del Expediente Digital no estará únicamente en almacenar información.
+
+Su valor aumenta cuando la información se encuentra:
+
+estructurada;
+relacionada;
+actualizada;
+fechada;
+respaldada;
+trazable;
+verificable;
+histórica.
+
+Por lo tanto:
+
+El valor del expediente aumenta con la calidad y continuidad de sus datos.
+
+El historial de evolución del activo puede convertirse en un componente fundamental para comprender su situación actual.
+
+💼 Expediente como servicio
+
+El Expediente Digital Permanente podrá constituir un servicio independiente de la publicación comercial.
+
+Conceptualmente:
+
+ACTIVO AGRO
+     │
+     ├── PUBLICACIÓN
+     │
+     └── EXPEDIENTE DIGITAL
+             │
+             ├── Datos
+             ├── Documentos
+             ├── Evidencias
+             ├── Historial
+             ├── Actualizaciones
+             ├── Evaluaciones
+             └── Auditoría
+
+El usuario podrá mantener su expediente actualizado incluso cuando el activo no esté publicado.
+
+Esto permite contemplar en el futuro un modelo de suscripción por mantenimiento y gestión del Expediente Digital.
+
+Importante
+
+La suscripción y sus condiciones comerciales serán definidas en una etapa posterior.
+
+Este documento establece únicamente la capacidad arquitectónica y estratégica.
+
+🌐 Internacionalización
+
+El Expediente Digital y el modelo de Suelo deberán formar parte de una única aplicación internacional.
+
+Agro Fields no desarrollará una aplicación independiente para cada idioma.
+
+Principio:
+
+                 AGRO FIELDS
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+       Español                 English
+          │                       │
+          └──── MISMO SISTEMA ────┘
+
+La internacionalización deberá contemplar:
+
+textos;
+estados;
+mensajes;
+campos;
+fechas;
+números;
+monedas;
+unidades;
+terminología técnica;
+clasificación de suelos;
+documentación.
+
+La traducción deberá gestionarse mediante una capa centralizada de internacionalización, evitando textos críticos dispersos dentro del código.
+
+🔗 Integración con Confianza, Madurez e Historial
+
+El Expediente Digital debe integrarse con los mecanismos existentes de Agro Fields:
+
+DATOS
+  ↓
+EVIDENCIAS
+  ↓
+HISTORIAL
+  ↓
+TRAZABILIDAD
+  ↓
+CONFIANZA
+  ↓
+MADUREZ
+
+Las actualizaciones relevantes podrán generar nuevos eventos históricos y, cuando corresponda, provocar una nueva evaluación de Confianza y/o Madurez.
+
+🔒 Principios de diseño
+El expediente no es una publicación.
+Archivar no significa eliminar.
+La información histórica no debe perderse sin una regla explícita.
+Los datos deben poder actualizarse.
+Las actualizaciones deben ser trazables.
+Dato desconocido no significa cero.
+La fuente y la evidencia son parte del valor del dato.
+La clasificación local del suelo debe conservarse.
+La referencia internacional no debe reemplazar la clasificación original.
+La aptitud por cultivo debe ser explicable y respaldada.
+El mismo sistema debe funcionar en español e inglés.
+No implementar estos conceptos en código hasta cerrar su diseño arquitectónico.
+Estado
+
+Concepto aprobado para arquitectura — V1
+
+Pendiente:
+
+incorporación en modelo de datos;
+revisión de Ficha Maestra;
+actualización de Matriz de Trazabilidad;
+revisión de arquitectura documental;
+revisión de auditoría;
+diseño de internacionalización;
+posterior implementación técnica.
