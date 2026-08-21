@@ -350,13 +350,7 @@ return doc.id;
 
     )
         .toList();
-
-
-  }
-
-
-
-
+}
 
  // =====================================================
 // PUBLICAR ACTIVO
@@ -374,6 +368,28 @@ Future<void> publicarActivo(
     );
   }
 
+  // =====================================================
+  // EVALUAR CONFIANZA Y MADUREZ ANTES DE PUBLICAR
+  // =====================================================
+
+  await evaluarActivo(activoId);
+
+  // Recuperamos el activo nuevamente porque
+  // evaluarActivo actualizó confianza, evaluación
+  // y madurez en Firestore.
+  final activoEvaluado =
+      await obtenerActivoPorId(activoId);
+
+  if (activoEvaluado == null) {
+    throw Exception(
+      'No se pudo recuperar el activo evaluado',
+    );
+  }
+
+  // =====================================================
+  // EVENTO DE HISTORIAL
+  // =====================================================
+
   final evento =
       _crearEventoHistorial(
     tipoEvento:
@@ -381,13 +397,17 @@ Future<void> publicarActivo(
     descripcion:
         'El Activo Agro fue publicado',
     usuarioId:
-        activo.publicadorId,
+        activoEvaluado.publicadorId,
     moduloOrigen:
         'activo',
   );
 
+  // =====================================================
+  // PUBLICAR
+  // =====================================================
+
   final activoActualizado =
-      activo.copyWith(
+      activoEvaluado.copyWith(
     estado:
         EstadoActivo.publicado,
     estadoPublicacion:
@@ -395,7 +415,7 @@ Future<void> publicarActivo(
     visible:
         true,
     historial: [
-      ...activo.historial,
+      ...activoEvaluado.historial,
       evento,
     ],
   );
@@ -407,22 +427,26 @@ Future<void> publicarActivo(
     activoActualizado.toMap(),
   );
 
+  // =====================================================
+  // AUDITORÍA
+  // =====================================================
+
   await _auditService.registrar(
     activoId: activoId,
-    usuarioId: activo.publicadorId,
+    usuarioId:
+        activoEvaluado.publicadorId,
     tipo: AuditType.publicacion,
     modulo: 'activo',
     accion: 'publicar_activo',
     elementoAfectado: activoId,
     estadoAnterior:
-        activo.estadoPublicacion,
+        activoEvaluado.estadoPublicacion,
     estadoNuevo:
         'publicado',
     referencia:
         activoId,
   );
 }
-
 
   // =====================================================
 // PAUSAR ACTIVO
@@ -622,11 +646,10 @@ Future<void> actualizarEvaluacionConfianza(
 
 final confianzaActualizada =
     activo.confianza.copyWith(
-  nivelGeneral:
-      evaluacion.nivelGeneral,
-  ultimaVerificacion:
-      DateTime.now(),
-);
+  nivelGeneral: evaluacion.nivelGeneral,
+  ultimaVerificacion: DateTime.now(),
+  ultimaEvaluacion: evaluacion.fechaEvaluacion,
+ );
 
 // =====================================================
 // CALCULAR MADUREZ

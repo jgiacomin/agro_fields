@@ -1,11 +1,11 @@
-class ModuloProduccion {
+import 'ciclo_productivo_model.dart';
 
+class ModuloProduccion {
   /// Identificador del módulo productivo
   final String? id;
 
   /// Referencia al Activo Agro V2
   final String? activoAgroId;
-
 
   final String dominio;
 
@@ -17,201 +17,106 @@ class ModuloProduccion {
 
   final String? unidad;
 
-  final Map<String,dynamic> datos;
+  final Map<String, dynamic> datos;
 
-
-
+  final double? capacidadActual;
+  final double? capacidadMaxima;
+  final bool activo;
+  final List<CicloProductivo> ciclos;
 
   ModuloProduccion({
+    this.id,
 
-  this.id,
+    this.activoAgroId,
 
-  this.activoAgroId,
+    required this.dominio,
 
-  required this.dominio,
+    required this.actividad,
 
-  required this.actividad,
+    required this.descripcion,
 
-  required this.descripcion,
+    this.superficie,
 
-  this.superficie,
+    this.unidad,
 
-  this.unidad,
+    this.capacidadActual,
 
-  required this.datos,
+    this.capacidadMaxima,
 
-});
+    this.activo = true,
 
+    required this.datos,
 
+    required this.ciclos,
+  });
 
-
-
-
-
-  factory ModuloProduccion.fromMap(
-      Map<String,dynamic> map){
-
-
+  factory ModuloProduccion.fromMap(Map<String, dynamic> map) {
     return ModuloProduccion(
+      id: map['id'],
 
-
-
-          id:
-  map['id'],
-
-  activoAgroId:
-  map['activoAgroId'],
+      activoAgroId: map['activoAgroId'],
 
       // Compatibilidad con versión anterior
+      dominio: map['dominio'] ?? map['tipoProduccion'] ?? '',
 
-      dominio:
+      actividad: map['actividad'] ?? map['tipoProduccion'] ?? '',
 
-      map['dominio']
+      descripcion: map['descripcion'] ?? '',
 
-      ??
+      superficie: map['superficie'] != null
+          ? (map['superficie']).toDouble()
+          : null,
 
-      map['tipoProduccion']
+      unidad: map['unidad'],
 
-      ??
+      capacidadActual: map['capacidadActual'] != null
+          ? (map['capacidadActual'] as num).toDouble()
+          : null,
 
-      '',
+      capacidadMaxima: map['capacidadMaxima'] != null
+          ? (map['capacidadMaxima'] as num).toDouble()
+          : null,
 
+      activo: map['activo'] ?? true,
 
+      datos: Map<String, dynamic>.from(map['datos'] ?? {}),
 
-
-
-      actividad:
-
-      map['actividad']
-
-      ??
-
-      map['tipoProduccion']
-
-      ??
-
-      '',
-
-
-
-
-
-
-      descripcion:
-
-      map['descripcion']
-
-      ??
-
-      '',
-
-
-
-
-
-
-      superficie:
-
-      map['superficie'] != null
-
-      ?
-
-      (map['superficie']).toDouble()
-
-      :
-
-      null,
-
-
-
-
-
-
-      unidad:
-
-      map['unidad'],
-
-
-
-
-
-
-
-      datos:
-
-      Map<String,dynamic>.from(
-
-        map['datos'] ?? {},
-
-      ),
-
-
-
-
+      ciclos: (map['ciclos'] as List<dynamic>? ?? [])
+          .map(
+            (item) => CicloProductivo.fromMap(
+              Map<String, dynamic>.from(item),
+              item['cicloId'] ?? '',
+            ),
+          )
+          .toList(),
     );
-
-
   }
 
-
-
-
-
-
-
-
-  Map<String,dynamic> toMap(){
-
-
+  Map<String, dynamic> toMap() {
     return {
+      'id': id,
 
-      'id':
-      id,
+      'activoAgroId': activoAgroId,
 
-    'activoAgroId':
-     activoAgroId,
+      'dominio': dominio,
 
-      'dominio':
+      'actividad': actividad,
 
-      dominio,
+      'descripcion': descripcion,
 
+      'superficie': superficie,
 
+      'unidad': unidad,
 
-      'actividad':
+      'capacidadActual': capacidadActual,
 
-      actividad,
+      'capacidadMaxima': capacidadMaxima,
 
+      'activo': activo,
 
+      'datos': datos,
 
-      'descripcion':
-
-      descripcion,
-
-
-
-      'superficie':
-
-      superficie,
-
-
-
-      'unidad':
-
-      unidad,
-
-
-
-      'datos':
-
-      datos,
-
-
-
+      'ciclos': ciclos.map((ciclo) => ciclo.toMap()).toList(),
     };
-
-
   }
-
-
-
 }

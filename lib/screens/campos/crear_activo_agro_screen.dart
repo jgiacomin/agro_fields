@@ -170,12 +170,10 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
         producciones: [
           ModuloProduccion(
             actividad: 'agricultura',
-
             dominio: 'agropecuario',
-
             descripcion: 'Producción inicial',
-
             datos: {},
+            ciclos: [],
           ),
         ],
 

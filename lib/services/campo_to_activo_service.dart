@@ -82,6 +82,7 @@ class CampoToActivoService {
 
             'equipamiento': [],
           },
+           ciclos: [],
         ),
       ],
 

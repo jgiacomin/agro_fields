@@ -4,6 +4,8 @@ import 'ubicacion_activo_model.dart';
 import 'modulo_produccion_model.dart';
 import 'madurez_activo_model.dart';
 
+import 'ciclo_productivo_model.dart';
+
 import 'activo_agro_model_v2.dart';
 
 import 'confianza_activo_model.dart';
@@ -75,6 +77,19 @@ class ActivoAgroTestData {
 
             "produccionDiaria": "3500 huevos",
           },
+          ciclos: [
+            CicloProductivo(
+              cicloId: 'ciclo_001',
+              activoAgroId: 'activo_test_001',
+              moduloProduccionId: 'prod_001',
+              fechaInicio: DateTime(2026, 1, 1),
+              fechaFin: null,
+              campania: '2026',
+              produccionObtenida: 105000,
+              unidadProduccion: 'huevos',
+              observaciones: 'Ciclo productivo de prueba',
+            ),
+          ],
         ),
       ],
 
