@@ -1579,3 +1579,217 @@ Pendiente de etapas posteriores:
 - actualización de arquitectura relacionada;
 - actualización de trazabilidad;
 - actualización de auditoría.
+
+---
+
+# 35.11 Identidad permanente y trazabilidad del Activo Agro
+
+Cada Activo Agro deberá poseer un identificador único y permanente:
+
+`activoId`
+
+El `activoId` constituye la identidad digital del activo dentro de Agro Fields.
+
+La identidad del activo es independiente de:
+
+- su publicación;
+- su propietario actual;
+- su publicador;
+- sus compradores potenciales;
+- sus inversores;
+- sus profesionales;
+- sus administradores;
+- su estado comercial.
+
+Un cambio de participante o de estado comercial no deberá generar un nuevo Activo Agro cuando se trate del mismo activo.
+
+Conceptualmente:
+
+ACTIVO AGRO
+
+↓
+
+activoId
+
+↓
+
+EXPEDIENTE DIGITAL PERMANENTE
+
+├── Datos
+
+├── Documentación
+
+├── Evidencias
+
+├── Historial
+
+├── Evaluaciones
+
+├── Confianza
+
+├── Madurez
+
+├── Auditoría
+
+├── Publicaciones
+
+└── Participantes
+
+Todas las relaciones relevantes deberán poder vincularse al `activoId`.
+
+---
+
+# 35.12 Múltiples participantes y relaciones
+
+Un mismo Activo Agro podrá tener múltiples participantes relacionados con diferentes funciones.
+
+Ejemplos:
+
+- propietario;
+- representante;
+- inmobiliaria / broker;
+- comprador;
+- inversor;
+- profesional;
+- administrador;
+- otros participantes autorizados.
+
+Los participantes no son propietarios del Expediente Digital.
+
+El Expediente Digital pertenece al Activo Agro.
+
+Cada participante deberá relacionarse con el activo mediante una relación determinada y los permisos correspondientes.
+
+Conceptualmente:
+
+ACTIVO AGRO
+
+↓
+
+activoId
+
+↓
+
+PARTICIPANTES
+
+├── Propietario
+
+├── Broker / Inmobiliaria
+
+├── Comprador
+
+├── Inversor
+
+├── Profesional
+
+├── Administrador
+
+└── Otros
+
+La existencia de múltiples participantes no deberá generar expedientes duplicados para un mismo activo.
+
+---
+
+# 35.13 Identidad del activo y permisos de acceso
+
+La identidad del activo no determina por sí misma los permisos de acceso.
+
+Principio:
+
+> Identidad del activo ≠ permiso de acceso.
+
+El acceso a la información deberá depender de la relación del participante con el Activo Agro, su rol y los permisos correspondientes.
+
+Conceptualmente:
+
+ACTIVO AGRO
+
+↓
+
+activoId
+
+↓
+
+EXPEDIENTE DIGITAL
+
+├── Información pública
+
+├── Información restringida
+
+└── Información privada
+
+La plataforma deberá poder determinar qué información puede consultar, modificar o administrar cada participante según su autorización.
+
+---
+
+# 35.14 Trazabilidad de las interacciones
+
+Las interacciones relevantes con un Activo Agro deberán poder vincularse al `activoId`.
+
+Cuando corresponda, una interacción podrá registrar:
+
+- `activoId`;
+- participante;
+- rol o relación;
+- acción realizada;
+- fecha;
+- módulo de origen;
+- evento generado;
+- fuente;
+- evidencia;
+- resultado.
+
+Conceptualmente:
+
+activoId
+
+↓
+
+PARTICIPANTE
+
+↓
+
+ACCIÓN
+
+↓
+
+FECHA
+
+↓
+
+EVENTO
+
+↓
+
+FUENTE / EVIDENCIA
+
+↓
+
+RESULTADO
+
+Esto permitirá reconstruir la evolución del activo y las principales intervenciones realizadas sobre su expediente.
+
+La trazabilidad deberá complementar, y no reemplazar, los mecanismos específicos de auditoría.
+
+---
+
+# 35.15 Regla de identidad permanente
+
+Agro Fields no deberá crear un nuevo Activo Agro únicamente porque:
+
+- finalice una publicación;
+- se genere una nueva publicación;
+- cambie el propietario;
+- cambie el broker;
+- aparezca un nuevo comprador;
+- aparezca un nuevo inversor;
+- cambie el estado comercial;
+- se actualice la información del activo.
+
+Mientras se trate del mismo activo, deberá conservarse su `activoId` y su Expediente Digital Permanente.
+
+Principio:
+
+> Un activo → una identidad → un expediente → múltiples relaciones a lo largo del tiempo.
+
+Esta regla constituye un principio estructural de la arquitectura de Agro Fields.
