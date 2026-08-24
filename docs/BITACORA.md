@@ -3301,3 +3301,166 @@ Validación ejecutada:
 ```text
 flutter test
 00:01 +2: All tests passed!
+Bitácora — Descubrimiento del Expediente Permanente del Activo
+Proyecto: Agro Fields
+Fecha: 24/08/2026
+Estado: Descubrimiento y definición conceptual
+Regla: No modificar código hasta cerrar concepto y arquitectura.
+
+1. Punto de partida
+Agro Fields viene evolucionando desde una plataforma orientada a la publicación de activos agropecuarios hacia una concepción más amplia:
+
+El Activo Agro puede ser entendido como una identidad digital permanente que conserva información, evidencias, evaluaciones, cambios e historia a lo largo del tiempo.
+
+El activo físico permanece aunque cambien sus propietarios, producciones, condiciones, documentación o evaluaciones.
+
+2. Descubrimiento principal
+La publicación no debería representar necesariamente el final del proceso.
+
+Puede representar el comienzo de la construcción del expediente.
+
+Conceptualmente:
+
+Usuario declara un activo → Agro Fields reúne y estructura información → incorpora evidencias → construye trazabilidad → evalúa → determina nivel de confianza y madurez → el activo puede alcanzar condiciones de publicación.
+
+Por lo tanto, publicar no debería significar simplemente “cargar información”.
+
+Debe existir una diferencia entre:
+
+Activo creado.
+Activo en construcción.
+Activo documentado.
+Activo evaluado.
+Activo preparado.
+Activo publicable.
+Activo publicado.
+Estas categorías deberán ser definidas como reglas de negocio antes de implementarlas.
+
+3. Expediente Permanente
+Se identifica como hipótesis estratégica el concepto de:
+
+Expediente Permanente del Activo Agro.
+
+El expediente puede contener, entre otras capas:
+
+Identidad.
+Ubicación.
+Participantes.
+Documentación.
+Suelo.
+Producción.
+Ciclos productivos.
+Ambiente.
+OTBN y normativa relacionada.
+Permisos.
+Infraestructura.
+Economía.
+Evidencias.
+Evaluaciones.
+Confianza.
+Madurez.
+Historial.
+Auditoría.
+Evolución.
+Información climática relacionada.
+El expediente no debe limitarse al estado actual.
+
+Debe permitir conservar la historia del activo.
+
+4. El dato como materia prima de valor
+Se identifica una hipótesis fundamental:
+
+El valor diferencial de Agro Fields no está simplemente en almacenar datos, sino en convertir información fragmentada en información estructurada, relacionada, trazable y confiable.
+
+La evolución conceptual es:
+
+Dato → estructura → relación → evidencia → historial → confianza → conocimiento → capacidad de evaluación y valoración.
+
+La valoración no debe presentarse como una consecuencia automática de tener más datos.
+
+La hipótesis es que una mejor información sobre el activo permite fundamentar mejor su evaluación, potencial, riesgos y eventual estimación de valor.
+
+5. Clima como parte de la historia del activo
+Se incorpora el clima como una capa relevante del expediente.
+
+El clima presenta una particularidad: generalmente proviene de fuentes externas y debe conservar su contexto.
+
+La información climática deberá considerar, cuando corresponda:
+
+Ubicación.
+Período.
+Fuente.
+Tipo de medición.
+Precipitaciones.
+Temperaturas.
+Heladas.
+Sequías.
+Excesos hídricos.
+Eventos extremos.
+Relación temporal con ciclos productivos.
+Calidad o confiabilidad del dato.
+La hipótesis es que el clima adquiere mayor utilidad cuando puede relacionarse con la historia productiva del activo.
+
+Ejemplo conceptual:
+
+Evento climático → ciclo productivo → resultado → evaluación → incorporación al historial.
+
+No se implementará esta capa todavía.
+
+6. Relación entre activo, historia y conocimiento
+Se identifica una posible evolución conceptual:
+
+Activo → datos → expediente → historial → relaciones → evaluación → conocimiento → inteligencia.
+
+La IA no debe constituir el punto de partida.
+
+Primero debe existir una memoria estructurada y confiable del activo.
+
+Luego, sobre esa base, podrán evaluarse futuras capacidades de inteligencia, análisis, escenarios y recomendaciones.
+
+7. Hipótesis estratégica de largo plazo
+Agro Fields comienza en el sector agropecuario.
+
+La hipótesis futura es que el concepto de expediente permanente podría eventualmente aplicarse a otros activos reales.
+
+Ejemplos:
+
+Campos.
+Casas.
+Locales.
+Fábricas.
+Maquinaria.
+Establecimientos productivos.
+Otros activos.
+Esta posibilidad queda registrada como hipótesis estratégica, no como decisión de producto.
+
+8. Principio de trabajo
+Las nuevas ideas no deben convertirse automáticamente en funcionalidades.
+
+Proceso:
+
+Idea → Bitácora → análisis → Master Plan → arquitectura → prioridad → implementación.
+
+Se mantiene la regla:
+
+Primero negocio y arquitectura. Después código.
+
+9. Próximo punto técnico
+El desarrollo inmediato continúa con la capa Suelo del Activo Agro.
+
+Orden previsto:
+
+Suelo → modelo → persistencia → recuperación → visualización → pruebas.
+
+La visión del Expediente Permanente no debe utilizarse para acelerar ni romper la arquitectura actual.
+
+10. Conclusión
+El descubrimiento actual no reemplaza el proyecto existente.
+
+Lo amplía conceptualmente.
+
+Agro Fields continúa construyendo el MVP agropecuario mientras protege una hipótesis estratégica:
+
+Construir y conservar la memoria digital, histórica y trazable del activo.
+
+🦎 Regla de la jornada: no correr detrás de la idea; trabajarla hasta convertirla en una decisión arquitectónica sólida.
