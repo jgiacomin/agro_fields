@@ -1875,3 +1875,298 @@ revisión de arquitectura documental;
 revisión de auditoría;
 diseño de internacionalización;
 posterior implementación técnica.
+
+Master Plan — Agro Fields
+Expediente Permanente del Activo
+1. Visión
+Agro Fields comienza como una plataforma para activos agropecuarios.
+
+La visión estratégica que se encuentra en validación es evolucionar hacia una infraestructura capaz de organizar la identidad, información, evidencia, historial y evolución de activos reales.
+
+La hipótesis central es:
+
+El verdadero producto diferencial no es solamente publicar activos, sino construir y conservar su expediente digital histórico.
+
+2. Núcleo del producto — Activo Agro
+El Activo Agro debe poseer una identidad permanente.
+
+Esa identidad representa al activo físico y permite acumular información a lo largo de su ciclo de vida.
+
+El expediente debe conservar la historia del activo aunque cambien:
+
+propietarios;
+producciones;
+condiciones;
+documentación;
+evaluaciones;
+permisos;
+infraestructura;
+estado productivo.
+La historia del activo no debe desaparecer cuando cambia su estado actual.
+
+3. Expediente Permanente del Activo
+El expediente constituye una hipótesis central de evolución del producto.
+
+Podrá contener, entre otras, las siguientes capas:
+
+Identidad.
+Ubicación.
+Participantes.
+Documentación.
+Suelo.
+Producción.
+Ciclos productivos.
+Ambiente.
+OTBN.
+Normativa.
+Permisos.
+Infraestructura.
+Economía.
+Evidencias.
+Evaluaciones.
+Confianza.
+Madurez.
+Historial.
+Auditoría.
+Evolución.
+Información climática relacionada.
+El expediente no debe limitarse a representar el estado actual.
+
+Debe permitir conservar y reconstruir la historia del activo.
+
+4. Principio de trazabilidad
+La información relevante deberá conservar, cuando corresponda:
+
+qué información es → de dónde proviene → cuándo corresponde → a qué activo pertenece → qué nivel de confianza posee → qué ocurrió posteriormente.
+
+La trazabilidad forma parte del valor del sistema.
+
+No debe considerarse una funcionalidad secundaria.
+
+5. El dato como materia prima de valor
+Hipótesis:
+
+El valor diferencial de Agro Fields no está simplemente en almacenar datos, sino en transformar información fragmentada en información estructurada, relacionada, trazable y confiable.
+
+Evolución conceptual:
+
+Dato → estructura → relación → evidencia → historial → confianza → conocimiento → evaluación → valoración.
+
+La cantidad de datos no implica automáticamente mayor valor.
+
+El objetivo es aumentar la calidad, contexto, trazabilidad y confiabilidad de la información.
+
+Una mejor información puede permitir fundamentar mejor:
+
+evaluación;
+potencial;
+riesgos;
+oportunidades;
+decisiones;
+eventual estimación de valor.
+6. Clima
+El clima constituye una capa relevante del expediente.
+
+Debe considerarse información contextual y, generalmente, proveniente de fuentes externas.
+
+Cuando corresponda, deberá conservar:
+
+ubicación;
+período;
+fuente;
+tipo de medición;
+precipitaciones;
+temperaturas;
+heladas;
+sequías;
+excesos hídricos;
+eventos extremos;
+relación temporal con ciclos productivos;
+calidad o confiabilidad del dato.
+La hipótesis es que el clima adquiere mayor valor cuando puede relacionarse con la historia productiva del activo.
+
+Ejemplo conceptual:
+
+Evento climático → ciclo productivo → resultado → evaluación → historial.
+
+Esta capa queda documentada como evolución futura y no forma parte de la implementación inmediata.
+
+7. Ciclo de vida del Activo
+Debe definirse conceptualmente la diferencia entre:
+
+Activo creado
+→ Activo en construcción
+→ Activo documentado
+→ Activo evaluado
+→ Activo preparado
+→ Activo publicable
+→ Activo publicado
+
+Estas categorías no deben considerarse equivalentes.
+
+La condición de Activo publicable deberá definirse como regla de negocio antes de modificar significativamente el flujo de publicación.
+
+8. Publicación
+La publicación no debería ser simplemente:
+
+usuario carga información → botón publicar.
+
+La hipótesis de evolución es:
+
+Usuario declara activo
+↓
+Agro Fields construye expediente
+↓
+Se reúnen datos y evidencias
+↓
+Se estructura la información
+↓
+Se evalúa el activo
+↓
+Se determina confianza y madurez
+↓
+Se verifican condiciones de publicación
+↓
+Activo publicable
+↓
+Publicación
+
+Esto deberá ser validado conceptualmente antes de implementarse.
+
+9. Evolución del Activo
+El Activo Agro puede considerarse un sistema vivo desde el punto de vista informacional.
+
+Puede acumular:
+
+estado actual;
+historia;
+oportunidades;
+restricciones;
+decisiones;
+resultados;
+nuevas evaluaciones;
+nuevos niveles de confianza;
+nueva información.
+El activo físico puede permanecer igual mientras aumenta el conocimiento disponible sobre él.
+
+Conceptualmente:
+
+Activo → datos → expediente → historial → relaciones → evaluación → conocimiento.
+
+10. Inteligencia
+La inteligencia artificial constituye una capa posterior.
+
+Principio:
+
+Primero construimos una memoria confiable del activo. Después aplicamos inteligencia sobre esa memoria.
+
+Evolución conceptual:
+
+Datos → historial → relaciones → análisis → IA → escenarios → decisión → resultado → expediente actualizado.
+
+La IA no debe agregarse simplemente como funcionalidad aislada.
+
+Debe aprovechar la estructura histórica y relacional construida previamente.
+
+11. Valoración
+Agro Fields podrá explorar en el futuro mecanismos de evaluación y estimación de valor o potencial del activo.
+
+La valoración deberá basarse en información estructurada y criterios explícitos.
+
+No se debe asumir que el sistema determina automáticamente el “valor real” de un activo.
+
+La hipótesis es:
+
+A mayor calidad, trazabilidad y contexto de la información, mayor capacidad para fundamentar una evaluación del activo.
+
+12. Relación con el Estado
+Existe una hipótesis futura relacionada con la posibilidad de que Agro Fields funcione como una capa de información ordenada e interoperable.
+
+No se plantea reemplazar organismos públicos.
+
+La hipótesis es:
+
+Organizar información del activo para facilitar, cuando corresponda y bajo los marcos legales adecuados, su interoperabilidad con sistemas y organismos externos.
+
+Esta línea queda como investigación futura.
+
+13. Inteligencia del Activo
+Una posible evolución futura es que el sistema pueda pasar de:
+
+datos → análisis
+
+a:
+
+datos → historial → relaciones → conocimiento → inteligencia → escenarios → decisiones → evolución.
+
+La inteligencia podría eventualmente analizar no solamente el estado actual del activo, sino también su trayectoria histórica.
+
+Esto queda como hipótesis y no como funcionalidad inmediata.
+
+14. Expansión estratégica
+Agro Fields comienza en el agro.
+
+Si el modelo demuestra ser sólido, podrá investigarse si el concepto de Expediente Permanente resulta aplicable a otros activos reales.
+
+Hipótesis de expansión:
+
+Campo → casa → local → fábrica → maquinaria → establecimiento productivo → otros activos.
+
+Esta expansión no forma parte del MVP actual.
+
+15. Cartera de evolución
+Ahora
+Consolidar Activo Agro.
+Incorporar correctamente Suelo.
+Persistencia.
+Recuperación.
+Visualización.
+Tests.
+Consolidar producción.
+Consolidar ciclos productivos.
+Consolidar evaluación.
+Consolidar confianza.
+Consolidar madurez.
+Consolidar historial.
+Consolidar auditoría.
+Próximamente
+Definir Expediente Permanente.
+Definir estados del activo.
+Definir condiciones de publicación.
+Definir evidencias.
+Revisar trazabilidad.
+Analizar clima como capa vinculada al activo.
+Futuro
+Valoración.
+Evolución del activo.
+Escenarios.
+Inteligencia sobre el expediente.
+Integraciones.
+Interoperabilidad.
+Extensión a otros activos.
+16. Regla maestra
+Ninguna idea nueva debe convertirse automáticamente en código.
+
+Proceso:
+
+Idea → Bitácora → análisis → Master Plan → arquitectura → prioridad → implementación → pruebas → validación.
+
+Regla:
+
+Primero negocio y arquitectura. Después código.
+
+17. Estado actual
+La base técnica actual del proyecto es:
+
+2021cb5 — feat: consolidar ciclos productivos y evaluacion de activos
+
+La nueva visión estratégica no reemplaza ni invalida lo construido.
+
+Se construirá incrementalmente sobre la arquitectura existente.
+
+18. Principio central de Agro Fields
+Agro Fields comienza organizando activos agropecuarios, pero busca construir algo más profundo: la memoria digital, histórica y trazable del activo.
+
+Y una segunda frase que yo dejaría como hipótesis estratégica:
+
+El activo físico tiene valor; Agro Fields busca convertir la información fragmentada sobre ese activo en conocimiento estructurado, verificable y trazable.
