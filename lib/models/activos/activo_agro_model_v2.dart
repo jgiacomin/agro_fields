@@ -6,6 +6,7 @@ import 'estado_activo.dart';
 import 'ubicacion_activo_model.dart';
 import 'modulo_produccion_model.dart';
 import 'madurez_activo_model.dart';
+import 'suelo_activo_model.dart';
 
 import 'confianza_activo_model.dart';
 import 'economia_activo_model.dart';
@@ -68,6 +69,8 @@ class ActivoAgroV2 {
   // Ubicación
   final UbicacionActivo ubicacion;
 
+  // Suelo
+  final SueloActivo suelo;
 
 
   // Producción
@@ -203,6 +206,8 @@ class ActivoAgroV2 {
     required this.evaluacion,
 
     required this.madurez,
+
+    required this.suelo,
 
     required this.participantes,
 
@@ -396,6 +401,11 @@ class ActivoAgroV2 {
 
       ),
 
+      suelo: SueloActivo.fromMap(
+       Map<String,dynamic>.from(
+        map['suelo'] ?? {},
+         ),
+      ),
 
 
       participantes:
@@ -609,6 +619,9 @@ class ActivoAgroV2 {
       'madurez':
       madurez.toMap(),
 
+      'suelo':
+      suelo.toMap(),
+
 
       'participantes':
       participantes.map((e)=>e.toMap()).toList(),
@@ -698,6 +711,8 @@ class ActivoAgroV2 {
 
     MadurezActivo? madurez,
 
+    SueloActivo? suelo,
+
     List<ParticipanteActivo>? participantes,
 
     EstadoActivo? estado,
@@ -738,6 +753,8 @@ class ActivoAgroV2 {
       evaluacion: evaluacion ?? this.evaluacion,
 
       madurez: madurez ?? this.madurez,
+
+      suelo: suelo ?? this.suelo,
 
       participantes: participantes ?? this.participantes,
 

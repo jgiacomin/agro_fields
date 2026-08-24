@@ -11,6 +11,7 @@ import '../lib/models/activos/evaluacion_confianza_model.dart';
 import '../lib/models/activos/madurez_activo_model.dart';
 import '../lib/models/activos/tipo_activo.dart';
 import '../lib/models/activos/estado_activo.dart';
+import '../lib/models/activos/suelo_activo_model.dart';
 
 void main() {
   test(
@@ -71,6 +72,7 @@ void main() {
           zonaHoraria: 'America/Argentina/Buenos_Aires',
           monedaLocal: 'ARS',
         ),
+        suelo: SueloActivo.inicial(),
         producciones: [
           modulo,
         ],

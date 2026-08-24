@@ -5,6 +5,8 @@ import '../../models/activos/tipo_activo.dart';
 import '../../models/activos/ubicacion_activo_model.dart';
 import '../../models/activos/modulo_produccion_model.dart';
 import '../../models/activos/madurez_activo_model.dart';
+import '../../models/activos/suelo_activo_model.dart';
+
 import '../../models/activos/estado_activo.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 
@@ -232,6 +234,7 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
           preparacionInversion: 'inicial',
         ),
+         suelo: SueloActivo.inicial(),
 
         participantes: [],
 

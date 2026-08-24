@@ -6,6 +6,8 @@ import '../models/activos/estado_activo.dart';
 
 import '../models/activos/ubicacion_activo_model.dart';
 import '../models/activos/modulo_produccion_model.dart';
+import '../models/activos/suelo_activo_model.dart';
+
 
 import '../models/activos/confianza_activo_model.dart';
 import '../models/activos/economia_activo_model.dart';
@@ -139,6 +141,8 @@ class CampoToActivoService {
 
         fechaActualizacion: DateTime.now(),
       ),
+
+      suelo: SueloActivo.inicial(),
 
       confianza: ConfianzaActivo(
         nivelGeneral: campo.verificado ? 50 : 0,

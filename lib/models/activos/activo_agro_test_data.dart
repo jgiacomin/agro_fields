@@ -3,6 +3,7 @@ import 'estado_activo.dart';
 import 'ubicacion_activo_model.dart';
 import 'modulo_produccion_model.dart';
 import 'madurez_activo_model.dart';
+import 'suelo_activo_model.dart';
 
 import 'ciclo_productivo_model.dart';
 
@@ -250,6 +251,7 @@ class ActivoAgroTestData {
 
         preparacionInversion: "inicial",
       ),
+      suelo: SueloActivo.inicial(),
 
       participantes: [],
 
