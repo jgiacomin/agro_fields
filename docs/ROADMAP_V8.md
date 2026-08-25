@@ -1786,3 +1786,333 @@ campoId
 propietarioId
 +
 interesadoId
+---
+
+# Evolución V8 — Suelo Activo Agro
+
+## Estado
+
+🟡 En evolución.
+
+El módulo de Suelo se incorpora al Activo Agro V2 como una nueva dimensión de información y evaluación del activo.
+
+Se mantiene la arquitectura existente.
+
+Criterio:
+
+No crear ActivoAgroV3.
+
+La evolución del suelo continúa sobre ActivoAgroV2.
+
+---
+
+## Modelo de Suelo
+
+Archivo:
+
+lib/models/activos/suelo_activo_model.dart
+
+Estado:
+
+🟢 Modelo base implementado.
+
+El modelo contempla:
+
+- estado de evaluación;
+- textura;
+- drenaje;
+- pH;
+- materia orgánica;
+- evidencias;
+- observaciones;
+- fecha de evaluación.
+
+El modelo incorpora:
+
+- constructor;
+- estado inicial;
+- deserialización desde Map;
+- serialización a Map;
+- conversión de Timestamp;
+- copyWith.
+
+---
+
+## Integración con ActivoAgroV2
+
+Archivo:
+
+lib/models/activos/activo_agro_model_v2.dart
+
+Estado:
+
+🟢 Integrado.
+
+ActivoAgroV2 incorpora:
+
+```dart
+final SueloActivo suelo;
+---
+
+# EVOLUCIÓN MÓDULO SUELO — CIERRE DE ETAPA
+
+## Inicialización del Suelo
+
+El Suelo se inicializa actualmente mediante:
+
+`SueloActivo.inicial()`
+
+Estado inicial:
+
+`sin_evaluar`
+
+Las evidencias comienzan vacías.
+
+El objetivo es permitir que todo nuevo Activo Agro disponga desde su creación de una estructura de suelo preparada para futuras evaluaciones.
+
+---
+
+## Próxima evolución funcional del Suelo
+
+### 1. Validación de serialización
+
+Estado:
+
+🟡 Pendiente.
+
+Agregar pruebas específicas para validar:
+
+`SueloActivo`
+↓
+`toMap`
+↓
+`fromMap`
+↓
+`SueloActivo`
+
+Se deberá verificar la conservación de:
+
+- estado;
+- textura;
+- drenaje;
+- pH;
+- materia orgánica;
+- evidencias;
+- observaciones;
+- fecha de evaluación.
+
+---
+
+### 2. Visualización del Suelo
+
+Estado:
+
+🟡 Pendiente.
+
+Integrar el módulo Suelo en:
+
+`lib/screens/campos/detalle_activo_agro_screen.dart`
+
+La pantalla deberá mostrar inicialmente:
+
+- estado;
+- textura;
+- drenaje;
+- pH;
+- materia orgánica;
+- cantidad de evidencias;
+- observaciones;
+- fecha de evaluación.
+
+---
+
+### 3. Actualización del Suelo
+
+Estado:
+
+🟡 Pendiente.
+
+Evolucionar:
+
+`lib/services/activo_agro_service_v2.dart`
+
+incorporando una operación específica para actualizar el módulo Suelo.
+
+La actualización deberá mantener la arquitectura existente de persistencia del Activo Agro.
+
+---
+
+### 4. Historial del Suelo
+
+Estado:
+
+🟡 Pendiente.
+
+Las modificaciones del módulo deberán generar eventos dentro del historial del Activo Agro.
+
+Evento previsto:
+
+`actualizacion_suelo`
+
+El historial permitirá conservar la evolución temporal de la información del suelo.
+
+---
+
+### 5. Auditoría del Suelo
+
+Estado:
+
+🟡 Pendiente.
+
+Las modificaciones del módulo Suelo deberán registrarse mediante:
+
+`AuditService`
+
+utilizando:
+
+`modulo: suelo`
+
+y una acción específica para la actualización del módulo.
+
+La auditoría deberá conservar:
+
+- activo afectado;
+- usuario responsable;
+- acción;
+- referencia;
+- datos relevantes de la modificación.
+
+---
+
+### 6. Evaluación del Suelo
+
+Estado:
+
+🟡 Pendiente.
+
+Se deberá implementar posteriormente un flujo de evaluación del suelo que permita registrar:
+
+- características físicas;
+- condiciones de drenaje;
+- pH;
+- materia orgánica;
+- observaciones;
+- evidencias;
+- fecha de evaluación.
+
+Flujo previsto:
+
+Detalle Activo Agro
+↓
+Evaluación de Suelo
+↓
+SueloActivo
+↓
+ActivoAgroServiceV2
+↓
+Firestore
+↓
+Historial
+↓
+Auditoría
+
+---
+
+## Relación futura entre Suelo, Confianza y Madurez
+
+Estado:
+
+⚪ Posterior.
+
+En esta etapa el módulo Suelo se considera una dimensión independiente de información y evaluación del Activo Agro.
+
+No se incorpora todavía al cálculo automático de:
+
+- Confianza;
+- Madurez;
+- rentabilidad;
+- publicación.
+
+Antes de establecer dicha relación deberá definirse:
+
+- metodología de evaluación;
+- criterios agronómicos;
+- evidencia requerida;
+- responsables de validación;
+- niveles de confianza;
+- impacto sobre la madurez del activo.
+
+Criterio arquitectónico:
+
+No establecer dependencias entre Suelo, Confianza y Madurez hasta contar con una definición funcional y metodológica suficiente.
+
+---
+
+## Criterio de continuidad V8
+
+La evolución del módulo Suelo continuará sobre:
+
+`ActivoAgroV2`
+
+sin crear una nueva versión estructural del modelo.
+
+La prioridad inmediata será cerrar el circuito:
+
+Modelo
+↓
+Serialización
+↓
+Visualización
+↓
+Actualización
+↓
+Historial
+↓
+Auditoría
+↓
+Evaluación
+
+Una vez cerrado este circuito se evaluará la integración del Suelo con las capas superiores de Confianza y Madurez.
+
+---
+
+## Próxima jornada técnica
+
+Prioridad:
+
+1. cerrar test de serialización de Suelo;
+2. integrar visualización en `DetalleActivoAgroScreen`;
+3. implementar actualización del Suelo;
+4. incorporar historial;
+5. incorporar auditoría;
+6. implementar evaluación;
+7. ejecutar pruebas;
+8. documentar resultados en `BITACORA.md`.
+
+Estado de cierre:
+
+🟡 Módulo Suelo incorporado arquitectónicamente y pendiente de completar su circuito funcional.
+
+---
+
+# CIERRE DE JORNADA — MÓDULO SUELO
+
+El módulo Suelo queda formalmente incorporado a la arquitectura del Activo Agro V2.
+
+La estructura de datos, integración con `ActivoAgroV2`, inicialización y persistencia base se encuentran implementadas.
+
+La evolución funcional queda deliberadamente pendiente de la siguiente etapa, manteniendo separación entre:
+
+- información del suelo;
+- evaluación agronómica;
+- confianza;
+- madurez;
+- publicación.
+
+No se crea una nueva versión del modelo.
+
+La continuidad del desarrollo se realizará sobre `ActivoAgroV2`, respetando la arquitectura V8, la trazabilidad mediante Git, el historial del activo y la auditoría transversal.
+
+Estado general:
+
+🟡 **Módulo Suelo incorporado arquitectónicamente — circuito funcional pendiente.**
