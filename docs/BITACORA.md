@@ -3464,3 +3464,294 @@ Agro Fields continúa construyendo el MVP agropecuario mientras protege una hip�
 Construir y conservar la memoria digital, histórica y trazable del activo.
 
 🦎 Regla de la jornada: no correr detrás de la idea; trabajarla hasta convertirla en una decisión arquitectónica sólida.
+# Cierre de jornada — 24/08/2026
+
+## Estado
+
+🟢 JORNADA CERRADA
+
+## Expediente Permanente del Activo Agro
+
+Durante la jornada se consolidó conceptualmente la hipótesis del Expediente Permanente del Activo Agro como evolución del Activo Agro V2.
+
+El Activo Agro se entiende como una identidad digital permanente capaz de conservar información, evidencias, evaluaciones, cambios e historia a lo largo del tiempo.
+
+El expediente podrá integrar progresivamente:
+
+- identidad;
+- ubicación;
+- participantes;
+- documentación;
+- suelo;
+- producción;
+- ciclos productivos;
+- ambiente;
+- normativa;
+- permisos;
+- infraestructura;
+- economía;
+- evidencias;
+- evaluaciones;
+- confianza;
+- madurez;
+- historial;
+- auditoría;
+- evolución.
+
+## Principio de evolución
+
+Se consolida la regla:
+
+> Primero negocio y arquitectura. Después código.
+
+Las nuevas ideas deberán seguir el proceso:
+
+Idea
+↓
+
+Bitácora
+
+↓
+
+Análisis
+
+↓
+
+Master Plan
+
+↓
+
+Arquitectura
+
+↓
+
+Prioridad
+
+↓
+
+Implementación
+
+## Hipótesis estratégica
+
+El diferencial de Agro Fields no consiste solamente en almacenar información.
+
+La evolución buscada es:
+
+Dato
+↓
+
+Estructura
+↓
+
+Relación
+↓
+
+Evidencia
+↓
+
+Historial
+↓
+
+Confianza
+↓
+
+Conocimiento
+↓
+
+Evaluación / valoración
+↓
+
+Inteligencia
+
+La información climática, productiva, territorial, documental y económica deberá adquirir mayor valor al poder relacionarse con la historia del Activo Agro.
+
+## Estado técnico
+
+Durante la evolución del concepto de Expediente Permanente se incorporó también la primera implementación del modelo de suelo dentro del Activo Agro.
+
+Commit relacionado:
+
+6679dd2 feat: agregar modelo de suelo al activo agro
+
+## Estado Git al cierre
+
+Rama:
+
+main
+
+Repositorio:
+
+origin/main
+
+Estado:
+
+working tree clean
+
+Últimos commits relevantes:
+
+- 6679dd2 feat: agregar modelo de suelo al activo agro
+- cefbd07 docs: consolidar master plan del expediente permanente
+- c9fe9dc docs: registrar expediente permanente del activo
+- 2021cb5 feat: consolidar ciclos productivos y evaluacion de activos
+- 6de78df docs: definir identidad permanente y trazabilidad del activo
+
+## Próxima jornada
+
+### Consolidación del módulo Suelo del Activo Agro V2
+
+Objetivo:
+
+Verificar y consolidar la implementación existente del modelo de suelo dentro de ActivoAgroV2.
+
+Orden de trabajo:
+
+1. Revisar `suelo_activo_model.dart`.
+2. Revisar integración con `activo_agro_model_v2.dart`.
+3. Revisar serialización y recuperación desde Firebase.
+4. Revisar persistencia mediante el servicio correspondiente.
+5. Revisar visualización.
+6. Revisar tests.
+7. Corregir únicamente lo necesario.
+8. Ejecutar validaciones.
+9. Registrar commit.
+10. Actualizar Bitácora y cerrar la jornada.
+
+## Regla de continuidad
+
+No realizar una auditoría general de `lib/` ni de toda la documentación.
+
+La próxima jornada estará limitada al objetivo definido:
+
+> Consolidar Suelo dentro del Activo Agro V2.
+
+Los hallazgos fuera de este alcance se registrarán como pendientes sin interrumpir el trabajo principal.
+# Próxima Jornada — Evolución de Suelo del Activo Agro V2
+
+## Objetivo
+
+Continuar la implementación de la capa Suelo del Activo Agro V2,
+verificando que el modelo recientemente incorporado quede correctamente
+integrado con persistencia, recuperación, visualización y pruebas.
+
+La jornada deberá comenzar desde el estado actual del repositorio,
+sin realizar cambios arquitectónicos innecesarios.
+
+---
+
+## Punto de partida
+
+Último commit:
+
+6679dd2 feat: agregar modelo de suelo al activo agro
+
+Estado Git:
+
+- rama main
+- sincronizada con origin/main
+- working tree limpio
+
+---
+
+## Orden de trabajo
+
+### 1. Revisar modelo SueloActivo
+
+Analizar:
+
+- estructura actual;
+- campos;
+- constructor;
+- fromMap();
+- toMap();
+- copyWith(), si corresponde.
+
+### 2. Revisar integración con ActivoAgroV2
+
+Verificar:
+
+- campo suelo;
+- constructor;
+- fromMap();
+- toMap();
+- copyWith();
+- compatibilidad con datos existentes.
+
+### 3. Revisar servicio
+
+Verificar cómo se crea, actualiza y persiste el Activo Agro y determinar
+si SueloActivo requiere integración adicional.
+
+### 4. Revisar pantalla de detalle
+
+Determinar si la información de suelo debe comenzar a visualizarse
+en detalle_activo_agro_screen.dart.
+
+### 5. Validación
+
+Ejecutar:
+
+- flutter analyze
+- flutter test
+
+Registrar cualquier error, warning o comportamiento inesperado.
+
+### 6. Implementación
+
+Solo después de completar la revisión se realizarán las modificaciones
+necesarias.
+
+---
+
+## Regla arquitectónica
+
+Mantener:
+
+Screen
+↓
+Service
+↓
+Model
+↓
+Firebase
+
+No crear versiones paralelas innecesarias.
+
+No crear ActivoAgroV3.
+
+Evolucionar los archivos existentes.
+
+---
+
+## Contexto estratégico
+
+El concepto de Expediente Permanente del Activo Agro permanece como
+hipótesis estratégica.
+
+No se implementará todavía como una funcionalidad independiente.
+
+La capa Suelo debe continuar integrándose dentro del Activo Agro V2
+existente.
+
+---
+
+## Resultado esperado
+
+Al finalizar la jornada se deberá conocer:
+
+- qué soporta actualmente SueloActivo;
+- qué falta integrar;
+- qué modificaciones son realmente necesarias;
+- qué pruebas deben agregarse;
+- cuál será el siguiente módulo a evolucionar.
+
+La implementación deberá quedar respaldada por:
+
+Código
++
+Tests
++
+Commit Git
++
+Bitácora
++
+Próximo paso
