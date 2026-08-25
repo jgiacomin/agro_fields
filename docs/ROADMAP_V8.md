@@ -1852,7 +1852,21 @@ ActivoAgroV2 incorpora:
 
 ```dart
 final SueloActivo suelo;
----
+```
+
+La información del suelo forma parte de la estructura persistente del Activo Agro V2.
+
+La deserialización y serialización se realizan mediante:
+
+```dart
+SueloActivo.fromMap(...)
+```
+
+y:
+
+```dart
+suelo.toMap()
+```
 
 # EVOLUCIÓN MÓDULO SUELO — CIERRE DE ETAPA
 
