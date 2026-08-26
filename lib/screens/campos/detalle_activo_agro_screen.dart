@@ -267,6 +267,50 @@ class _DetalleActivoAgroScreenState
               "Clasificación",
             ),
 
+            _titulo(
+              "Suelo",
+            ),
+
+            Text(
+              "Estado: ${activo.suelo.estado}",
+            ),
+
+            Text(
+              "Textura: ${activo.suelo.textura ?? 'Sin registrar'}",
+            ),
+
+            Text(
+              "Drenaje: ${activo.suelo.drenaje ?? 'Sin registrar'}",
+            ),
+
+            Text(
+              "pH: ${activo.suelo.ph?.toString() ?? 'Sin registrar'}",
+            ),
+
+            Text(
+              "Materia orgánica: ${activo.suelo.materiaOrganica?.toString() ?? 'Sin registrar'}",
+            ),
+
+            Text(
+              "Evidencias: ${activo.suelo.evidencias.length}",
+            ),
+
+            if (activo.suelo.observaciones != null &&
+                activo.suelo.observaciones!.isNotEmpty)
+              Text(
+                "Observaciones: ${activo.suelo.observaciones}",
+              ),
+
+            if (activo.suelo.fechaEvaluacion != null)
+              Text(
+                "Fecha de evaluación: ${activo.suelo.fechaEvaluacion}",
+              ),
+
+            const Divider(
+              height:30,
+            ),
+
+
 
 
 
