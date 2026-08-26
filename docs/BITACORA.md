@@ -3755,3 +3755,118 @@ Commit Git
 Bitácora
 +
 Próximo paso
+# Cierre de jornada — 26/08/2026
+
+## Estado
+
+🟢 JORNADA CERRADA
+
+## Objetivo cumplido
+
+Se completó la integración funcional del módulo `SueloActivo` dentro de `ActivoAgroV2`, respetando la arquitectura existente y sin modificar nuevamente el modelo principal.
+
+## Trabajo realizado
+
+### 1. Serialización y deserialización
+
+Se integró y verificó la persistencia de `SueloActivo` mediante:
+
+* `ActivoAgroV2.toMap()`;
+* `ActivoAgroV2.fromMap()`.
+
+Se validaron dos escenarios:
+
+* suelo inicial con estado `sin_evaluar`;
+* suelo completo con datos de evaluación.
+
+Todos los datos verificados fueron recuperados correctamente.
+
+### 2. Visualización
+
+Se incorporó la información de suelo en la pantalla de detalle del Activo Agro.
+
+Se muestran:
+
+* estado;
+* textura;
+* drenaje;
+* pH;
+* materia orgánica;
+* cantidad de evidencias;
+* observaciones;
+* fecha de evaluación.
+
+### 3. Actualización
+
+Se incorporó `actualizarSuelo()` al servicio `ActivoAgroServiceV2`.
+
+La actualización:
+
+* recupera el activo;
+* reemplaza la información de suelo;
+* agrega un evento al historial;
+* persiste el activo actualizado;
+* registra la modificación en auditoría.
+
+### 4. Validación
+
+Se ejecutó:
+
+`flutter test test/activo_agro_serializacion_test.dart`
+
+Resultado:
+
+🟢 `All tests passed!`
+
+Se verificó específicamente:
+
+* creación del activo;
+* estado inicial del suelo;
+* presencia de `suelo` en el mapa;
+* deserialización;
+* conservación de identidad;
+* conservación de los datos de suelo;
+* serialización y recuperación de datos completos.
+
+## Commits realizados
+
+* `dd68ed5` — `test: integrar serializacion de SueloActivo`
+* `7f54cfe` — `feat: mostrar suelo en detalle del activo agro`
+* `f56015a` — `feat: agregar actualización de suelo del activo`
+
+## Integridad arquitectónica
+
+El archivo `activo_agro_model_v2.dart` no presenta modificaciones entre el cierre arquitectónico `2f0bea4` y `HEAD`.
+
+La implementación evolucionó utilizando los componentes existentes, sin crear una nueva versión de `ActivoAgroV2`.
+
+Se mantuvo la regla:
+
+`Screen → Service → Model → Firebase`
+
+## Estado Git
+
+Al momento de la validación:
+
+* rama: `main`;
+* working tree: limpio;
+* `HEAD`: `f56015a`;
+* rama local: 3 commits por delante de `origin/main`.
+
+Los commits todavía no fueron publicados en `origin/main`.
+
+## Observación técnica
+
+La utilización de `activo.creadorId` como `usuarioId` en `actualizarSuelo()` mantiene el patrón ya existente en `ActivoAgroServiceV2`.
+
+La identificación del usuario real que ejecuta cada modificación queda como tema transversal para una futura revisión del sistema de auditoría y permisos, no como parte de esta etapa.
+
+## Próximo paso
+
+No agregar nuevas funcionalidades al módulo Suelo en esta etapa.
+
+El módulo queda funcionalmente integrado y validado.
+
+El siguiente trabajo deberá comenzar desde el estado actual del repositorio, revisando el próximo módulo definido por el Plan Maestro V8 y manteniendo la arquitectura existente.
+
+🦎 Regla de cierre: primero consolidar, validar y documentar; después evolucionar.
