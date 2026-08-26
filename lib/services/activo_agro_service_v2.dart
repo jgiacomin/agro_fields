@@ -4,6 +4,7 @@ import '../core/audit/audit_service.dart';
 import '../core/audit/audit_type.dart';
 
 import '../models/activos/activo_agro_model_v2.dart';
+import '../models/activos/suelo_activo_model.dart';
 import '../models/activos/confianza_activo_model.dart';
 import '../models/activos/evaluacion_confianza_model.dart';
 import '../models/activos/historial_activo_model.dart';
@@ -559,6 +560,71 @@ Future<void> pausarActivo(
 
 
  // =====================================================
+// ACTUALIZAR SUELO
+// =====================================================
+
+Future<void> actualizarSuelo(
+  String activoId,
+  SueloActivo suelo,
+) async {
+
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  final evento =
+      _crearEventoHistorial(
+    tipoEvento:
+        'actualizacion_suelo',
+    descripcion:
+        'Actualización de información del suelo',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'suelo',
+  );
+
+  final activoActualizado =
+      activo.copyWith(
+    suelo:
+        suelo,
+    historial: [
+      ...activo.historial,
+      evento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  await _auditService.registrar(
+    activoId: activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'suelo',
+    accion:
+        'actualizar_suelo',
+    elementoAfectado:
+        activoId,
+    referencia:
+        activoId,
+  );
+}
+
+
+// =====================================================
 // ACTUALIZAR SISTEMA DE CONFIANZA
 // =====================================================
 
