@@ -3421,3 +3421,162 @@ No se realizaron modificaciones de código.
 Próximo paso:
 
 PASO 8 — IMPLEMENTACIÓN DEL MODELO OPORTUNIDAD AGRO, SERIALIZACIÓN Y PRUEBAS.
+# 21. IMPLEMENTACIÓN DEL MODELO OPORTUNIDAD AGRO, SERIALIZACIÓN Y PRUEBAS
+
+## Objetivo
+
+Implementar técnicamente el modelo `OportunidadAgro` definido durante el Paso 7, establecer su serialización compatible con Firestore y validar su funcionamiento mediante pruebas automatizadas.
+
+## Modelo implementado
+
+Se creó:
+
+```text
+lib/models/oportunidad_agro_model.dart
+```
+
+El modelo `OportunidadAgro` representa una oportunidad comercial vinculada estructuralmente a un Activo Agro existente.
+
+La relación principal es:
+
+```text
+ActivoAgroV2
+    │
+    │ activoId
+    ▼
+OportunidadAgro
+```
+
+La Oportunidad Agro no reemplaza al Activo Agro ni duplica la información estructural contenida en su Expediente.
+
+## Estructura
+
+El modelo incorpora:
+
+```text
+oportunidadId
+activoId
+creadorId
+
+titulo
+descripcion
+tipo
+
+montoObjetivo
+montoMinimo
+
+estado
+
+fechaCreacion
+fechaActualizacion
+```
+
+Los valores económicos `montoObjetivo` y `montoMinimo` son opcionales, permitiendo representar oportunidades que todavía no poseen una estructura económica completamente definida.
+
+## Serialización
+
+Se implementaron:
+
+```text
+OportunidadAgro.fromMap()
+OportunidadAgro.toMap()
+```
+
+La deserialización contempla:
+
+* valores ausentes;
+* valores numéricos;
+* valores numéricos almacenados como texto;
+* `Timestamp` de Firestore;
+* `DateTime`;
+* fechas almacenadas como texto;
+* valores por defecto.
+
+La serialización convierte las fechas a `Timestamp` para su almacenamiento en Firestore.
+
+## Pruebas
+
+Se creó:
+
+```text
+test/oportunidad_agro_model_test.dart
+```
+
+Se validó la creación y serialización/deserialización del modelo.
+
+Resultado:
+
+```text
+flutter test test\oportunidad_agro_model_test.dart
+
+00:07 +2: All tests passed!
+```
+
+Resultado de la validación:
+
+```text
+2 tests
+2 tests passed
+0 tests failed
+```
+
+## Integración arquitectónica
+
+La implementación mantiene las decisiones establecidas en el Paso 7:
+
+```text
+ActivoAgroV2
+      │
+      │ activoId
+      ▼
+OportunidadAgro
+      │
+      │ oportunidadId
+      ▼
+Inversion
+```
+
+El modelo `Inversion` existente no fue modificado.
+
+El modelo `PublicacionInversion` tampoco fue eliminado ni migrado.
+
+No se realizó ninguna migración global de `campoId` a `activoId`.
+
+## Archivos incorporados
+
+```text
+lib/models/oportunidad_agro_model.dart
+test/oportunidad_agro_model_test.dart
+```
+
+## Git
+
+La implementación del modelo y sus pruebas quedó registrada en:
+
+```text
+e6f84bd feat: agregar modelo oportunidad agro
+```
+
+## Estado
+
+PASO 8 — IMPLEMENTACIÓN DEL MODELO OPORTUNIDAD AGRO, SERIALIZACIÓN Y PRUEBAS
+
+Estado: COMPLETADO.
+
+Se implementó:
+
+* modelo `OportunidadAgro`;
+* vínculo estructural mediante `activoId`;
+* serialización `toMap()`;
+* deserialización `fromMap()`;
+* conversión compatible con Firestore;
+* manejo de fechas;
+* manejo de valores económicos opcionales;
+* pruebas automatizadas;
+* validación exitosa con 2 tests.
+
+No se implementó todavía el servicio de Oportunidad Agro.
+
+Próximo paso:
+
+PASO 8.6 — IMPLEMENTACIÓN DEL SERVICIO DE OPORTUNIDAD AGRO.
