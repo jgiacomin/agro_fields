@@ -2925,3 +2925,27 @@ etapas:
 5. Diseñar la capa de IA.
 6. Implementar el asistente IA sobre información estructurada.
 7. Auditar respuestas, fuentes y límites de la IA.
+## Estado
+
+PASO 5 — CATÁLOGO INTELIGENTE DE OPORTUNIDADES + IA
+
+Estado: COMPLETADO CONCEPTUALMENTE.
+
+Se definió:
+
+- concepto de catálogo inteligente;
+- relación con ActivoAgroV2;
+- relación con la Ficha Maestra;
+- función de la IA como capa de asistencia;
+- límites de la IA;
+- diferenciación entre datos e interpretación;
+- información que podrá presentar el catálogo;
+- base funcional actualmente existente;
+- evolución futura del asistente IA.
+
+No se implementa todavía el motor de IA.
+
+Próximo paso:
+
+PASO 6 — DEFINICIÓN TÉCNICA DEL CATÁLOGO Y REUTILIZACIÓN DE COMPONENTES
+EXISTENTES.
