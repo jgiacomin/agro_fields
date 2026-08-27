@@ -2949,3 +2949,194 @@ Próximo paso:
 
 PASO 6 — DEFINICIÓN TÉCNICA DEL CATÁLOGO Y REUTILIZACIÓN DE COMPONENTES
 EXISTENTES.
+# 20. AUDITORÍA ARQUITECTÓNICA — PASO 6
+
+## Definición técnica del catálogo y reutilización de componentes existentes
+
+### Objetivo
+
+Definir la arquitectura técnica para evolucionar el catálogo existente de
+oportunidades hacia un catálogo basado en ActivoAgroV2, reutilizando los
+componentes existentes y evitando duplicación de información.
+
+### Estado actual
+
+Existe una implementación funcional inicial basada en:
+
+- PublicacionInversion;
+- Inversion;
+- PublicacionInversionService;
+- InversionService;
+- FeedInversionScreen;
+- InvertirScreen.
+
+Las publicaciones se almacenan actualmente en:
+
+publicaciones_inversion
+
+Las inversiones se almacenan actualmente en:
+
+inversiones
+
+### Hallazgo arquitectónico
+
+PublicacionInversion utiliza actualmente campoId como referencia al activo
+comercial anterior.
+
+ActivoAgroV2 utiliza activoId como identificador estructural del Activo Agro.
+
+CampoToActivoService ya establece continuidad entre ambos identificadores,
+utilizando campo.campoId como activoId.
+
+### Decisión
+
+La evolución del catálogo utilizará ActivoAgroV2 como fuente estructural
+del Activo Agro.
+
+Las futuras oportunidades deberán relacionarse mediante activoId.
+
+La oportunidad no duplicará la información estructural del activo.
+
+### Reutilización
+
+Se reutilizarán:
+
+- ActivoAgroV2;
+- ActivoAgroServiceV2;
+- DetalleActivoAgroScreen;
+- ConfianzaActivoService;
+- componentes actuales de inversión;
+- componentes actuales de navegación y autenticación.
+
+### Compatibilidad
+
+PublicacionInversion no será eliminada en esta etapa.
+
+Se considera una implementación funcional heredada que podrá evolucionar
+progresivamente hacia el concepto de Oportunidad Agro.
+
+No se realizará una migración global de campoId a activoId sin auditar
+previamente sus dependencias.
+
+### Inversion
+
+El modelo Inversion continuará representando una operación vinculada a una
+publicación durante la etapa de transición.
+
+Su evolución futura podrá vincular la inversión con una Oportunidad Agro,
+manteniendo trazabilidad hacia el Activo Agro.
+
+### Catálogo
+
+FeedInversionScreen constituye la base funcional del catálogo actual.
+
+La evolución prevista es convertirlo progresivamente en un catálogo de
+Oportunidades Agro capaz de presentar información estructurada proveniente
+del ActivoAgroV2.
+
+### Regla arquitectónica
+
+No crear un nuevo modelo de Activo Agro.
+
+No duplicar la Ficha Maestra dentro de la oportunidad.
+
+No reemplazar componentes existentes sin auditar sus dependencias.
+
+Toda evolución deberá mantener trazabilidad entre:
+
+ActivoAgroV2 → Oportunidad Agro → Inversión.
+
+### Expediente como fuente principal
+
+El Expediente del Activo Agro constituye la fuente estructural principal
+de información del activo.
+
+La publicación comercial no deberá duplicar la información estructural
+contenida en ActivoAgroV2.
+
+Una misma Ficha Maestra podrá ser utilizada por diferentes participantes
+del ecosistema, incluyendo propietarios, inmobiliarias, brokers y
+profesionales, según los permisos definidos.
+
+### Aportes de información
+
+Los participantes podrán aportar información al Expediente según su rol
+y nivel de autorización.
+
+Aportar información no implica necesariamente modificar directamente el
+dato maestro del Activo Agro.
+
+Los aportes deberán conservar, cuando corresponda:
+
+- usuario aportante;
+- rol;
+- fecha;
+- dato aportado;
+- fuente;
+- evidencia asociada;
+- estado de validación;
+- usuario que valida.
+
+### Trazabilidad de la información
+
+El sistema deberá permitir distinguir entre:
+
+- información declarada por el propietario;
+- información aportada por un intermediario;
+- información aportada por un profesional;
+- información respaldada documentalmente;
+- información verificada.
+
+La evolución de un dato deberá conservar trazabilidad y no deberá
+eliminar el origen de la información anterior.
+
+### Permisos
+
+El modelo futuro deberá contemplar permisos diferenciados para:
+
+- visualizar el Expediente;
+- aportar información;
+- modificar información propia;
+- solicitar modificación de información existente;
+- validar información;
+- administrar la publicación;
+- administrar el Activo Agro.
+
+Los permisos deberán estar vinculados al participante y a su relación
+con el Activo Agro.
+
+### Principio central
+
+La publicación es una representación comercial del Activo Agro.
+
+El Activo Agro es el objeto estructural.
+
+El Expediente es la fuente de información viva y trazable.
+
+La oportunidad comercial se relaciona con el Activo Agro y no reemplaza
+ni duplica su Expediente.
+
+### Estado
+
+PASO 6 — DEFINICIÓN TÉCNICA DEL CATÁLOGO Y REUTILIZACIÓN DE COMPONENTES
+EXISTENTES
+
+Estado: COMPLETADO CONCEPTUALMENTE.
+
+Se auditó:
+
+- PublicacionInversion;
+- Inversion;
+- PublicacionInversionService;
+- InversionService;
+- FeedInversionScreen;
+- InvertirScreen;
+- referencias a campoId;
+- referencias a ActivoAgroV2.
+
+No se realizaron modificaciones de código.
+
+Próximo paso:
+
+PASO 7 — DISEÑO DEL MODELO TÉCNICO DE OPORTUNIDAD AGRO Y SU VINCULACIÓN
+CON ACTIVOAGROV2.
