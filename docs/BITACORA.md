@@ -3870,3 +3870,310 @@ El módulo queda funcionalmente integrado y validado.
 El siguiente trabajo deberá comenzar desde el estado actual del repositorio, revisando el próximo módulo definido por el Plan Maestro V8 y manteniendo la arquitectura existente.
 
 🦎 Regla de cierre: primero consolidar, validar y documentar; después evolucionar.
+# 2026-08-27 — Jornada: Oportunidades Agro + preparación Firestore Emulator
+
+## Objetivo de la jornada
+
+Avanzar sobre el módulo `OportunidadAgro`, verificar su modelo y comenzar a preparar el entorno de pruebas local con Firebase Emulator, manteniendo la arquitectura V8 y evitando modificaciones innecesarias.
+
+---
+
+## Trabajo realizado
+
+### 1. Modelo `OportunidadAgro`
+
+Se verificó el modelo:
+
+`lib/models/oportunidad_agro_model.dart`
+
+Se confirmó el flujo:
+
+`OportunidadAgro → toMap() → fromMap() → OportunidadAgro`
+
+Se verificaron:
+
+* `oportunidadId`
+* `activoId`
+* `creadorId`
+* `titulo`
+* `descripcion`
+* `tipo`
+* `montoObjetivo`
+* `montoMinimo`
+* `estado`
+* `fechaCreacion`
+* `fechaActualizacion`
+
+También se verificó que los montos puedan ser opcionales.
+
+### 2. Test del modelo
+
+Se ejecutó:
+
+`flutter test test/oportunidad_agro_model_test.dart`
+
+Resultado:
+
+`00:02 +2: All tests passed!`
+
+El modelo queda validado para serialización y deserialización.
+
+### 3. Servicio `OportunidadAgroService`
+
+Se incorporó:
+
+`lib/services/oportunidad_agro_service.dart`
+
+El servicio contempla:
+
+* creación de oportunidades;
+* verificación de existencia del Activo Agro asociado;
+* persistencia en `oportunidades_agro`;
+* registro de auditoría mediante `AuditService`;
+* consulta por ID;
+* consulta de oportunidades por Activo Agro;
+* consulta de oportunidades activas.
+
+La arquitectura mantiene el flujo:
+
+`Screen → Service → Model → Firestore`
+
+y la auditoría transversal.
+
+### 4. Auditoría
+
+`OportunidadAgroService` utiliza:
+
+`AuditService`
+
+La creación de una oportunidad genera un evento de auditoría con:
+
+* activo;
+* usuario;
+* módulo;
+* acción;
+* oportunidad afectada;
+* referencia;
+* datos básicos de la oportunidad.
+
+Esto mantiene la trazabilidad definida para Agro Fields.
+
+### 5. Firebase Emulator
+
+Se inicializó Firebase Emulator en el proyecto.
+
+Proyecto Firebase:
+
+`agro-conecta-887df`
+
+Se configuró:
+
+`Firestore Emulator`
+
+Puerto elegido:
+
+`8080`
+
+También se habilitó el Emulator UI y se descargaron los emuladores correspondientes.
+
+Estado actual:
+
+* Emulator configurado: ✅
+* Firestore Emulator descargado: ✅
+* Conexión de Flutter al Emulator: ⏳ pendiente de validar
+* Tests del servicio contra Emulator: ⏳ pendiente
+
+### 6. Validación del proyecto
+
+Se ejecutó:
+
+`git diff --check`
+
+Resultado:
+
+`limpio`
+
+Se ejecutó:
+
+`flutter analyze`
+
+Resultado:
+
+`88 issues found`
+
+Los reportes corresponden principalmente a:
+
+* `avoid_print`
+* `avoid_relative_lib_imports`
+* un `unused_import`
+
+No se detectaron errores de compilación que impidan el análisis.
+
+Estos avisos no se corrigen en esta jornada porque no forman parte del objetivo funcional actual.
+
+### 7. Limpieza de cambios accidentales
+
+Se detectó que `activo_agro_service_v2.dart` presentaba modificaciones de formato/espaciado sin cambio funcional.
+
+El archivo fue restaurado mediante Git.
+
+También se eliminó el archivo de test vacío:
+
+`test/oportunidad_agro_service_test.dart`
+
+El objetivo fue evitar incorporar ruido o código no validado al cierre de jornada.
+
+---
+
+## Estado final de Git
+
+Al momento del cierre queda como único cambio funcional pendiente de versionado:
+
+`lib/services/oportunidad_agro_service.dart`
+
+No se deben incorporar modificaciones accidentales de `ActivoAgroServiceV2`.
+
+---
+
+## Decisiones de la jornada
+
+1. No modificar `ActivoAgroServiceV2` por cambios puramente de formato.
+2. No declarar probado el `OportunidadAgroService` contra Firestore hasta ejecutar pruebas reales.
+3. No considerar configurado el flujo completo de Emulator hasta validar la conexión desde Flutter.
+4. Mantener `OportunidadAgro` sobre la arquitectura `ActivoAgroV2`.
+5. Mantener auditoría y trazabilidad como capacidades transversales.
+6. No crear `ActivoAgroV3`.
+7. No avanzar hacia nuevas funcionalidades hasta validar correctamente esta capa.
+
+---
+
+## Cierre
+
+La jornada queda cerrada con:
+
+* Modelo `OportunidadAgro`: validado.
+* Tests del modelo: ✅ 2/2.
+* `OportunidadAgroService`: implementado.
+* Auditoría integrada: ✅.
+* Firestore Emulator: configurado y descargado.
+* Conexión Flutter → Emulator: pendiente.
+* Test del servicio contra Firestore: pendiente.
+* Working tree: queda pendiente únicamente el nuevo servicio para realizar el commit de cierre.
+
+---
+
+# CONTINUIDAD SIGUIENTE JORNADA
+
+## Módulo
+
+`OportunidadAgro`
+
+## Estado
+
+Modelo validado. Servicio implementado. Entorno Firestore Emulator preparado.
+
+## Último trabajo realizado
+
+Se creó:
+
+`lib/services/oportunidad_agro_service.dart`
+
+y se validó:
+
+`test/oportunidad_agro_model_test.dart`
+
+con resultado:
+
+`+2 All tests passed!`
+
+## Pendiente inmediato
+
+Validar el servicio contra Firestore Emulator.
+
+## Próximo paso
+
+1. Confirmar configuración de Firebase Emulator.
+2. Conectar Flutter al Firestore Emulator.
+3. Crear test de `OportunidadAgroService`.
+4. Probar creación de oportunidad.
+5. Verificar existencia del Activo Agro asociado.
+6. Verificar persistencia en `oportunidades_agro`.
+7. Verificar registro en `auditoria_activos`.
+8. Probar lectura por ID.
+9. Probar consulta por Activo Agro.
+10. Probar consulta de oportunidades activas.
+11. Ejecutar tests.
+12. Ejecutar `flutter analyze`.
+13. Revisar `git diff --check`.
+14. Documentar resultados.
+15. Realizar commit y push.
+
+## Criterio de cierre de la próxima jornada
+
+No alcanza con que compile.
+
+Debe quedar demostrado:
+
+`OportunidadAgro`
+
+↓
+
+`OportunidadAgroService`
+
+↓
+
+`Firestore Emulator`
+
+↓
+
+`auditoria_activos`
+
+con tests verificables.
+
+## Palabras clave de continuidad
+
+`CONTINUIDAD AGRO FIELDS V8`
+
+`OPORTUNIDAD AGRO`
+
+`FIRESTORE EMULATOR`
+
+`AUDITORÍA`
+
+`TRAZABILIDAD`
+
+`ACTIVO AGRO`
+
+`SERVICIO`
+
+`TEST`
+
+`SERIALIZACIÓN`
+
+`PERSISTENCIA`
+
+## Regla
+
+Primero validar.
+
+Después documentar.
+
+Después versionar.
+
+No acelerar etapas.
+
+No crear V3.
+
+Mantener la arquitectura V8.
+
+---
+
+## Contexto estratégico
+
+La evolución de OportunidadAgro debe seguir vinculada al concepto central que venimos desarrollando:
+
+**Activo → Identidad → Expediente → Evidencias → Historial → Estado → Valor**
+
+El objetivo no es convertir Agro Fields simplemente en otro marketplace. La hipótesis estratégica que debe mantenerse visible es que el valor diferencial puede estar en construir y conservar el expediente histórico de los activos reales.
+
+Esta hipótesis todavía debe validarse y no implica cambiar la arquitectura ni implementar nuevas capas inmediatamente.
