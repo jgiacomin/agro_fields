@@ -2289,3 +2289,639 @@ Estado: COMPLETADO.
 Próximo paso:
 
 PASO 3 — DISEÑO FUNCIONAL DE LA OPORTUNIDAD Y CATÁLOGO.
+# 19. AUDITORÍA ARQUITECTÓNICA — PASO 3
+
+## Diseño funcional de la Oportunidad Agro y Catálogo
+
+### Objetivo
+
+Definir funcionalmente cómo Agro Fields presentará oportunidades vinculadas
+a Activos Agro y cómo los usuarios podrán explorarlas y analizarlas.
+
+### Principio central
+
+La Oportunidad Agro no constituye un nuevo Activo Agro.
+
+Representa una posibilidad concreta vinculada a un Activo Agro, como:
+
+- adquisición;
+- expansión;
+- desarrollo productivo;
+- infraestructura;
+- necesidad de capital;
+- asociación;
+- participación en un proyecto.
+
+Conceptualmente:
+
+ACTIVO AGRO
+        ↓
+OPORTUNIDAD AGRO
+        ↓
+CATÁLOGO
+        ↓
+USUARIO / INVERSOR
+
+### Relación con el Activo Agro
+
+El Activo Agro continúa siendo el núcleo de información.
+
+La Oportunidad Agro no debe duplicar el expediente del activo.
+
+Conceptualmente:
+
+ACTIVO AGRO
+├── información
+├── producción
+├── suelo
+├── economía
+├── documentación
+├── confianza
+├── madurez
+├── relaciones
+├── historial
+└── oportunidades
+       ├── oportunidad A
+       ├── oportunidad B
+       └── oportunidad C
+
+Un mismo Activo Agro podrá generar diferentes oportunidades durante
+su ciclo de vida.
+
+### Catálogo de oportunidades
+
+El catálogo constituye una vista de exploración y presentación de
+Oportunidades Agro.
+
+Podrá permitir posteriormente:
+
+- búsqueda;
+- filtros;
+- comparación;
+- visualización resumida;
+- acceso al detalle;
+- análisis;
+- contacto.
+
+La información mostrada deberá permitir comprender rápidamente:
+
+- qué activo existe;
+- qué oportunidad se propone;
+- cuál es el objetivo;
+- qué necesidad existe;
+- qué información está disponible;
+- qué información requiere verificación;
+- cuál es el estado de la oportunidad.
+
+### Inteligencia Artificial como capa transversal
+
+La Inteligencia Artificial formará parte de la experiencia del catálogo
+como una capa de asistencia y análisis.
+
+La IA no constituye un atributo de la Oportunidad Agro ni reemplaza al
+Activo Agro.
+
+Conceptualmente:
+
+ACTIVO AGRO
+      ↓
+OPORTUNIDAD
+      ↓
+CATÁLOGO
+      ↓
+┌─────────────────────────────┐
+│ ASISTENCIA IA               │
+│                             │
+│ Explicar                    │
+│ Resumir                     │
+│ Comparar                    │
+│ Detectar faltantes          │
+│ Identificar preguntas       │
+│ Señalar puntos de revisión  │
+│ Orientar al usuario         │
+└─────────────────────────────┘
+      ↓
+ANÁLISIS DEL USUARIO
+
+### Funciones conceptuales de IA
+
+La IA podrá posteriormente:
+
+- explicar una oportunidad en lenguaje sencillo;
+- resumir información relevante;
+- identificar información faltante;
+- diferenciar información declarada, documentada y validada;
+- comparar oportunidades;
+- identificar preguntas relevantes;
+- señalar riesgos o aspectos que requieren revisión;
+- sugerir qué información debería analizarse;
+- orientar sobre la participación de profesionales especializados.
+
+### Límite de la IA
+
+La IA no deberá:
+
+- garantizar rentabilidad;
+- recomendar inversiones como certeza;
+- reemplazar análisis financiero;
+- reemplazar evaluación legal;
+- reemplazar evaluación técnica profesional;
+- alterar la información original del expediente.
+
+La IA deberá diferenciar claramente entre:
+
+- dato registrado;
+- interpretación;
+- hipótesis;
+- recomendación de revisión;
+- información faltante.
+
+### Estados conceptuales de la oportunidad
+
+La oportunidad podrá evolucionar mediante estados como:
+
+- borrador;
+- en preparación;
+- en validación;
+- publicable;
+- publicada;
+- en análisis;
+- en negociación;
+- concretada;
+- cerrada;
+- pausada;
+- cancelada.
+
+La clasificación definitiva se determinará durante el diseño técnico.
+
+### Decisiones arquitectónicas
+
+1. ActivoAgroV2 continúa siendo el núcleo.
+2. La Oportunidad Agro será un componente especializado vinculado al activo.
+3. La oportunidad no duplicará el expediente.
+4. Un activo podrá generar diferentes oportunidades durante su vida.
+5. El catálogo será una vista de exploración de oportunidades.
+6. La IA será una capa transversal de asistencia.
+7. La IA explicará y analizará información, pero no garantizará resultados.
+8. La IA no reemplazará profesionales ni decisiones legales o financieras.
+9. No se crea ActivoAgroV3.
+10. No se implementarán todavía modelos o servicios hasta completar el
+    diseño técnico.
+
+## Estado
+
+PASO 3 — DISEÑO FUNCIONAL DE LA OPORTUNIDAD Y CATÁLOGO
+
+Estado: COMPLETADO.
+
+Próximo paso:
+
+PASO 4 — DISEÑO DEL MODELO OPORTUNIDAD AGRO Y SUS RELACIONES CON
+ACTIVOAGROV2.
+# 26. PASO 4 — EXPERIENCIA DEL CATÁLOGO DE OPORTUNIDADES AGRO
+
+## Objetivo
+
+Definir la experiencia conceptual del Catálogo de Oportunidades Agro de
+Agro Fields antes de iniciar su implementación.
+
+El catálogo será la puerta de entrada para que un usuario pueda descubrir,
+comprender y comenzar a analizar Activos Agro que representen oportunidades.
+
+Agro Fields no debe limitarse a mostrar propiedades rurales.
+
+Debe presentar Activos Agro estructurados, con información relevante,
+trazabilidad y herramientas de asistencia para facilitar su comprensión.
+
+---
+
+## 26.1 Principio del Catálogo
+
+El catálogo debe permitir una comprensión rápida del activo sin exponer toda
+la complejidad del Expediente Permanente.
+
+Conceptualmente:
+
+CATÁLOGO
+    ↓
+OPORTUNIDAD
+    ↓
+FICHA RESUMIDA
+    ↓
+ANÁLISIS
+    ↓
+FICHA MAESTRA
+    ↓
+EXPEDIENTE
+
+El catálogo representa una vista simplificada del Activo Agro.
+
+---
+
+## 26.2 Información mínima de la tarjeta
+
+Cada oportunidad podrá presentar inicialmente:
+
+- nombre o identificación del activo;
+- ubicación;
+- superficie;
+- actividad productiva;
+- producción actual;
+- infraestructura relevante;
+- situación económica disponible;
+- necesidad de inversión, cuando corresponda;
+- nivel de información;
+- Índice de Confianza;
+- potencial productivo;
+- estado de la oportunidad.
+
+La información mostrada deberá adaptarse a la disponibilidad real de datos.
+
+No deberán inventarse datos faltantes.
+
+---
+
+## 26.3 Catálogo y Activo Agro
+
+La oportunidad mostrada en el catálogo no constituye una entidad
+independiente del Activo Agro.
+
+La relación conceptual será:
+
+ACTIVO AGRO
+    ↓
+INFORMACIÓN ESTRUCTURADA
+    ↓
+OPORTUNIDAD
+    ↓
+CATÁLOGO
+
+La publicación comercial representa una vista o etapa del activo.
+
+El ActivoAgroV2 continúa siendo el núcleo de información.
+
+No se crea ActivoAgroV3.
+
+---
+
+## 26.4 Entrada a la Ficha Maestra
+
+Desde una oportunidad del catálogo el usuario podrá acceder progresivamente
+a información más detallada.
+
+Flujo:
+
+CATÁLOGO
+    ↓
+RESUMEN
+    ↓
+FICHA MAESTRA
+    ↓
+DETALLE
+    ↓
+EXPEDIENTE
+    ↓
+HISTORIAL
+
+La navegación deberá permitir que el usuario profundice solamente cuando lo
+necesite.
+
+---
+
+## 26.5 Inteligencia Artificial como asesor
+
+La Inteligencia Artificial formará parte de la experiencia del catálogo como
+capa de asistencia.
+
+Su función será ayudar al usuario a comprender la oportunidad y detectar
+aspectos que requieran mayor análisis.
+
+Conceptualmente:
+
+OPORTUNIDAD
+    ↓
+INFORMACIÓN DISPONIBLE
+    ↓
+IA
+    ↓
+ASISTENCIA AL USUARIO
+
+La IA podrá ayudar a:
+
+- explicar qué representa el activo;
+- resumir la información disponible;
+- identificar información faltante;
+- señalar aspectos que deberían analizarse;
+- sugerir preguntas relevantes;
+- explicar conceptos productivos o económicos;
+- ayudar a comparar oportunidades;
+- orientar al usuario hacia información adicional.
+
+---
+
+## 26.6 Límites de la IA
+
+La IA no deberá:
+
+- garantizar rentabilidad;
+- recomendar automáticamente una inversión;
+- reemplazar profesionales;
+- emitir una evaluación jurídica definitiva;
+- reemplazar análisis financiero profesional;
+- inventar información inexistente;
+- presentar hipótesis como hechos comprobados.
+
+La IA debe distinguir claramente entre:
+
+INFORMACIÓN VERIFICADA
+        ↓
+INFORMACIÓN DECLARADA
+        ↓
+INFORMACIÓN INCOMPLETA
+        ↓
+ANÁLISIS / INTERPRETACIÓN DE IA
+
+---
+
+## 26.7 Preguntas rápidas al asesor IA
+
+La experiencia podrá incorporar preguntas predefinidas para reducir la
+complejidad de interacción.
+
+Ejemplos:
+
+- ¿Qué estoy viendo?
+- ¿Qué información tiene este activo?
+- ¿Qué información falta?
+- ¿Cuáles son los puntos importantes?
+- ¿Qué debería preguntar?
+- ¿Qué debería verificar?
+- ¿Qué profesionales podrían intervenir?
+- ¿Qué otros activos podría comparar?
+
+Estas funciones serán definidas posteriormente en detalle.
+
+---
+
+## 26.8 Búsqueda y filtros
+
+El catálogo deberá evolucionar hacia mecanismos de búsqueda y filtrado.
+
+Los filtros podrán considerar, entre otros:
+
+- ubicación;
+- actividad productiva;
+- superficie;
+- tipo de activo;
+- nivel de información;
+- Índice de Confianza;
+- estado de oportunidad;
+- necesidad de inversión;
+- características productivas.
+
+Los filtros definitivos deberán definirse según necesidades reales de uso.
+
+No se implementarán filtros únicamente por razones técnicas.
+
+---
+
+## 26.9 Experiencia del inversor
+
+El recorrido conceptual del usuario interesado en una oportunidad será:
+
+DESCUBRIR
+    ↓
+COMPRENDER
+    ↓
+PREGUNTAR
+    ↓
+ANALIZAR
+    ↓
+VERIFICAR
+    ↓
+CONSULTAR PROFESIONALES
+    ↓
+CONTACTAR
+    ↓
+OPERAR
+
+Agro Fields debe acompañar este recorrido sin convertir la IA ni el catálogo
+en sustitutos del análisis profesional.
+
+---
+
+## 26.10 Diferencial estratégico
+
+El diferencial del catálogo no será solamente la cantidad de activos
+publicados.
+
+Será la combinación de:
+
+Activo Agro
++
+Información estructurada
++
+Confianza
++
+Trazabilidad
++
+Ficha Maestra
++
+IA como asistencia
++
+Red profesional
+
+El objetivo es evolucionar desde un catálogo de propiedades hacia un
+catálogo de oportunidades agro estructuradas.
+
+---
+
+## 26.11 Regla de simplicidad
+
+El catálogo debe ser sencillo para el usuario aunque la arquitectura
+interna sea compleja.
+
+Principio:
+
+> Descubrir fácil.
+> Comprender fácil.
+> Preguntar fácil.
+> Profundizar cuando sea necesario.
+
+La información avanzada deberá aparecer progresivamente.
+
+---
+
+## 26.12 Estado del Paso 4
+
+PASO 4 — EXPERIENCIA DEL CATÁLOGO DE OPORTUNIDADES AGRO
+
+Estado: COMPLETADO CONCEPTUALMENTE.
+
+Se definió:
+
+- propósito del catálogo;
+- estructura conceptual de la oportunidad;
+- información mínima;
+- relación con ActivoAgroV2;
+- acceso a la Ficha Maestra;
+- recorrido del usuario;
+- papel de la IA;
+- límites de la IA;
+- concepto inicial de filtros;
+- integración futura con profesionales;
+- principio de simplicidad.
+
+No se implementan todavía modelos, servicios ni pantallas nuevos.
+
+Próximo paso:
+
+PASO 5 — DEFINICIÓN TÉCNICA DEL CATÁLOGO Y REUTILIZACIÓN DE COMPONENTES
+EXISTENTES.
+## Paso 5 — Catálogo Inteligente de Oportunidades + IA
+
+### Objetivo
+
+Evolucionar el catálogo de oportunidades agropecuarias desde una simple
+visualización de publicaciones hacia una herramienta de descubrimiento,
+comprensión y análisis asistido.
+
+El catálogo debe permitir visualizar oportunidades de inversión y,
+progresivamente, utilizar inteligencia artificial como asistente para
+interpretar la información disponible del activo.
+
+La IA no reemplaza la decisión del usuario ni constituye asesoramiento
+financiero automático. Su función es asistir en la comprensión de la
+información disponible y señalar datos relevantes, faltantes o aspectos
+que requieren verificación.
+
+### Modelo conceptual
+
+La oportunidad publicada no constituye un nuevo activo.
+
+La publicación debe referenciar la información existente del ecosistema
+Agro Fields y, cuando corresponda, al ActivoAgroV2 y su Ficha Maestra.
+
+Flujo conceptual:
+
+ActivoAgroV2
+    ↓
+Ficha Maestra del Activo Agro
+    ↓
+Datos + documentación + evidencias + historial
+    ↓
+Publicación de oportunidad
+    ↓
+Catálogo
+    ↓
+Asistente IA
+    ↓
+Usuario
+
+### Catálogo
+
+El catálogo deberá permitir descubrir oportunidades mediante una
+presentación clara y comparable.
+
+Una oportunidad podrá mostrar, según la información disponible:
+
+- Identificación del activo.
+- Ubicación.
+- Tipo de activo.
+- Superficie.
+- Actividad productiva.
+- Información económica disponible.
+- Estado de la oportunidad.
+- Información de suelo disponible.
+- Documentación disponible.
+- Evidencias.
+- Historial.
+- Nivel de confianza.
+- Nivel de madurez.
+- Información faltante.
+
+La interfaz deberá diferenciar claramente entre:
+
+- Información disponible.
+- Información no disponible.
+- Información pendiente de verificación.
+- Información proveniente de documentación o evidencia.
+
+### Asistente IA
+
+El catálogo podrá incorporar una capa de inteligencia artificial orientada
+a asistir al usuario en el análisis inicial de una oportunidad.
+
+La IA podrá:
+
+- Resumir la información disponible.
+- Explicar características relevantes del activo.
+- Identificar información faltante.
+- Señalar aspectos que deberían verificarse.
+- Generar preguntas para profundizar el análisis.
+- Relacionar información existente de diferentes módulos.
+- Ayudar a interpretar la información presentada en la Ficha Maestra.
+- Explicar por qué determinados datos pueden ser relevantes para el
+  análisis de una oportunidad.
+
+### Principio de IA responsable
+
+La IA no deberá inventar información que no exista en los datos del
+activo.
+
+Cuando un dato no esté disponible, deberá indicarlo explícitamente.
+
+Las respuestas deberán diferenciar entre:
+
+- Datos registrados.
+- Inferencias.
+- Información faltante.
+- Aspectos que requieren validación profesional.
+
+La decisión final corresponde siempre al usuario.
+
+### Relación con la Ficha Maestra
+
+El catálogo inteligente debe utilizar la Ficha Maestra como fuente
+estructurada de información y no crear una segunda ficha paralela.
+
+La IA deberá consumir información existente y evolucionar posteriormente
+hacia una capa de interpretación sobre los datos estructurados del activo.
+
+### Estado de implementación
+
+Existe actualmente una base funcional para publicaciones de inversión:
+
+- `PublicacionInversion`
+- `Inversion`
+- `PublicacionInversionService`
+- `feed_inversion_screen.dart`
+
+La implementación actual permite publicar y obtener publicaciones activas
+desde Firestore.
+
+El Paso 5 define la evolución arquitectónica hacia un catálogo inteligente,
+pero no implica todavía implementar el motor de IA.
+
+### Regla arquitectónica
+
+No crear un nuevo modelo de activo para las oportunidades.
+
+Las oportunidades deberán relacionarse con los activos existentes y
+reutilizar la información estructurada disponible en Agro Fields.
+
+La IA será una capa de asistencia sobre los datos y no una fuente
+independiente de verdad.
+
+### Próxima evolución
+
+Una vez cerrado este paso documental, la implementación podrá avanzar en
+etapas:
+
+1. Consolidar el catálogo.
+2. Mejorar la presentación de oportunidades.
+3. Incorporar indicadores de información, confianza y madurez.
+4. Vincular progresivamente la oportunidad con la Ficha Maestra.
+5. Diseñar la capa de IA.
+6. Implementar el asistente IA sobre información estructurada.
+7. Auditar respuestas, fuentes y límites de la IA.
