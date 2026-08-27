@@ -3138,5 +3138,286 @@ No se realizaron modificaciones de código.
 
 Próximo paso:
 
-PASO 7 — DISEÑO DEL MODELO TÉCNICO DE OPORTUNIDAD AGRO Y SU VINCULACIÓN
-CON ACTIVOAGROV2.
+# 21. AUDITORÍA ARQUITECTÓNICA — PASO 7
+
+## Diseño técnico del modelo Oportunidad Agro y su vinculación con ActivoAgroV2
+
+### Objetivo
+
+Definir técnicamente el concepto de Oportunidad Agro y establecer su relación con ActivoAgroV2 e Inversion, manteniendo la arquitectura existente y evitando duplicación de información.
+
+### Principio arquitectónico
+
+La arquitectura diferencia tres conceptos:
+
+* ActivoAgroV2: objeto estructural del ecosistema agro.
+* Oportunidad Agro: representación comercial de una propuesta vinculada a un Activo Agro.
+* Inversion: operación realizada sobre una oportunidad.
+
+La relación conceptual será:
+
+```text
+ActivoAgroV2
+    │
+    │ activoId
+    ▼
+OportunidadAgro
+    │
+    │ oportunidadId
+    ▼
+Inversion
+```
+
+### ActivoAgroV2 como objeto estructural
+
+ActivoAgroV2 continúa siendo la fuente estructural principal del Activo Agro.
+
+La información estructural permanece dentro del ActivoAgroV2, incluyendo:
+
+* identidad;
+* ubicación;
+* suelo;
+* producción;
+* economía;
+* documentación;
+* confianza;
+* evaluación;
+* madurez;
+* participantes;
+* historial;
+* trazabilidad.
+
+La Oportunidad Agro no deberá duplicar esta información.
+
+### Oportunidad Agro
+
+La Oportunidad Agro representa una propuesta comercial asociada a un Activo Agro existente.
+
+Modelo conceptual inicial:
+
+```text
+OportunidadAgro
+
+oportunidadId
+activoId
+creadorId
+
+titulo
+descripcion
+tipo
+
+montoObjetivo
+montoMinimo
+
+estado
+
+fechaCreacion
+fechaActualizacion
+```
+
+### Identidad
+
+`oportunidadId` identifica de manera única la oportunidad.
+
+`activoId` establece la relación con el ActivoAgroV2 correspondiente.
+
+La Oportunidad Agro no reemplaza al Activo Agro ni constituye un nuevo tipo de Activo Agro.
+
+### Creador
+
+`creadorId` identifica al usuario que crea la oportunidad.
+
+El creador no necesariamente coincide con el propietario del activo.
+
+El propietario continúa siendo definido por:
+
+```text
+ActivoAgroV2.propietarioId
+```
+
+La creación y administración de oportunidades deberá respetar los permisos asociados al participante y a su relación con el Activo Agro.
+
+### Información comercial
+
+La oportunidad podrá contener información propia de la propuesta comercial:
+
+* título;
+* descripción;
+* tipo;
+* condiciones económicas;
+* estado;
+* fechas de creación y actualización.
+
+Esta información no reemplaza ni duplica la información estructural del Expediente del Activo Agro.
+
+### Tipo de oportunidad
+
+El diseño inicial contempla un modelo genérico de oportunidad.
+
+Tipos conceptuales iniciales:
+
+* inversion;
+* venta;
+* arrendamiento;
+* sociedad;
+* financiamiento;
+* servicio.
+
+El catálogo podrá evolucionar posteriormente incorporando nuevos tipos sin crear nuevos modelos de Activo Agro.
+
+### Estado
+
+El estado inicial de una Oportunidad Agro podrá contemplar:
+
+* borrador;
+* activa;
+* pausada;
+* cerrada;
+* cancelada.
+
+La máquina de estados podrá evolucionar posteriormente si las necesidades funcionales lo requieren.
+
+### Información económica
+
+Las oportunidades que requieran objetivos económicos podrán utilizar:
+
+* `montoObjetivo`;
+* `montoMinimo`.
+
+`montoRecaudado` no se considera inicialmente un dato maestro de la oportunidad.
+
+Cuando corresponda a una oportunidad de inversión, el monto recaudado podrá derivarse de las operaciones de inversión registradas, evitando duplicación e inconsistencias.
+
+### Compatibilidad con PublicacionInversion
+
+`PublicacionInversion` continuará existiendo durante la etapa de transición.
+
+Actualmente representa el circuito funcional heredado:
+
+```text
+Campo
+  │
+  │ campoId
+  ▼
+PublicacionInversion
+  │
+  │ publicacionId
+  ▼
+Inversion
+```
+
+Este circuito no será eliminado ni migrado globalmente en esta etapa.
+
+La auditoría de dependencias confirmó que `campoId` continúa siendo utilizado por otras funcionalidades existentes, incluyendo:
+
+* Campo;
+* Chat;
+* ChatRoom;
+* SolicitudContacto;
+* servicios relacionados;
+* CampoToActivoService.
+
+Por lo tanto, no corresponde realizar una migración global de `campoId` a `activoId` como parte de este paso.
+
+### Nueva arquitectura
+
+La evolución prevista del catálogo utilizará:
+
+```text
+ActivoAgroV2
+  │
+  │ activoId
+  ▼
+OportunidadAgro
+  │
+  │ oportunidadId
+  ▼
+Inversion
+```
+
+La nueva arquitectura coexistirá inicialmente con el circuito heredado.
+
+### Inversion
+
+El modelo `Inversion` actual continuará funcionando sin modificaciones en este paso.
+
+Actualmente mantiene:
+
+```text
+inversionId
+inversorId
+publicacionId
+monto
+porcentaje
+estado
+fecha
+```
+
+No se agregará todavía `oportunidadId`.
+
+La evolución de `Inversion` hacia una relación directa con Oportunidad Agro será evaluada posteriormente, una vez implementado y probado el nuevo modelo de oportunidad.
+
+### Regla de transición
+
+La transición deberá realizarse progresivamente:
+
+```text
+Auditar
+   ↓
+Definir modelo
+   ↓
+Implementar modelo
+   ↓
+Probar serialización
+   ↓
+Implementar servicio
+   ↓
+Integrar catálogo
+   ↓
+Validar funcionamiento
+   ↓
+Evaluar migración progresiva
+```
+
+No se realizará una migración global mientras existan dependencias no auditadas.
+
+### Reglas arquitectónicas
+
+Se mantienen las siguientes reglas:
+
+1. No crear un nuevo modelo de Activo Agro.
+2. No crear ActivoAgroV3.
+3. Evolucionar sobre ActivoAgroV2.
+4. No duplicar la Ficha Maestra dentro de la Oportunidad Agro.
+5. Mantener al Expediente como fuente estructural de información.
+6. No eliminar PublicacionInversion en esta etapa.
+7. No migrar globalmente `campoId` sin una auditoría específica.
+8. Mantener trazabilidad entre Activo Agro, oportunidad e inversión.
+9. Separar información estructural de información comercial.
+10. Implementar progresivamente y validar cada etapa mediante pruebas.
+
+### Estado
+
+PASO 7 — DISEÑO TÉCNICO DEL MODELO DE OPORTUNIDAD AGRO Y SU VINCULACIÓN CON ACTIVOAGROV2.
+
+Estado: COMPLETADO CONCEPTUALMENTE.
+
+Se definió:
+
+* identidad de Oportunidad Agro;
+* relación mediante `activoId`;
+* identificación del creador;
+* información comercial;
+* tipos de oportunidad;
+* estados;
+* información económica;
+* relación conceptual con Inversion;
+* compatibilidad con PublicacionInversion;
+* estrategia de transición;
+* reglas arquitectónicas.
+
+No se realizaron modificaciones de código.
+
+Próximo paso:
+
+PASO 8 — IMPLEMENTACIÓN DEL MODELO OPORTUNIDAD AGRO, SERIALIZACIÓN Y PRUEBAS.
