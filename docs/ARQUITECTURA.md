@@ -2152,3 +2152,140 @@ Próximo paso:
 
 PASO 2 — DEFINICIÓN DEL GAP ARQUITECTÓNICO Y MODELO CONCEPTUAL DE RELACIONES.
 
+# 19. AUDITORÍA ARQUITECTÓNICA — PASO 2
+
+## Objetivo
+
+Definir el GAP arquitectónico existente para evolucionar Agro Fields desde
+la representación del Activo Agro hacia la presentación estructurada de
+proyectos y oportunidades agropecuarias.
+
+## Hallazgo
+
+La arquitectura actual permite representar información estructurada del
+Activo Agro, incluyendo producción, suelo, economía, documentación,
+confianza, madurez, participantes e historial.
+
+El GAP identificado es la capacidad conceptual de representar una
+oportunidad concreta vinculada a un Activo Agro.
+
+## Principio
+
+La Oportunidad Agro no reemplaza al Activo Agro.
+
+Representa una posibilidad de participación, inversión, expansión,
+desarrollo o transformación vinculada a un activo o proyecto determinado.
+
+Conceptualmente:
+
+ACTIVO AGRO
++
+PROYECTO / NECESIDAD
++
+CONDICIONES
++
+INFORMACIÓN
++
+CONFIANZA
+↓
+OPORTUNIDAD AGRO
+
+## Catálogo de oportunidades
+
+Agro Fields podrá presentar las oportunidades mediante una experiencia de
+catálogo orientada a usuarios interesados e inversores.
+
+El catálogo constituye una vista de exploración sobre oportunidades
+estructuradas y no debe convertirse en una duplicación de la información
+del Activo Agro.
+
+Conceptualmente:
+
+CATÁLOGO
+↓
+OPORTUNIDAD
+↓
+ACTIVO AGRO
+↓
+EXPEDIENTE
+
+## Información conceptual de una oportunidad
+
+Una oportunidad podrá incluir posteriormente:
+
+- activo relacionado;
+- objetivo;
+- tipo de oportunidad;
+- necesidad identificada;
+- inversión requerida;
+- destino de fondos;
+- plazo;
+- estado;
+- condiciones;
+- potencial;
+- riesgos;
+- información disponible;
+- documentación;
+- evidencias;
+- nivel de confianza;
+- responsables;
+- fecha de actualización.
+
+Estos elementos son conceptuales y no implican todavía la creación de un
+nuevo modelo.
+
+## Tipos posibles de oportunidad
+
+Entre otras:
+
+- adquisición de activo;
+- expansión productiva;
+- incorporación de infraestructura;
+- desarrollo de nueva actividad;
+- proyecto productivo;
+- necesidad de capital;
+- participación en inversión;
+- transformación o mejora del activo.
+
+La clasificación definitiva se realizará posteriormente mediante análisis
+funcional.
+
+## Principio para inversores
+
+La plataforma debe permitir comprender:
+
+- qué activo existe;
+- qué situación presenta;
+- qué oportunidad se propone;
+- qué necesidad existe;
+- qué información está respaldada;
+- qué información falta;
+- qué riesgos requieren análisis;
+- qué profesionales participaron.
+
+Agro Fields no garantiza rentabilidad ni reemplaza el análisis profesional,
+legal o financiero.
+
+## Decisión arquitectónica
+
+1. ActivoAgroV2 continúa siendo el núcleo.
+2. La oportunidad estará vinculada al Activo Agro.
+3. El catálogo será una forma de consulta y presentación.
+4. No se duplicará innecesariamente la información del activo.
+5. No se crea ActivoAgroV3.
+6. No se implementará todavía un nuevo modelo sin definir previamente
+   sus responsabilidades y relaciones.
+7. La información de la oportunidad deberá poder vincularse con el
+   expediente del activo.
+8. La confianza y trazabilidad del activo deberán acompañar la presentación
+   de la oportunidad.
+
+## Estado
+
+PASO 2 — DEFINICIÓN DEL GAP ARQUITECTÓNICO Y MODELO CONCEPTUAL
+
+Estado: COMPLETADO.
+
+Próximo paso:
+
+PASO 3 — DISEÑO FUNCIONAL DE LA OPORTUNIDAD Y CATÁLOGO.
