@@ -2130,3 +2130,107 @@ La continuidad del desarrollo se realizará sobre `ActivoAgroV2`, respetando la 
 Estado general:
 
 🟡 **Módulo Suelo incorporado arquitectónicamente — circuito funcional pendiente.**
+# Paso 9 — Validación de OportunidadAgroService
+
+## Estado
+
+🟢 VALIDADO
+
+## Fecha
+
+03/09/2026
+
+## Validación realizada
+
+Se validó mediante Integration Test la integración real entre:
+
+`ActivoAgroV2`
+
+↓
+
+`OportunidadAgro`
+
+↓
+
+`OportunidadAgroService`
+
+↓
+
+`Firestore Emulator`
+
+↓
+
+`Auditoría`
+
+## Capacidades verificadas
+
+- creación de Activo Agro V2;
+- persistencia del Activo Agro;
+- recuperación del Activo Agro;
+- creación de OportunidadAgro vinculada;
+- persistencia de la oportunidad;
+- recuperación por ID;
+- consulta de oportunidades por Activo Agro;
+- consulta de oportunidades activas;
+- generación de auditoría;
+- trazabilidad de usuario y referencia;
+- rechazo de oportunidades vinculadas a activos inexistentes.
+
+## Evidencia
+
+Test:
+
+`integration_test/oportunidad_agro_service_integration_test.dart`
+
+Resultado:
+
+`All tests passed!`
+
+## Arquitectura
+
+La implementación continúa sobre `ActivoAgroV2`.
+
+No se crea `ActivoAgroV3`.
+
+Se mantiene:
+
+`Screen → Service → Model → Firebase`
+
+con auditoría transversal.
+
+## Próxima etapa
+
+Consolidar el cierre del Paso 9 mediante:
+
+- actualización de documentación;
+- actualización de BITÁCORA;
+- commit;
+- push;
+- verificación de working tree limpio.
+
+Una vez completado el versionado, iniciar la planificación del Paso 10 sin modificar innecesariamente las capas ya validadas.
+# Principios rectores de experiencia Agro Fields
+
+## 1. Experiencia adaptativa
+
+Responsive no alcanza.
+
+Agro Fields debe adaptar la experiencia al contexto de uso, manteniendo la misma plataforma, información, arquitectura, modelos, servicios y lógica de negocio.
+
+---
+
+## 2. Complejidad detrás de escena
+
+La complejidad queda en el sistema, no en la pantalla.
+
+El usuario debe poder realizar acciones simples sin tener que comprender la complejidad interna de Agro Fields.
+
+---
+
+## 3. Registro inmediato y estructuración automática
+
+Registrar en el momento, con el mínimo esfuerzo; estructurar automáticamente detrás.
+
+Principio operativo:
+
+> Lo veo → lo registro → Agro Fields lo organiza.

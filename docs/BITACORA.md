@@ -4177,3 +4177,192 @@ La evolución de OportunidadAgro debe seguir vinculada al concepto central que v
 El objetivo no es convertir Agro Fields simplemente en otro marketplace. La hipótesis estratégica que debe mantenerse visible es que el valor diferencial puede estar en construir y conservar el expediente histórico de los activos reales.
 
 Esta hipótesis todavía debe validarse y no implica cambiar la arquitectura ni implementar nuevas capas inmediatamente.
+# 2026-09-03 — Cierre Paso 9: Validación OportunidadAgroService con Firestore Emulator
+
+## Objetivo de la jornada
+
+Validar mediante pruebas reales la integración de `OportunidadAgroService` con `ActivoAgroV2`, Firestore Emulator y el sistema transversal de auditoría.
+
+El objetivo fue comprobar el circuito completo de persistencia, consultas, vinculación y trazabilidad.
+
+---
+
+## Trabajo realizado
+
+### 1. Integración real con Android Emulator
+
+Se ejecutó el test de integración utilizando:
+
+`Android Emulator`
+
+y conexión al:
+
+`Firestore Emulator`
+
+Host utilizado desde Android Emulator:
+
+`10.0.2.2`
+
+Puerto:
+
+`8080`
+
+---
+
+### 2. Creación de Activo Agro V2
+
+Se creó un `ActivoAgroV2` de prueba mediante:
+
+`ActivoAgroServiceV2`
+
+Se verificó:
+
+- creación;
+- persistencia;
+- recuperación por ID;
+- conservación de identidad y datos principales.
+
+---
+
+### 3. Creación de OportunidadAgro vinculada
+
+Se creó una `OportunidadAgro` asociada al Activo Agro previamente creado.
+
+Se verificó:
+
+- creación;
+- persistencia;
+- recuperación;
+- conservación del `activoId`;
+- estado de la oportunidad.
+
+---
+
+### 4. Consultas
+
+Se validaron las consultas del servicio:
+
+- obtener oportunidad por ID;
+- obtener oportunidades por Activo Agro;
+- obtener oportunidades activas.
+
+La oportunidad creada fue recuperada correctamente en las consultas correspondientes.
+
+---
+
+### 5. Auditoría y trazabilidad
+
+La creación de la oportunidad vinculada generó correctamente un evento mediante `AuditService`.
+
+Se verificó:
+
+- activo afectado;
+- usuario;
+- módulo `oportunidad`;
+- acción `crear_oportunidad`;
+- elemento afectado;
+- referencia de la oportunidad.
+
+Esto confirma la integración de `OportunidadAgro` con la arquitectura transversal de trazabilidad.
+
+---
+
+### 6. Validación negativa
+
+Se probó el intento de crear una oportunidad vinculada a un Activo Agro inexistente.
+
+Resultado:
+
+La operación fue rechazada correctamente mediante una excepción.
+
+Esto confirma la validación de integridad de la relación:
+
+`OportunidadAgro → ActivoAgroV2`
+
+---
+
+## Test ejecutado
+
+Archivo:
+
+`integration_test/oportunidad_agro_service_integration_test.dart`
+
+Comando:
+
+`flutter test integration_test/oportunidad_agro_service_integration_test.dart -d emulator-5554`
+
+Resultado:
+
+`01:22 +1: All tests passed!`
+
+---
+
+## Resultado técnico
+
+Queda validado el circuito:
+
+`Android Emulator`
+
+↓
+
+`OportunidadAgroService`
+
+↓
+
+`ActivoAgroServiceV2`
+
+↓
+
+`Firestore Emulator`
+
+↓
+
+`oportunidades_agro`
+
+↓
+
+`auditoria_activos`
+
+La integración fue comprobada mediante ejecución real y no solamente mediante compilación.
+
+---
+
+## Principios arquitectónicos mantenidos
+
+Se mantuvo la arquitectura V8 existente.
+
+No se creó `ActivoAgroV3`.
+
+La evolución continúa sobre:
+
+`ActivoAgroV2`
+
+Se mantiene el flujo:
+
+`Screen → Service → Model → Firebase`
+
+y la auditoría como capacidad transversal.
+
+---
+
+## Estado del Paso 9
+
+🟢 VALIDACIÓN TÉCNICA COMPLETADA
+
+El Paso 9 queda listo para cierre documental y versionado mediante Git.
+
+---
+
+## Regla de cierre
+
+Primero validar.
+
+Después documentar.
+
+Después versionar.
+
+No acelerar etapas.
+
+No crear V3.
+
+Mantener la arquitectura V8.

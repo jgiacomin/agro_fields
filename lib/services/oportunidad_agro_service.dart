@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/oportunidad_agro_model.dart';
-//import '../models/activos/activo_agro_model_v2.dart';
 import '../core/audit/audit_service.dart';
 import '../core/audit/audit_type.dart';
 
@@ -22,18 +21,20 @@ class OportunidadAgroService {
   Future<String> crearOportunidad(
     OportunidadAgro oportunidad,
   ) async {
+    // Si la oportunidad está vinculada a un Activo Agro,
+    // verificamos que el activo exista.
+    if (oportunidad.activoId != null) {
+      final activoSnapshot =
+          await _db
+              .collection('activos_agro')
+              .doc(oportunidad.activoId)
+              .get();
 
-    // Verificar que exista el Activo Agro
-    final activoSnapshot =
-        await _db
-            .collection('activos_agro')
-            .doc(oportunidad.activoId)
-            .get();
-
-    if (!activoSnapshot.exists) {
-      throw Exception(
-        'El Activo Agro asociado no existe',
-      );
+      if (!activoSnapshot.exists) {
+        throw Exception(
+          'El Activo Agro asociado no existe',
+        );
+      }
     }
 
     final doc = _db
@@ -44,21 +45,26 @@ class OportunidadAgroService {
       oportunidad.toMap(),
     );
 
-    await _auditService.registrar(
-      activoId: oportunidad.activoId,
-      usuarioId: oportunidad.creadorId,
-      tipo: AuditType.creacion,
-      modulo: 'oportunidad',
-      accion: 'crear_oportunidad',
-      elementoAfectado:
-          oportunidad.oportunidadId,
-      referencia: doc.id,
-      datos: {
-        'titulo': oportunidad.titulo,
-        'tipo': oportunidad.tipo,
-        'estado': oportunidad.estado,
-      },
-    );
+    // La auditoría sobre el Activo Agro solo corresponde
+    // cuando la oportunidad está vinculada a uno.
+    if (oportunidad.activoId != null) {
+      await _auditService.registrar(
+        activoId: oportunidad.activoId!,
+        usuarioId: oportunidad.creadorId,
+        tipo: AuditType.creacion,
+        modulo: 'oportunidad',
+        accion: 'crear_oportunidad',
+        elementoAfectado:
+            oportunidad.oportunidadId,
+        referencia: doc.id,
+       datos: {
+  'titulo': oportunidad.titulo,
+  'tipoOportunidad': oportunidad.tipoOportunidad,
+  'ladoMercado': oportunidad.ladoMercado,
+  'estado': oportunidad.estado,
+},
+      );
+    }
 
     return doc.id;
   }
@@ -70,7 +76,6 @@ class OportunidadAgroService {
   Future<OportunidadAgro?> obtenerOportunidadPorId(
     String oportunidadId,
   ) async {
-
     final snapshot =
         await _db
             .collection(coleccion)
@@ -95,7 +100,6 @@ class OportunidadAgroService {
       obtenerOportunidadesPorActivo(
     String activoId,
   ) async {
-
     final snapshot =
         await _db
             .collection(coleccion)
@@ -122,7 +126,6 @@ class OportunidadAgroService {
 
   Future<List<OportunidadAgro>>
       obtenerOportunidadesActivas() async {
-
     final snapshot =
         await _db
             .collection(coleccion)
