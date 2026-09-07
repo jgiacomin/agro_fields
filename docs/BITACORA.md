@@ -4972,3 +4972,178 @@ Mantener la arquitectura V8.
 `Git`
 
 La jornada del 07/09/2026 continúa esta regla de trazabilidad.
+
+## 2026-09-07 — Paso 12.8: Auditoría GAP y cierre arquitectónico
+
+### Objetivo
+
+Auditar el código real de Agro Fields contra la arquitectura del Expediente Digital Permanente del Activo Agro y determinar, antes de implementar, qué capacidades existentes son suficientes y dónde existen GAP estructurales.
+
+### Trabajo realizado
+
+Se realizó auditoría de los principales componentes relacionados con el Expediente Digital Permanente:
+
+* `ActivoAgroV2`
+* `HistorialActivo`
+* `AuditEvent`
+* `AuditService`
+* `AuditType`
+* `DocumentacionActivo`
+* `ModuloProduccion`
+* `CicloProductivo`
+* `EconomiaActivo`
+* `ParticipanteActivo`
+* `ConfianzaActivo`
+* `EvaluacionConfianza`
+* `FactorConfianza`
+* `MadurezActivo`
+* `ConfianzaActivoService`
+
+También se realizó búsqueda transversal de infraestructura existente para:
+
+* Evidencia
+* Documento
+* Verificación
+* Fuente
+
+Resultado: no existe actualmente una entidad transversal dedicada a Evidencia, Verificación o Fuente. La única coincidencia estructural encontrada fue `DocumentacionActivo`.
+
+### GAP principales identificados
+
+#### GAP-EVID-01 — Evidencia transversal
+
+Actualmente existen referencias simples a evidencias mediante `List<String>`, contadores o referencias aisladas.
+
+No existe una entidad transversal formal que permita representar:
+
+* qué información respalda;
+* origen/fuente;
+* aportante;
+* fecha;
+* documento o archivo relacionado;
+* referencia;
+* verificación;
+* observaciones.
+
+**Decisión:** crear posteriormente un componente transversal de `Evidencia`.
+
+#### GAP-DOC-01 — Documentación
+
+`DocumentacionActivo` utiliza actualmente listas simples para documentos, certificaciones, permisos y archivos.
+
+**Decisión:** evolucionar posteriormente la documentación para permitir trazabilidad de documentos, evidencia y validez sin duplicar el Activo Agro.
+
+#### GAP-PROD-01 — Producción
+
+La producción posee estructura temporal mediante `ModuloProduccion` y `CicloProductivo`, pero no posee una relación estructurada transversal con evidencia.
+
+**Decisión:** integrar posteriormente Evidencia sin duplicar los datos productivos.
+
+#### GAP-ECON-01 — Economía
+
+`EconomiaActivo` posee origen de información y responsable de declaración, pero no dispone de una relación estructurada con evidencia y verificación.
+
+**Decisión:** integrar posteriormente Evidencia.
+
+#### GAP-PART-01 — Participantes
+
+`ParticipanteActivo` representa correctamente la relación participante ↔ activo.
+
+No se utilizará este modelo como historial de acciones.
+
+**Decisión:** mantener el modelo. Las intervenciones relevantes deberán registrarse mediante HistorialActivo y AuditEvent, asociando Evidencia cuando corresponda.
+
+#### GAP-VAL-01 — Validez
+
+No existe actualmente una representación transversal de validez de la información.
+
+Se establece conceptualmente:
+
+* `vigente_verificado`
+* `vigente_informado`
+* `requiere_actualizacion`
+* `desactualizado`
+* `sin_informacion`
+
+La validez no será incorporada globalmente a `ActivoAgroV2`.
+
+### Decisiones arquitectónicas
+
+Se confirma:
+
+1. No crear `ActivoAgroV3`.
+2. No crear un modelo gigante `ExpedienteDigitalPermanente`.
+3. El Expediente Digital Permanente será una composición lógica de:
+
+   * `ActivoAgroV2`
+   * módulos existentes
+   * Evidencias
+   * Historial
+   * Auditoría
+   * Confianza
+   * Madurez
+4. Evidencia y Confianza son conceptos diferentes.
+5. Evidencia y Historial son conceptos diferentes.
+6. Auditoría y Historial son conceptos complementarios.
+7. Validez y Confianza son dimensiones diferentes.
+8. Los datos históricos no deben considerarse desactualizados simplemente por ser antiguos.
+9. `fechaActualizacion` no equivale automáticamente a validez.
+10. No se crearán modelos específicos como `EvidenciaSuelo`, `EvidenciaProduccion` o `EvidenciaEconomia`.
+11. La futura Evidencia será transversal al ecosistema del Activo Agro.
+
+### Matriz final de decisión
+
+| GAP          | Decisión                                           |
+| ------------ | -------------------------------------------------- |
+| GAP-EVID-01  | Nuevo componente transversal Evidencia             |
+| GAP-DOC-01   | Evolucionar DocumentacionActivo                    |
+| GAP-PROD-01  | Integrar Evidencia con producción                  |
+| GAP-ECON-01  | Integrar Evidencia con economía                    |
+| GAP-PART-01  | Mantener ParticipanteActivo                        |
+| GAP-VAL-01   | Nuevo concepto transversal de Validez              |
+| GAP-TRACE-01 | Definir convención de trazabilidad old/new         |
+| GAP-AUD-01   | Mejora futura de consulta ordenada de auditoría    |
+| GAP-MAD-01   | Revisión futura del algoritmo de madurez           |
+| GAP-CONF-01  | Integración futura de evidencia real con confianza |
+
+### Regla de implementación
+
+No se modifica código durante la auditoría.
+
+La secuencia queda:
+
+Auditar
+→ detectar GAP
+→ decidir arquitectura
+→ documentar
+→ implementar
+→ probar
+→ validar
+→ versionar
+
+### Estado de Paso 12.8
+
+**CERRADO ARQUITECTÓNICAMENTE.**
+
+La arquitectura del Expediente Digital Permanente queda definida sin introducir duplicación de modelos ni romper la arquitectura V8.
+
+### Próximo paso
+
+**PASO 13 — Diseño técnico de Evidencia**
+
+Antes de implementar, definir:
+
+* modelo `Evidencia`;
+* relación con Activo;
+* relación con módulo/dato;
+* tipos de evidencia;
+* referencia a documentos/archivos;
+* fuente/aportante;
+* verificación;
+* validez;
+* persistencia;
+* servicio;
+* auditoría;
+* tests.
+
+No implementar hasta cerrar este diseño.

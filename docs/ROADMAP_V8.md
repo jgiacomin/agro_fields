@@ -2713,3 +2713,110 @@ Cada evolución debe mantener:
 +
 
 `Commit Git`
+
+## PASO 12.8 — Auditoría GAP y cierre arquitectónico
+
+### Estado
+
+**CERRADO ARQUITECTÓNICAMENTE**
+
+Se completó la auditoría del código real relacionada con el Expediente Digital Permanente del Activo Agro.
+
+### Componentes auditados
+
+* `ActivoAgroV2`
+* `HistorialActivo`
+* `AuditEvent`
+* `AuditService`
+* `AuditType`
+* `DocumentacionActivo`
+* Producción y ciclos productivos
+* Economía
+* Participantes
+* Confianza
+* Evaluación de confianza
+* Factores de confianza
+* Madurez
+* Servicio de confianza
+
+Se verificó además la existencia de infraestructura transversal para Evidencia, Documento, Verificación y Fuente.
+
+### Resultado
+
+No existe actualmente una entidad transversal formal de Evidencia.
+
+Los modelos actuales contienen referencias simples a evidencias, archivos, fuentes o declaraciones, pero no una estructura común para conectar:
+
+**Dato → Evidencia → Verificación → Validez → Confianza**
+
+### GAP confirmados
+
+* **GAP-EVID-01:** falta entidad transversal de Evidencia.
+* **GAP-DOC-01:** documentación basada en listas simples.
+* **GAP-PROD-01:** producción sin respaldo estructurado transversal.
+* **GAP-ECON-01:** economía sin evidencia estructurada.
+* **GAP-PART-01:** participación sin registro estructurado de contribución, manteniendo acciones en historial/auditoría.
+* **GAP-VAL-01:** falta representación transversal de Validez.
+* **GAP-TRACE-01:** falta normalización documental del uso de old/new en cambios relevantes.
+* **GAP-AUD-01:** consulta de auditoría puede evolucionar para ordenar explícitamente por fecha.
+* **GAP-MAD-01:** algoritmo de madurez requiere futura revisión.
+* **GAP-CONF-01:** confianza reconoce evidencias conceptualmente, pero todavía no dispone de una capa real de evidencia.
+
+### Decisiones arquitectónicas
+
+* Mantener `ActivoAgroV2`.
+* No crear `ActivoAgroV3`.
+* No crear un `ExpedienteDigitalPermanenteModel`.
+* El Expediente Digital Permanente será una composición lógica del Activo y sus capas de información, memoria y trazabilidad.
+* Crear posteriormente una única capa transversal de Evidencia.
+* Mantener separadas Evidencia, Verificación, Validez, Confianza, Historial y Auditoría.
+* Evolucionar los módulos existentes en lugar de duplicarlos.
+* No crear modelos de evidencia específicos por módulo.
+
+### Estado conceptual del Expediente
+
+```text
+ActivoAgroV2
+      │
+      ├── Datos
+      ├── Documentación
+      ├── Producción
+      ├── Economía
+      ├── Participantes
+      │
+      ├── Evidencias
+      │       ↓
+      │   Verificación
+      │       ↓
+      │     Validez
+      │
+      ├── Historial
+      ├── Auditoría
+      ├── Confianza
+      └── Madurez
+```
+
+### Próximo paso
+
+**PASO 13 — Diseño técnico de Evidencia**
+
+Orden previsto:
+
+1. Definir modelo conceptual final.
+2. Definir campos.
+3. Definir relaciones.
+4. Definir tipos de evidencia.
+5. Definir verificación.
+6. Definir validez.
+7. Definir persistencia.
+8. Definir servicio.
+9. Definir integración con módulos.
+10. Definir auditoría.
+11. Crear tests.
+12. Implementar.
+13. Validar con Firestore Emulator.
+14. Documentar.
+15. Commit.
+16. Push.
+
+**Regla:** no implementar hasta cerrar el diseño técnico.
