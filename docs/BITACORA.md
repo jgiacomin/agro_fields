@@ -4546,3 +4546,429 @@ No acelerar etapas.
 No crear V3.
 
 Mantener la arquitectura V8.
+---
+
+# 2026-09-07 — Cierre documental Paso 11 + Paso 12
+
+## Estado de la jornada
+
+🟢 **JORNADA CERRADA DOCUMENTALMENTE**
+
+---
+
+# Cierre formal del Paso 11 — Inversiones
+
+La validación técnica de `InversionService.crearInversion()` quedó completada y posteriormente versionada mediante Git.
+
+Commit:
+
+`805a279 feat: validar paso 11 inversiones`
+
+La implementación utiliza una transacción Firestore para coordinar:
+
+- verificación de la publicación;
+- lectura del monto recaudado;
+- registro de la inversión;
+- actualización del monto recaudado.
+
+## Validación técnica
+
+Test:
+
+`integration_test/inversion_service_integration_test.dart`
+
+Entorno:
+
+`Android Emulator — emulator-5554`
+
+`Firestore Emulator — 10.0.2.2:8080`
+
+Resultado:
+
+`All tests passed!`
+
+También se ejecutó:
+
+`flutter analyze integration_test/inversion_service_integration_test.dart`
+
+Resultado:
+
+`No issues found!`
+
+Caso validado:
+
+`25000.0 + 15000.0 = 40000.0`
+
+El commit `805a279` fue publicado previamente en `origin/main` y dejó la rama sincronizada y el working tree limpio.
+
+Por lo tanto:
+
+## 🟢 PASO 11 — INVERSIONES: CERRADO
+
+---
+
+# Paso 12 — Expediente Digital Permanente del Activo Agro
+
+## Objetivo
+
+Definir arquitectónicamente el Expediente Digital Permanente como la memoria histórica y trazable del Activo Agro.
+
+Se mantiene la separación conceptual:
+
+`ActivoAgroV2`
+
+↓
+
+`Expediente Digital Permanente`
+
+↓
+
+`Datos + Historial + Evidencias`
+
+↓
+
+`Auditoría`
+
+↓
+
+`Confianza`
+
+↓
+
+`Publicación / Evaluación`
+
+El Expediente Digital Permanente se define como una composición lógica de la información existente y no como una duplicación gigante de `ActivoAgroV2`.
+
+Criterio obligatorio:
+
+**No crear `ActivoAgroV3`.**
+
+La evolución continúa sobre `ActivoAgroV2`.
+
+---
+
+# Paso 12.1 — Auditoría de arquitectura actual
+
+## Estado
+
+🟢 **CERRADO**
+
+Se revisó la arquitectura y el código real existente para determinar cómo se encuentra actualmente representado el Activo Agro.
+
+Se verificó la existencia e integración de:
+
+- `ActivoAgroV2`;
+- `HistorialActivo`;
+- `AuditEvent`;
+- `DocumentacionActivo`;
+- `ConfianzaActivo`;
+- `EvaluacionConfianza`;
+- `MadurezActivo`;
+- `ParticipanteActivo`;
+- `SueloActivo`;
+- servicios relacionados.
+
+Conclusión:
+
+La arquitectura actual ya contiene varias de las piezas necesarias para construir el Expediente Digital Permanente sin crear una entidad estructural duplicada.
+
+---
+
+# Paso 12.2 — Matriz Master Plan ↔ Arquitectura V8 ↔ Código real
+
+## Estado
+
+🟢 **CERRADO**
+
+Se contrastó el concepto definido en el Master Plan con la arquitectura V8 y las implementaciones existentes.
+
+Se confirmó que el núcleo actual continúa siendo:
+
+`ActivoAgroV2`
+
+y que la trazabilidad se distribuye mediante:
+
+`Modelos + Servicios + Historial + Auditoría`
+
+Se identificaron como áreas de evolución futura:
+
+- validez de datos;
+- profundidad de auditoría;
+- fuentes;
+- evidencias;
+- verificaciones;
+- temporalidad de información;
+- metadatos documentales.
+
+No se realizaron modificaciones de código durante esta auditoría.
+
+---
+
+# Paso 12.3 — Definición conceptual del Expediente Digital Permanente
+
+## Estado
+
+🟢 **CERRADO**
+
+Se definió el Expediente Digital Permanente como la memoria digital continua del Activo Agro.
+
+Debe permitir comprender:
+
+- qué información existe;
+- cuándo fue registrada;
+- quién intervino;
+- qué evidencia existe;
+- qué ocurrió posteriormente;
+- qué información fue modificada;
+- qué estado tuvo el activo;
+- qué evaluaciones recibió.
+
+El expediente no reemplaza a `ActivoAgroV2`, al historial ni a la auditoría.
+
+Los integra conceptualmente.
+
+---
+
+# Paso 12.4 — Ciclo de vida del Activo Agro
+
+## Estado
+
+🟢 **CERRADO CONCEPTUALMENTE**
+
+Se estableció la separación entre:
+
+### Estado del Activo
+
+Representa el ciclo de vida de la entidad productiva.
+
+Estados actualmente utilizados en código:
+
+- `borrador`;
+- `publicado`;
+- `pausado`.
+
+Otros estados existentes en el enum requieren definición funcional antes de asumir que representan transiciones implementadas.
+
+### Estado de publicación
+
+Representa la exposición comercial del activo.
+
+### Confianza / verificación
+
+Representa el nivel de respaldo de la información.
+
+### Flujo comercial
+
+Negociación e inversión no deben confundirse automáticamente con estados permanentes del Activo Agro.
+
+### Archivado
+
+El archivado no elimina el Expediente Digital Permanente.
+
+---
+
+# Paso 12.5 — Historial y Auditoría
+
+## Estado
+
+🟢 **CERRADO CONCEPTUALMENTE**
+
+Se estableció la diferencia formal:
+
+**Historial = evolución significativa del Activo.**
+
+**Auditoría = trazabilidad de la acción realizada.**
+
+Cuando un acontecimiento modifica de manera relevante la realidad o estado del Activo Agro, puede generar ambos registros.
+
+Eventos considerados:
+
+- creación;
+- actualización;
+- suelo;
+- producción;
+- economía;
+- documentación;
+- confianza;
+- evaluación;
+- publicación;
+- pausa;
+- cambios de estado;
+- intervención profesional;
+- oportunidades;
+- negociación;
+- inversión cuando tenga impacto relevante sobre la vida comercial del activo.
+
+No se registrarán como acontecimientos del expediente las consultas normales de pantalla, login o errores técnicos.
+
+Para modificaciones relevantes se establece como criterio:
+
+`campo → valor anterior → valor nuevo → usuario → fecha → módulo → evidencia/referencia`
+
+No se implementará auditoría automática indiscriminada de todos los campos.
+
+---
+
+# Paso 12.6 — Validez de los datos
+
+## Estado
+
+🟢 **CERRADO CONCEPTUALMENTE**
+
+Se definieron cinco estados conceptuales de validez:
+
+- 🟢 `vigente_verificado`
+- 🟡 `vigente_informado`
+- 🟠 `requiere_actualizacion`
+- 🔴 `desactualizado`
+- ⚪ `sin_informacion`
+
+Se estableció que:
+
+**Validez ≠ Confianza**
+
+La validez responde principalmente a:
+
+> ¿Esta información continúa siendo actual para el contexto en el que se utiliza?
+
+La confianza responde a:
+
+> ¿Qué nivel de respaldo y evidencia posee esta información?
+
+La fecha de actualización del registro no convierte automáticamente un dato en vigente.
+
+Los hechos históricos mantienen su significado temporal y no deben considerarse desactualizados simplemente por ser antiguos.
+
+No se incorporarán todavía campos genéricos de validez directamente en `ActivoAgroV2`.
+
+---
+
+# Paso 12.7 — Actualización documental
+
+## Estado
+
+🟢 **CERRADO**
+
+Se actualizan:
+
+- `docs/BITACORA.md`
+- `docs/ROADMAP_V8.md`
+
+La documentación incorpora:
+
+- cierre formal del Paso 11;
+- inicio y avance del Paso 12;
+- auditoría arquitectónica;
+- definición del Expediente Digital Permanente;
+- ciclo de vida;
+- separación Historial/Auditoría;
+- concepto de validez de datos;
+- decisiones arquitectónicas;
+- próximo GAP entre arquitectura y código.
+
+No se modifica código durante esta etapa.
+
+---
+
+# Decisiones arquitectónicas consolidadas
+
+1. `ActivoAgroV2` continúa siendo la identidad permanente del Activo Agro.
+
+2. No se crea `ActivoAgroV3`.
+
+3. El Expediente Digital Permanente es una composición lógica de información, historial, evidencias y auditoría.
+
+4. La publicación comercial permanece separada del expediente permanente.
+
+5. Historial y Auditoría son capas complementarias y no equivalentes.
+
+6. Validez de datos y Confianza son dimensiones diferentes.
+
+7. No se crearán modelos duplicados hasta demostrar una necesidad arquitectónica real.
+
+8. Antes de modificar código se deberá identificar el GAP concreto entre arquitectura y implementación actual.
+
+---
+
+# Próximo paso
+
+## Paso 12.8 — GAP Arquitectura ↔ Código
+
+Estado:
+
+🟡 **PRÓXIMO PASO**
+
+Objetivo:
+
+Determinar exactamente qué componentes existentes necesitan evolucionar para soportar las decisiones arquitectónicas del Expediente Digital Permanente.
+
+La evaluación deberá realizarse sobre:
+
+- `ActivoAgroV2`;
+- `HistorialActivo`;
+- `AuditEvent`;
+- `DocumentacionActivo`;
+- `ConfianzaActivo`;
+- `EvaluacionConfianza`;
+- `MadurezActivo`;
+- `ParticipanteActivo`;
+- `SueloActivo`;
+- servicios relacionados.
+
+Regla:
+
+**Primero identificar el GAP.**
+
+**Después definir la solución mínima.**
+
+**Recién después modificar código.**
+
+No implementar conceptos todavía no definidos.
+
+No crear V3.
+
+Mantener la arquitectura V8.
+
+---
+
+# Regla de cierre Agro Fields
+
+`Idea`
+
+↓
+
+`Bitácora`
+
+↓
+
+`Análisis`
+
+↓
+
+`Master Plan`
+
+↓
+
+`Arquitectura`
+
+↓
+
+`Implementación`
+
+↓
+
+`Pruebas`
+
+↓
+
+`Validación`
+
+↓
+
+`Documentación`
+
+↓
+
+`Git`
+
+La jornada del 07/09/2026 continúa esta regla de trazabilidad.

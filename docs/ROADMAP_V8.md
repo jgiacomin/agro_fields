@@ -2362,3 +2362,354 @@ No acelerar etapas.
 No crear V3.
 
 Mantener la arquitectura V8.
+
+---
+
+# PASO 11 — INVERSIONES — CIERRE FORMAL
+
+## Fecha
+
+07/09/2026
+
+## Estado
+
+🟢 **CERRADO**
+
+La validación técnica de `InversionService.crearInversion()` fue completada mediante Integration Test con Android Emulator y Firestore Emulator.
+
+Resultado:
+
+`All tests passed!`
+
+También se validó:
+
+`flutter analyze integration_test/inversion_service_integration_test.dart`
+
+Resultado:
+
+`No issues found!`
+
+Caso validado:
+
+`25000.0 + 15000.0 = 40000.0`
+
+Commit:
+
+`805a279 feat: validar paso 11 inversiones`
+
+El commit fue publicado en `origin/main`.
+
+Por lo tanto:
+
+**Paso 11 — INVERSIONES: CERRADO.**
+
+---
+
+# PASO 12 — EXPEDIENTE DIGITAL PERMANENTE DEL ACTIVO AGRO
+
+## Fecha de inicio
+
+07/09/2026
+
+## Estado
+
+🟢 **12.1–12.7 CERRADOS CONCEPTUAL Y DOCUMENTALMENTE**
+
+## Objetivo
+
+Definir el Expediente Digital Permanente como la memoria digital histórica y trazable del Activo Agro.
+
+La arquitectura mantiene:
+
+`ActivoAgroV2`
+
+↓
+
+`Expediente Digital Permanente`
+
+↓
+
+`Datos + Historial + Evidencias`
+
+↓
+
+`Auditoría`
+
+↓
+
+`Confianza`
+
+↓
+
+`Publicación / Evaluación`
+
+El expediente se define como una composición lógica de las capacidades existentes y no como un nuevo modelo duplicado.
+
+Criterio:
+
+**No crear `ActivoAgroV3`.**
+
+---
+
+# Paso 12.1 — Auditoría de arquitectura actual
+
+Estado:
+
+🟢 **CERRADO**
+
+Se revisaron los modelos, servicios y capas existentes relacionados con el Activo Agro.
+
+Se confirmó la existencia de:
+
+- `ActivoAgroV2`;
+- `HistorialActivo`;
+- `AuditEvent`;
+- `DocumentacionActivo`;
+- `ConfianzaActivo`;
+- `EvaluacionConfianza`;
+- `MadurezActivo`;
+- `ParticipanteActivo`;
+- `SueloActivo`.
+
+Conclusión:
+
+La base actual permite evolucionar el Expediente Digital Permanente sin crear una entidad estructural duplicada.
+
+---
+
+# Paso 12.2 — Master Plan ↔ Arquitectura V8 ↔ Código real
+
+Estado:
+
+🟢 **CERRADO**
+
+La arquitectura conceptual fue contrastada con la implementación real.
+
+Se identificaron como áreas futuras de evolución:
+
+- validez;
+- fuentes;
+- evidencias;
+- verificaciones;
+- temporalidad;
+- metadatos documentales;
+- profundidad de auditoría.
+
+No se modificó código durante esta etapa.
+
+---
+
+# Paso 12.3 — Expediente Digital Permanente
+
+Estado:
+
+🟢 **CERRADO**
+
+El Expediente Digital Permanente representa la memoria continua del Activo Agro.
+
+Debe permitir reconstruir:
+
+- información;
+- fechas;
+- participantes;
+- evidencias;
+- modificaciones;
+- estados;
+- evaluaciones;
+- evolución.
+
+No reemplaza a `ActivoAgroV2`, HistorialActivo ni AuditEvent.
+
+---
+
+# Paso 12.4 — Ciclo de vida
+
+Estado:
+
+🟢 **CERRADO CONCEPTUALMENTE**
+
+Se mantiene la separación entre:
+
+- estado del Activo;
+- estado de publicación;
+- confianza/verificación;
+- flujo comercial.
+
+Estados actualmente utilizados en código:
+
+- `borrador`;
+- `publicado`;
+- `pausado`.
+
+Los restantes estados del enum requieren definición funcional antes de considerarse transiciones implementadas.
+
+El archivado no elimina el expediente permanente.
+
+---
+
+# Paso 12.5 — Historial y Auditoría
+
+Estado:
+
+🟢 **CERRADO CONCEPTUALMENTE**
+
+Criterio:
+
+**Historial = evolución significativa del Activo.**
+
+**Auditoría = trazabilidad de la acción.**
+
+Los acontecimientos relevantes pueden generar ambos registros.
+
+Se establece trazabilidad profunda para cambios relevantes, evitando registrar indiscriminadamente toda actividad técnica de la aplicación.
+
+---
+
+# Paso 12.6 — Validez de los datos
+
+Estado:
+
+🟢 **CERRADO CONCEPTUALMENTE**
+
+Estados definidos:
+
+- 🟢 `vigente_verificado`
+- 🟡 `vigente_informado`
+- 🟠 `requiere_actualizacion`
+- 🔴 `desactualizado`
+- ⚪ `sin_informacion`
+
+Principio:
+
+**Validez ≠ Confianza**
+
+La actualización de un registro no implica automáticamente que el dato sea vigente.
+
+Los hechos históricos mantienen su contexto temporal.
+
+No se agregan todavía campos genéricos de validez directamente a `ActivoAgroV2`.
+
+---
+
+# Paso 12.7 — Documentación
+
+Estado:
+
+🟢 **CERRADO**
+
+Se actualizan:
+
+- `docs/BITACORA.md`;
+- `docs/ROADMAP_V8.md`.
+
+La documentación consolida las decisiones arquitectónicas del Paso 12 y el cierre formal del Paso 11.
+
+No se modifica código.
+
+---
+
+# Decisiones arquitectónicas consolidadas
+
+- `ActivoAgroV2` continúa como identidad permanente.
+- No crear `ActivoAgroV3`.
+- Expediente Digital Permanente como composición lógica.
+- Publicación comercial separada del expediente.
+- Historial y Auditoría como capas complementarias.
+- Validez separada de Confianza.
+- No duplicar modelos sin necesidad demostrada.
+- Identificar el GAP antes de modificar código.
+
+---
+
+# Paso 12.8 — GAP Arquitectura ↔ Código
+
+## Estado
+
+🟡 **PRÓXIMO PASO**
+
+Objetivo:
+
+Determinar qué modificaciones mínimas son realmente necesarias para llevar las decisiones arquitectónicas del Expediente Digital Permanente al código existente.
+
+La revisión deberá cubrir:
+
+- `ActivoAgroV2`;
+- `HistorialActivo`;
+- `AuditEvent`;
+- `DocumentacionActivo`;
+- `ConfianzaActivo`;
+- `EvaluacionConfianza`;
+- `MadurezActivo`;
+- `ParticipanteActivo`;
+- `SueloActivo`;
+- servicios relacionados.
+
+Regla:
+
+**Identificar GAP → definir solución → modificar código → probar → validar → documentar → versionar.**
+
+No modificar código antes de cerrar el análisis del GAP.
+
+No crear V3.
+
+Mantener arquitectura V8.
+
+---
+
+# Estado general del Roadmap
+
+🟢 Paso 9 — OportunidadAgroService: CERRADO
+
+🟢 Paso 11 — Inversiones: CERRADO
+
+🟢 Paso 12.1 — Auditoría arquitectónica: CERRADO
+
+🟢 Paso 12.2 — Matriz Master Plan ↔ Arquitectura ↔ Código: CERRADO
+
+🟢 Paso 12.3 — Expediente Digital Permanente: CERRADO
+
+🟢 Paso 12.4 — Ciclo de vida: CERRADO CONCEPTUALMENTE
+
+🟢 Paso 12.5 — Historial y Auditoría: CERRADO CONCEPTUALMENTE
+
+🟢 Paso 12.6 — Validez de datos: CERRADO CONCEPTUALMENTE
+
+🟢 Paso 12.7 — Documentación: CERRADO
+
+🟡 Paso 12.8 — GAP Arquitectura ↔ Código: PRÓXIMO
+
+---
+
+# Regla V8
+
+Cada evolución debe mantener:
+
+`Modelo`
+
++
+
+`Arquitectura`
+
++
+
+`Auditoría`
+
++
+
+`Bitácora`
+
++
+
+`Roadmap`
+
++
+
+`Pruebas`
+
++
+
+`Validación`
+
++
+
+`Commit Git`
