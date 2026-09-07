@@ -6,9 +6,47 @@ class InversionService {
 
   final String collection = 'inversiones';
 
-  /// 💰 Crear inversión
+  /// 💰 Crear inversión y actualizar monto recaudado
   Future<void> crearInversion(Inversion inversion) async {
-    await _firestore.collection(collection).add(inversion.toMap());
+    final inversionRef =
+        _firestore.collection(collection).doc();
+
+    final publicacionRef = _firestore
+        .collection('publicaciones_inversion')
+        .doc(inversion.publicacionId);
+
+    await _firestore.runTransaction((transaction) async {
+      final publicacionSnapshot =
+          await transaction.get(publicacionRef);
+
+      if (!publicacionSnapshot.exists) {
+        throw Exception(
+          'La publicación de inversión no existe: '
+          '${inversion.publicacionId}',
+        );
+      }
+
+      final publicacionData =
+          publicacionSnapshot.data() as Map<String, dynamic>;
+
+      final montoRecaudadoActual =
+          (publicacionData['montoRecaudado'] ?? 0).toDouble();
+
+      final nuevoMontoRecaudado =
+          montoRecaudadoActual + inversion.monto;
+
+      transaction.set(
+        inversionRef,
+        inversion.toMap(),
+      );
+
+      transaction.update(
+        publicacionRef,
+        {
+          'montoRecaudado': nuevoMontoRecaudado,
+        },
+      );
+    });
   }
 
   /// 📄 Inversiones por usuario

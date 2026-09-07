@@ -2234,3 +2234,131 @@ Registrar en el momento, con el mínimo esfuerzo; estructurar automáticamente d
 Principio operativo:
 
 > Lo veo → lo registro → Agro Fields lo organiza.
+# Paso 11 — Inversiones
+
+## Estado
+
+🟢 **VALIDACIÓN TÉCNICA COMPLETADA**
+
+## Fecha
+
+07/09/2026
+
+## Objetivo
+
+Validar el registro de inversiones y la actualización del monto recaudado de una publicación de inversión mediante una transacción Firestore.
+
+## Implementación validada
+
+Archivo:
+
+`lib/services/inversion_service.dart`
+
+La operación:
+
+`InversionService.crearInversion()`
+
+utiliza una transacción Firestore para mantener coordinadas las siguientes operaciones:
+
+1. verificar la existencia de la publicación de inversión;
+2. obtener `montoRecaudado`;
+3. calcular el nuevo monto recaudado;
+4. registrar la inversión;
+5. actualizar `montoRecaudado`.
+
+## Test de integración
+
+Archivo:
+
+`integration_test/inversion_service_integration_test.dart`
+
+Se validó mediante:
+
+`Android Emulator`
+
+`emulator-5554`
+
+con:
+
+`Firestore Emulator`
+
+Host desde Android:
+
+`10.0.2.2`
+
+Puerto:
+
+`8080`
+
+Comando:
+
+`flutter test integration_test/inversion_service_integration_test.dart -d emulator-5554`
+
+Resultado:
+
+`All tests passed!`
+
+También se ejecutó:
+
+`flutter analyze integration_test/inversion_service_integration_test.dart`
+
+Resultado:
+
+`No issues found!`
+
+## Caso validado
+
+Monto recaudado inicial:
+
+`25000.0`
+
+Inversión:
+
+`15000.0`
+
+Monto recaudado final:
+
+`40000.0`
+
+Resultado:
+
+`25000.0 + 15000.0 = 40000.0`
+
+## Arquitectura
+
+Se mantiene:
+
+`Screen → Service → Model → Firebase`
+
+No se crea `ActivoAgroV3`.
+
+La evolución continúa sobre la arquitectura V8 existente.
+
+## Próximo paso
+
+Completar el cierre formal del Paso 11 mediante:
+
+* actualización de `BITACORA.md`;
+* actualización de `ROADMAP_V8.md`;
+* revisión de cambios;
+* commit;
+* push a `origin/main`;
+* verificación de working tree limpio y rama sincronizada.
+
+El Paso 11 no se considerará formalmente cerrado hasta completar el versionado y publicación.
+
+---
+
+## Regla de cierre
+
+Primero validar.
+
+Después documentar.
+
+Después versionar.
+
+No acelerar etapas.
+
+No crear V3.
+
+Mantener la arquitectura V8.

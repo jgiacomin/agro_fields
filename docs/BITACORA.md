@@ -4365,4 +4365,184 @@ No acelerar etapas.
 
 No crear V3.
 
+# 2026-09-07 — Paso 11: Validación técnica de Inversiones
+
+## Objetivo de la jornada
+
+Validar el comportamiento de `InversionService.crearInversion()` para registrar una inversión y actualizar correctamente el monto recaudado de la publicación de inversión, manteniendo la arquitectura V8 y la integridad de la operación mediante una transacción Firestore.
+
+---
+
+## Trabajo realizado
+
+### 1. Evolución de `InversionService`
+
+Se evolucionó:
+
+`lib/services/inversion_service.dart`
+
+La operación:
+
+`crearInversion()`
+
+pasó de realizar únicamente el registro de la inversión a ejecutar una transacción Firestore que:
+
+- verifica que exista la publicación de inversión;
+- obtiene el monto recaudado actual;
+- suma el monto de la nueva inversión;
+- registra la inversión;
+- actualiza `montoRecaudado`.
+
+La actualización de la inversión y del monto recaudado se realiza dentro de una misma transacción.
+
+---
+
+### 2. Test de integración
+
+Se incorporó:
+
+`integration_test/inversion_service_integration_test.dart`
+
+El test crea una publicación de inversión en Firestore Emulator con:
+
+`montoRecaudado = 25000.0`
+
+Luego registra una inversión de:
+
+`monto = 15000.0`
+
+y verifica que:
+
+`25000.0 + 15000.0 = 40000.0`
+
+También verifica:
+
+- existencia de la inversión registrada;
+- `inversorId`;
+- `publicacionId`;
+- monto de la inversión;
+- existencia de la publicación;
+- nuevo `montoRecaudado`.
+
+---
+
+## 3. Validación del análisis
+
+Se ejecutó:
+
+`flutter analyze integration_test/inversion_service_integration_test.dart`
+
+Resultado:
+
+`No issues found!`
+
+---
+
+## 4. Validación de integración
+
+Se ejecutó el test mediante:
+
+`Android Emulator`
+
+dispositivo:
+
+`emulator-5554`
+
+con conexión al:
+
+`Firestore Emulator`
+
+Host utilizado desde Android Emulator:
+
+`10.0.2.2`
+
+Puerto:
+
+`8080`
+
+Comando:
+
+`flutter test integration_test/inversion_service_integration_test.dart -d emulator-5554`
+
+Resultado final:
+
+`01:02 +1: All tests passed!`
+
+La prueba fue ejecutada nuevamente después de la limpieza del test y volvió a finalizar correctamente.
+
+---
+
+## Resultado técnico
+
+Queda validado el circuito:
+
+`Inversion`
+
+↓
+
+`InversionService.crearInversion()`
+
+↓
+
+`Firestore Transaction`
+
+↓
+
+`inversiones`
+
++
+
+`publicaciones_inversion.montoRecaudado`
+
+La prueba confirmó:
+
+`25000.0 → 40000.0`
+
+mediante una inversión de:
+
+`15000.0`
+
+---
+
+## Principios arquitectónicos mantenidos
+
+Se mantiene la arquitectura V8.
+
+No se crea `ActivoAgroV3`.
+
+La evolución continúa sobre los modelos y servicios existentes.
+
+Se mantiene el principio:
+
+`Screen → Service → Model → Firebase`
+
+y el uso de Firestore como capa de persistencia.
+
+---
+
+## Estado del Paso 11
+
+🟢 **VALIDACIÓN TÉCNICA COMPLETADA**
+
+Queda pendiente:
+
+- documentación final;
+- versionado mediante Git;
+- publicación en `origin/main`;
+- verificación final del working tree.
+
+---
+
+## Regla de cierre
+
+Primero validar.
+
+Después documentar.
+
+Después versionar.
+
+No acelerar etapas.
+
+No crear V3.
+
 Mantener la arquitectura V8.
