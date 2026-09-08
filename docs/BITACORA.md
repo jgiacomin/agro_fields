@@ -5278,28 +5278,58 @@ Resultado:
 
 ## GAP-PROD-ID-01
 
-Durante esta implementación se detectó un nuevo GAP:
+Durante la validación técnica de producción se confirmó un GAP relacionado con la identidad del módulo:
 
-`ModuloProduccion.id` es opcional.
+`ModuloProduccion.id` es opcional y algunas rutas de creación no establecen necesariamente un identificador estable.
 
-Además, algunas rutas existentes de creación de módulos no establecen necesariamente un identificador estable.
-
-Esto puede dificultar la trazabilidad profunda:
+Esto podía dificultar la trazabilidad profunda:
 
 `ActivoAgroV2`
 → `ModuloProduccion`
 → `CicloProductivo`
 → `Evidencia`
 
-### Decisión
+### Solución implementada
 
-No modificar todavía `ModuloProduccion`.
+Se centralizó la normalización de identidad en `ActivoAgroServiceV2.crearActivo()`.
 
-No agregar campos ni generar una solución parcial.
+Cuando `ModuloProduccion.id` es nulo:
 
-El GAP queda registrado como **pendiente técnico**.
+- se genera un identificador mediante Firestore;
+- se asigna el identificador generado al módulo;
+- se completa `activoAgroId` con el ID del `ActivoAgroV2` cuando falta;
+- el módulo normalizado se persiste junto con el Activo Agro.
 
-La próxima intervención deberá comenzar auditando todas las rutas de creación, actualización y persistencia de `ModuloProduccion`.
+De esta manera, la identidad del módulo no depende de que cada pantalla o ruta de creación recuerde generar el identificador.
+
+### Validación técnica
+
+Se creó y ejecutó:
+
+`integration_test/activo_agro_service_produccion_id_integration_test.dart`
+
+El test validó:
+
+`ModuloProduccion.id == null`
+→ generación de ID
+→ persistencia
+→ recuperación
+→ `activoAgroId`
+→ vinculación con `CicloProductivo`
+→ `Evidencia`
+→ `Historial`
+→ `Auditoría`
+
+Resultados:
+
+- `flutter analyze integration_test/activo_agro_service_produccion_id_integration_test.dart` → **No issues found!**
+- `flutter test integration_test/activo_agro_service_produccion_id_integration_test.dart` → **All tests passed!**
+
+### Estado
+
+**GAP-PROD-ID-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+
+La solución mantiene `ActivoAgroV2`, no crea nuevos modelos y centraliza la normalización en la capa de servicio.
 
 ## Decisiones consolidadas
 
@@ -5315,10 +5345,7 @@ La próxima intervención deberá comenzar auditando todas las rutas de creació
 ## Estado de Paso 12.9
 
 **CERRADO Y VALIDADO TÉCNICAMENTE.**
-
 Se validó la integración de evidencia con suelo y producción/ciclos productivos utilizando Android Emulator + Firestore Emulator.
-
-El nuevo `GAP-PROD-ID-01` queda documentado como pendiente y no se implementa todavía.
 
 ## Continuidad
 

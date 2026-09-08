@@ -2905,33 +2905,49 @@ Resultado:
 
 ## GAP-PROD-ID-01 — Identidad estable del módulo de producción
 
-Durante la validación de producción se detectó un GAP adicional:
+Durante la validación técnica de producción se confirmó un GAP relacionado con la identidad del módulo:
 
-`ModuloProduccion.id` es actualmente opcional y existen rutas de creación que no establecen necesariamente un identificador estable del módulo.
+`ModuloProduccion.id` es opcional y algunas rutas de creación no establecen necesariamente un identificador estable.
 
-Esto dificulta garantizar una referencia inequívoca entre:
+Esto podía dificultar la trazabilidad profunda:
 
 `ActivoAgroV2`
 → `ModuloProduccion`
 → `CicloProductivo`
 → `Evidencia`
 
-### Decisión
+### Solución implementada
 
-**No modificar todavía el modelo ni las rutas de creación.**
+Se centralizó la normalización de identidad en `ActivoAgroServiceV2.crearActivo()`.
 
-El GAP queda documentado como pendiente técnico para una evolución posterior.
+Cuando `ModuloProduccion.id` es nulo:
 
-Antes de resolverlo deberán auditarse todas las rutas de creación y persistencia de `ModuloProduccion`.
+- se genera un identificador mediante Firestore;
+- se asigna el identificador generado al módulo;
+- se completa `activoAgroId` con el ID del `ActivoAgroV2` cuando falta;
+- el módulo normalizado se persiste junto con el Activo Agro.
 
-## Estado de GAP
+### Validación técnica
+
+Se creó y ejecutó:
+
+`integration_test/activo_agro_service_produccion_id_integration_test.dart`
+
+Resultados:
+
+- `flutter analyze integration_test/activo_agro_service_produccion_id_integration_test.dart` → **No issues found!**
+- `flutter test integration_test/activo_agro_service_produccion_id_integration_test.dart` → **All tests passed!**
+
+### Estado
+
+**GAP-PROD-ID-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
 
 | GAP               | Estado                    |
 | ----------------- | ------------------------- |
 | GAP-EVID-01       | 🟢 Resuelto en capa base  |
 | GAP-SUELO-EVID-01 | 🟢 Resuelto y validado    |
 | GAP-PROD-01       | 🟢 Resuelto y validado    |
-| GAP-PROD-ID-01    | 🟡 Pendiente              |
+| GAP-PROD-ID-01    | 🟢 Resuelto y validado    |
 | GAP-DOC-01        | 🟡 Pendiente              |
 | GAP-ECON-01       | 🟡 Pendiente              |
 | GAP-PART-01       | 🟢 Mantener modelo actual |
@@ -2952,5 +2968,3 @@ Secuencia:
 ## Próximo paso
 
 Continuar con la revisión de los GAP pendientes de la matriz, priorizando aquellos que impacten directamente en la Ficha Maestra y en la trazabilidad histórica del Activo Agro.
-
-**GAP-PROD-ID-01 queda pendiente y no se implementa en este paso.**

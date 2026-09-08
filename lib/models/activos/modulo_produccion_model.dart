@@ -91,6 +91,36 @@ class ModuloProduccion {
           .toList(),
     );
   }
+  ModuloProduccion copyWith({
+  String? id,
+  String? activoAgroId,
+  String? dominio,
+  String? actividad,
+  String? descripcion,
+  double? superficie,
+  String? unidad,
+  double? capacidadActual,
+  double? capacidadMaxima,
+  bool? activo,
+  Map<String, dynamic>? datos,
+  List<CicloProductivo>? ciclos,
+})
+{
+  return ModuloProduccion(
+    id: id ?? this.id,
+    activoAgroId: activoAgroId ?? this.activoAgroId,
+    dominio: dominio ?? this.dominio,
+    actividad: actividad ?? this.actividad,
+    descripcion: descripcion ?? this.descripcion,
+    superficie: superficie ?? this.superficie,
+    unidad: unidad ?? this.unidad,
+    capacidadActual: capacidadActual ?? this.capacidadActual,
+    capacidadMaxima: capacidadMaxima ?? this.capacidadMaxima,
+    activo: activo ?? this.activo,
+    datos: datos ?? this.datos,
+    ciclos: ciclos ?? this.ciclos,
+  );
+}
 
   Map<String, dynamic> toMap() {
     return {

@@ -99,6 +99,19 @@ HistorialActivo _crearEventoHistorial({
       .collection(coleccion)
       .doc(activo.activoId);
 
+final produccionesNormalizadas =
+    activo.producciones.map((modulo) {
+  final moduloId =
+      modulo.id ?? _db.collection(coleccion).doc().id;
+
+  return modulo.copyWith(
+    id: moduloId,
+    activoAgroId:
+        modulo.activoAgroId ?? activo.activoId,
+  );
+    })
+    .toList();
+
   final historialInicial = _crearEventoHistorial(
 
     tipoEvento:
@@ -116,16 +129,12 @@ HistorialActivo _crearEventoHistorial({
   );
 
   final activoConHistorial = activo.copyWith(
-
-    historial: [
-
-      ...activo.historial,
-
-      historialInicial,
-
-    ],
-
-  );
+  producciones: produccionesNormalizadas,
+  historial: [
+    ...activo.historial,
+    historialInicial,
+  ],
+);
 
   await doc.set(
   activoConHistorial.toMap(),
