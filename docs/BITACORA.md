@@ -5147,3 +5147,181 @@ Antes de implementar, definir:
 * tests.
 
 No implementar hasta cerrar este diseño.
+
+# 2026-09-07 — Paso 12.9: Matriz Ficha Maestra V1.0 ↔ Arquitectura V8 ↔ Código real
+
+## Estado
+
+🟢 **CERRADO — VALIDADO TÉCNICAMENTE**
+
+## Objetivo
+
+Traducir la Ficha Maestra del Activo Agro V1 a la arquitectura real de Agro Fields y comprobar, antes de crear nuevos componentes, qué información ya está cubierta por `ActivoAgroV2` y sus modelos especializados.
+
+Se mantiene como regla:
+
+**No crear `ActivoAgroV3`.**
+
+## Trabajo realizado
+
+Se revisó la correspondencia entre la Ficha Maestra y:
+
+* `ActivoAgroV2`;
+* `SueloActivo`;
+* `ModuloProduccion`;
+* `CicloProductivo`;
+* `EconomiaActivo`;
+* `DocumentacionActivo`;
+* `ParticipanteActivo`;
+* `ConfianzaActivo`;
+* `EvaluacionConfianza`;
+* `MadurezActivo`;
+* `HistorialActivo`;
+* `AuditEvent`;
+* `Evidencia`;
+* servicios relacionados.
+
+La matriz permitió identificar capacidades existentes, capacidades parciales y GAP pendientes.
+
+## Evolución de Evidencia
+
+El GAP arquitectónico `GAP-EVID-01` había identificado la necesidad de una capa transversal de Evidencia.
+
+Durante la evolución técnica se confirmó que el modelo `Evidencia` ya existía en el código real.
+
+Por lo tanto, no se creó un nuevo modelo conceptual.
+
+Se implementó la persistencia transversal mediante:
+
+`EvidenciaService`
+
+La evidencia queda relacionada con:
+
+* Activo Agro;
+* módulo de origen;
+* elemento relacionado;
+* campo relacionado;
+* fuente/aportante;
+* soporte documental;
+* fecha del hecho;
+* fecha de registro;
+* verificación;
+* validez.
+
+## Validación de Evidencia
+
+Se validó el flujo:
+
+`Dato`
+→ `Evidencia`
+→ `Historial`
+→ `Auditoría`
+
+mediante Firestore Emulator.
+
+La persistencia y auditoría de evidencia fueron verificadas mediante test de integración.
+
+Resultado:
+
+**All tests passed!**
+
+## Suelo + Evidencia
+
+Se integró evidencia al método:
+
+`ActivoAgroServiceV2.actualizarSuelo()`
+
+El flujo permite actualizar `SueloActivo` y asociar una evidencia transversal sin crear un modelo específico de evidencia para suelo.
+
+Se validó:
+
+* persistencia del suelo;
+* referencia de evidencia;
+* documento `Evidencia` en Firestore;
+* historial `actualizacion_suelo`;
+* auditoría de modificación del suelo;
+* auditoría de creación de evidencia.
+
+Resultado:
+
+**All tests passed!**
+
+## Producción + Ciclo Productivo + Evidencia
+
+Se incorporó el registro de ciclos productivos mediante:
+
+`ActivoAgroServiceV2.registrarCicloProductivo()`
+
+El ciclo mantiene relación con:
+
+* `ActivoAgroV2`;
+* `ModuloProduccion`;
+* campaña;
+* producción obtenida;
+* unidad de producción.
+
+Se agregó la posibilidad de asociar evidencia transversal.
+
+Se validó:
+
+* persistencia del ciclo;
+* referencia al Activo Agro;
+* referencia al módulo;
+* persistencia de evidencia;
+* historial `registro_ciclo_productivo`;
+* auditoría del registro del ciclo;
+* auditoría de creación de evidencia.
+
+Resultado:
+
+**All tests passed!**
+
+## GAP-PROD-ID-01
+
+Durante esta implementación se detectó un nuevo GAP:
+
+`ModuloProduccion.id` es opcional.
+
+Además, algunas rutas existentes de creación de módulos no establecen necesariamente un identificador estable.
+
+Esto puede dificultar la trazabilidad profunda:
+
+`ActivoAgroV2`
+→ `ModuloProduccion`
+→ `CicloProductivo`
+→ `Evidencia`
+
+### Decisión
+
+No modificar todavía `ModuloProduccion`.
+
+No agregar campos ni generar una solución parcial.
+
+El GAP queda registrado como **pendiente técnico**.
+
+La próxima intervención deberá comenzar auditando todas las rutas de creación, actualización y persistencia de `ModuloProduccion`.
+
+## Decisiones consolidadas
+
+1. Mantener `ActivoAgroV2`.
+2. Mantener una única capa transversal de `Evidencia`.
+3. No crear modelos `EvidenciaSuelo`, `EvidenciaProduccion` ni `EvidenciaEconomia`.
+4. Mantener separados Evidencia, Historial y Auditoría.
+5. Mantener separados Validez y Confianza.
+6. No modificar un modelo simplemente porque se detecte un GAP; primero definir su solución mínima.
+7. Mantener los datos históricos con su contexto temporal.
+8. Registrar nuevos GAP antes de implementar su solución.
+
+## Estado de Paso 12.9
+
+**CERRADO Y VALIDADO TÉCNICAMENTE.**
+
+Se validó la integración de evidencia con suelo y producción/ciclos productivos utilizando Android Emulator + Firestore Emulator.
+
+El nuevo `GAP-PROD-ID-01` queda documentado como pendiente y no se implementa todavía.
+
+## Continuidad
+
+El siguiente trabajo deberá priorizar los GAP pendientes de la matriz y mantener la trazabilidad:
+
+`Código → Test → Auditoría → Bitácora → Roadmap → Commit`

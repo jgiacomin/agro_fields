@@ -2820,3 +2820,137 @@ Orden previsto:
 16. Push.
 
 **Regla:** no implementar hasta cerrar el diseño técnico.
+
+# PASO 12.9 — Matriz Ficha Maestra V1.0 ↔ Arquitectura V8 ↔ Código real
+
+## Estado
+
+🟢 **CERRADO — VALIDADO TÉCNICAMENTE**
+
+## Objetivo
+
+Traducir la Ficha Maestra del Activo Agro V1 a la arquitectura existente de Agro Fields, verificando qué información ya existe, qué capacidades requieren evolución y cuáles son los GAP concretos que deben resolverse sin duplicar modelos.
+
+## Principio
+
+**No agregar campos ni crear modelos nuevos hasta comprobar si la información ya existe en la arquitectura actual.**
+
+La referencia funcional es la Ficha Maestra.
+
+La referencia técnica es la arquitectura V8 y el código real existente.
+
+## Resultado
+
+La matriz confirmó que el Expediente Digital Permanente puede evolucionar sobre `ActivoAgroV2`, utilizando los módulos existentes y una capa transversal de `Evidencia`.
+
+Se mantiene la decisión:
+
+**No crear `ActivoAgroV3`.**
+
+No se crea un modelo `ExpedienteDigitalPermanente`.
+
+## Evidencia transversal
+
+Durante la implementación posterior al GAP arquitectónico se confirmó que ya existía el modelo:
+
+`Evidencia`
+
+y se implementó:
+
+`EvidenciaService`
+
+La evidencia queda como capa transversal y no como modelos específicos por módulo.
+
+No se crearán:
+
+* `EvidenciaSuelo`;
+* `EvidenciaProduccion`;
+* `EvidenciaEconomia`.
+
+## Validación de suelo
+
+Se integró evidencia al flujo de actualización de `SueloActivo`.
+
+Flujo validado:
+
+`Dato de suelo`
+→ `Evidencia`
+→ `HistorialActivo`
+→ `AuditEvent`
+→ `Firestore Emulator`
+
+La integración fue validada mediante test de integración con Android Emulator + Firestore Emulator.
+
+Resultado:
+
+**All tests passed!**
+
+## Validación de producción y ciclo productivo
+
+Se integró evidencia al registro de `CicloProductivo`.
+
+Flujo validado:
+
+`CicloProductivo`
+→ `Evidencia`
+→ `HistorialActivo`
+→ `AuditEvent`
+→ `Firestore Emulator`
+
+La integración fue validada mediante test de integración con Android Emulator + Firestore Emulator.
+
+Resultado:
+
+**All tests passed!**
+
+## GAP-PROD-ID-01 — Identidad estable del módulo de producción
+
+Durante la validación de producción se detectó un GAP adicional:
+
+`ModuloProduccion.id` es actualmente opcional y existen rutas de creación que no establecen necesariamente un identificador estable del módulo.
+
+Esto dificulta garantizar una referencia inequívoca entre:
+
+`ActivoAgroV2`
+→ `ModuloProduccion`
+→ `CicloProductivo`
+→ `Evidencia`
+
+### Decisión
+
+**No modificar todavía el modelo ni las rutas de creación.**
+
+El GAP queda documentado como pendiente técnico para una evolución posterior.
+
+Antes de resolverlo deberán auditarse todas las rutas de creación y persistencia de `ModuloProduccion`.
+
+## Estado de GAP
+
+| GAP               | Estado                    |
+| ----------------- | ------------------------- |
+| GAP-EVID-01       | 🟢 Resuelto en capa base  |
+| GAP-SUELO-EVID-01 | 🟢 Resuelto y validado    |
+| GAP-PROD-01       | 🟢 Resuelto y validado    |
+| GAP-PROD-ID-01    | 🟡 Pendiente              |
+| GAP-DOC-01        | 🟡 Pendiente              |
+| GAP-ECON-01       | 🟡 Pendiente              |
+| GAP-PART-01       | 🟢 Mantener modelo actual |
+| GAP-VAL-01        | 🟡 Pendiente              |
+| GAP-TRACE-01      | 🟡 Pendiente              |
+| GAP-AUD-01        | 🟡 Mejora futura          |
+| GAP-MAD-01        | 🟡 Mejora futura          |
+| GAP-CONF-01       | 🟡 Integración futura     |
+
+## Regla de continuidad
+
+Los nuevos GAP detectados durante la implementación deberán documentarse antes de modificarse.
+
+Secuencia:
+
+`GAP → decisión → implementación → test → validación → documentación → commit`
+
+## Próximo paso
+
+Continuar con la revisión de los GAP pendientes de la matriz, priorizando aquellos que impacten directamente en la Ficha Maestra y en la trazabilidad histórica del Activo Agro.
+
+**GAP-PROD-ID-01 queda pendiente y no se implementa en este paso.**
