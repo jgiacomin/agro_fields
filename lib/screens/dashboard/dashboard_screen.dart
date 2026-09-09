@@ -70,11 +70,21 @@ class _DashboardScreenState
       // =================================================
       // IDENTIDAD DEL USUARIO
       // =================================================
+final data =
+    await _userService.getUsuario(
+  user.uid,
+);
 
-      final data =
-          await _userService.getUsuario(
-        user.uid,
-      );
+debugPrint('DASHBOARD: getUsuario OK');
+
+final activosPropios =
+    await _activoService.buscarPorPropietario(
+  user.uid,
+);
+
+debugPrint(
+  'DASHBOARD: buscarPorPropietario OK - ${activosPropios.length} activos',
+);
 
       // =================================================
       // RELACIÓN CONTEXTUAL CON ACTIVOS AGRO
@@ -83,10 +93,7 @@ class _DashboardScreenState
       // si es propietario.
       // =================================================
 
-      final activosPropios =
-          await _activoService.buscarPorPropietario(
-        user.uid,
-      );
+    
 
       if (!mounted) return;
 
