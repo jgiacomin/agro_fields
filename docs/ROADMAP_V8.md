@@ -2952,7 +2952,7 @@ Resultados:
 | GAP-ECON-01       | 🟡 Pendiente              |
 | GAP-PART-01       | 🟢 Mantener modelo actual |
 | GAP-VAL-01        | 🟢 Resuelto y validado    |
-| GAP-TRACE-01      | 🟡 Pendiente              |
+| GAP-TRACE-01      | 🟢 Resuelto y validado    |
 | GAP-AUD-01        | 🟡 Mejora futura          |
 | GAP-MAD-01        | 🟡 Mejora futura          |
 | GAP-CONF-01       | 🟡 Integración futura     |

@@ -5367,3 +5367,100 @@ Se validó la integración de evidencia con suelo y producción/ciclos productiv
 El siguiente trabajo deberá priorizar los GAP pendientes de la matriz y mantener la trazabilidad:
 
 `Código → Test → Auditoría → Bitácora → Roadmap → Commit`
+## GAP-TRACE-01 — Trazabilidad documental old/new
+
+### Estado
+
+🟢 **RESUELTO Y VALIDADO TÉCNICAMENTE**
+
+Durante la validación del Expediente Digital Permanente se revisó la trazabilidad de los cambios sobre `DocumentacionActivo`.
+
+El objetivo fue comprobar que una modificación documental relevante conserve explícitamente:
+
+* documentación anterior;
+* documentación nueva;
+* relación con el Activo Agro;
+* existencia de evidencia asociada;
+* registro en HistorialActivo;
+* registro en Auditoría.
+
+### Solución validada
+
+Se confirmó que `ActivoAgroServiceV2.actualizarDocumentacion()` ya implementaba la trazabilidad necesaria mediante:
+
+`documentacionAnterior`
+
+→ `documentacionNueva`
+
+→ `HistorialActivo`
+
+→ `AuditEvent`
+
+Cuando existe evidencia, también se registra su referencia y la indicación de que el cambio posee evidencia asociada.
+
+No fue necesario modificar el servicio.
+
+El GAP correspondía a **cobertura de prueba y validación**, no a ausencia de implementación.
+
+### Test de integración
+
+Se amplió:
+
+`integration_test/activo_agro_service_documentacion_integration_test.dart`
+
+Se incorporó el test:
+
+`Paso 12 - GAP-TRACE-01 - conserva documentación anterior y nueva en historial y auditoría`
+
+El test valida:
+
+`DocumentacionAnterior`
+→ `actualizarDocumentacion()`
+→ `DocumentacionNueva`
+→ `Evidencia`
+→ `Historial`
+→ `Auditoría`
+
+Se verificó:
+
+* persistencia de la documentación nueva;
+* conservación de la documentación anterior en el evento histórico;
+* conservación de la documentación nueva en el evento histórico;
+* indicación de evidencia asociada;
+* persistencia del historial;
+* auditoría de actualización documental;
+* estados anterior y nuevo de la auditoría;
+* datos anterior/nuevo dentro de la auditoría.
+
+### Validación técnica
+
+Comando ejecutado:
+
+`flutter test integration_test/activo_agro_service_documentacion_integration_test.dart`
+
+Resultado:
+
+**`+2: All tests passed!`**
+
+Los dos escenarios del archivo de integración fueron ejecutados correctamente.
+
+### Decisión
+
+No modificar `ActivoAgroServiceV2` porque la implementación existente ya satisface el requisito de trazabilidad documental.
+
+Se agrega cobertura de integración para convertir el comportamiento existente en una capacidad validada y auditable.
+
+### Estado final
+
+**GAP-TRACE-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+
+La trazabilidad documental queda respaldada por:
+
+`Dato documental`
+→ `DocumentacionActivo`
+→ `Evidencia`
+→ `HistorialActivo`
+→ `AuditEvent`
+→ `Firestore Emulator`
+
+09/09/2026

@@ -440,5 +440,429 @@ void main() {
       );
     },
   );
+
+  // =====================================================
+  // PASO 12 - GAP-TRACE-01
+  // CONSERVAR DOCUMENTACIÓN ANTERIOR Y NUEVA
+  // EN HISTORIAL Y AUDITORÍA
+  // =====================================================
+
+  testWidgets(
+    'Paso 12 - GAP-TRACE-01 - conserva documentación anterior y nueva en historial y auditoría',
+    (tester) async {
+      final sufijo =
+          DateTime.now().microsecondsSinceEpoch.toString();
+
+      final traceActivoId =
+          'activo-gap-trace-$sufijo';
+
+      // =====================================================
+      // 1. CREAR ACTIVO BASE
+      // =====================================================
+
+      final activoTrace = ActivoAgroV2(
+        activoId: traceActivoId,
+        nombre: 'Activo GAP TRACE $sufijo',
+        descripcion:
+            'Activo para validar trazabilidad documental.',
+        tipoActivo: TipoActivo.agricola,
+        categorias: ['agricultura'],
+        ubicacion: UbicacionActivo(
+          pais: 'Argentina',
+          provincia: 'Buenos Aires',
+          departamento: 'La Plata',
+          localidad: 'La Plata',
+          codigoPostal: '1900',
+          latitud: 0,
+          longitud: 0,
+          superficie: 100,
+          regionProductiva: 'agricola',
+          tipoZona: 'rural',
+          descripcionEntorno: 'Prueba GAP TRACE',
+          accesoCaminos: 'camino rural',
+          disponibilidadServicios: '',
+          jurisdiccionLegal: 'Argentina',
+          zonaHoraria:
+              'America/Argentina/Buenos_Aires',
+          monedaLocal: 'ARS',
+        ),
+        suelo: SueloActivo.inicial(),
+        producciones: [
+          ModuloProduccion(
+            dominio: 'agricola',
+            actividad: 'produccion agricola',
+            descripcion:
+                'Producción para prueba GAP TRACE.',
+            superficie: 100,
+            unidad: 'hectareas',
+            capacidadActual: 100,
+            capacidadMaxima: 100,
+            activo: true,
+            datos: {},
+            ciclos: [],
+          ),
+        ],
+        economia: EconomiaActivo.inicial(),
+        documentacion:
+            DocumentacionActivo.inicial(),
+        confianza: ConfianzaActivo(
+          nivelGeneral: 0,
+          identidadVerificada: false,
+          documentacionCompleta: false,
+          nivelDocumentacion: 0,
+          cantidadEvidencias: 0,
+          nivelEvidencias: 0,
+          informacionProductivaCompleta: false,
+          nivelProduccion: 0,
+          nivelInfraestructura: 0,
+          infraestructuraVerificada: false,
+          cantidadInfraestructuras: 0,
+          nivelTecnologia: 0,
+          tecnologiaVerificada: false,
+          cantidadTecnologias: 0,
+          nivelInversion: 0,
+          inversionDeclarada: false,
+          inversionVerificada: false,
+          montoInversionDeclarada: 0,
+          monedaInversion: 'USD',
+          participantesVerificados: false,
+          nivelGobernanza: 0,
+          ultimaVerificacion:
+              DateTime(2026, 9, 10),
+          ultimaEvaluacion:
+              DateTime(2026, 9, 10),
+          observaciones: '',
+        ),
+        evaluacion:
+            EvaluacionConfianza.inicial(),
+        madurez: MadurezActivo(
+          porcentaje: 0,
+          faltantes: [],
+          etapa: '',
+          nivelTecnologico: '',
+          preparacionInversion: '',
+        ),
+        participantes: [],
+        propietarioId: usuarioId,
+        creadorId: usuarioId,
+        publicadorId: usuarioId,
+        tipoRelacionPropietario: 'propietario',
+        estado: EstadoActivo.borrador,
+        estadoPublicacion: 'borrador',
+        visible: false,
+        historial: [],
+        hashActivo:
+            'hash-gap-trace-$sufijo',
+        versionDatos: 1,
+        datos: null,
+        fechaCreacion:
+            DateTime(2026, 9, 10),
+        ultimaActualizacion:
+            DateTime(2026, 9, 10),
+      );
+
+      await activoService.crearActivo(
+        activoTrace,
+      );
+
+      // =====================================================
+      // 2. DOCUMENTACIÓN ANTERIOR
+      // =====================================================
+
+      final documentacionAnterior =
+          DocumentacionActivo(
+        documentacionCompleta: false,
+        documentos: [
+          'titulo_propiedad',
+        ],
+        certificaciones: [],
+        permisos: [],
+        archivos: [],
+        observaciones:
+            'Documentación inicial declarada.',
+        fechaActualizacion:
+            DateTime(2026, 9, 10, 10, 0),
+      );
+
+      await activoService.actualizarDocumentacion(
+        traceActivoId,
+        documentacionAnterior,
+      );
+
+      // =====================================================
+      // 3. DOCUMENTACIÓN NUEVA
+      // =====================================================
+
+      final documentacionNueva =
+          DocumentacionActivo(
+        documentacionCompleta: true,
+        documentos: [
+          'titulo_propiedad',
+          'plano_mensura',
+        ],
+        certificaciones: [
+          'certificacion_ambiental',
+        ],
+        permisos: [
+          'permiso_riego',
+        ],
+        archivos: [
+          'expediente_completo.pdf',
+        ],
+        observaciones:
+            'Documentación actualizada y ampliada.',
+        fechaActualizacion:
+            DateTime(2026, 9, 10, 11, 0),
+      );
+
+      // =====================================================
+      // 4. EVIDENCIA DEL CAMBIO
+      // =====================================================
+
+      final evidenciaTrace =
+          Evidencia(
+        evidenciaId: '',
+        activoAgroId: traceActivoId,
+        moduloOrigen: 'documentacion',
+        elementoTipo: 'DocumentacionActivo',
+        elementoId: traceActivoId,
+        campoRelacionado: 'documentacion',
+        tipo: 'documento',
+        descripcion:
+            'Evidencia documental de actualización.',
+        observaciones:
+            'Se incorpora documentación adicional.',
+        aportanteId: usuarioId,
+        fuenteTipo: 'usuario',
+        fuenteNombre:
+            'Propietario del activo',
+        fuenteReferencia: usuarioId,
+        soporteTipo: 'archivo',
+        soporteReferencia:
+            'expediente_completo.pdf',
+        soporteNombre:
+            'expediente_completo.pdf',
+        fechaHecho:
+            DateTime(2026, 9, 10, 11, 0),
+        fechaRegistro:
+            DateTime(2026, 9, 10, 11, 0),
+        estadoVerificacion: 'pendiente',
+        estadoValidez: 'vigente_informado',
+      );
+
+      // =====================================================
+      // 5. ACTUALIZAR DOCUMENTACIÓN + EVIDENCIA
+      // =====================================================
+
+      await activoService.actualizarDocumentacion(
+        traceActivoId,
+        documentacionNueva,
+        evidencia: evidenciaTrace,
+      );
+
+      // =====================================================
+      // 6. RECUPERAR ACTIVO
+      // =====================================================
+
+      final activoFinal =
+          await activoService.obtenerActivoPorId(
+        traceActivoId,
+      );
+
+      expect(
+        activoFinal,
+        isNotNull,
+      );
+
+      expect(
+        activoFinal!.documentacion.documentacionCompleta,
+        isTrue,
+      );
+
+      expect(
+        activoFinal.documentacion.documentos,
+        contains('plano_mensura'),
+      );
+
+      // =====================================================
+      // 7. VERIFICAR HISTORIAL
+      // =====================================================
+
+      final eventosDocumentacion =
+          activoFinal.historial.where(
+        (evento) =>
+            evento.tipoEvento ==
+            'actualizacion_documentacion',
+      );
+
+      expect(
+        eventosDocumentacion,
+        isNotEmpty,
+      );
+
+      final evento =
+          eventosDocumentacion.last;
+
+      expect(
+        evento.datosEvento,
+        isNotNull,
+      );
+
+      final datosEvento =
+          evento.datosEvento!;
+
+      expect(
+        datosEvento['documentacionAnterior'],
+        isNotNull,
+      );
+
+      expect(
+        datosEvento['documentacionNueva'],
+        isNotNull,
+      );
+
+      final historialAnterior =
+          Map<String, dynamic>.from(
+        datosEvento['documentacionAnterior']
+            as Map,
+      );
+
+      final historialNueva =
+          Map<String, dynamic>.from(
+        datosEvento['documentacionNueva']
+            as Map,
+      );
+
+      expect(
+        historialAnterior['documentacionCompleta'],
+        false,
+      );
+
+      expect(
+        historialAnterior['documentos'],
+        contains('titulo_propiedad'),
+      );
+
+      expect(
+        historialNueva['documentacionCompleta'],
+        true,
+      );
+
+      expect(
+        historialNueva['documentos'],
+        contains('plano_mensura'),
+      );
+
+      expect(
+        datosEvento['tieneEvidencia'],
+        true,
+      );
+
+      // =====================================================
+      // 8. VERIFICAR AUDITORÍA
+      // =====================================================
+
+      final auditoriaSnapshot =
+          await firestore
+              .collection('auditoria_activos')
+              .where(
+                'activoId',
+                isEqualTo: traceActivoId,
+              )
+              .get();
+
+      expect(
+        auditoriaSnapshot.docs,
+        isNotEmpty,
+      );
+
+      final auditoriasDocumentacion =
+          auditoriaSnapshot.docs.where(
+        (doc) {
+          final data = doc.data();
+
+          return data['modulo'] ==
+                  'documentacion' &&
+              data['accion'] ==
+                  'actualizar_documentacion';
+        },
+      );
+
+      expect(
+        auditoriasDocumentacion,
+        isNotEmpty,
+      );
+
+      final auditoria =
+          auditoriasDocumentacion.last.data();
+
+      expect(
+        auditoria['estadoAnterior'],
+        'documentacion_registrada',
+      );
+
+      expect(
+        auditoria['estadoNuevo'],
+        'documentacion_actualizada',
+      );
+
+      expect(
+        auditoria['datos'],
+        isNotNull,
+      );
+
+      final datosAuditoria =
+          Map<String, dynamic>.from(
+        auditoria['datos'] as Map,
+      );
+
+      expect(
+        datosAuditoria['documentacionAnterior'],
+        isNotNull,
+      );
+
+      expect(
+        datosAuditoria['documentacionNueva'],
+        isNotNull,
+      );
+
+      final auditoriaAnterior =
+          Map<String, dynamic>.from(
+        datosAuditoria['documentacionAnterior']
+            as Map,
+      );
+
+      final auditoriaNueva =
+          Map<String, dynamic>.from(
+        datosAuditoria['documentacionNueva']
+            as Map,
+      );
+
+      expect(
+        auditoriaAnterior['documentacionCompleta'],
+        false,
+      );
+
+      expect(
+        auditoriaAnterior['documentos'],
+        contains('titulo_propiedad'),
+      );
+
+      expect(
+        auditoriaNueva['documentacionCompleta'],
+        true,
+      );
+
+      expect(
+        auditoriaNueva['documentos'],
+        contains('plano_mensura'),
+      );
+
+      expect(
+        datosAuditoria['tieneEvidencia'],
+        true,
+      );
+    },
+  );
 }
 
