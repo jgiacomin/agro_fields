@@ -2951,7 +2951,7 @@ Resultados:
 | GAP-DOC-01        | 🟡 Pendiente              |
 | GAP-ECON-01       | 🟡 Pendiente              |
 | GAP-PART-01       | 🟢 Mantener modelo actual |
-| GAP-VAL-01        | 🟡 Pendiente              |
+| GAP-VAL-01        | 🟢 Resuelto y validado    |
 | GAP-TRACE-01      | 🟡 Pendiente              |
 | GAP-AUD-01        | 🟡 Mejora futura          |
 | GAP-MAD-01        | 🟡 Mejora futura          |

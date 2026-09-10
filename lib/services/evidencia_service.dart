@@ -26,7 +26,22 @@ class EvidenciaService {
         'La evidencia debe estar vinculada a un activoAgroId.',
       );
     }
+    const estadosValidezPermitidos = {
+      'vigente_verificado',
+      'vigente_informado',
+      'requiere_actualizacion',
+      'desactualizado',
+      'sin_informacion',
+    };
 
+    if (!estadosValidezPermitidos.contains(
+      evidencia.estadoValidez,
+    )) {
+      throw ArgumentError(
+        'Estado de validez no permitido: '
+        '${evidencia.estadoValidez}',
+      );
+    }
     final evidenciaRef =
         _db.collection(coleccion).doc();
 

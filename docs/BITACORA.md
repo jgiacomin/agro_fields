@@ -5053,11 +5053,12 @@ No se utilizará este modelo como historial de acciones.
 
 **Decisión:** mantener el modelo. Las intervenciones relevantes deberán registrarse mediante HistorialActivo y AuditEvent, asociando Evidencia cuando corresponda.
 
-#### GAP-VAL-01 — Validez
+#### GAP-VAL-01 — Validez — RESUELTO Y VALIDADO TÉCNICAMENTE
 
-No existe actualmente una representación transversal de validez de la información.
+Se implementó la representación transversal de validez mediante el campo
+`estadoValidez` de `Evidencia`.
 
-Se establece conceptualmente:
+Estados permitidos:
 
 * `vigente_verificado`
 * `vigente_informado`
@@ -5065,7 +5066,21 @@ Se establece conceptualmente:
 * `desactualizado`
 * `sin_informacion`
 
-La validez no será incorporada globalmente a `ActivoAgroV2`.
+La validación se centralizó en `EvidenciaService.crearEvidencia()`,
+rechazando cualquier estado no permitido antes de persistir la evidencia
+en Firestore.
+
+Se validaron dos escenarios mediante Integration Test:
+
+1. Evidencia con estado válido → persistencia, recuperación y auditoría correctas.
+2. Evidencia con estado inválido → rechazo mediante `ArgumentError`.
+
+Resultado:
+
+**GAP-VAL-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+
+La validez continúa separada conceptualmente de Verificación y Confianza,
+y no se incorpora como campo global de `ActivoAgroV2`.
 
 ### Decisiones arquitectónicas
 

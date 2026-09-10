@@ -207,4 +207,38 @@ void main() {
       );
     },
   );
+  testWidgets(
+    'Paso 12.10 - rechaza estado de validez no permitido',
+    (tester) async {
+      final evidenciaService = EvidenciaService();
+
+      final sufijo =
+          DateTime.now().microsecondsSinceEpoch.toString();
+
+      final activoId =
+          'activo-evidencia-invalida-test-$sufijo';
+
+      final evidencia = Evidencia(
+        evidenciaId: '',
+        activoAgroId: activoId,
+        moduloOrigen: 'suelo',
+        elementoTipo: 'ActivoAgroV2',
+        elementoId: activoId,
+        campoRelacionado: 'ph',
+        tipo: 'medicion',
+        descripcion: 'Evidencia con estado de validez inválido.',
+        fechaRegistro: DateTime(2026, 9, 8, 11, 0),
+        estadoVerificacion: 'pendiente',
+        estadoValidez: 'estado_inexistente',
+      );
+
+      expect(
+        () => evidenciaService.crearEvidencia(
+          evidencia: evidencia,
+          usuarioId: 'usuario-evidencia-invalida-$sufijo',
+        ),
+        throwsArgumentError,
+      );
+    },
+  );
 }
