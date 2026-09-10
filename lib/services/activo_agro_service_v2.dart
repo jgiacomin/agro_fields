@@ -13,6 +13,7 @@ import '../models/activos/evidencia_model.dart';
 import '../models/activos/modulo_produccion_model.dart';
 import '../models/activos/ciclo_productivo_model.dart';
 import '../models/activos/documentacion_activo_model.dart';
+import '../models/activos/economia_activo_model.dart';
 import 'evidencia_service.dart';
 import 'confianza_activo_service.dart';
 
@@ -732,6 +733,109 @@ Future<void> actualizarDocumentacion(
     datos: {
       'documentacionCompleta':
           documentacion.documentacionCompleta,
+      'tieneEvidencia':
+          evidencia != null,
+    },
+  );
+}
+// =====================================================
+// ACTUALIZAR ECONOMÍA
+// =====================================================
+
+Future<void> actualizarEconomia(
+  String activoId,
+  EconomiaActivo economia, {
+  Evidencia? evidencia,
+}) async {
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  // =====================================================
+  // EVIDENCIA OPCIONAL DE LA ECONOMÍA
+  // =====================================================
+
+  if (evidencia != null) {
+    if (evidencia.activoAgroId != activoId) {
+      throw ArgumentError(
+        'La evidencia no corresponde al activo indicado.',
+      );
+    }
+
+    await _evidenciaService.crearEvidencia(
+      evidencia: evidencia,
+      usuarioId: activo.creadorId,
+    );
+  }
+
+  // =====================================================
+  // HISTORIAL
+  // =====================================================
+
+  final evento =
+      _crearEventoHistorial(
+    tipoEvento:
+        'actualizacion_economia',
+    descripcion:
+        'Actualización de la información económica del Activo Agro',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'economia',
+  );
+
+  // =====================================================
+  // ACTUALIZAR ACTIVO
+  // =====================================================
+
+  final activoActualizado =
+      activo.copyWith(
+    economia:
+        economia,
+    historial: [
+      ...activo.historial,
+      evento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  // =====================================================
+  // AUDITORÍA
+  // =====================================================
+
+  await _auditService.registrar(
+    activoId:
+        activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'economia',
+    accion:
+        'actualizar_economia',
+    elementoAfectado:
+        activoId,
+    referencia:
+        activoId,
+    datos: {
+      'valorSolicitado':
+          economia.valorSolicitado,
+      'capitalRequerido':
+          economia.capitalRequerido,
+      'inversionEsperada':
+          economia.inversionEsperada,
       'tieneEvidencia':
           evidencia != null,
     },
