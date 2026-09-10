@@ -12,6 +12,7 @@ import '../models/activos/estado_activo.dart';
 import '../models/activos/evidencia_model.dart'; 
 import '../models/activos/modulo_produccion_model.dart';
 import '../models/activos/ciclo_productivo_model.dart';
+import '../models/activos/documentacion_activo_model.dart';
 import 'evidencia_service.dart';
 import 'confianza_activo_service.dart';
 
@@ -635,6 +636,105 @@ Future<void> actualizarSuelo(
         activoId,
     referencia:
         activoId,
+  );
+}
+// =====================================================
+// ACTUALIZAR DOCUMENTACIÓN
+// =====================================================
+
+Future<void> actualizarDocumentacion(
+  String activoId,
+  DocumentacionActivo documentacion, {
+  Evidencia? evidencia,
+}) async {
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  // =====================================================
+  // EVIDENCIA OPCIONAL DE LA DOCUMENTACIÓN
+  // =====================================================
+
+  if (evidencia != null) {
+    if (evidencia.activoAgroId != activoId) {
+      throw ArgumentError(
+        'La evidencia no corresponde al activo indicado.',
+      );
+    }
+
+    await _evidenciaService.crearEvidencia(
+      evidencia: evidencia,
+      usuarioId: activo.creadorId,
+    );
+  }
+
+  // =====================================================
+  // HISTORIAL
+  // =====================================================
+
+  final evento =
+      _crearEventoHistorial(
+    tipoEvento:
+        'actualizacion_documentacion',
+    descripcion:
+        'Actualización de la documentación del Activo Agro',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'documentacion',
+  );
+
+  // =====================================================
+  // ACTUALIZAR ACTIVO
+  // =====================================================
+
+  final activoActualizado =
+      activo.copyWith(
+    documentacion:
+        documentacion,
+    historial: [
+      ...activo.historial,
+      evento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  // =====================================================
+  // AUDITORÍA
+  // =====================================================
+
+  await _auditService.registrar(
+    activoId:
+        activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'documentacion',
+    accion:
+        'actualizar_documentacion',
+    elementoAfectado:
+        activoId,
+    referencia:
+        activoId,
+    datos: {
+      'documentacionCompleta':
+          documentacion.documentacionCompleta,
+      'tieneEvidencia':
+          evidencia != null,
+    },
   );
 }
 // =====================================================
