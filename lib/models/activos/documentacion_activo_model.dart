@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'documento_activo_model.dart';
 
 class DocumentacionActivo {
 
@@ -17,6 +17,8 @@ class DocumentacionActivo {
 
 
   final List<String> archivos;
+
+  final List<DocumentoActivo> documentosEstructurados;
 
 
   final String observaciones;
@@ -37,6 +39,8 @@ class DocumentacionActivo {
     required this.permisos,
 
     required this.archivos,
+
+    this.documentosEstructurados = const [],
 
     required this.observaciones,
 
@@ -79,7 +83,15 @@ class DocumentacionActivo {
         map['archivos'] ?? []
       ),
 
-
+       documentosEstructurados:
+(map['documentosEstructurados'] as List<dynamic>? ?? [])
+    .map(
+      (item) => DocumentoActivo.fromMap(
+        Map<String, dynamic>.from(item),
+        item['documentoId'] ?? '',
+      ),
+    )
+    .toList(),
       observaciones:
       map['observaciones'] ?? '',
 
@@ -117,6 +129,11 @@ class DocumentacionActivo {
       'archivos':
       archivos,
 
+      'documentosEstructurados':
+       documentosEstructurados
+    .map((documento) => documento.toMap())
+    .toList(),
+
       'observaciones':
       observaciones,
 
@@ -146,6 +163,8 @@ class DocumentacionActivo {
 
       fechaActualizacion:
       DateTime.now(),
+
+      documentosEstructurados: const [],
 
     );
 

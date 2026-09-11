@@ -5464,3 +5464,21 @@ La trazabilidad documental queda respaldada por:
 → `Firestore Emulator`
 
 09/09/2026
+GAP-DOC-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.
+
+La documentación estructurada queda incorporada a la evolución del Expediente Digital Permanente sin duplicar la arquitectura existente.
+
+Actualización de matriz
+GAP	Estado
+GAP-EVID-01	🟢 Resuelto en capa base
+GAP-SUELO-EVID-01	🟢 Resuelto y validado
+GAP-PROD-01	🟢 Resuelto y validado
+GAP-PROD-ID-01	🟢 Resuelto y validado
+GAP-DOC-01	🟢 Resuelto y validado
+GAP-ECON-01	🟡 Pendiente
+GAP-PART-01	🟢 Mantener modelo actual
+GAP-VAL-01	🟢 Resuelto y validado
+GAP-TRACE-01	🟢 Resuelto y validado
+GAP-AUD-01	🟡 Mejora futura
+GAP-MAD-01	🟡 Mejora futura
+GAP-CONF-01	🟡 Integración futura

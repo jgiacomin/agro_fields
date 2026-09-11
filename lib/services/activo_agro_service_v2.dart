@@ -138,7 +138,7 @@ final produccionesNormalizadas =
   ],
 );
 
-  await doc.set(
+await doc.set(
   activoConHistorial.toMap(),
 );
 
@@ -642,12 +642,12 @@ Future<void> actualizarSuelo(
 // =====================================================
 // ACTUALIZAR DOCUMENTACIÓN
 // =====================================================
-
 Future<void> actualizarDocumentacion(
   String activoId,
   DocumentacionActivo documentacion, {
   Evidencia? evidencia,
 }) async {
+
   final activo =
       await obtenerActivoPorId(activoId);
 
@@ -656,6 +656,15 @@ Future<void> actualizarDocumentacion(
       'Activo no encontrado',
     );
   }
+  // =====================================================
+  // TRAZABILIDAD DOCUMENTAL: ESTADO ANTERIOR / NUEVO
+  // =====================================================
+
+  final documentacionAnterior =
+      activo.documentacion.toMap();
+
+  final documentacionNueva =
+      documentacion.toMap();
 
   // =====================================================
   // EVIDENCIA OPCIONAL DE LA DOCUMENTACIÓN
@@ -678,8 +687,13 @@ Future<void> actualizarDocumentacion(
   // HISTORIAL
   // =====================================================
 
-  final evento =
-      _crearEventoHistorial(
+  final eventoId =
+      DateTime.now()
+          .millisecondsSinceEpoch
+          .toString();
+
+  final evento = HistorialActivo(
+    eventoId: eventoId,
     tipoEvento:
         'actualizacion_documentacion',
     descripcion:
@@ -688,6 +702,23 @@ Future<void> actualizarDocumentacion(
         activo.creadorId,
     moduloOrigen:
         'documentacion',
+    fecha:
+        DateTime.now(),
+    entidadRelacionada:
+        'documentacion',
+    referenciaId:
+        activoId,
+    datosEvento: {
+      'documentacionAnterior':
+          documentacionAnterior,
+      'documentacionNueva':
+          documentacionNueva,
+      'tieneEvidencia':
+          evidencia != null,
+      if (evidencia != null)
+        'evidenciaId':
+            evidencia.evidenciaId,
+    },
   );
 
   // =====================================================
@@ -728,13 +759,24 @@ Future<void> actualizarDocumentacion(
         'actualizar_documentacion',
     elementoAfectado:
         activoId,
+    estadoAnterior:
+        'documentacion_registrada',
+    estadoNuevo:
+        'documentacion_actualizada',
     referencia:
         activoId,
     datos: {
+      'documentacionAnterior':
+          documentacionAnterior,
+      'documentacionNueva':
+          documentacionNueva,
       'documentacionCompleta':
           documentacion.documentacionCompleta,
       'tieneEvidencia':
           evidencia != null,
+      if (evidencia != null)
+        'evidenciaId':
+            evidencia.evidenciaId,
     },
   );
 }

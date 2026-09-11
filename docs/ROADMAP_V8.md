@@ -2948,7 +2948,7 @@ Resultados:
 | GAP-SUELO-EVID-01 | 🟢 Resuelto y validado    |
 | GAP-PROD-01       | 🟢 Resuelto y validado    |
 | GAP-PROD-ID-01    | 🟢 Resuelto y validado    |
-| GAP-DOC-01        | 🟡 Pendiente              |
+| GAP-DOC-01        | 🟢 Resuelto y validado    |
 | GAP-ECON-01       | 🟡 Pendiente              |
 | GAP-PART-01       | 🟢 Mantener modelo actual |
 | GAP-VAL-01        | 🟢 Resuelto y validado    |
