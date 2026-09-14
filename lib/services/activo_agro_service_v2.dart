@@ -798,9 +798,17 @@ Future<void> actualizarEconomia(
     );
   }
 
+  final economiaAnterior =
+      activo.economia.toMap();
+
+  final economiaNueva =
+      economia.toMap();
+
   // =====================================================
   // EVIDENCIA OPCIONAL DE LA ECONOMÍA
   // =====================================================
+
+  String? evidenciaId;
 
   if (evidencia != null) {
     if (evidencia.activoAgroId != activoId) {
@@ -809,7 +817,8 @@ Future<void> actualizarEconomia(
       );
     }
 
-    await _evidenciaService.crearEvidencia(
+    evidenciaId =
+        await _evidenciaService.crearEvidencia(
       evidencia: evidencia,
       usuarioId: activo.creadorId,
     );
@@ -819,8 +828,13 @@ Future<void> actualizarEconomia(
   // HISTORIAL
   // =====================================================
 
-  final evento =
-      _crearEventoHistorial(
+  final eventoId =
+      DateTime.now()
+          .millisecondsSinceEpoch
+          .toString();
+
+  final evento = HistorialActivo(
+    eventoId: eventoId,
     tipoEvento:
         'actualizacion_economia',
     descripcion:
@@ -829,6 +843,23 @@ Future<void> actualizarEconomia(
         activo.creadorId,
     moduloOrigen:
         'economia',
+    fecha:
+        DateTime.now(),
+    entidadRelacionada:
+        'economia',
+    referenciaId:
+        activoId,
+    datosEvento: {
+      'economiaAnterior':
+          economiaAnterior,
+      'economiaNueva':
+          economiaNueva,
+      'tieneEvidencia':
+          evidencia != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
+    },
   );
 
   // =====================================================
@@ -872,6 +903,10 @@ Future<void> actualizarEconomia(
     referencia:
         activoId,
     datos: {
+      'economiaAnterior':
+          economiaAnterior,
+      'economiaNueva':
+          economiaNueva,
       'valorSolicitado':
           economia.valorSolicitado,
       'capitalRequerido':
@@ -880,6 +915,9 @@ Future<void> actualizarEconomia(
           economia.inversionEsperada,
       'tieneEvidencia':
           evidencia != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
     },
   );
 }

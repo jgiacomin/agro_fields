@@ -5475,10 +5475,77 @@ GAP-SUELO-EVID-01	🟢 Resuelto y validado
 GAP-PROD-01	🟢 Resuelto y validado
 GAP-PROD-ID-01	🟢 Resuelto y validado
 GAP-DOC-01	🟢 Resuelto y validado
-GAP-ECON-01	🟡 Pendiente
+GAP-ECON-01	🟢 Resuelto y validado
 GAP-PART-01	🟢 Mantener modelo actual
 GAP-VAL-01	🟢 Resuelto y validado
 GAP-TRACE-01	🟢 Resuelto y validado
 GAP-AUD-01	🟡 Mejora futura
 GAP-MAD-01	🟡 Mejora futura
 GAP-CONF-01	🟡 Integración futura
+## GAP-ECON-01 — Economía — RESUELTO Y VALIDADO TÉCNICAMENTE
+
+14/09/2026
+
+Se cerró técnicamente GAP-ECON-01 mediante la integración de Economía con Evidencia,
+HistorialActivo y AuditEvent.
+
+La implementación de `actualizarEconomia()` conserva:
+
+- economía anterior;
+- economía nueva;
+- `evidenciaId` cuando existe evidencia asociada;
+- evento de `HistorialActivo` con trazabilidad;
+- datos de la modificación en `AuditEvent`.
+
+Cadena validada:
+
+`Economía → Evidencia → HistorialActivo → AuditEvent → Firestore Emulator`
+
+### Validación
+
+Test de integración:
+
+`integration_test/activo_agro_service_economia_integration_test.dart`
+
+Resultado:
+
+`All tests passed!`
+
+La prueba verifica explícitamente economía anterior/nueva y la correspondencia del
+`evidenciaId` tanto en Historial como en Auditoría.
+
+**GAP-ECON-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+## 🎯 Regla estratégica de prioridad — Lanzamiento Enero 2027
+
+14/09/2026
+
+Se establece como objetivo prioritario del proyecto alcanzar el lanzamiento de
+Agro Fields durante **enero de 2027**.
+
+La fecha de enero se considera un **objetivo de planificación**, respetando los
+tiempos reales que requieran las tareas técnicas, funcionales, de validación,
+auditoría y documentación.
+
+### Regla adoptada
+
+> **Enero 2027 es el objetivo; calidad, estabilidad y trazabilidad son condiciones.**
+
+La prioridad del desarrollo será avanzar hacia un producto lanzable durante
+enero de 2027 sin:
+
+- acelerar artificialmente etapas;
+- cerrar GAPs sin evidencia;
+- omitir pruebas;
+- sacrificar estabilidad;
+- introducir cambios arquitectónicos innecesarios;
+- incorporar funcionalidades secundarias que desvíen el objetivo.
+
+Si una tarea requiere más tiempo del previsto, se deberá ajustar el cronograma
+manteniendo la calidad y dejando constancia en Roadmap y Bitácora.
+
+Esta regla pasa a formar parte de los criterios permanentes de planificación
+de Agro Fields V8.
+
+**Objetivo:** enero de 2027.
+**Criterio:** llegar con un sistema sólido, probado, trazable y realmente
+lanzable.

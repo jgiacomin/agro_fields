@@ -442,7 +442,8 @@ void main() {
         evidenciaSnapshot.docs.length,
         equals(1),
       );
-
+      final evidenciaId =
+          evidenciaSnapshot.docs.first.id;
       final evidenciaData =
           evidenciaSnapshot.docs.first.data();
 
@@ -506,7 +507,28 @@ void main() {
         eventosEconomia.last.moduloOrigen,
         equals('economia'),
       );
+       final datosHistorial =
+    eventosEconomia.last.datosEvento!;
 
+expect(
+  datosHistorial['economiaAnterior'],
+  isNotNull,
+);
+
+expect(
+  datosHistorial['economiaNueva'],
+  isNotNull,
+);
+
+expect(
+  datosHistorial['economiaNueva']['valorSolicitado'],
+  equals(1350000),
+);
+
+expect(
+  datosHistorial['evidenciaId'],
+  equals(evidenciaId),
+);
       // =====================================================
       // 8. VERIFICAR AUDITORÍA
       // =====================================================
@@ -540,7 +562,42 @@ void main() {
         ),
         isTrue,
       );
+         final auditoriaEconomia =
+    auditorias.firstWhere(
+  (data) =>
+      data['modulo'] ==
+          'economia' &&
+      data['accion'] ==
+          'actualizar_economia',
+);
 
+final datosAuditoria =
+    auditoriaEconomia['datos']
+        as Map<String, dynamic>;
+
+expect(
+  datosAuditoria['evidenciaId'],
+  equals(evidenciaId),
+);
+
+expect(
+  datosAuditoria['economiaAnterior'],
+  isNotNull,
+);
+
+expect(
+  datosAuditoria['economiaNueva'],
+  isNotNull,
+);
+
+final economiaNuevaAuditoria =
+    datosAuditoria['economiaNueva']
+        as Map<String, dynamic>;
+
+expect(
+  economiaNuevaAuditoria['valorSolicitado'],
+  equals(1350000),
+);
       expect(
         auditorias.any(
           (data) =>

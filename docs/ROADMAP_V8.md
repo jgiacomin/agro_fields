@@ -2949,7 +2949,7 @@ Resultados:
 | GAP-PROD-01       | 🟢 Resuelto y validado    |
 | GAP-PROD-ID-01    | 🟢 Resuelto y validado    |
 | GAP-DOC-01        | 🟢 Resuelto y validado    |
-| GAP-ECON-01       | 🟡 Pendiente              |
+| GAP-ECON-01       | 🟢 Resuelto y validado    |
 | GAP-PART-01       | 🟢 Mantener modelo actual |
 | GAP-VAL-01        | 🟢 Resuelto y validado    |
 | GAP-TRACE-01      | 🟢 Resuelto y validado    |
@@ -2957,6 +2957,38 @@ Resultados:
 | GAP-MAD-01        | 🟡 Mejora futura          |
 | GAP-CONF-01       | 🟡 Integración futura     |
 
+## GAP-ECON-01 — Economía — RESUELTO Y VALIDADO TÉCNICAMENTE
+
+14/09/2026
+
+Se implementó la integración de `EconomiaActivo` con Evidencia, HistorialActivo y
+AuditEvent.
+
+`actualizarEconomia()` conserva economía anterior y nueva, registra el `evidenciaId`
+cuando corresponde y mantiene la trazabilidad de la modificación en Historial y
+Auditoría.
+
+Cadena validada:
+
+`Economía → Evidencia → HistorialActivo → AuditEvent → Firestore Emulator`
+
+### Test de integración
+
+`integration_test/activo_agro_service_economia_integration_test.dart`
+
+Resultado:
+
+`All tests passed!`
+
+La prueba verifica:
+
+- economía anterior;
+- economía nueva;
+- `evidenciaId`;
+- trazabilidad en HistorialActivo;
+- trazabilidad en AuditEvent.
+
+**GAP-ECON-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
 ## Regla de continuidad
 
 Los nuevos GAP detectados durante la implementación deberán documentarse antes de modificarse.
@@ -2968,3 +3000,42 @@ Secuencia:
 ## Próximo paso
 
 Continuar con la revisión de los GAP pendientes de la matriz, priorizando aquellos que impacten directamente en la Ficha Maestra y en la trazabilidad histórica del Activo Agro.
+## 🎯 Objetivo prioritario de lanzamiento — Enero 2027
+
+**Objetivo estratégico:** priorizar el lanzamiento de Agro Fields durante
+**enero de 2027**.
+
+Enero de 2027 se establece como **objetivo prioritario de planificación**,
+pero no como una fecha rígida que justifique acelerar artificialmente el
+desarrollo.
+
+La planificación deberá respetar los tiempos reales necesarios para:
+
+- implementación;
+- pruebas;
+- estabilidad;
+- resolución de GAPs relevantes;
+- auditoría y trazabilidad;
+- documentación;
+- calidad funcional;
+- dependencias técnicas;
+- preparación efectiva del producto para lanzamiento.
+
+### Regla de prioridad
+
+> **Enero 2027 es el objetivo; calidad, estabilidad y trazabilidad son condiciones.**
+
+Por lo tanto:
+
+- se priorizarán las capacidades necesarias para alcanzar un lanzamiento sólido;
+- se evitará incorporar funcionalidades secundarias que desvíen innecesariamente
+  el objetivo;
+- no se considerará cerrado un trabajo sin evidencia real;
+- no se omitirán pruebas o auditorías para cumplir una fecha;
+- si una tarea requiere más tiempo del previsto, se ajustará el cronograma;
+- cualquier modificación significativa del objetivo temporal deberá quedar
+  registrada en Roadmap y Bitácora con su motivo.
+
+**Principio rector:** avanzar con prioridad hacia enero de 2027, respetando
+los tiempos reales del proyecto y sin sacrificar la calidad técnica o
+funcional de Agro Fields.
