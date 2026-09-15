@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:agro_fields/models/activos/dato_economico_model.dart';
 
 class EconomiaActivo {
-
 
   // ==========================
   // NUEVA TRAZABILIDAD ECONÓMICA V8
@@ -43,9 +42,6 @@ class EconomiaActivo {
   /// Persona responsable de declarar la información
   final String responsableDeclaracion;
 
-
-
-
   // ==========================
   // CAMPOS ECONÓMICOS EXISTENTES
   // ==========================
@@ -75,12 +71,10 @@ class EconomiaActivo {
   final String periodoEvaluacion;
 
 
-  final Map<String,dynamic> datosEconomicos;
+  final List<DatoEconomico> datosEconomicos;
 
 
   final DateTime fechaActualizacion;
-
-
 
   EconomiaActivo({
 
@@ -124,9 +118,6 @@ class EconomiaActivo {
   });
 
 
-
-
-
   factory EconomiaActivo.fromMap(
       Map<String,dynamic> map
       ){
@@ -165,9 +156,6 @@ class EconomiaActivo {
       responsableDeclaracion:
       map['responsableDeclaracion'] ?? '',
 
-
-
-
       valorSolicitado:
       (map['valorSolicitado'] ?? 0).toDouble(),
 
@@ -197,16 +185,17 @@ class EconomiaActivo {
 
 
       periodoEvaluacion:
-      map['periodoEvaluacion'] ?? '',
-
-
-      datosEconomicos:
-
-      Map<String,dynamic>.from(
-        map['datosEconomicos'] ?? {}
-      ),
-
-
+map['periodoEvaluacion'] ?? '',
+   datosEconomicos:
+    map['datosEconomicos'] is List
+        ? (map['datosEconomicos'] as List<dynamic>)
+            .map(
+              (item) => DatoEconomico.fromMap(
+                Map<String, dynamic>.from(item),
+              ),
+            )
+            .toList()
+        : [],
 
       fechaActualizacion:
 
@@ -223,11 +212,6 @@ class EconomiaActivo {
     );
 
   }
-
-
-
-
-
 
   Map<String,dynamic> toMap(){
 
@@ -267,9 +251,6 @@ class EconomiaActivo {
       'responsableDeclaracion':
       responsableDeclaracion,
 
-
-
-
       // Economía existente
 
       'valorSolicitado':
@@ -305,7 +286,9 @@ class EconomiaActivo {
 
 
       'datosEconomicos':
-      datosEconomicos,
+    datosEconomicos
+        .map((dato) => dato.toMap())
+        .toList(),
 
 
       'fechaActualizacion':
@@ -314,10 +297,6 @@ class EconomiaActivo {
     };
 
   }
-
-
-
-
 
   factory EconomiaActivo.inicial(){
 
@@ -391,7 +370,7 @@ class EconomiaActivo {
 
 
       datosEconomicos:
-      {},
+        [],
 
 
       fechaActualizacion:

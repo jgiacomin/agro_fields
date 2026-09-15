@@ -5549,3 +5549,61 @@ de Agro Fields V8.
 **Objetivo:** enero de 2027.
 **Criterio:** llegar con un sistema sólido, probado, trazable y realmente
 lanzable.
+## GAP-RWA-01 — Temporalidad económica: histórico, actual, proyectado y escenario
+
+### Estado
+
+🟡 PARCIALMENTE RESUELTO
+
+Durante la evolución de GAP-ECON-01 se detectó una necesidad adicional:
+distinguir explícitamente la naturaleza temporal de los datos económicos.
+
+Se definieron cuatro tipos:
+
+- histórico;
+- actual;
+- proyectado;
+- escenario.
+
+La temporalidad se mantiene separada de Evidencia, Verificación,
+Validez y Confianza.
+
+### Solución implementada
+
+Se creó:
+
+`DatoEconomico`
+
+con:
+
+- `nombreDato`;
+- `valor`;
+- `tipoTemporal`;
+- `periodo`;
+- `escenarioId` para escenarios.
+
+No se crearon modelos económicos separados por temporalidad.
+
+### Validación
+
+Se validaron los cuatro tipos mediante tests de modelo e integración,
+incluyendo serialización, persistencia y recuperación mediante Firestore Emulator.
+
+La integración mantiene la cadena:
+
+`Economía → Evidencia → HistorialActivo → AuditEvent → Firestore Emulator`
+
+### Regla conceptual
+
+Un dato proyectado puede estar documentado o verificado como proyección,
+pero dicha verificación no lo convierte en resultado realizado.
+
+Un escenario representa una hipótesis o contexto y no debe interpretarse
+automáticamente como resultado ni como proyección.
+
+### Pendiente
+
+Queda pendiente validar esta separación en una capa funcional de consulta
+o presentación que consuma datos económicos.
+
+Por este motivo GAP-RWA-01 permanece parcialmente resuelto.

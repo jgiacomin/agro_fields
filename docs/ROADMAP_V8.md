@@ -2956,6 +2956,7 @@ Resultados:
 | GAP-AUD-01        | 🟡 Mejora futura          |
 | GAP-MAD-01        | 🟡 Mejora futura          |
 | GAP-CONF-01       | 🟡 Integración futura     |
+| GAP-RWA-01        | 🟡 Parcialmente resuelto  |
 
 ## GAP-ECON-01 — Economía — RESUELTO Y VALIDADO TÉCNICAMENTE
 
@@ -2989,6 +2990,8 @@ La prueba verifica:
 - trazabilidad en AuditEvent.
 
 **GAP-ECON-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+
+
 ## Regla de continuidad
 
 Los nuevos GAP detectados durante la implementación deberán documentarse antes de modificarse.

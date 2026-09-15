@@ -15,6 +15,7 @@ import 'package:agro_fields/models/activos/confianza_activo_model.dart';
 import 'package:agro_fields/models/activos/evaluacion_confianza_model.dart';
 import 'package:agro_fields/models/activos/madurez_activo_model.dart';
 import 'package:agro_fields/models/activos/estado_activo.dart';
+import 'package:agro_fields/models/activos/dato_economico_model.dart';
 import 'package:agro_fields/services/activo_agro_service_v2.dart';
 
 void main() {
@@ -147,7 +148,14 @@ void main() {
               '10%',
           periodoEvaluacion:
               '5 años',
-          datosEconomicos: {},
+          datosEconomicos: [
+       DatoEconomico(
+         nombreDato: 'ingresosHistoricos',
+         valor: 150000,
+         tipoTemporal: TipoTemporalEconomico.historico,
+         periodo: '2025',
+         ),
+         ],
           fechaActualizacion:
               fecha,
         ),
@@ -339,7 +347,33 @@ void main() {
             '11%',
         periodoEvaluacion:
             '5 años',
-        datosEconomicos: {},
+        datosEconomicos: [
+  DatoEconomico(
+    nombreDato: 'ingresosHistoricos',
+    valor: 150000,
+    tipoTemporal: TipoTemporalEconomico.historico,
+    periodo: '2025',
+  ),
+  DatoEconomico(
+    nombreDato: 'valorActual',
+    valor: 1350000,
+    tipoTemporal: TipoTemporalEconomico.actual,
+    periodo: '2026',
+  ),
+  DatoEconomico(
+    nombreDato: 'ingresosProyectados',
+    valor: 210000,
+    tipoTemporal: TipoTemporalEconomico.proyectado,
+    periodo: '2027',
+  ),
+  DatoEconomico(
+    nombreDato: 'ingresosEscenario',
+    valor: 250000,
+    tipoTemporal: TipoTemporalEconomico.escenario,
+    periodo: '2027',
+    escenarioId: 'expansion_80_ha',
+  ),
+],
         fechaActualizacion:
             fecha,
       );
@@ -419,7 +453,54 @@ void main() {
             .rentabilidadDeclarada,
         equals('11%'),
       );
+       expect(
+  activoRecuperado.economia.datosEconomicos.length,
+  equals(4),
+);
 
+expect(
+  activoRecuperado.economia.datosEconomicos[0].tipoTemporal,
+  equals(TipoTemporalEconomico.historico),
+);
+
+expect(
+  activoRecuperado.economia.datosEconomicos[1].tipoTemporal,
+  equals(TipoTemporalEconomico.actual),
+);
+
+expect(
+  activoRecuperado.economia.datosEconomicos[2].tipoTemporal,
+  equals(TipoTemporalEconomico.proyectado),
+);
+
+expect(
+  activoRecuperado.economia.datosEconomicos[3].tipoTemporal,
+  equals(TipoTemporalEconomico.escenario),
+);
+
+expect(
+  activoRecuperado.economia.datosEconomicos[3].escenarioId,
+  equals('expansion_80_ha'),
+);
+expect(
+  activoRecuperado.economia.datosEconomicos[0].periodo,
+  equals('2025'),
+);
+
+expect(
+  activoRecuperado.economia.datosEconomicos[1].periodo,
+  equals('2026'),
+);
+
+expect(
+  activoRecuperado.economia.datosEconomicos[2].periodo,
+  equals('2027'),
+);
+
+expect(
+  activoRecuperado.economia.datosEconomicos[3].periodo,
+  equals('2027'),
+);
       // =====================================================
       // 6. VERIFICAR EVIDENCIA EN FIRESTORE
       // =====================================================
