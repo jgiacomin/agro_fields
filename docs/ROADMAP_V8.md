@@ -3042,3 +3042,58 @@ Por lo tanto:
 **Principio rector:** avanzar con prioridad hacia enero de 2027, respetando
 los tiempos reales del proyecto y sin sacrificar la calidad técnica o
 funcional de Agro Fields.
+## GAP-RWA-02 — Derechos, relaciones jurídicas y titularidad
+
+### Estado actual
+
+🟡 **AUDITORÍA EN CURSO**
+
+El GAP-RWA-02 continúa abierto como GAP general.
+
+Se completó y validó técnicamente el requisito:
+
+**02.02 — Titular del derecho**
+
+### 02.02 — Titular del derecho
+
+🟢 **RESUELTO Y VALIDADO TÉCNICAMENTE**
+
+Se incorporó `RelacionJuridica` como modelo genérico asociado a `DerechoActivo`.
+
+`ActivoAgroV2` incorpora:
+
+`List<RelacionJuridica> relacionesJuridicas`
+
+La relación conserva sujeto, tipo de sujeto, rol, estado, condiciones y temporalidad, vinculándose con el derecho mediante `derechoId`.
+
+Validación realizada mediante:
+
+* `derecho_activo_model_test.dart`;
+* `activo_agro_derechos_serializacion_test.dart`;
+* `activo_agro_relacion_juridica_serializacion_test.dart`.
+
+Resultado:
+
+`00:02 +5: All tests passed!`
+
+Análisis focalizado:
+
+`flutter analyze lib/models/activos/activo_agro_model_v2.dart`
+
+Resultado:
+
+`No issues found!`
+
+### Alcance
+
+El cierre corresponde únicamente al requisito **02.02**.
+
+Los restantes requisitos de GAP-RWA-02 permanecen pendientes de auditoría individual.
+
+### Próximo criterio
+
+Continuar con la matriz RWA-02 requisito por requisito, aplicando:
+
+`Matriz → GAP → Auditoría del código real → cambio mínimo → test → evidencia → documentación → commit`
+
+No se debe marcar GAP-RWA-02 completo como resuelto hasta validar los requisitos restantes.

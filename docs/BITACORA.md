@@ -5607,3 +5607,102 @@ Queda pendiente validar esta separación en una capa funcional de consulta
 o presentación que consuma datos económicos.
 
 Por este motivo GAP-RWA-01 permanece parcialmente resuelto.
+
+## GAP-RWA-02 — 02.02 Titular del derecho
+
+### Estado
+
+🟢 **02.02 RESUELTO Y VALIDADO TÉCNICAMENTE**
+
+Durante la auditoría de GAP-RWA-02 se verificó la necesidad de representar de forma explícita la relación entre un `DerechoActivo` y el sujeto titular o relacionado con dicho derecho.
+
+Se incorporó el modelo genérico:
+
+`RelacionJuridica`
+
+La relación conserva:
+
+* `relacionId`;
+* `derechoId`;
+* `sujetoId`;
+* `tipoSujeto`;
+* `rol`;
+* `fechaInicio`;
+* `fechaFin`;
+* `estado`;
+* `condiciones`.
+
+### Integración en ActivoAgroV2
+
+`ActivoAgroV2` incorpora:
+
+`List<RelacionJuridica> relacionesJuridicas`
+
+La integración contempla:
+
+* constructor;
+* `fromMap()`;
+* `toMap()`;
+* `copyWith()`.
+
+La relación queda vinculada al `DerechoActivo` mediante `derechoId`, permitiendo distinguir el derecho jurídico del sujeto que mantiene la relación con dicho derecho.
+
+### Validación
+
+Se ejecutaron los tests:
+
+`test/models/activos/derecho_activo_model_test.dart`
+
+`test/models/activos/activo_agro_derechos_serializacion_test.dart`
+
+`test/models/activos/activo_agro_relacion_juridica_serializacion_test.dart`
+
+Resultado:
+
+`00:02 +5: All tests passed!`
+
+También se ejecutó:
+
+`flutter analyze lib/models/activos/activo_agro_model_v2.dart`
+
+Resultado:
+
+`No issues found!`
+
+La prueba confirma la conservación de la relación jurídica mediante:
+
+`DerechoActivo → RelacionJuridica → ActivoAgroV2 → toMap() → fromMap()`
+
+incluyendo identificación del derecho, sujeto, tipo de sujeto, rol, estado, condiciones y temporalidad.
+
+### Auditoría arquitectónica
+
+No fue necesario modificar `ActivoAgroServiceV2`.
+
+La persistencia existente de `ActivoAgroV2` utiliza `toMap()` y la reconstrucción utiliza `fromMap()`, por lo que la nueva colección de relaciones jurídicas queda integrada al flujo existente sin duplicar servicios ni introducir una nueva versión de `ActivoAgroV2`.
+
+No se realizaron modificaciones de UI.
+
+### Alcance
+
+Este cierre corresponde exclusivamente a:
+
+**GAP-RWA-02 / requisito 02.02 — Titular del derecho.**
+
+No implica el cierre completo de GAP-RWA-02.
+
+Los demás requisitos de la matriz RWA-02 continúan sujetos a auditoría individual.
+
+### Regla mantenida
+
+Se mantiene la arquitectura jurídica genérica:
+
+`ACTIVO AGRO → DERECHOS → RELACIONES JURIDICAS → SUJETOS`
+
+separando conceptualmente:
+
+`Derecho ≠ Contrato ≠ Permiso ≠ Operación ≠ Producción`
+
+La arquitectura no se especializa en un régimen regulatorio nacional concreto.
+
+**GAP-RWA-02 / 02.02 — RESUELTO Y VALIDADO TÉCNICAMENTE.**

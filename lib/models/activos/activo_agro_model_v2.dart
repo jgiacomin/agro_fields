@@ -13,6 +13,8 @@ import 'economia_activo_model.dart';
 import 'documentacion_activo_model.dart';
 import 'evaluacion_confianza_model.dart';
 import 'participante_activo_model.dart';
+import 'derecho_activo_model.dart';
+import 'relacion_juridica_model.dart';
 import 'historial_activo_model.dart';
 
 
@@ -106,7 +108,11 @@ class ActivoAgroV2 {
   // Participantes del ecosistema
   final List<ParticipanteActivo> participantes;
 
+  // Derechos jurídicos asociados al Activo Agro
+  final List<DerechoActivo> derechos;
 
+// Relaciones jurídicas asociadas a los derechos del Activo Agro
+   final List<RelacionJuridica> relacionesJuridicas;
 
   // Usuarios relacionados
 
@@ -210,6 +216,10 @@ class ActivoAgroV2 {
     required this.suelo,
 
     required this.participantes,
+
+    this.derechos = const [],
+
+    this.relacionesJuridicas = const [],
 
     required this.propietarioId,
 
@@ -428,6 +438,42 @@ class ActivoAgroV2 {
 
 
 
+      derechos:
+
+      (map['derechos'] ?? [])
+
+          .map<DerechoActivo>(
+
+            (e) =>
+
+            DerechoActivo.fromMap(
+
+              Map<String, dynamic>.from(e),
+
+            ),
+
+          )
+
+              .toList(),
+
+              relacionesJuridicas:
+
+       (map['relacionesJuridicas'] ?? [])
+
+       .map<RelacionJuridica>(
+
+      (e) =>
+
+      RelacionJuridica.fromMap(
+
+        Map<String, dynamic>.from(e),
+
+      ),
+
+    )
+
+        .toList(),
+
       propietarioId:
 
       map['propietarioId'] ?? '',
@@ -627,6 +673,12 @@ class ActivoAgroV2 {
       participantes.map((e)=>e.toMap()).toList(),
 
 
+      'derechos':
+      derechos.map((e)=>e.toMap()).toList(),
+
+      'relacionesJuridicas':
+       relacionesJuridicas.map((e)=>e.toMap()).toList(),
+
       'propietarioId':
       propietarioId,
 
@@ -714,6 +766,9 @@ class ActivoAgroV2 {
     SueloActivo? suelo,
 
     List<ParticipanteActivo>? participantes,
+    List<DerechoActivo>? derechos,
+
+    List<RelacionJuridica>? relacionesJuridicas,
 
     EstadoActivo? estado,
 
@@ -757,6 +812,10 @@ class ActivoAgroV2 {
       suelo: suelo ?? this.suelo,
 
       participantes: participantes ?? this.participantes,
+      derechos: derechos ?? this.derechos,
+
+      relacionesJuridicas:
+    relacionesJuridicas ?? this.relacionesJuridicas,
 
       propietarioId: propietarioId,
 
