@@ -3084,6 +3084,44 @@ Resultado:
 
 `No issues found!`
 
+### 02.09 — Restricciones
+
+🟢 **RESUELTO Y VALIDADO TÉCNICAMENTE**
+
+El requisito 02.09 se resolvió inicialmente mediante:
+
+`DerechoActivo.condiciones`
+
+más la infraestructura genérica existente de:
+
+`Evidencia + Documentación + Auditoría`
+
+La evidencia queda vinculada al derecho mediante:
+
+`elementoTipo = DerechoActivo`
+
+`elementoId = derechoId`
+
+`campoRelacionado = restricciones`
+
+No se creó `RestriccionActivo`, ya que la matriz establece inicialmente una resolución basada en condiciones y evidencia/documentación.
+
+Validación realizada mediante:
+
+`integration_test/activo_agro_service_derecho_restriccion_evidencia_integration_test.dart`
+
+Resultado:
+
+`02:06 +1: All tests passed!`
+
+Commit:
+
+`eca3eb2`
+
+El cierre corresponde exclusivamente al requisito **02.09**.
+
+GAP-RWA-02 continúa como **AUDITORÍA EN CURSO** hasta validar individualmente los restantes requisitos de la matriz.
+
 ### Alcance
 
 El cierre corresponde únicamente al requisito **02.02**.

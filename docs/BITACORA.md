@@ -5706,3 +5706,77 @@ separando conceptualmente:
 La arquitectura no se especializa en un régimen regulatorio nacional concreto.
 
 **GAP-RWA-02 / 02.02 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+## GAP-RWA-02 — 02.09 Restricciones
+
+### Estado
+
+🟢 **02.09 RESUELTO Y VALIDADO TÉCNICAMENTE**
+
+Durante la auditoría del requisito 02.09 se verificó que las restricciones asociadas a un derecho pueden representarse inicialmente mediante las `condiciones` de `DerechoActivo`, manteniendo la separación conceptual entre el derecho y su evidencia.
+
+No se creó un modelo específico `RestriccionActivo`, ya que la matriz RWA-02 establece inicialmente:
+
+`Condiciones + Evidencia/Documentación`
+
+La evidencia jurídica se vinculó al `DerechoActivo` mediante:
+
+* `moduloOrigen = derecho`;
+* `elementoTipo = DerechoActivo`;
+* `elementoId = derechoId`;
+* `campoRelacionado = restricciones`.
+
+La infraestructura existente de `Evidencia` permite conservar fuente, soporte, aportante, estado de verificación y estado de validez sin duplicar modelos jurídicos.
+
+### Validación
+
+Se creó y ejecutó:
+
+`integration_test/activo_agro_service_derecho_restriccion_evidencia_integration_test.dart`
+
+El test verificó:
+
+* representación de la condición/restricción en `DerechoActivo`;
+* persistencia de la evidencia en Firestore;
+* vinculación de la evidencia con el `DerechoActivo`;
+* fuente y soporte documental;
+* estado de verificación;
+* estado de validez;
+* recuperación mediante `EvidenciaService`;
+* auditoría de creación de la evidencia.
+
+Resultado:
+
+`02:06 +1: All tests passed!`
+
+### Auditoría arquitectónica
+
+No fue necesario modificar:
+
+* `DerechoActivo`;
+* `Evidencia`;
+* `EvidenciaService`;
+* `ActivoAgroServiceV2`;
+* `ActivoAgroV2`;
+* UI.
+
+Se reutilizó la infraestructura existente de evidencia, historial y auditoría.
+
+No se creó `RestriccionActivo`.
+
+### Alcance
+
+Este cierre corresponde exclusivamente a:
+
+**GAP-RWA-02 / requisito 02.09 — Restricciones.**
+
+No implica el cierre completo de GAP-RWA-02.
+
+Los demás requisitos de la matriz RWA-02 continúan sujetos a auditoría individual.
+
+### Evidencia Git
+
+Commit:
+
+`eca3eb2`
+
+`Cerrar GAP-RWA-02 02.09 restricciones`
