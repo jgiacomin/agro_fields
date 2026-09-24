@@ -1,4 +1,4 @@
-# ROADMAP AGRO FIELDS V8
+﻿# ROADMAP AGRO FIELDS V8
 
 ## Estado del proyecto
 
@@ -12,30 +12,30 @@ Arquitectura:
 V8.0
 
 
-Último cierre técnico:
+Ãšltimo cierre tÃ©cnico:
 
 23/07/2026
 
 
-Último commit:
+Ãšltimo commit:
 
 ef874cb
 
 
 Objetivo:
 
-Continuar la evolución del ecosistema Agro Fields manteniendo:
+Continuar la evoluciÃ³n del ecosistema Agro Fields manteniendo:
 
 - compatibilidad del modelo existente;
 - trazabilidad mediante Git;
-- documentación técnica;
-- auditoría de cambios;
-- evolución modular.
+- documentaciÃ³n tÃ©cnica;
+- auditorÃ­a de cambios;
+- evoluciÃ³n modular.
 
 
 ---
 
-# Módulo principal
+# MÃ³dulo principal
 
 ## ActivoAgroV2
 
@@ -47,68 +47,68 @@ lib/models/activos/activo_agro_model_v2.dart
 
 Estado:
 
-✅ Base arquitectónica implementada
+âœ… Base arquitectÃ³nica implementada
 
 
 Contiene:
 
 - identidad;
-- clasificación;
-- ubicación;
-- producción;
-- economía;
-- documentación;
+- clasificaciÃ³n;
+- ubicaciÃ³n;
+- producciÃ³n;
+- economÃ­a;
+- documentaciÃ³n;
 - confianza;
-- evaluación;
+- evaluaciÃ³n;
 - madurez;
 - participantes;
 - historial;
-- auditoría.
+- auditorÃ­a.
 
-La auditoría forma parte de la trazabilidad integral del Activo Agro.
+La auditorÃ­a forma parte de la trazabilidad integral del Activo Agro.
 
 Su objetivo es conservar la historicidad del activo mediante el registro de eventos relevantes, participantes, modificaciones y evidencias asociadas.
 
 No reemplaza el historial del activo.
 
-Lo complementa permitiendo reconstruir la evolución completa de la entidad digital productiva.
+Lo complementa permitiendo reconstruir la evoluciÃ³n completa de la entidad digital productiva.
 
 Criterio definido:
 
 No crear ActivoAgroV3.
 
 
-Continuar evolución sobre ActivoAgroV2.
+Continuar evoluciÃ³n sobre ActivoAgroV2.
 
 
 ---
 
-# Actualización 23/07/2026
+# ActualizaciÃ³n 23/07/2026
 
 
-ActivoAgroV2 incorpora evolución inicial de:
+ActivoAgroV2 incorpora evoluciÃ³n inicial de:
 
 
-- ubicación territorial avanzada;
+- ubicaciÃ³n territorial avanzada;
 - participantes;
 - historial;
-- versión del modelo;
-- trazabilidad de creación;
-- relación Campo → Activo Agro.
+- versiÃ³n del modelo;
+- trazabilidad de creaciÃ³n;
+- relaciÃ³n Campo â†’ Activo Agro.
 
 
 Objetivo:
 
 
-Transformar el Activo Agro desde una publicación hacia una entidad digital productiva trazable.
+Transformar el Activo Agro desde una publicaciÃ³n hacia una entidad digital productiva trazable.
 
 
 ---
 
-# Auditorías completadas
+# AuditorÃ­as completadas
 
 
-## Economía
+## EconomÃ­a
 
 
 Archivo:
@@ -118,29 +118,29 @@ economia_activo_model.dart
 
 Estado:
 
-✅ Auditado y evolucionado
+âœ… Auditado y evolucionado
 
 
 Incorporado:
 
 - objetivo del proyecto;
 - etapa del proyecto;
-- inversión esperada;
+- inversiÃ³n esperada;
 - capacidad actual;
 - capacidad proyectada;
 - riesgos;
-- origen información;
-- responsable declaración.
+- origen informaciÃ³n;
+- responsable declaraciÃ³n.
 
 
 Objetivo futuro:
 
-Relacionar producción, inversión y expansión del activo.
+Relacionar producciÃ³n, inversiÃ³n y expansiÃ³n del activo.
 
 
 ---
 
-## Ubicación
+## UbicaciÃ³n
 
 
 Archivo:
@@ -150,26 +150,26 @@ ubicacion_activo_model.dart
 
 Estado:
 
-✅ Auditado y evolucionado
+âœ… Auditado y evolucionado
 
 
 Incorporado:
 
 
-Jerarquía territorial:
+JerarquÃ­a territorial:
 
 
-País
+PaÃ­s
 
-↓
+â†“
 
 Provincia / Estado
 
-↓
+â†“
 
 Departamento
 
-↓
+â†“
 
 Municipio / Localidad
 
@@ -179,15 +179,15 @@ Objetivo:
 
 Preparar:
 
-- análisis legal;
+- anÃ¡lisis legal;
 - restricciones territoriales;
-- expansión internacional;
-- evaluación por jurisdicción.
+- expansiÃ³n internacional;
+- evaluaciÃ³n por jurisdicciÃ³n.
 
 
 ---
 
-## Producción
+## ProducciÃ³n
 
 
 Archivo:
@@ -197,7 +197,7 @@ modulo_produccion_model.dart
 
 Estado:
 
-✅ Auditado
+âœ… Auditado
 
 
 Base existente:
@@ -205,20 +205,20 @@ Base existente:
 
 - dominio;
 - actividad;
-- descripción;
+- descripciÃ³n;
 - superficie;
 - unidad;
 - datos.
 
 
-Evolución pendiente:
+EvoluciÃ³n pendiente:
 
 
 - ciclos productivos;
 - historial;
 - capacidad futura;
-- expansión;
-- validación profesional.
+- expansiÃ³n;
+- validaciÃ³n profesional.
 
 
 ---
@@ -233,7 +233,7 @@ confianza_activo_model.dart
 
 Estado:
 
-✅ Auditado
+âœ… Auditado
 
 
 Base existente:
@@ -241,37 +241,37 @@ Base existente:
 
 - nivel general;
 - identidad;
-- documentación;
+- documentaciÃ³n;
 - evidencias;
-- información productiva;
+- informaciÃ³n productiva;
 - participantes;
 - observaciones.
 
 
-Evolución pendiente:
+EvoluciÃ³n pendiente:
 
 
-Evolución pendiente:
+EvoluciÃ³n pendiente:
 
 - factores oficiales;
-- cálculo multidimensional;
+- cÃ¡lculo multidimensional;
 - evidencias asociadas;
-- responsables de validación;
+- responsables de validaciÃ³n;
 - profesionales participantes;
-- auditorías;
+- auditorÃ­as;
 - historial de verificaciones.
 
 Criterio:
 
-El Índice de Confianza no determina rentabilidad ni garantiza resultados económicos.
+El Ãndice de Confianza no determina rentabilidad ni garantiza resultados econÃ³micos.
 
-Evalúa el nivel de información, respaldo, trazabilidad e historial disponible sobre un Activo Agro.
+EvalÃºa el nivel de informaciÃ³n, respaldo, trazabilidad e historial disponible sobre un Activo Agro.
 
 
 
 ---
 
-## Documentación
+## DocumentaciÃ³n
 
 
 Archivo:
@@ -281,7 +281,7 @@ documentacion_activo_model.dart
 
 Estado:
 
-✅ Auditado
+âœ… Auditado
 
 
 Base existente:
@@ -294,12 +294,12 @@ Base existente:
 - observaciones.
 
 
-Evolución pendiente:
+EvoluciÃ³n pendiente:
 
 
 - metadata documental;
 - vencimientos;
-- validación profesional;
+- validaciÃ³n profesional;
 - evidencia verificable;
 - trazabilidad documental.
 
@@ -316,7 +316,7 @@ activo_agro_service_v2.dart
 
 Estado:
 
-✅ Revisado
+âœ… Revisado
 
 
 Funciones actuales:
@@ -333,21 +333,21 @@ Funciones actuales:
 - actualizar confianza.
 
 
-Evolución futura:
+EvoluciÃ³n futura:
 
 
-- generación automática de historial;
+- generaciÃ³n automÃ¡tica de historial;
 - control de permisos;
-- auditoría de modificaciones;
+- auditorÃ­a de modificaciones;
 - eventos profesionales.
 
 
 ---
 
-# Evolución Jornada 23/07/2026
+# EvoluciÃ³n Jornada 23/07/2026
 
 
-## Conversión Campo → Activo Agro
+## ConversiÃ³n Campo â†’ Activo Agro
 
 
 Archivo:
@@ -357,18 +357,18 @@ campo_to_activo_service.dart
 
 Estado:
 
-✅ Evolucionado
+âœ… Evolucionado
 
 
 Incorpora:
 
 
-- ubicación completa;
-- economía inicial;
+- ubicaciÃ³n completa;
+- economÃ­a inicial;
 - propietario como participante;
-- historial de creación;
-- estado de publicación;
-- versión del modelo.
+- historial de creaciÃ³n;
+- estado de publicaciÃ³n;
+- versiÃ³n del modelo.
 
 
 Objetivo:
@@ -379,7 +379,7 @@ Transformar registros productivos existentes en activos digitales trazables.
 
 ---
 
-## Creación manual de Activo Agro
+## CreaciÃ³n manual de Activo Agro
 
 
 Archivo:
@@ -389,18 +389,18 @@ crear_activo_agro_screen.dart
 
 Estado:
 
-✅ Actualizado
+âœ… Actualizado
 
 
 Incorpora:
 
 
-- país;
+- paÃ­s;
 - departamento;
-- código postal;
+- cÃ³digo postal;
 - historial inicial;
-- información económica ampliada;
-- metadatos de versión.
+- informaciÃ³n econÃ³mica ampliada;
+- metadatos de versiÃ³n.
 
 
 Flujo validado:
@@ -408,26 +408,26 @@ Flujo validado:
 
 Usuario propietario
 
-↓
+â†“
 
 Crear Activo Agro
 
-↓
+â†“
 
 Guardar
 
-↓
+â†“
 
 Visualizar
 
-↓
+â†“
 
 Publicar
 
 
 ---
 
-# Evolución de módulos del Activo Agro V2
+# EvoluciÃ³n de mÃ³dulos del Activo Agro V2
 
 
 ## 1. Participantes
@@ -440,7 +440,7 @@ participante_activo_model.dart
 
 Estado:
 
-🟢 Base implementada
+ðŸŸ¢ Base implementada
 
 
 Incorporado:
@@ -448,11 +448,11 @@ Incorporado:
 
 - propietario;
 - usuario relacionado;
-- estado de participación;
+- estado de participaciÃ³n;
 - fecha de ingreso.
 
 
-Evolución pendiente:
+EvoluciÃ³n pendiente:
 
 
 - profesionales;
@@ -480,7 +480,7 @@ historial_activo_model.dart
 
 Estado:
 
-🟢 Base implementada
+ðŸŸ¢ Base implementada
 
 
 Incorporado:
@@ -488,17 +488,17 @@ Incorporado:
 
 - eventoId;
 - tipoEvento;
-- descripción;
+- descripciÃ³n;
 - usuario responsable;
 - fecha.
 
 
-Evolución pendiente:
+EvoluciÃ³n pendiente:
 
 
 - eventos productivos;
-- eventos económicos;
-- auditorías;
+- eventos econÃ³micos;
+- auditorÃ­as;
 - validaciones profesionales;
 - eventos legales.
 - eventos documentales;
@@ -510,14 +510,14 @@ Evolución pendiente:
 
 Objetivo:
 
-Convertir el historial en la línea de tiempo verificable del Activo Agro.
+Convertir el historial en la lÃ­nea de tiempo verificable del Activo Agro.
 
 Convertir el historial en trazabilidad completa del activo.
 
 
 ---
 
-## 3. Evaluación de confianza
+## 3. EvaluaciÃ³n de confianza
 
 
 Archivo:
@@ -527,43 +527,43 @@ evaluacion_confianza_model.dart
 
 Estado:
 
-🟡 Pendiente auditoría
+ðŸŸ¡ Pendiente auditorÃ­a
 
 
 Analizar:
 
 
-- índice;
+- Ã­ndice;
 - factores;
 - puntuaciones;
 - responsables;
 - evidencias.
 
 
-Evolución esperada:
+EvoluciÃ³n esperada:
 
 
-Información
+InformaciÃ³n
 
-↓
+â†“
 
 Evidencia
 
-↓
+â†“
 
 Factor de confianza
 
-↓
+â†“
 
-Evaluación
+EvaluaciÃ³n
 
-↓
+â†“
 
-Índice de confianza del activo
+Ãndice de confianza del activo
 
-La evaluación utiliza información histórica y evidencias disponibles.
+La evaluaciÃ³n utiliza informaciÃ³n histÃ³rica y evidencias disponibles.
 
-No representa una recomendación financiera ni una garantía de inversión.
+No representa una recomendaciÃ³n financiera ni una garantÃ­a de inversiÃ³n.
 
 ---
 
@@ -577,16 +577,16 @@ madurez_activo_model.dart
 
 Estado:
 
-🟡 Pendiente auditoría
+ðŸŸ¡ Pendiente auditorÃ­a
 
 
 Analizar:
 
 
 - etapa productiva;
-- nivel tecnológico;
-- capacidad de expansión;
-- preparación para inversión.
+- nivel tecnolÃ³gico;
+- capacidad de expansiÃ³n;
+- preparaciÃ³n para inversiÃ³n.
 
 
 Objetivo:
@@ -597,9 +597,9 @@ Determinar el grado de desarrollo del activo.
 
 ---
 
-# Nuevos módulos futuros
+# Nuevos mÃ³dulos futuros
 
-# Evolución de módulos del Activo Agro V2
+# EvoluciÃ³n de mÃ³dulos del Activo Agro V2
 
 ## 1. Participantes
 
@@ -609,7 +609,7 @@ Determinar el grado de desarrollo del activo.
 
 ...
 
-## 3. Evaluación de confianza
+## 3. EvaluaciÃ³n de confianza
 
 ...
 
@@ -620,49 +620,49 @@ Determinar el grado de desarrollo del activo.
 
 ---
 
-# Auditoría y Trazabilidad Agro Fields
+# AuditorÃ­a y Trazabilidad Agro Fields
 
 Estado:
 
-🟢 Arquitectura definida
+ðŸŸ¢ Arquitectura definida
 
-🟡 Implementación progresiva
+ðŸŸ¡ ImplementaciÃ³n progresiva
 
 
 Objetivo:
 
-Crear una capa transversal de auditoría que permita registrar la evolución completa del ecosistema Agro Fields.
+Crear una capa transversal de auditorÃ­a que permita registrar la evoluciÃ³n completa del ecosistema Agro Fields.
 
 
-La auditoría permitirá:
+La auditorÃ­a permitirÃ¡:
 
 - registrar eventos importantes;
 - identificar usuario responsable;
 - conservar historial de cambios;
 - asociar evidencias;
-- mantener versiones de información;
-- reconstruir la evolución del Activo Agro.
+- mantener versiones de informaciÃ³n;
+- reconstruir la evoluciÃ³n del Activo Agro.
 
 
-Integración:
+IntegraciÃ³n:
 
-La capa de Auditoría y Trazabilidad será utilizada por:
+La capa de AuditorÃ­a y Trazabilidad serÃ¡ utilizada por:
 
 - Activos Agro;
-- Producción;
-- Economía;
-- Documentación;
+- ProducciÃ³n;
+- EconomÃ­a;
+- DocumentaciÃ³n;
 - Profesionales;
 - Inversiones;
 - Chat;
 - Futuras integraciones.
 
 
-Relación con confianza:
+RelaciÃ³n con confianza:
 
 La confianza del ecosistema se construye mediante:
 
-Información
+InformaciÃ³n
 
 +
 
@@ -678,7 +678,7 @@ Historial
 
 +
 
-Auditoría
+AuditorÃ­a
 
 
 Futuro:
@@ -688,11 +688,11 @@ Certificado de Trazabilidad Agro Fields.
 
 Criterio:
 
-La auditoría no reemplaza el historial del activo.
+La auditorÃ­a no reemplaza el historial del activo.
 
-El historial representa la evolución del negocio.
+El historial representa la evoluciÃ³n del negocio.
 
-La auditoría registra quién, cuándo y cómo ocurrió cada cambio.
+La auditorÃ­a registra quiÃ©n, cuÃ¡ndo y cÃ³mo ocurriÃ³ cada cambio.
 
 
 
@@ -701,15 +701,15 @@ La auditoría registra quién, cuándo y cómo ocurrió cada cambio.
 
 Estado:
 
-❌ Pendiente
+âŒ Pendiente
 
 
-Crear módulo para:
+Crear mÃ³dulo para:
 
 
-- jurisdicción;
+- jurisdicciÃ³n;
 - restricciones;
-- tipo operación;
+- tipo operaciÃ³n;
 - superficie;
 - nacionalidad inversor.
 
@@ -718,7 +718,7 @@ Resultado:
 
 
 - permitido;
-- requiere revisión profesional;
+- requiere revisiÃ³n profesional;
 - restringido.
 
 
@@ -729,23 +729,23 @@ Resultado:
 
 Estado:
 
-🔜 Futuro
+ðŸ”œ Futuro
 
 
 Aplicaciones:
 
 
-- análisis documental;
-- detección de inconsistencias;
+- anÃ¡lisis documental;
+- detecciÃ³n de inconsistencias;
 - recomendaciones;
-- evaluación de riesgo;
+- evaluaciÃ³n de riesgo;
 - asistencia al inversor.
 
 
 Criterio:
 
 
-La IA interpreta información existente.
+La IA interpreta informaciÃ³n existente.
 
 
 No reemplaza validaciones profesionales.
@@ -753,68 +753,68 @@ No reemplaza validaciones profesionales.
 Certificado de Trazabilidad Agro Fields
 Estado:
 
-🔜 Futuro
+ðŸ”œ Futuro
 
 Objetivo:
 
-Crear una capacidad de certificación digital basada en la historia verificable del Activo Agro.
+Crear una capacidad de certificaciÃ³n digital basada en la historia verificable del Activo Agro.
 
-Podrá considerar:
+PodrÃ¡ considerar:
 
 historial del activo;
-auditorías registradas;
-documentación disponible;
+auditorÃ­as registradas;
+documentaciÃ³n disponible;
 evidencias asociadas;
-participación profesional;
-evolución productiva.
+participaciÃ³n profesional;
+evoluciÃ³n productiva.
 Finalidad:
 
-Demostrar que la información de un activo u operación posee un historial trazable dentro del ecosistema Agro Fields.
+Demostrar que la informaciÃ³n de un activo u operaciÃ³n posee un historial trazable dentro del ecosistema Agro Fields.
 
 No representa:
 
-certificación estatal;
-garantía económica;
-validación financiera.
+certificaciÃ³n estatal;
+garantÃ­a econÃ³mica;
+validaciÃ³n financiera.
 ---
 
-# Cierre técnico Jornada 23/07/2026
+# Cierre tÃ©cnico Jornada 23/07/2026
 
 
 Estado alcanzado:
 
 
-✅ ActivoAgroV2 consolidado como entidad principal
+âœ… ActivoAgroV2 consolidado como entidad principal
 
-✅ Campo convertido en Activo Agro trazable
+âœ… Campo convertido en Activo Agro trazable
 
-✅ Ubicación territorial ampliada
+âœ… UbicaciÃ³n territorial ampliada
 
-✅ Participantes iniciales operativos
+âœ… Participantes iniciales operativos
 
-✅ Historial inicial operativo
+âœ… Historial inicial operativo
 
-✅ Creación manual actualizada
+âœ… CreaciÃ³n manual actualizada
 
-✅ Conversión automática actualizada
+âœ… ConversiÃ³n automÃ¡tica actualizada
 
-✅ Documentación técnica sincronizada
-
-
-Próxima etapa:
+âœ… DocumentaciÃ³n tÃ©cnica sincronizada
 
 
-- índice de confianza;
-- evolución productiva;
+PrÃ³xima etapa:
+
+
+- Ã­ndice de confianza;
+- evoluciÃ³n productiva;
 - marco legal;
 - red profesional;
-- trazabilidad económica.
+- trazabilidad econÃ³mica.
 
-- auditoría y trazabilidad integral;
+- auditorÃ­a y trazabilidad integral;
 - historial de eventos del Activo Agro;
 - evidencias verificables;
 - seguimiento de intervenciones profesionales;
-- preparación para certificaciones futuras.
+- preparaciÃ³n para certificaciones futuras.
 
 
 ---
@@ -822,18 +822,18 @@ Próxima etapa:
 # Regla de trabajo V8
 
 
-Cada evolución debe seguir:
+Cada evoluciÃ³n debe seguir:
 
 
 Modelo Dart
 
 +
 
-Auditoría técnica
+AuditorÃ­a tÃ©cnica
 
 +
 
-Actualización documentación
+ActualizaciÃ³n documentaciÃ³n
 
 +
 
@@ -842,7 +842,7 @@ Commit Git
 
 ---
 
-# Próximo inicio
+# PrÃ³ximo inicio
 
 
 Continuar desde:
@@ -855,10 +855,10 @@ Analizar:
 
 
 - factores de confianza;
-- cálculo de índice;
+- cÃ¡lculo de Ã­ndice;
 - evidencias;
 - responsables;
-- integración con historial.
+- integraciÃ³n con historial.
 
 
 ---
@@ -872,8 +872,8 @@ Analizar:
 - ciclos productivos;
 - historial productivo;
 - capacidad futura;
-- expansión;
-- intervenciones técnicas.
+- expansiÃ³n;
+- intervenciones tÃ©cnicas.
 
 
 ---
@@ -885,43 +885,43 @@ Analizar:
 
 
 - etapa del activo;
-- preparación para inversión;
-- nivel tecnológico;
-- evolución del proyecto.
+- preparaciÃ³n para inversiÃ³n;
+- nivel tecnolÃ³gico;
+- evoluciÃ³n del proyecto.
 ---
 
 # Arquitectura Base del Ecosistema Agro Fields V8
 
 ## Estado
 
-Iniciado - En evolución
+Iniciado - En evoluciÃ³n
 
 ## Objetivo
 
-Definir y documentar los principios arquitectónicos que permitirán la evolución de Agro Fields V8 como ecosistema escalable, modular y preparado para crecimiento futuro.
+Definir y documentar los principios arquitectÃ³nicos que permitirÃ¡n la evoluciÃ³n de Agro Fields V8 como ecosistema escalable, modular y preparado para crecimiento futuro.
 
-## Alcance Arquitectónico
+## Alcance ArquitectÃ³nico
 
-Esta línea de trabajo establece las bases para:
+Esta lÃ­nea de trabajo establece las bases para:
 
 - Modularidad del sistema.
-- Separación de responsabilidades.
-- Configuración desacoplada del código.
-- Internacionalización (i18n).
-- Regionalización (l10n).
-- Catálogos centralizados.
+- SeparaciÃ³n de responsabilidades.
+- ConfiguraciÃ³n desacoplada del cÃ³digo.
+- InternacionalizaciÃ³n (i18n).
+- RegionalizaciÃ³n (l10n).
+- CatÃ¡logos centralizados.
 - Roles y permisos.
-- Parámetros configurables.
-- Auditoría y trazabilidad.
-- Preparación para integraciones futuras.
+- ParÃ¡metros configurables.
+- AuditorÃ­a y trazabilidad.
+- PreparaciÃ³n para integraciones futuras.
 
-## Criterio de implementación
+## Criterio de implementaciÃ³n
 
 La arquitectura base no modifica el alcance del MVP actual.
 
-Su incorporación tiene como objetivo evitar decisiones estructurales que dificulten la evolución futura del ecosistema.
+Su incorporaciÃ³n tiene como objetivo evitar decisiones estructurales que dificulten la evoluciÃ³n futura del ecosistema.
 
-La implementación será progresiva acompañando el desarrollo de los módulos principales.
+La implementaciÃ³n serÃ¡ progresiva acompaÃ±ando el desarrollo de los mÃ³dulos principales.
  ---
 
 # Cierre Arquitectura Integral Agro Fields V8
@@ -929,115 +929,115 @@ La implementación será progresiva acompañando el desarrollo de los módulos p
 
 ## Estado
 
-✅ Arquitectura técnica integral documentada
+âœ… Arquitectura tÃ©cnica integral documentada
 
 ## Objetivo alcanzado
 
-Completar la definición arquitectónica del ecosistema Agro Fields V8 preparando la plataforma para evolución modular, escalable e integración de nuevas capacidades tecnológicas.
+Completar la definiciÃ³n arquitectÃ³nica del ecosistema Agro Fields V8 preparando la plataforma para evoluciÃ³n modular, escalable e integraciÃ³n de nuevas capacidades tecnolÃ³gicas.
 
 ---
 
 # Arquitecturas completadas
 
-## Núcleo de plataforma
+## NÃºcleo de plataforma
 
-✅ Arquitectura Base del Ecosistema  
-✅ Arquitectura API Backend  
-✅ Arquitectura Datos y Modelo de Entidades  
-✅ Arquitectura Firebase / Firestore  
-✅ Arquitectura Búsqueda e Indexación  
-✅ Arquitectura Escalabilidad e Infraestructura  
+âœ… Arquitectura Base del Ecosistema  
+âœ… Arquitectura API Backend  
+âœ… Arquitectura Datos y Modelo de Entidades  
+âœ… Arquitectura Firebase / Firestore  
+âœ… Arquitectura BÃºsqueda e IndexaciÃ³n  
+âœ… Arquitectura Escalabilidad e Infraestructura  
 
 ---
 
 ## Experiencia de usuario
 
-✅ Arquitectura App Móvil Frontend  
-✅ Arquitectura Admin Panel  
-✅ Arquitectura Marketplace  
+âœ… Arquitectura App MÃ³vil Frontend  
+âœ… Arquitectura Admin Panel  
+âœ… Arquitectura Marketplace  
 
 ---
 
 ## Negocio
 
-✅ Arquitectura Modelo Comercial  
-✅ Arquitectura Monetización y Suscripciones  
-✅ Arquitectura Cumplimiento Legal y Normativo  
-✅ Arquitectura Localización e Internacionalización  
+âœ… Arquitectura Modelo Comercial  
+âœ… Arquitectura MonetizaciÃ³n y Suscripciones  
+âœ… Arquitectura Cumplimiento Legal y Normativo  
+âœ… Arquitectura LocalizaciÃ³n e InternacionalizaciÃ³n  
 
 ---
 
 ## Datos e inteligencia
 
-✅ Arquitectura Analytics y Business Intelligence  
-✅ Arquitectura Inteligencia Artificial y Machine Learning  
-✅ Arquitectura Big Data y Data Lake  
-✅ Arquitectura Gobernanza de Datos  
+âœ… Arquitectura Analytics y Business Intelligence  
+âœ… Arquitectura Inteligencia Artificial y Machine Learning  
+âœ… Arquitectura Big Data y Data Lake  
+âœ… Arquitectura Gobernanza de Datos  
 
 ---
 
 ## Ecosistema Agro avanzado
 
-✅ Arquitectura IoT y Sensores Agro  
-✅ Arquitectura Digital Twin Agro  
-✅ Arquitectura Blockchain y Trazabilidad Agro  
+âœ… Arquitectura IoT y Sensores Agro  
+âœ… Arquitectura Digital Twin Agro  
+âœ… Arquitectura Blockchain y Trazabilidad Agro  
 
 ---
 
 ## Seguridad y control
 
-✅ Arquitectura Seguridad y Privacidad  
-✅ Arquitectura Auditoría y Trazabilidad  
-✅ Arquitectura Notificaciones y Eventos  
-✅ Arquitectura Integraciones Externas  
+âœ… Arquitectura Seguridad y Privacidad  
+âœ… Arquitectura AuditorÃ­a y Trazabilidad  
+âœ… Arquitectura Notificaciones y Eventos  
+âœ… Arquitectura Integraciones Externas  
 
 ---
 
-# Resultado arquitectónico
+# Resultado arquitectÃ³nico
 
 Agro Fields V8 queda definido como un ecosistema compuesto por:
 
 Usuario
 
-↓
+â†“
 
 Aplicaciones Agro
 
-↓
+â†“
 
 Servicios Backend
 
-↓
+â†“
 
 Modelo Activo Agro V2
 
-↓
+â†“
 
 Datos Productivos
 
-↓
+â†“
 
 IoT
 
-↓
+â†“
 
 Digital Twin
 
-↓
+â†“
 
 IA / Analytics
 
-↓
+â†“
 
 Blockchain
 
-↓
+â†“
 
 Marketplace
 
-↓
+â†“
 
-Inversión y comercialización
+InversiÃ³n y comercializaciÃ³n
 
 ---
 
@@ -1049,31 +1049,31 @@ Activo Agro como entidad digital productiva.
 
 Ahora:
 
-Activo Agro como ecosistema digital trazable, inteligente, verificable y preparado para expansión internacional.
+Activo Agro como ecosistema digital trazable, inteligente, verificable y preparado para expansiÃ³n internacional.
 
 ---
 
-# Próxima etapa V8
+# PrÃ³xima etapa V8
 
-Inicio fase implementación:
+Inicio fase implementaciÃ³n:
 
 ## Prioridad 1
 
-Evolución técnica ActivoAgroV2:
+EvoluciÃ³n tÃ©cnica ActivoAgroV2:
 
-- evaluación de confianza;
+- evaluaciÃ³n de confianza;
 - factores de confianza;
-- cálculo de índice;
+- cÃ¡lculo de Ã­ndice;
 - evidencias verificables;
-- integración historial.
+- integraciÃ³n historial.
 
 ## Prioridad 2
 
-Evolución productiva:
+EvoluciÃ³n productiva:
 
 - ciclos productivos;
 - capacidad futura;
-- intervenciones técnicas;
+- intervenciones tÃ©cnicas;
 - validaciones profesionales.
 
 ## Prioridad 3
@@ -1084,7 +1084,7 @@ Infraestructura:
 
 - servicios backend;
 - eventos;
-- auditoría y trazabilidad;
+- auditorÃ­a y trazabilidad;
 - permisos;
 - integraciones.
 
@@ -1093,7 +1093,7 @@ Infraestructura:
 
 # Regla V8 actualizada
 
-Cada evolución debe mantener:
+Cada evoluciÃ³n debe mantener:
 
 Modelo
 
@@ -1103,11 +1103,11 @@ Arquitectura
 
 +
 
-Auditoría
+AuditorÃ­a
 
 +
 
-Bitácora
+BitÃ¡cora
 
 +
 
@@ -1124,78 +1124,78 @@ Fecha cierre arquitectura:
 24/07/2026
 # Cierre Arquitectura Integral Agro Fields V8
 
-La versión V8 consolida la evolución arquitectónica del ecosistema Agro Fields estableciendo un modelo basado en capas, donde el Activo Agro V2 representa la entidad central del dominio.
+La versiÃ³n V8 consolida la evoluciÃ³n arquitectÃ³nica del ecosistema Agro Fields estableciendo un modelo basado en capas, donde el Activo Agro V2 representa la entidad central del dominio.
 
-Las capacidades incorporadas funcionan como módulos especializados:
+Las capacidades incorporadas funcionan como mÃ³dulos especializados:
 
 - API Backend V8
-  - Comunicación y exposición de servicios.
+  - ComunicaciÃ³n y exposiciÃ³n de servicios.
 
 - Modelo de Datos V8
-  - Núcleo de entidades y relaciones.
+  - NÃºcleo de entidades y relaciones.
 
 - Gobernanza de Datos V8
-  - Calidad, seguridad y control de información.
+  - Calidad, seguridad y control de informaciÃ³n.
 
 - IoT V8
-  - Captura de datos del mundo físico.
+  - Captura de datos del mundo fÃ­sico.
 
 - Big Data / Data Lake V8
   - Almacenamiento y procesamiento masivo.
 
 - Digital Twin V8
-  - Representación dinámica del activo.
+  - RepresentaciÃ³n dinÃ¡mica del activo.
 
 - IA y Machine Learning V8
-  - Predicción y recomendaciones inteligentes.
+  - PredicciÃ³n y recomendaciones inteligentes.
 
 - Analytics & BI V8
-  - Transformación de datos en conocimiento.
+  - TransformaciÃ³n de datos en conocimiento.
 
 - Blockchain y Trazabilidad V8
-  - Certificación y verificación de eventos.
+  - CertificaciÃ³n y verificaciÃ³n de eventos.
 
 - Marketplace V8
-  - Conexión comercial del ecosistema.
+  - ConexiÃ³n comercial del ecosistema.
 
 - Modelo Comercial V8
-  - Generación futura de valor económico.
+  - GeneraciÃ³n futura de valor econÃ³mico.
 
 ---
 
 # Arquitectura conceptual final
 
-Campo físico
+Campo fÃ­sico
 
-↓
+â†“
 
 Activo Agro V2
 
-↓
+â†“
 
 Datos + Eventos + Documentos
 
-↓
+â†“
 
-Gobernanza y Auditoría
+Gobernanza y AuditorÃ­a
 
-↓
+â†“
 
 IoT / Big Data / Digital Twin
 
-↓
+â†“
 
 IA / Analytics
 
-↓
+â†“
 
-Blockchain (certificación)
+Blockchain (certificaciÃ³n)
 
-↓
+â†“
 
 Marketplace / Modelo Comercial
 
-↓
+â†“
 
 Confianza del Mercado
 
@@ -1207,41 +1207,41 @@ Confianza del Mercado
 La arquitectura V8 queda definida como una base escalable preparada para:
 
 - crecimiento internacional;
-- integración de nuevos servicios;
-- automatización inteligente;
-- analítica avanzada;
+- integraciÃ³n de nuevos servicios;
+- automatizaciÃ³n inteligente;
+- analÃ­tica avanzada;
 - modelos comerciales futuros.
 
-La implementación podrá evolucionar por fases manteniendo la separación de responsabilidades y la independencia entre capas.
+La implementaciÃ³n podrÃ¡ evolucionar por fases manteniendo la separaciÃ³n de responsabilidades y la independencia entre capas.
 
 ---
 
-# Principio arquitectónico final
+# Principio arquitectÃ³nico final
 
-Agro Fields V8 no se construye como una aplicación aislada.
+Agro Fields V8 no se construye como una aplicaciÃ³n aislada.
 
 Se define como un ecosistema digital agro donde:
 
-Activo Agro V2 = núcleo del dominio
+Activo Agro V2 = nÃºcleo del dominio
 
-y las demás capacidades agregan:
+y las demÃ¡s capacidades agregan:
 
-- información;
+- informaciÃ³n;
 - inteligencia;
 - confianza;
 - conectividad;
-- valor económico.
+- valor econÃ³mico.
 
 
 # Roadmap Agro Fields
 
 ## Estado general
 
-### Fase 1 — Núcleo del Activo Agro
+### Fase 1 â€” NÃºcleo del Activo Agro
 
 - [x] Modelo ActivoAgroV2
 - [x] Firestore
-- [x] Serialización
+- [x] SerializaciÃ³n
 - [x] CRUD
 - [x] Historial
 - [x] Sistema de Confianza
@@ -1250,11 +1250,11 @@ Estado: 100%
 
 ---
 
-### Fase 2 — Módulos
+### Fase 2 â€” MÃ³dulos
 
-- [ ] Producción
-- [ ] Economía
-- [ ] Documentación
+- [ ] ProducciÃ³n
+- [ ] EconomÃ­a
+- [ ] DocumentaciÃ³n
 - [ ] Participantes
 - [ ] Validaciones
 
@@ -1262,31 +1262,31 @@ Estado aproximado: 40%
 
 ---
 
-### Fase 3 — Automatización
+### Fase 3 â€” AutomatizaciÃ³n
 
-- [ ] Historial automático
-- [ ] Auditoría
+- [ ] Historial automÃ¡tico
+- [ ] AuditorÃ­a
 - [ ] Reglas de negocio
 - [ ] Eventos
 - [ ] Notificaciones
 
 ---
 
-### Fase 4 — Marketplace
+### Fase 4 â€” Marketplace
 
-- [ ] Publicación
-- [ ] Búsqueda
+- [ ] PublicaciÃ³n
+- [ ] BÃºsqueda
 - [ ] Ranking
-- [ ] Reputación
+- [ ] ReputaciÃ³n
 - [ ] Compra/Venta
 
 ---
 
 ## Objetivo inmediato
 
-Finalizar los módulos funcionales del Activo Agro.
+Finalizar los mÃ³dulos funcionales del Activo Agro.
 
-Después comenzar el Marketplace.
+DespuÃ©s comenzar el Marketplace.
 
 # Agro Fields V8
 # Roadmap de Jornada
@@ -1294,33 +1294,33 @@ Después comenzar el Marketplace.
 ## Fecha 28/07/2026
 
 
-# Módulo
+# MÃ³dulo
 
-Historial y Auditoría del Activo Agro V2
+Historial y AuditorÃ­a del Activo Agro V2
 
 
 ---
 
 # Objetivo de la jornada
 
-Iniciar la evolución del sistema de trazabilidad del Activo Agro mediante eventos asociados a cambios relevantes del ecosistema.
+Iniciar la evoluciÃ³n del sistema de trazabilidad del Activo Agro mediante eventos asociados a cambios relevantes del ecosistema.
 
-Transformar el historial actual en una línea temporal verificable que permita reconstruir la evolución del activo.
+Transformar el historial actual en una lÃ­nea temporal verificable que permita reconstruir la evoluciÃ³n del activo.
 
 
 ---
 
-# Objetivo arquitectónico
+# Objetivo arquitectÃ³nico
 
 Convertir el Activo Agro en una entidad digital con memoria propia.
 
 
 El activo debe poder responder:
 
-- qué ocurrió;
-- cuándo ocurrió;
-- quién participó;
-- qué módulo generó el cambio.
+- quÃ© ocurriÃ³;
+- cuÃ¡ndo ocurriÃ³;
+- quiÃ©n participÃ³;
+- quÃ© mÃ³dulo generÃ³ el cambio.
 
 
 ---
@@ -1328,7 +1328,7 @@ El activo debe poder responder:
 # Alcance de la jornada
 
 
-## 1. Evolución del HistorialActivo
+## 1. EvoluciÃ³n del HistorialActivo
 
 
 Archivo:
@@ -1348,9 +1348,9 @@ Historial capaz de registrar:
 
 - eventoId;
 - tipoEvento;
-- descripción;
+- descripciÃ³n;
 - usuario responsable;
-- módulo origen;
+- mÃ³dulo origen;
 - fecha.
 
 
@@ -1361,7 +1361,7 @@ Base para la trazabilidad integral futura.
 
 ---
 
-# 2. Integración con ActivoAgroV2
+# 2. IntegraciÃ³n con ActivoAgroV2
 
 
 Archivo:
@@ -1371,7 +1371,7 @@ lib/models/activos/activo_agro_model_v2.dart
 
 Objetivo:
 
-Incorporar historial dentro del núcleo del activo.
+Incorporar historial dentro del nÃºcleo del activo.
 
 
 Acciones:
@@ -1381,7 +1381,7 @@ Agregar:
 
 ```dart
 List<HistorialActivo> historial
-## Fase: Valorización y Mercado Inteligente Agro
+## Fase: ValorizaciÃ³n y Mercado Inteligente Agro
 
 Objetivo:
 
@@ -1389,60 +1389,60 @@ Transformar activos registrados en oportunidades agro analizadas.
 
 Incluye:
 
-- motor de valorización
-- comparación de activos
+- motor de valorizaciÃ³n
+- comparaciÃ³n de activos
 - ranking de oportunidades
-- búsqueda avanzada
+- bÃºsqueda avanzada
 - perfiles de inversores
 
 ---
 
-# Evolución Estratégica Agro Fields V8.X
+# EvoluciÃ³n EstratÃ©gica Agro Fields V8.X
 
-## Nueva etapa: Inteligencia de Mercado y Valorización Agro
+## Nueva etapa: Inteligencia de Mercado y ValorizaciÃ³n Agro
 
 ## Objetivo
 
-Transformar los Activos Agro registrados en oportunidades analizadas mediante información histórica, productiva, económica y documental.
+Transformar los Activos Agro registrados en oportunidades analizadas mediante informaciÃ³n histÃ³rica, productiva, econÃ³mica y documental.
 
-Esta evolución busca ampliar el ecosistema desde una plataforma de registro y gestión hacia una infraestructura digital de confianza para análisis agropecuario.
+Esta evoluciÃ³n busca ampliar el ecosistema desde una plataforma de registro y gestiÃ³n hacia una infraestructura digital de confianza para anÃ¡lisis agropecuario.
 
 ---
 
-# Fase 5 — Inteligencia de Mercado Agro
+# Fase 5 â€” Inteligencia de Mercado Agro
 
 ## Estado
 
-🔜 Futuro
+ðŸ”œ Futuro
 
 
 ## Objetivo
 
-Crear capacidades para analizar activos agropecuarios utilizando información validada dentro del ecosistema.
+Crear capacidades para analizar activos agropecuarios utilizando informaciÃ³n validada dentro del ecosistema.
 
 
 ## Capacidades futuras
 
-### Motor de análisis de activos
+### Motor de anÃ¡lisis de activos
 
-Permitirá:
+PermitirÃ¡:
 
 - comparar activos;
-- analizar evolución histórica;
-- identificar características productivas;
-- visualizar capacidad de expansión;
+- analizar evoluciÃ³n histÃ³rica;
+- identificar caracterÃ­sticas productivas;
+- visualizar capacidad de expansiÃ³n;
 - generar indicadores.
 
 
 ---
 
-### Búsqueda avanzada de oportunidades
+### BÃºsqueda avanzada de oportunidades
 
 Preparada para:
 
 - filtros productivos;
-- ubicación geográfica;
-- características económicas;
+- ubicaciÃ³n geogrÃ¡fica;
+- caracterÃ­sticas econÃ³micas;
 - tipo de actividad;
 - nivel de confianza;
 - estado del activo.
@@ -1452,11 +1452,11 @@ Preparada para:
 
 ### Ranking de oportunidades
 
-Permitirá organizar activos según:
+PermitirÃ¡ organizar activos segÃºn:
 
-- información disponible;
+- informaciÃ³n disponible;
 - nivel de confianza;
-- características productivas;
+- caracterÃ­sticas productivas;
 - objetivos del inversor;
 - criterios configurables.
 
@@ -1468,78 +1468,78 @@ Permitirá organizar activos según:
 Preparado para:
 
 - intereses productivos;
-- ubicación;
-- tipo de inversión;
+- ubicaciÃ³n;
+- tipo de inversiÃ³n;
 - preferencias;
 - objetivos.
 
 
 ---
 
-# Nuevo flujo estratégico
+# Nuevo flujo estratÃ©gico
 
 Activo Agro V2
 
-↓
+â†“
 
-Información Productiva
+InformaciÃ³n Productiva
 
-↓
+â†“
 
 Historial
 
-↓
+â†“
 
-Auditoría
+AuditorÃ­a
 
-↓
+â†“
 
 Confianza
 
-↓
+â†“
 
 Analytics
 
-↓
+â†“
 
-Valorización Inteligente
+ValorizaciÃ³n Inteligente
 
-↓
+â†“
 
 Marketplace
 
-↓
+â†“
 
-Inversión
+InversiÃ³n
 
 
 ---
 
-# Criterio de valorización
+# Criterio de valorizaciÃ³n
 
 Agro Fields no determina:
 
 - precio definitivo;
 - rentabilidad garantizada;
-- recomendación financiera.
+- recomendaciÃ³n financiera.
 
 
-La plataforma organiza información verificable para facilitar análisis y toma de decisiones entre participantes.
+La plataforma organiza informaciÃ³n verificable para facilitar anÃ¡lisis y toma de decisiones entre participantes.
 
 
 ---
 
-# Relación con el ecosistema
+# RelaciÃ³n con el ecosistema
 
-Esta evolución utiliza las capacidades existentes:
+Esta evoluciÃ³n utiliza las capacidades existentes:
 
 - Activo Agro V2;
 - Historial;
-- Auditoría;
-- Documentación;
+- AuditorÃ­a;
+- DocumentaciÃ³n;
 - Confianza;
-- Producción;
-- Economía;
+- ProducciÃ³n;
+- EconomÃ­a;
 - IA;
 - Analytics;
 - Marketplace.
@@ -1547,52 +1547,52 @@ Esta evolución utiliza las capacidades existentes:
 
 ---
 
-# Diferenciador estratégico
+# Diferenciador estratÃ©gico
 
-Agro Fields no funciona únicamente como un marketplace agropecuario.
+Agro Fields no funciona Ãºnicamente como un marketplace agropecuario.
 
 El diferencial es construir una memoria digital del activo que permita comprender:
 
-- qué ocurrió;
-- cuándo ocurrió;
-- quién participó;
-- qué evidencia existe;
-- cómo evolucionó.
+- quÃ© ocurriÃ³;
+- cuÃ¡ndo ocurriÃ³;
+- quiÃ©n participÃ³;
+- quÃ© evidencia existe;
+- cÃ³mo evolucionÃ³.
 
 
 ---
 
-# Próxima implementación técnica
+# PrÃ³xima implementaciÃ³n tÃ©cnica
 
 Prioridades actuales:
 
-1. Evaluación de confianza:
+1. EvaluaciÃ³n de confianza:
    - factores;
    - evidencias;
    - responsables;
-   - cálculo de índice.
+   - cÃ¡lculo de Ã­ndice.
 
-2. Evolución productiva:
+2. EvoluciÃ³n productiva:
    - ciclos productivos;
    - historial;
    - capacidad futura;
-   - expansión.
+   - expansiÃ³n.
 
-3. Auditoría integral:
+3. AuditorÃ­a integral:
    - eventos;
    - trazabilidad;
    - evidencias.
 
 4. Inteligencia futura:
-   - análisis;
+   - anÃ¡lisis;
    - recomendaciones;
-   - comparación de activos.
+   - comparaciÃ³n de activos.
 
 ---
 
 # Regla V8
 
-Cada evolución debe mantener:
+Cada evoluciÃ³n debe mantener:
 
 Modelo
 
@@ -1602,11 +1602,11 @@ Arquitectura
 
 +
 
-Auditoría
+AuditorÃ­a
 
 +
 
-Bitácora
+BitÃ¡cora
 
 +
 
@@ -1619,29 +1619,29 @@ Commit Git
 ---
 
 Fase:
-Evolución técnica Activo Agro V2
+EvoluciÃ³n tÃ©cnica Activo Agro V2
 
-Módulo:
-Producción
+MÃ³dulo:
+ProducciÃ³n
 
 Estado:
 Modelo base actualizado
 
 Avances:
-✅ identidad del módulo
-✅ relación con Activo Agro V2
-✅ compatibilidad Firestore
+âœ… identidad del mÃ³dulo
+âœ… relaciÃ³n con Activo Agro V2
+âœ… compatibilidad Firestore
 
-Próximos pasos:
+PrÃ³ximos pasos:
 - ciclos productivos
 - historial productivo
 - capacidad futura
-- intervenciones técnicas
+- intervenciones tÃ©cnicas
 ---
 
-# Evolución Madurez Activo V8
+# EvoluciÃ³n Madurez Activo V8
 
-## Módulo
+## MÃ³dulo
 
 Madurez del Activo Agro V2
 
@@ -1651,134 +1651,134 @@ Modelo base actualizado.
 
 ## Avances realizados
 
-Se incorpora una capa de evolución del activo considerando:
+Se incorpora una capa de evoluciÃ³n del activo considerando:
 
 - porcentaje de madurez;
 - faltantes identificados;
 - etapa del activo;
-- nivel tecnológico;
-- preparación para inversión.
+- nivel tecnolÃ³gico;
+- preparaciÃ³n para inversiÃ³n.
 
 ## Objetivo
 
-Permitir representar el grado de evolución y organización del Activo Agro dentro del ecosistema Agro Fields V8.
+Permitir representar el grado de evoluciÃ³n y organizaciÃ³n del Activo Agro dentro del ecosistema Agro Fields V8.
 
 ## Integraciones futuras
 
 Preparado para relacionarse con:
 
-- Evaluación de Confianza;
-- Producción;
+- EvaluaciÃ³n de Confianza;
+- ProducciÃ³n;
 - Analytics;
 - Marketplace.
 
-## Próximas evoluciones
+## PrÃ³ximas evoluciones
 
 - historial de madurez;
-- eventos de evolución;
+- eventos de evoluciÃ³n;
 - indicadores avanzados.
-# 🗺️ ROADMAP AGRO FIELDS
+# ðŸ—ºï¸ ROADMAP AGRO FIELDS
 
-## Versión
+## VersiÃ³n
 V8.X
 
-## Fecha de actualización
+## Fecha de actualizaciÃ³n
 13/08/2026
 
 ## Arquitectura base
 V8.0
 
-## Principio estratégico
+## Principio estratÃ©gico
 
-Agro Fields evoluciona desde una plataforma de publicación y contacto
-hacia una infraestructura digital de información para Activos Agro.
+Agro Fields evoluciona desde una plataforma de publicaciÃ³n y contacto
+hacia una infraestructura digital de informaciÃ³n para Activos Agro.
 
 El objetivo no es solamente publicar campos.
 
 El objetivo es:
 
 > estructurar, documentar, relacionar, validar y contextualizar
-> información de activos agropecuarios reales.
+> informaciÃ³n de activos agropecuarios reales.
 
 ---
 
-# 1. Visión del producto
+# 1. VisiÃ³n del producto
 
 Campo real
-↓
+â†“
 Activo Agro
-↓
-Información estructurada
-↓
-Documentación
-↓
+â†“
+InformaciÃ³n estructurada
+â†“
+DocumentaciÃ³n
+â†“
 Evidencias
-↓
+â†“
 Validaciones
-↓
+â†“
 Confianza
-↓
+â†“
 Oportunidad
-↓
+â†“
 Comprador / Inversor / Productor
 
 ---
 
 # 2. Estado actual
 
-## 🟢 Funcional
+## ðŸŸ¢ Funcional
 
 Actualmente el sistema cuenta con:
 
 - Activo Agro V2;
-- creación y gestión de activos;
-- información productiva;
-- información económica;
-- documentación;
+- creaciÃ³n y gestiÃ³n de activos;
+- informaciÃ³n productiva;
+- informaciÃ³n econÃ³mica;
+- documentaciÃ³n;
 - confianza inicial;
 - madurez del activo;
 - solicitudes de contacto;
-- aceptación de solicitudes;
-- creación de conversaciones;
-- chat comprador ↔ propietario;
+- aceptaciÃ³n de solicitudes;
+- creaciÃ³n de conversaciones;
+- chat comprador â†” propietario;
 - mensajes persistidos en Firebase;
 - listado de conversaciones;
-- información real del activo dentro del chat;
-- información real del participante;
-- historial y auditoría como base arquitectónica.
+- informaciÃ³n real del activo dentro del chat;
+- informaciÃ³n real del participante;
+- historial y auditorÃ­a como base arquitectÃ³nica.
 
 ---
 
-# 3. Etapa actual — Contacto y Conversación
+# 3. Etapa actual â€” Contacto y ConversaciÃ³n
 
 ## Estado
 
-🟢 Funcional / consolidación
+ðŸŸ¢ Funcional / consolidaciÃ³n
 
 El sistema ya permite:
 
 Comprador
-↓
+â†“
 Oportunidad
-↓
+â†“
 Solicitud de contacto
-↓
+â†“
 Propietario acepta
-↓
-Conversación
-↓
+â†“
+ConversaciÃ³n
+â†“
 Mensaje
-↓
+â†“
 Respuesta
 
 ---
 
-## Próximas tareas inmediatas
+## PrÃ³ximas tareas inmediatas
 
 ### Unicidad de conversaciones
 
 Garantizar que no puedan existir conversaciones duplicadas para la
-misma relación:
+misma relaciÃ³n:
 
 ```text
 campoId
@@ -1788,13 +1788,13 @@ propietarioId
 interesadoId
 ---
 
-# Evolución V8 — Suelo Activo Agro
+# EvoluciÃ³n V8 â€” Suelo Activo Agro
 
 ## Estado
 
-🟡 En evolución.
+ðŸŸ¡ En evoluciÃ³n.
 
-El módulo de Suelo se incorpora al Activo Agro V2 como una nueva dimensión de información y evaluación del activo.
+El mÃ³dulo de Suelo se incorpora al Activo Agro V2 como una nueva dimensiÃ³n de informaciÃ³n y evaluaciÃ³n del activo.
 
 Se mantiene la arquitectura existente.
 
@@ -1802,7 +1802,7 @@ Criterio:
 
 No crear ActivoAgroV3.
 
-La evolución del suelo continúa sobre ActivoAgroV2.
+La evoluciÃ³n del suelo continÃºa sobre ActivoAgroV2.
 
 ---
 
@@ -1814,31 +1814,31 @@ lib/models/activos/suelo_activo_model.dart
 
 Estado:
 
-🟢 Modelo base implementado.
+ðŸŸ¢ Modelo base implementado.
 
 El modelo contempla:
 
-- estado de evaluación;
+- estado de evaluaciÃ³n;
 - textura;
 - drenaje;
 - pH;
-- materia orgánica;
+- materia orgÃ¡nica;
 - evidencias;
 - observaciones;
-- fecha de evaluación.
+- fecha de evaluaciÃ³n.
 
 El modelo incorpora:
 
 - constructor;
 - estado inicial;
-- deserialización desde Map;
-- serialización a Map;
-- conversión de Timestamp;
+- deserializaciÃ³n desde Map;
+- serializaciÃ³n a Map;
+- conversiÃ³n de Timestamp;
 - copyWith.
 
 ---
 
-## Integración con ActivoAgroV2
+## IntegraciÃ³n con ActivoAgroV2
 
 Archivo:
 
@@ -1846,7 +1846,7 @@ lib/models/activos/activo_agro_model_v2.dart
 
 Estado:
 
-🟢 Integrado.
+ðŸŸ¢ Integrado.
 
 ActivoAgroV2 incorpora:
 
@@ -1854,9 +1854,9 @@ ActivoAgroV2 incorpora:
 final SueloActivo suelo;
 ```
 
-La información del suelo forma parte de la estructura persistente del Activo Agro V2.
+La informaciÃ³n del suelo forma parte de la estructura persistente del Activo Agro V2.
 
-La deserialización y serialización se realizan mediante:
+La deserializaciÃ³n y serializaciÃ³n se realizan mediante:
 
 ```dart
 SueloActivo.fromMap(...)
@@ -1868,9 +1868,9 @@ y:
 suelo.toMap()
 ```
 
-# EVOLUCIÓN MÓDULO SUELO — CIERRE DE ETAPA
+# EVOLUCIÃ“N MÃ“DULO SUELO â€” CIERRE DE ETAPA
 
-## Inicialización del Suelo
+## InicializaciÃ³n del Suelo
 
 El Suelo se inicializa actualmente mediante:
 
@@ -1880,79 +1880,79 @@ Estado inicial:
 
 `sin_evaluar`
 
-Las evidencias comienzan vacías.
+Las evidencias comienzan vacÃ­as.
 
-El objetivo es permitir que todo nuevo Activo Agro disponga desde su creación de una estructura de suelo preparada para futuras evaluaciones.
+El objetivo es permitir que todo nuevo Activo Agro disponga desde su creaciÃ³n de una estructura de suelo preparada para futuras evaluaciones.
 
 ---
 
-## Próxima evolución funcional del Suelo
+## PrÃ³xima evoluciÃ³n funcional del Suelo
 
-### 1. Validación de serialización
+### 1. ValidaciÃ³n de serializaciÃ³n
 
 Estado:
 
-🟡 Pendiente.
+ðŸŸ¡ Pendiente.
 
-Agregar pruebas específicas para validar:
+Agregar pruebas especÃ­ficas para validar:
 
 `SueloActivo`
-↓
+â†“
 `toMap`
-↓
+â†“
 `fromMap`
-↓
+â†“
 `SueloActivo`
 
-Se deberá verificar la conservación de:
+Se deberÃ¡ verificar la conservaciÃ³n de:
 
 - estado;
 - textura;
 - drenaje;
 - pH;
-- materia orgánica;
+- materia orgÃ¡nica;
 - evidencias;
 - observaciones;
-- fecha de evaluación.
+- fecha de evaluaciÃ³n.
 
 ---
 
-### 2. Visualización del Suelo
+### 2. VisualizaciÃ³n del Suelo
 
 Estado:
 
-🟡 Pendiente.
+ðŸŸ¡ Pendiente.
 
-Integrar el módulo Suelo en:
+Integrar el mÃ³dulo Suelo en:
 
 `lib/screens/campos/detalle_activo_agro_screen.dart`
 
-La pantalla deberá mostrar inicialmente:
+La pantalla deberÃ¡ mostrar inicialmente:
 
 - estado;
 - textura;
 - drenaje;
 - pH;
-- materia orgánica;
+- materia orgÃ¡nica;
 - cantidad de evidencias;
 - observaciones;
-- fecha de evaluación.
+- fecha de evaluaciÃ³n.
 
 ---
 
-### 3. Actualización del Suelo
+### 3. ActualizaciÃ³n del Suelo
 
 Estado:
 
-🟡 Pendiente.
+ðŸŸ¡ Pendiente.
 
 Evolucionar:
 
 `lib/services/activo_agro_service_v2.dart`
 
-incorporando una operación específica para actualizar el módulo Suelo.
+incorporando una operaciÃ³n especÃ­fica para actualizar el mÃ³dulo Suelo.
 
-La actualización deberá mantener la arquitectura existente de persistencia del Activo Agro.
+La actualizaciÃ³n deberÃ¡ mantener la arquitectura existente de persistencia del Activo Agro.
 
 ---
 
@@ -1960,25 +1960,25 @@ La actualización deberá mantener la arquitectura existente de persistencia del
 
 Estado:
 
-🟡 Pendiente.
+ðŸŸ¡ Pendiente.
 
-Las modificaciones del módulo deberán generar eventos dentro del historial del Activo Agro.
+Las modificaciones del mÃ³dulo deberÃ¡n generar eventos dentro del historial del Activo Agro.
 
 Evento previsto:
 
 `actualizacion_suelo`
 
-El historial permitirá conservar la evolución temporal de la información del suelo.
+El historial permitirÃ¡ conservar la evoluciÃ³n temporal de la informaciÃ³n del suelo.
 
 ---
 
-### 5. Auditoría del Suelo
+### 5. AuditorÃ­a del Suelo
 
 Estado:
 
-🟡 Pendiente.
+ðŸŸ¡ Pendiente.
 
-Las modificaciones del módulo Suelo deberán registrarse mediante:
+Las modificaciones del mÃ³dulo Suelo deberÃ¡n registrarse mediante:
 
 `AuditService`
 
@@ -1986,193 +1986,193 @@ utilizando:
 
 `modulo: suelo`
 
-y una acción específica para la actualización del módulo.
+y una acciÃ³n especÃ­fica para la actualizaciÃ³n del mÃ³dulo.
 
-La auditoría deberá conservar:
+La auditorÃ­a deberÃ¡ conservar:
 
 - activo afectado;
 - usuario responsable;
-- acción;
+- acciÃ³n;
 - referencia;
-- datos relevantes de la modificación.
+- datos relevantes de la modificaciÃ³n.
 
 ---
 
-### 6. Evaluación del Suelo
+### 6. EvaluaciÃ³n del Suelo
 
 Estado:
 
-🟡 Pendiente.
+ðŸŸ¡ Pendiente.
 
-Se deberá implementar posteriormente un flujo de evaluación del suelo que permita registrar:
+Se deberÃ¡ implementar posteriormente un flujo de evaluaciÃ³n del suelo que permita registrar:
 
-- características físicas;
+- caracterÃ­sticas fÃ­sicas;
 - condiciones de drenaje;
 - pH;
-- materia orgánica;
+- materia orgÃ¡nica;
 - observaciones;
 - evidencias;
-- fecha de evaluación.
+- fecha de evaluaciÃ³n.
 
 Flujo previsto:
 
 Detalle Activo Agro
-↓
-Evaluación de Suelo
-↓
+â†“
+EvaluaciÃ³n de Suelo
+â†“
 SueloActivo
-↓
+â†“
 ActivoAgroServiceV2
-↓
+â†“
 Firestore
-↓
+â†“
 Historial
-↓
-Auditoría
+â†“
+AuditorÃ­a
 
 ---
 
-## Relación futura entre Suelo, Confianza y Madurez
+## RelaciÃ³n futura entre Suelo, Confianza y Madurez
 
 Estado:
 
-⚪ Posterior.
+âšª Posterior.
 
-En esta etapa el módulo Suelo se considera una dimensión independiente de información y evaluación del Activo Agro.
+En esta etapa el mÃ³dulo Suelo se considera una dimensiÃ³n independiente de informaciÃ³n y evaluaciÃ³n del Activo Agro.
 
-No se incorpora todavía al cálculo automático de:
+No se incorpora todavÃ­a al cÃ¡lculo automÃ¡tico de:
 
 - Confianza;
 - Madurez;
 - rentabilidad;
-- publicación.
+- publicaciÃ³n.
 
-Antes de establecer dicha relación deberá definirse:
+Antes de establecer dicha relaciÃ³n deberÃ¡ definirse:
 
-- metodología de evaluación;
-- criterios agronómicos;
+- metodologÃ­a de evaluaciÃ³n;
+- criterios agronÃ³micos;
 - evidencia requerida;
-- responsables de validación;
+- responsables de validaciÃ³n;
 - niveles de confianza;
 - impacto sobre la madurez del activo.
 
-Criterio arquitectónico:
+Criterio arquitectÃ³nico:
 
-No establecer dependencias entre Suelo, Confianza y Madurez hasta contar con una definición funcional y metodológica suficiente.
+No establecer dependencias entre Suelo, Confianza y Madurez hasta contar con una definiciÃ³n funcional y metodolÃ³gica suficiente.
 
 ---
 
 ## Criterio de continuidad V8
 
-La evolución del módulo Suelo continuará sobre:
+La evoluciÃ³n del mÃ³dulo Suelo continuarÃ¡ sobre:
 
 `ActivoAgroV2`
 
-sin crear una nueva versión estructural del modelo.
+sin crear una nueva versiÃ³n estructural del modelo.
 
-La prioridad inmediata será cerrar el circuito:
+La prioridad inmediata serÃ¡ cerrar el circuito:
 
 Modelo
-↓
-Serialización
-↓
-Visualización
-↓
-Actualización
-↓
+â†“
+SerializaciÃ³n
+â†“
+VisualizaciÃ³n
+â†“
+ActualizaciÃ³n
+â†“
 Historial
-↓
-Auditoría
-↓
-Evaluación
+â†“
+AuditorÃ­a
+â†“
+EvaluaciÃ³n
 
-Una vez cerrado este circuito se evaluará la integración del Suelo con las capas superiores de Confianza y Madurez.
+Una vez cerrado este circuito se evaluarÃ¡ la integraciÃ³n del Suelo con las capas superiores de Confianza y Madurez.
 
 ---
 
-## Próxima jornada técnica
+## PrÃ³xima jornada tÃ©cnica
 
 Prioridad:
 
-1. cerrar test de serialización de Suelo;
-2. integrar visualización en `DetalleActivoAgroScreen`;
-3. implementar actualización del Suelo;
+1. cerrar test de serializaciÃ³n de Suelo;
+2. integrar visualizaciÃ³n en `DetalleActivoAgroScreen`;
+3. implementar actualizaciÃ³n del Suelo;
 4. incorporar historial;
-5. incorporar auditoría;
-6. implementar evaluación;
+5. incorporar auditorÃ­a;
+6. implementar evaluaciÃ³n;
 7. ejecutar pruebas;
 8. documentar resultados en `BITACORA.md`.
 
 Estado de cierre:
 
-🟡 Módulo Suelo incorporado arquitectónicamente y pendiente de completar su circuito funcional.
+ðŸŸ¡ MÃ³dulo Suelo incorporado arquitectÃ³nicamente y pendiente de completar su circuito funcional.
 
 ---
 
-# CIERRE DE JORNADA — MÓDULO SUELO
+# CIERRE DE JORNADA â€” MÃ“DULO SUELO
 
-El módulo Suelo queda formalmente incorporado a la arquitectura del Activo Agro V2.
+El mÃ³dulo Suelo queda formalmente incorporado a la arquitectura del Activo Agro V2.
 
-La estructura de datos, integración con `ActivoAgroV2`, inicialización y persistencia base se encuentran implementadas.
+La estructura de datos, integraciÃ³n con `ActivoAgroV2`, inicializaciÃ³n y persistencia base se encuentran implementadas.
 
-La evolución funcional queda deliberadamente pendiente de la siguiente etapa, manteniendo separación entre:
+La evoluciÃ³n funcional queda deliberadamente pendiente de la siguiente etapa, manteniendo separaciÃ³n entre:
 
-- información del suelo;
-- evaluación agronómica;
+- informaciÃ³n del suelo;
+- evaluaciÃ³n agronÃ³mica;
 - confianza;
 - madurez;
-- publicación.
+- publicaciÃ³n.
 
-No se crea una nueva versión del modelo.
+No se crea una nueva versiÃ³n del modelo.
 
-La continuidad del desarrollo se realizará sobre `ActivoAgroV2`, respetando la arquitectura V8, la trazabilidad mediante Git, el historial del activo y la auditoría transversal.
+La continuidad del desarrollo se realizarÃ¡ sobre `ActivoAgroV2`, respetando la arquitectura V8, la trazabilidad mediante Git, el historial del activo y la auditorÃ­a transversal.
 
 Estado general:
 
-🟡 **Módulo Suelo incorporado arquitectónicamente — circuito funcional pendiente.**
-# Paso 9 — Validación de OportunidadAgroService
+ðŸŸ¡ **MÃ³dulo Suelo incorporado arquitectÃ³nicamente â€” circuito funcional pendiente.**
+# Paso 9 â€” ValidaciÃ³n de OportunidadAgroService
 
 ## Estado
 
-🟢 VALIDADO
+ðŸŸ¢ VALIDADO
 
 ## Fecha
 
 03/09/2026
 
-## Validación realizada
+## ValidaciÃ³n realizada
 
-Se validó mediante Integration Test la integración real entre:
+Se validÃ³ mediante Integration Test la integraciÃ³n real entre:
 
 `ActivoAgroV2`
 
-↓
+â†“
 
 `OportunidadAgro`
 
-↓
+â†“
 
 `OportunidadAgroService`
 
-↓
+â†“
 
 `Firestore Emulator`
 
-↓
+â†“
 
-`Auditoría`
+`AuditorÃ­a`
 
 ## Capacidades verificadas
 
-- creación de Activo Agro V2;
+- creaciÃ³n de Activo Agro V2;
 - persistencia del Activo Agro;
-- recuperación del Activo Agro;
-- creación de OportunidadAgro vinculada;
+- recuperaciÃ³n del Activo Agro;
+- creaciÃ³n de OportunidadAgro vinculada;
 - persistencia de la oportunidad;
-- recuperación por ID;
+- recuperaciÃ³n por ID;
 - consulta de oportunidades por Activo Agro;
 - consulta de oportunidades activas;
-- generación de auditoría;
+- generaciÃ³n de auditorÃ­a;
 - trazabilidad de usuario y referencia;
 - rechazo de oportunidades vinculadas a activos inexistentes.
 
@@ -2188,38 +2188,38 @@ Resultado:
 
 ## Arquitectura
 
-La implementación continúa sobre `ActivoAgroV2`.
+La implementaciÃ³n continÃºa sobre `ActivoAgroV2`.
 
 No se crea `ActivoAgroV3`.
 
 Se mantiene:
 
-`Screen → Service → Model → Firebase`
+`Screen â†’ Service â†’ Model â†’ Firebase`
 
-con auditoría transversal.
+con auditorÃ­a transversal.
 
-## Próxima etapa
+## PrÃ³xima etapa
 
 Consolidar el cierre del Paso 9 mediante:
 
-- actualización de documentación;
-- actualización de BITÁCORA;
+- actualizaciÃ³n de documentaciÃ³n;
+- actualizaciÃ³n de BITÃCORA;
 - commit;
 - push;
-- verificación de working tree limpio.
+- verificaciÃ³n de working tree limpio.
 
-Una vez completado el versionado, iniciar la planificación del Paso 10 sin modificar innecesariamente las capas ya validadas.
+Una vez completado el versionado, iniciar la planificaciÃ³n del Paso 10 sin modificar innecesariamente las capas ya validadas.
 # Principios rectores de experiencia Agro Fields
 
 ## 1. Experiencia adaptativa
 
 Responsive no alcanza.
 
-Agro Fields debe adaptar la experiencia al contexto de uso, manteniendo la misma plataforma, información, arquitectura, modelos, servicios y lógica de negocio.
+Agro Fields debe adaptar la experiencia al contexto de uso, manteniendo la misma plataforma, informaciÃ³n, arquitectura, modelos, servicios y lÃ³gica de negocio.
 
 ---
 
-## 2. Complejidad detrás de escena
+## 2. Complejidad detrÃ¡s de escena
 
 La complejidad queda en el sistema, no en la pantalla.
 
@@ -2227,18 +2227,18 @@ El usuario debe poder realizar acciones simples sin tener que comprender la comp
 
 ---
 
-## 3. Registro inmediato y estructuración automática
+## 3. Registro inmediato y estructuraciÃ³n automÃ¡tica
 
-Registrar en el momento, con el mínimo esfuerzo; estructurar automáticamente detrás.
+Registrar en el momento, con el mÃ­nimo esfuerzo; estructurar automÃ¡ticamente detrÃ¡s.
 
 Principio operativo:
 
-> Lo veo → lo registro → Agro Fields lo organiza.
-# Paso 11 — Inversiones
+> Lo veo â†’ lo registro â†’ Agro Fields lo organiza.
+# Paso 11 â€” Inversiones
 
 ## Estado
 
-🟢 **VALIDACIÓN TÉCNICA COMPLETADA**
+ðŸŸ¢ **VALIDACIÃ“N TÃ‰CNICA COMPLETADA**
 
 ## Fecha
 
@@ -2246,33 +2246,33 @@ Principio operativo:
 
 ## Objetivo
 
-Validar el registro de inversiones y la actualización del monto recaudado de una publicación de inversión mediante una transacción Firestore.
+Validar el registro de inversiones y la actualizaciÃ³n del monto recaudado de una publicaciÃ³n de inversiÃ³n mediante una transacciÃ³n Firestore.
 
-## Implementación validada
+## ImplementaciÃ³n validada
 
 Archivo:
 
 `lib/services/inversion_service.dart`
 
-La operación:
+La operaciÃ³n:
 
 `InversionService.crearInversion()`
 
-utiliza una transacción Firestore para mantener coordinadas las siguientes operaciones:
+utiliza una transacciÃ³n Firestore para mantener coordinadas las siguientes operaciones:
 
-1. verificar la existencia de la publicación de inversión;
+1. verificar la existencia de la publicaciÃ³n de inversiÃ³n;
 2. obtener `montoRecaudado`;
 3. calcular el nuevo monto recaudado;
-4. registrar la inversión;
+4. registrar la inversiÃ³n;
 5. actualizar `montoRecaudado`.
 
-## Test de integración
+## Test de integraciÃ³n
 
 Archivo:
 
 `integration_test/inversion_service_integration_test.dart`
 
-Se validó mediante:
+Se validÃ³ mediante:
 
 `Android Emulator`
 
@@ -2298,7 +2298,7 @@ Resultado:
 
 `All tests passed!`
 
-También se ejecutó:
+TambiÃ©n se ejecutÃ³:
 
 `flutter analyze integration_test/inversion_service_integration_test.dart`
 
@@ -2312,7 +2312,7 @@ Monto recaudado inicial:
 
 `25000.0`
 
-Inversión:
+InversiÃ³n:
 
 `15000.0`
 
@@ -2328,24 +2328,24 @@ Resultado:
 
 Se mantiene:
 
-`Screen → Service → Model → Firebase`
+`Screen â†’ Service â†’ Model â†’ Firebase`
 
 No se crea `ActivoAgroV3`.
 
-La evolución continúa sobre la arquitectura V8 existente.
+La evoluciÃ³n continÃºa sobre la arquitectura V8 existente.
 
-## Próximo paso
+## PrÃ³ximo paso
 
 Completar el cierre formal del Paso 11 mediante:
 
-* actualización de `BITACORA.md`;
-* actualización de `ROADMAP_V8.md`;
-* revisión de cambios;
+* actualizaciÃ³n de `BITACORA.md`;
+* actualizaciÃ³n de `ROADMAP_V8.md`;
+* revisiÃ³n de cambios;
 * commit;
 * push a `origin/main`;
-* verificación de working tree limpio y rama sincronizada.
+* verificaciÃ³n de working tree limpio y rama sincronizada.
 
-El Paso 11 no se considerará formalmente cerrado hasta completar el versionado y publicación.
+El Paso 11 no se considerarÃ¡ formalmente cerrado hasta completar el versionado y publicaciÃ³n.
 
 ---
 
@@ -2353,9 +2353,9 @@ El Paso 11 no se considerará formalmente cerrado hasta completar el versionado 
 
 Primero validar.
 
-Después documentar.
+DespuÃ©s documentar.
 
-Después versionar.
+DespuÃ©s versionar.
 
 No acelerar etapas.
 
@@ -2365,7 +2365,7 @@ Mantener la arquitectura V8.
 
 ---
 
-# PASO 11 — INVERSIONES — CIERRE FORMAL
+# PASO 11 â€” INVERSIONES â€” CIERRE FORMAL
 
 ## Fecha
 
@@ -2373,15 +2373,15 @@ Mantener la arquitectura V8.
 
 ## Estado
 
-🟢 **CERRADO**
+ðŸŸ¢ **CERRADO**
 
-La validación técnica de `InversionService.crearInversion()` fue completada mediante Integration Test con Android Emulator y Firestore Emulator.
+La validaciÃ³n tÃ©cnica de `InversionService.crearInversion()` fue completada mediante Integration Test con Android Emulator y Firestore Emulator.
 
 Resultado:
 
 `All tests passed!`
 
-También se validó:
+TambiÃ©n se validÃ³:
 
 `flutter analyze integration_test/inversion_service_integration_test.dart`
 
@@ -2401,11 +2401,11 @@ El commit fue publicado en `origin/main`.
 
 Por lo tanto:
 
-**Paso 11 — INVERSIONES: CERRADO.**
+**Paso 11 â€” INVERSIONES: CERRADO.**
 
 ---
 
-# PASO 12 — EXPEDIENTE DIGITAL PERMANENTE DEL ACTIVO AGRO
+# PASO 12 â€” EXPEDIENTE DIGITAL PERMANENTE DEL ACTIVO AGRO
 
 ## Fecha de inicio
 
@@ -2413,37 +2413,37 @@ Por lo tanto:
 
 ## Estado
 
-🟢 **12.1–12.7 CERRADOS CONCEPTUAL Y DOCUMENTALMENTE**
+ðŸŸ¢ **12.1â€“12.7 CERRADOS CONCEPTUAL Y DOCUMENTALMENTE**
 
 ## Objetivo
 
-Definir el Expediente Digital Permanente como la memoria digital histórica y trazable del Activo Agro.
+Definir el Expediente Digital Permanente como la memoria digital histÃ³rica y trazable del Activo Agro.
 
 La arquitectura mantiene:
 
 `ActivoAgroV2`
 
-↓
+â†“
 
 `Expediente Digital Permanente`
 
-↓
+â†“
 
 `Datos + Historial + Evidencias`
 
-↓
+â†“
 
-`Auditoría`
+`AuditorÃ­a`
 
-↓
+â†“
 
 `Confianza`
 
-↓
+â†“
 
-`Publicación / Evaluación`
+`PublicaciÃ³n / EvaluaciÃ³n`
 
-El expediente se define como una composición lógica de las capacidades existentes y no como un nuevo modelo duplicado.
+El expediente se define como una composiciÃ³n lÃ³gica de las capacidades existentes y no como un nuevo modelo duplicado.
 
 Criterio:
 
@@ -2451,15 +2451,15 @@ Criterio:
 
 ---
 
-# Paso 12.1 — Auditoría de arquitectura actual
+# Paso 12.1 â€” AuditorÃ­a de arquitectura actual
 
 Estado:
 
-🟢 **CERRADO**
+ðŸŸ¢ **CERRADO**
 
 Se revisaron los modelos, servicios y capas existentes relacionados con el Activo Agro.
 
-Se confirmó la existencia de:
+Se confirmÃ³ la existencia de:
 
 - `ActivoAgroV2`;
 - `HistorialActivo`;
@@ -2471,21 +2471,21 @@ Se confirmó la existencia de:
 - `ParticipanteActivo`;
 - `SueloActivo`.
 
-Conclusión:
+ConclusiÃ³n:
 
 La base actual permite evolucionar el Expediente Digital Permanente sin crear una entidad estructural duplicada.
 
 ---
 
-# Paso 12.2 — Master Plan ↔ Arquitectura V8 ↔ Código real
+# Paso 12.2 â€” Master Plan â†” Arquitectura V8 â†” CÃ³digo real
 
 Estado:
 
-🟢 **CERRADO**
+ðŸŸ¢ **CERRADO**
 
-La arquitectura conceptual fue contrastada con la implementación real.
+La arquitectura conceptual fue contrastada con la implementaciÃ³n real.
 
-Se identificaron como áreas futuras de evolución:
+Se identificaron como Ã¡reas futuras de evoluciÃ³n:
 
 - validez;
 - fuentes;
@@ -2493,145 +2493,145 @@ Se identificaron como áreas futuras de evolución:
 - verificaciones;
 - temporalidad;
 - metadatos documentales;
-- profundidad de auditoría.
+- profundidad de auditorÃ­a.
 
-No se modificó código durante esta etapa.
+No se modificÃ³ cÃ³digo durante esta etapa.
 
 ---
 
-# Paso 12.3 — Expediente Digital Permanente
+# Paso 12.3 â€” Expediente Digital Permanente
 
 Estado:
 
-🟢 **CERRADO**
+ðŸŸ¢ **CERRADO**
 
 El Expediente Digital Permanente representa la memoria continua del Activo Agro.
 
 Debe permitir reconstruir:
 
-- información;
+- informaciÃ³n;
 - fechas;
 - participantes;
 - evidencias;
 - modificaciones;
 - estados;
 - evaluaciones;
-- evolución.
+- evoluciÃ³n.
 
 No reemplaza a `ActivoAgroV2`, HistorialActivo ni AuditEvent.
 
 ---
 
-# Paso 12.4 — Ciclo de vida
+# Paso 12.4 â€” Ciclo de vida
 
 Estado:
 
-🟢 **CERRADO CONCEPTUALMENTE**
+ðŸŸ¢ **CERRADO CONCEPTUALMENTE**
 
-Se mantiene la separación entre:
+Se mantiene la separaciÃ³n entre:
 
 - estado del Activo;
-- estado de publicación;
-- confianza/verificación;
+- estado de publicaciÃ³n;
+- confianza/verificaciÃ³n;
 - flujo comercial.
 
-Estados actualmente utilizados en código:
+Estados actualmente utilizados en cÃ³digo:
 
 - `borrador`;
 - `publicado`;
 - `pausado`.
 
-Los restantes estados del enum requieren definición funcional antes de considerarse transiciones implementadas.
+Los restantes estados del enum requieren definiciÃ³n funcional antes de considerarse transiciones implementadas.
 
 El archivado no elimina el expediente permanente.
 
 ---
 
-# Paso 12.5 — Historial y Auditoría
+# Paso 12.5 â€” Historial y AuditorÃ­a
 
 Estado:
 
-🟢 **CERRADO CONCEPTUALMENTE**
+ðŸŸ¢ **CERRADO CONCEPTUALMENTE**
 
 Criterio:
 
-**Historial = evolución significativa del Activo.**
+**Historial = evoluciÃ³n significativa del Activo.**
 
-**Auditoría = trazabilidad de la acción.**
+**AuditorÃ­a = trazabilidad de la acciÃ³n.**
 
 Los acontecimientos relevantes pueden generar ambos registros.
 
-Se establece trazabilidad profunda para cambios relevantes, evitando registrar indiscriminadamente toda actividad técnica de la aplicación.
+Se establece trazabilidad profunda para cambios relevantes, evitando registrar indiscriminadamente toda actividad tÃ©cnica de la aplicaciÃ³n.
 
 ---
 
-# Paso 12.6 — Validez de los datos
+# Paso 12.6 â€” Validez de los datos
 
 Estado:
 
-🟢 **CERRADO CONCEPTUALMENTE**
+ðŸŸ¢ **CERRADO CONCEPTUALMENTE**
 
 Estados definidos:
 
-- 🟢 `vigente_verificado`
-- 🟡 `vigente_informado`
-- 🟠 `requiere_actualizacion`
-- 🔴 `desactualizado`
-- ⚪ `sin_informacion`
+- ðŸŸ¢ `vigente_verificado`
+- ðŸŸ¡ `vigente_informado`
+- ðŸŸ  `requiere_actualizacion`
+- ðŸ”´ `desactualizado`
+- âšª `sin_informacion`
 
 Principio:
 
-**Validez ≠ Confianza**
+**Validez â‰  Confianza**
 
-La actualización de un registro no implica automáticamente que el dato sea vigente.
+La actualizaciÃ³n de un registro no implica automÃ¡ticamente que el dato sea vigente.
 
-Los hechos históricos mantienen su contexto temporal.
+Los hechos histÃ³ricos mantienen su contexto temporal.
 
-No se agregan todavía campos genéricos de validez directamente a `ActivoAgroV2`.
+No se agregan todavÃ­a campos genÃ©ricos de validez directamente a `ActivoAgroV2`.
 
 ---
 
-# Paso 12.7 — Documentación
+# Paso 12.7 â€” DocumentaciÃ³n
 
 Estado:
 
-🟢 **CERRADO**
+ðŸŸ¢ **CERRADO**
 
 Se actualizan:
 
 - `docs/BITACORA.md`;
 - `docs/ROADMAP_V8.md`.
 
-La documentación consolida las decisiones arquitectónicas del Paso 12 y el cierre formal del Paso 11.
+La documentaciÃ³n consolida las decisiones arquitectÃ³nicas del Paso 12 y el cierre formal del Paso 11.
 
-No se modifica código.
+No se modifica cÃ³digo.
 
 ---
 
-# Decisiones arquitectónicas consolidadas
+# Decisiones arquitectÃ³nicas consolidadas
 
-- `ActivoAgroV2` continúa como identidad permanente.
+- `ActivoAgroV2` continÃºa como identidad permanente.
 - No crear `ActivoAgroV3`.
-- Expediente Digital Permanente como composición lógica.
-- Publicación comercial separada del expediente.
-- Historial y Auditoría como capas complementarias.
+- Expediente Digital Permanente como composiciÃ³n lÃ³gica.
+- PublicaciÃ³n comercial separada del expediente.
+- Historial y AuditorÃ­a como capas complementarias.
 - Validez separada de Confianza.
 - No duplicar modelos sin necesidad demostrada.
-- Identificar el GAP antes de modificar código.
+- Identificar el GAP antes de modificar cÃ³digo.
 
 ---
 
-# Paso 12.8 — GAP Arquitectura ↔ Código
+# Paso 12.8 â€” GAP Arquitectura â†” CÃ³digo
 
 ## Estado
 
-🟡 **PRÓXIMO PASO**
+ðŸŸ¡ **PRÃ“XIMO PASO**
 
 Objetivo:
 
-Determinar qué modificaciones mínimas son realmente necesarias para llevar las decisiones arquitectónicas del Expediente Digital Permanente al código existente.
+Determinar quÃ© modificaciones mÃ­nimas son realmente necesarias para llevar las decisiones arquitectÃ³nicas del Expediente Digital Permanente al cÃ³digo existente.
 
-La revisión deberá cubrir:
+La revisiÃ³n deberÃ¡ cubrir:
 
 - `ActivoAgroV2`;
 - `HistorialActivo`;
@@ -2646,9 +2646,9 @@ La revisión deberá cubrir:
 
 Regla:
 
-**Identificar GAP → definir solución → modificar código → probar → validar → documentar → versionar.**
+**Identificar GAP â†’ definir soluciÃ³n â†’ modificar cÃ³digo â†’ probar â†’ validar â†’ documentar â†’ versionar.**
 
-No modificar código antes de cerrar el análisis del GAP.
+No modificar cÃ³digo antes de cerrar el anÃ¡lisis del GAP.
 
 No crear V3.
 
@@ -2658,31 +2658,31 @@ Mantener arquitectura V8.
 
 # Estado general del Roadmap
 
-🟢 Paso 9 — OportunidadAgroService: CERRADO
+ðŸŸ¢ Paso 9 â€” OportunidadAgroService: CERRADO
 
-🟢 Paso 11 — Inversiones: CERRADO
+ðŸŸ¢ Paso 11 â€” Inversiones: CERRADO
 
-🟢 Paso 12.1 — Auditoría arquitectónica: CERRADO
+ðŸŸ¢ Paso 12.1 â€” AuditorÃ­a arquitectÃ³nica: CERRADO
 
-🟢 Paso 12.2 — Matriz Master Plan ↔ Arquitectura ↔ Código: CERRADO
+ðŸŸ¢ Paso 12.2 â€” Matriz Master Plan â†” Arquitectura â†” CÃ³digo: CERRADO
 
-🟢 Paso 12.3 — Expediente Digital Permanente: CERRADO
+ðŸŸ¢ Paso 12.3 â€” Expediente Digital Permanente: CERRADO
 
-🟢 Paso 12.4 — Ciclo de vida: CERRADO CONCEPTUALMENTE
+ðŸŸ¢ Paso 12.4 â€” Ciclo de vida: CERRADO CONCEPTUALMENTE
 
-🟢 Paso 12.5 — Historial y Auditoría: CERRADO CONCEPTUALMENTE
+ðŸŸ¢ Paso 12.5 â€” Historial y AuditorÃ­a: CERRADO CONCEPTUALMENTE
 
-🟢 Paso 12.6 — Validez de datos: CERRADO CONCEPTUALMENTE
+ðŸŸ¢ Paso 12.6 â€” Validez de datos: CERRADO CONCEPTUALMENTE
 
-🟢 Paso 12.7 — Documentación: CERRADO
+ðŸŸ¢ Paso 12.7 â€” DocumentaciÃ³n: CERRADO
 
-🟡 Paso 12.8 — GAP Arquitectura ↔ Código: PRÓXIMO
+ðŸŸ¡ Paso 12.8 â€” GAP Arquitectura â†” CÃ³digo: PRÃ“XIMO
 
 ---
 
 # Regla V8
 
-Cada evolución debe mantener:
+Cada evoluciÃ³n debe mantener:
 
 `Modelo`
 
@@ -2692,11 +2692,11 @@ Cada evolución debe mantener:
 
 +
 
-`Auditoría`
+`AuditorÃ­a`
 
 +
 
-`Bitácora`
+`BitÃ¡cora`
 
 +
 
@@ -2708,19 +2708,19 @@ Cada evolución debe mantener:
 
 +
 
-`Validación`
+`ValidaciÃ³n`
 
 +
 
 `Commit Git`
 
-## PASO 12.8 — Auditoría GAP y cierre arquitectónico
+## PASO 12.8 â€” AuditorÃ­a GAP y cierre arquitectÃ³nico
 
 ### Estado
 
-**CERRADO ARQUITECTÓNICAMENTE**
+**CERRADO ARQUITECTÃ“NICAMENTE**
 
-Se completó la auditoría del código real relacionada con el Expediente Digital Permanente del Activo Agro.
+Se completÃ³ la auditorÃ­a del cÃ³digo real relacionada con el Expediente Digital Permanente del Activo Agro.
 
 ### Componentes auditados
 
@@ -2730,75 +2730,75 @@ Se completó la auditoría del código real relacionada con el Expediente Digita
 * `AuditService`
 * `AuditType`
 * `DocumentacionActivo`
-* Producción y ciclos productivos
-* Economía
+* ProducciÃ³n y ciclos productivos
+* EconomÃ­a
 * Participantes
 * Confianza
-* Evaluación de confianza
+* EvaluaciÃ³n de confianza
 * Factores de confianza
 * Madurez
 * Servicio de confianza
 
-Se verificó además la existencia de infraestructura transversal para Evidencia, Documento, Verificación y Fuente.
+Se verificÃ³ ademÃ¡s la existencia de infraestructura transversal para Evidencia, Documento, VerificaciÃ³n y Fuente.
 
 ### Resultado
 
 No existe actualmente una entidad transversal formal de Evidencia.
 
-Los modelos actuales contienen referencias simples a evidencias, archivos, fuentes o declaraciones, pero no una estructura común para conectar:
+Los modelos actuales contienen referencias simples a evidencias, archivos, fuentes o declaraciones, pero no una estructura comÃºn para conectar:
 
-**Dato → Evidencia → Verificación → Validez → Confianza**
+**Dato â†’ Evidencia â†’ VerificaciÃ³n â†’ Validez â†’ Confianza**
 
 ### GAP confirmados
 
 * **GAP-EVID-01:** falta entidad transversal de Evidencia.
-* **GAP-DOC-01:** documentación basada en listas simples.
-* **GAP-PROD-01:** producción sin respaldo estructurado transversal.
-* **GAP-ECON-01:** economía sin evidencia estructurada.
-* **GAP-PART-01:** participación sin registro estructurado de contribución, manteniendo acciones en historial/auditoría.
-* **GAP-VAL-01:** falta representación transversal de Validez.
-* **GAP-TRACE-01:** falta normalización documental del uso de old/new en cambios relevantes.
-* **GAP-AUD-01:** consulta de auditoría puede evolucionar para ordenar explícitamente por fecha.
-* **GAP-MAD-01:** algoritmo de madurez requiere futura revisión.
-* **GAP-CONF-01:** confianza reconoce evidencias conceptualmente, pero todavía no dispone de una capa real de evidencia.
+* **GAP-DOC-01:** documentaciÃ³n basada en listas simples.
+* **GAP-PROD-01:** producciÃ³n sin respaldo estructurado transversal.
+* **GAP-ECON-01:** economÃ­a sin evidencia estructurada.
+* **GAP-PART-01:** participaciÃ³n sin registro estructurado de contribuciÃ³n, manteniendo acciones en historial/auditorÃ­a.
+* **GAP-VAL-01:** falta representaciÃ³n transversal de Validez.
+* **GAP-TRACE-01:** falta normalizaciÃ³n documental del uso de old/new en cambios relevantes.
+* **GAP-AUD-01:** consulta de auditorÃ­a puede evolucionar para ordenar explÃ­citamente por fecha.
+* **GAP-MAD-01:** algoritmo de madurez requiere futura revisiÃ³n.
+* **GAP-CONF-01:** confianza reconoce evidencias conceptualmente, pero todavÃ­a no dispone de una capa real de evidencia.
 
-### Decisiones arquitectónicas
+### Decisiones arquitectÃ³nicas
 
 * Mantener `ActivoAgroV2`.
 * No crear `ActivoAgroV3`.
 * No crear un `ExpedienteDigitalPermanenteModel`.
-* El Expediente Digital Permanente será una composición lógica del Activo y sus capas de información, memoria y trazabilidad.
-* Crear posteriormente una única capa transversal de Evidencia.
-* Mantener separadas Evidencia, Verificación, Validez, Confianza, Historial y Auditoría.
-* Evolucionar los módulos existentes en lugar de duplicarlos.
-* No crear modelos de evidencia específicos por módulo.
+* El Expediente Digital Permanente serÃ¡ una composiciÃ³n lÃ³gica del Activo y sus capas de informaciÃ³n, memoria y trazabilidad.
+* Crear posteriormente una Ãºnica capa transversal de Evidencia.
+* Mantener separadas Evidencia, VerificaciÃ³n, Validez, Confianza, Historial y AuditorÃ­a.
+* Evolucionar los mÃ³dulos existentes en lugar de duplicarlos.
+* No crear modelos de evidencia especÃ­ficos por mÃ³dulo.
 
 ### Estado conceptual del Expediente
 
 ```text
 ActivoAgroV2
-      │
-      ├── Datos
-      ├── Documentación
-      ├── Producción
-      ├── Economía
-      ├── Participantes
-      │
-      ├── Evidencias
-      │       ↓
-      │   Verificación
-      │       ↓
-      │     Validez
-      │
-      ├── Historial
-      ├── Auditoría
-      ├── Confianza
-      └── Madurez
+      â”‚
+      â”œâ”€â”€ Datos
+      â”œâ”€â”€ DocumentaciÃ³n
+      â”œâ”€â”€ ProducciÃ³n
+      â”œâ”€â”€ EconomÃ­a
+      â”œâ”€â”€ Participantes
+      â”‚
+      â”œâ”€â”€ Evidencias
+      â”‚       â†“
+      â”‚   VerificaciÃ³n
+      â”‚       â†“
+      â”‚     Validez
+      â”‚
+      â”œâ”€â”€ Historial
+      â”œâ”€â”€ AuditorÃ­a
+      â”œâ”€â”€ Confianza
+      â””â”€â”€ Madurez
 ```
 
-### Próximo paso
+### PrÃ³ximo paso
 
-**PASO 13 — Diseño técnico de Evidencia**
+**PASO 13 â€” DiseÃ±o tÃ©cnico de Evidencia**
 
 Orden previsto:
 
@@ -2806,12 +2806,12 @@ Orden previsto:
 2. Definir campos.
 3. Definir relaciones.
 4. Definir tipos de evidencia.
-5. Definir verificación.
+5. Definir verificaciÃ³n.
 6. Definir validez.
 7. Definir persistencia.
 8. Definir servicio.
-9. Definir integración con módulos.
-10. Definir auditoría.
+9. Definir integraciÃ³n con mÃ³dulos.
+10. Definir auditorÃ­a.
 11. Crear tests.
 12. Implementar.
 13. Validar con Firestore Emulator.
@@ -2819,31 +2819,31 @@ Orden previsto:
 15. Commit.
 16. Push.
 
-**Regla:** no implementar hasta cerrar el diseño técnico.
+**Regla:** no implementar hasta cerrar el diseÃ±o tÃ©cnico.
 
-# PASO 12.9 — Matriz Ficha Maestra V1.0 ↔ Arquitectura V8 ↔ Código real
+# PASO 12.9 â€” Matriz Ficha Maestra V1.0 â†” Arquitectura V8 â†” CÃ³digo real
 
 ## Estado
 
-🟢 **CERRADO — VALIDADO TÉCNICAMENTE**
+ðŸŸ¢ **CERRADO â€” VALIDADO TÃ‰CNICAMENTE**
 
 ## Objetivo
 
-Traducir la Ficha Maestra del Activo Agro V1 a la arquitectura existente de Agro Fields, verificando qué información ya existe, qué capacidades requieren evolución y cuáles son los GAP concretos que deben resolverse sin duplicar modelos.
+Traducir la Ficha Maestra del Activo Agro V1 a la arquitectura existente de Agro Fields, verificando quÃ© informaciÃ³n ya existe, quÃ© capacidades requieren evoluciÃ³n y cuÃ¡les son los GAP concretos que deben resolverse sin duplicar modelos.
 
 ## Principio
 
-**No agregar campos ni crear modelos nuevos hasta comprobar si la información ya existe en la arquitectura actual.**
+**No agregar campos ni crear modelos nuevos hasta comprobar si la informaciÃ³n ya existe en la arquitectura actual.**
 
 La referencia funcional es la Ficha Maestra.
 
-La referencia técnica es la arquitectura V8 y el código real existente.
+La referencia tÃ©cnica es la arquitectura V8 y el cÃ³digo real existente.
 
 ## Resultado
 
-La matriz confirmó que el Expediente Digital Permanente puede evolucionar sobre `ActivoAgroV2`, utilizando los módulos existentes y una capa transversal de `Evidencia`.
+La matriz confirmÃ³ que el Expediente Digital Permanente puede evolucionar sobre `ActivoAgroV2`, utilizando los mÃ³dulos existentes y una capa transversal de `Evidencia`.
 
-Se mantiene la decisión:
+Se mantiene la decisiÃ³n:
 
 **No crear `ActivoAgroV3`.**
 
@@ -2851,129 +2851,129 @@ No se crea un modelo `ExpedienteDigitalPermanente`.
 
 ## Evidencia transversal
 
-Durante la implementación posterior al GAP arquitectónico se confirmó que ya existía el modelo:
+Durante la implementaciÃ³n posterior al GAP arquitectÃ³nico se confirmÃ³ que ya existÃ­a el modelo:
 
 `Evidencia`
 
-y se implementó:
+y se implementÃ³:
 
 `EvidenciaService`
 
-La evidencia queda como capa transversal y no como modelos específicos por módulo.
+La evidencia queda como capa transversal y no como modelos especÃ­ficos por mÃ³dulo.
 
-No se crearán:
+No se crearÃ¡n:
 
 * `EvidenciaSuelo`;
 * `EvidenciaProduccion`;
 * `EvidenciaEconomia`.
 
-## Validación de suelo
+## ValidaciÃ³n de suelo
 
-Se integró evidencia al flujo de actualización de `SueloActivo`.
+Se integrÃ³ evidencia al flujo de actualizaciÃ³n de `SueloActivo`.
 
 Flujo validado:
 
 `Dato de suelo`
-→ `Evidencia`
-→ `HistorialActivo`
-→ `AuditEvent`
-→ `Firestore Emulator`
+â†’ `Evidencia`
+â†’ `HistorialActivo`
+â†’ `AuditEvent`
+â†’ `Firestore Emulator`
 
-La integración fue validada mediante test de integración con Android Emulator + Firestore Emulator.
+La integraciÃ³n fue validada mediante test de integraciÃ³n con Android Emulator + Firestore Emulator.
 
 Resultado:
 
 **All tests passed!**
 
-## Validación de producción y ciclo productivo
+## ValidaciÃ³n de producciÃ³n y ciclo productivo
 
-Se integró evidencia al registro de `CicloProductivo`.
+Se integrÃ³ evidencia al registro de `CicloProductivo`.
 
 Flujo validado:
 
 `CicloProductivo`
-→ `Evidencia`
-→ `HistorialActivo`
-→ `AuditEvent`
-→ `Firestore Emulator`
+â†’ `Evidencia`
+â†’ `HistorialActivo`
+â†’ `AuditEvent`
+â†’ `Firestore Emulator`
 
-La integración fue validada mediante test de integración con Android Emulator + Firestore Emulator.
+La integraciÃ³n fue validada mediante test de integraciÃ³n con Android Emulator + Firestore Emulator.
 
 Resultado:
 
 **All tests passed!**
 
-## GAP-PROD-ID-01 — Identidad estable del módulo de producción
+## GAP-PROD-ID-01 â€” Identidad estable del mÃ³dulo de producciÃ³n
 
-Durante la validación técnica de producción se confirmó un GAP relacionado con la identidad del módulo:
+Durante la validaciÃ³n tÃ©cnica de producciÃ³n se confirmÃ³ un GAP relacionado con la identidad del mÃ³dulo:
 
-`ModuloProduccion.id` es opcional y algunas rutas de creación no establecen necesariamente un identificador estable.
+`ModuloProduccion.id` es opcional y algunas rutas de creaciÃ³n no establecen necesariamente un identificador estable.
 
-Esto podía dificultar la trazabilidad profunda:
+Esto podÃ­a dificultar la trazabilidad profunda:
 
 `ActivoAgroV2`
-→ `ModuloProduccion`
-→ `CicloProductivo`
-→ `Evidencia`
+â†’ `ModuloProduccion`
+â†’ `CicloProductivo`
+â†’ `Evidencia`
 
-### Solución implementada
+### SoluciÃ³n implementada
 
-Se centralizó la normalización de identidad en `ActivoAgroServiceV2.crearActivo()`.
+Se centralizÃ³ la normalizaciÃ³n de identidad en `ActivoAgroServiceV2.crearActivo()`.
 
 Cuando `ModuloProduccion.id` es nulo:
 
 - se genera un identificador mediante Firestore;
-- se asigna el identificador generado al módulo;
+- se asigna el identificador generado al mÃ³dulo;
 - se completa `activoAgroId` con el ID del `ActivoAgroV2` cuando falta;
-- el módulo normalizado se persiste junto con el Activo Agro.
+- el mÃ³dulo normalizado se persiste junto con el Activo Agro.
 
-### Validación técnica
+### ValidaciÃ³n tÃ©cnica
 
-Se creó y ejecutó:
+Se creÃ³ y ejecutÃ³:
 
 `integration_test/activo_agro_service_produccion_id_integration_test.dart`
 
 Resultados:
 
-- `flutter analyze integration_test/activo_agro_service_produccion_id_integration_test.dart` → **No issues found!**
-- `flutter test integration_test/activo_agro_service_produccion_id_integration_test.dart` → **All tests passed!**
+- `flutter analyze integration_test/activo_agro_service_produccion_id_integration_test.dart` â†’ **No issues found!**
+- `flutter test integration_test/activo_agro_service_produccion_id_integration_test.dart` â†’ **All tests passed!**
 
 ### Estado
 
-**GAP-PROD-ID-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+**GAP-PROD-ID-01 â€” RESUELTO Y VALIDADO TÃ‰CNICAMENTE.**
 
 | GAP               | Estado                    |
 | ----------------- | ------------------------- |
-| GAP-EVID-01       | 🟢 Resuelto en capa base  |
-| GAP-SUELO-EVID-01 | 🟢 Resuelto y validado    |
-| GAP-PROD-01       | 🟢 Resuelto y validado    |
-| GAP-PROD-ID-01    | 🟢 Resuelto y validado    |
-| GAP-DOC-01        | 🟢 Resuelto y validado    |
-| GAP-ECON-01       | 🟢 Resuelto y validado    |
-| GAP-PART-01       | 🟢 Mantener modelo actual |
-| GAP-VAL-01        | 🟢 Resuelto y validado    |
-| GAP-TRACE-01      | 🟢 Resuelto y validado    |
-| GAP-AUD-01        | 🟡 Mejora futura          |
-| GAP-MAD-01        | 🟡 Mejora futura          |
-| GAP-CONF-01       | 🟡 Integración futura     |
-| GAP-RWA-01        | 🟡 Parcialmente resuelto  |
+| GAP-EVID-01       | ðŸŸ¢ Resuelto en capa base  |
+| GAP-SUELO-EVID-01 | ðŸŸ¢ Resuelto y validado    |
+| GAP-PROD-01       | ðŸŸ¢ Resuelto y validado    |
+| GAP-PROD-ID-01    | ðŸŸ¢ Resuelto y validado    |
+| GAP-DOC-01        | ðŸŸ¢ Resuelto y validado    |
+| GAP-ECON-01       | ðŸŸ¢ Resuelto y validado    |
+| GAP-PART-01       | ðŸŸ¢ Mantener modelo actual |
+| GAP-VAL-01        | ðŸŸ¢ Resuelto y validado    |
+| GAP-TRACE-01      | ðŸŸ¢ Resuelto y validado    |
+| GAP-AUD-01        | ðŸŸ¡ Mejora futura          |
+| GAP-MAD-01        | ðŸŸ¡ Mejora futura          |
+| GAP-CONF-01       | ðŸŸ¡ IntegraciÃ³n futura     |
+| GAP-RWA-01        | ðŸŸ¡ Parcialmente resuelto  |
 
-## GAP-ECON-01 — Economía — RESUELTO Y VALIDADO TÉCNICAMENTE
+## GAP-ECON-01 â€” EconomÃ­a â€” RESUELTO Y VALIDADO TÃ‰CNICAMENTE
 
 14/09/2026
 
-Se implementó la integración de `EconomiaActivo` con Evidencia, HistorialActivo y
+Se implementÃ³ la integraciÃ³n de `EconomiaActivo` con Evidencia, HistorialActivo y
 AuditEvent.
 
-`actualizarEconomia()` conserva economía anterior y nueva, registra el `evidenciaId`
-cuando corresponde y mantiene la trazabilidad de la modificación en Historial y
-Auditoría.
+`actualizarEconomia()` conserva economÃ­a anterior y nueva, registra el `evidenciaId`
+cuando corresponde y mantiene la trazabilidad de la modificaciÃ³n en Historial y
+AuditorÃ­a.
 
 Cadena validada:
 
-`Economía → Evidencia → HistorialActivo → AuditEvent → Firestore Emulator`
+`EconomÃ­a â†’ Evidencia â†’ HistorialActivo â†’ AuditEvent â†’ Firestore Emulator`
 
-### Test de integración
+### Test de integraciÃ³n
 
 `integration_test/activo_agro_service_economia_integration_test.dart`
 
@@ -2983,46 +2983,46 @@ Resultado:
 
 La prueba verifica:
 
-- economía anterior;
-- economía nueva;
+- economÃ­a anterior;
+- economÃ­a nueva;
 - `evidenciaId`;
 - trazabilidad en HistorialActivo;
 - trazabilidad en AuditEvent.
 
-**GAP-ECON-01 — RESUELTO Y VALIDADO TÉCNICAMENTE.**
+**GAP-ECON-01 â€” RESUELTO Y VALIDADO TÃ‰CNICAMENTE.**
 
 
 ## Regla de continuidad
 
-Los nuevos GAP detectados durante la implementación deberán documentarse antes de modificarse.
+Los nuevos GAP detectados durante la implementaciÃ³n deberÃ¡n documentarse antes de modificarse.
 
 Secuencia:
 
-`GAP → decisión → implementación → test → validación → documentación → commit`
+`GAP â†’ decisiÃ³n â†’ implementaciÃ³n â†’ test â†’ validaciÃ³n â†’ documentaciÃ³n â†’ commit`
 
-## Próximo paso
+## PrÃ³ximo paso
 
-Continuar con la revisión de los GAP pendientes de la matriz, priorizando aquellos que impacten directamente en la Ficha Maestra y en la trazabilidad histórica del Activo Agro.
-## 🎯 Objetivo prioritario de lanzamiento — Enero 2027
+Continuar con la revisiÃ³n de los GAP pendientes de la matriz, priorizando aquellos que impacten directamente en la Ficha Maestra y en la trazabilidad histÃ³rica del Activo Agro.
+## ðŸŽ¯ Objetivo prioritario de lanzamiento â€” Enero 2027
 
-**Objetivo estratégico:** priorizar el lanzamiento de Agro Fields durante
+**Objetivo estratÃ©gico:** priorizar el lanzamiento de Agro Fields durante
 **enero de 2027**.
 
-Enero de 2027 se establece como **objetivo prioritario de planificación**,
-pero no como una fecha rígida que justifique acelerar artificialmente el
+Enero de 2027 se establece como **objetivo prioritario de planificaciÃ³n**,
+pero no como una fecha rÃ­gida que justifique acelerar artificialmente el
 desarrollo.
 
-La planificación deberá respetar los tiempos reales necesarios para:
+La planificaciÃ³n deberÃ¡ respetar los tiempos reales necesarios para:
 
-- implementación;
+- implementaciÃ³n;
 - pruebas;
 - estabilidad;
-- resolución de GAPs relevantes;
-- auditoría y trazabilidad;
-- documentación;
+- resoluciÃ³n de GAPs relevantes;
+- auditorÃ­a y trazabilidad;
+- documentaciÃ³n;
 - calidad funcional;
-- dependencias técnicas;
-- preparación efectiva del producto para lanzamiento.
+- dependencias tÃ©cnicas;
+- preparaciÃ³n efectiva del producto para lanzamiento.
 
 ### Regla de prioridad
 
@@ -3030,43 +3030,43 @@ La planificación deberá respetar los tiempos reales necesarios para:
 
 Por lo tanto:
 
-- se priorizarán las capacidades necesarias para alcanzar un lanzamiento sólido;
-- se evitará incorporar funcionalidades secundarias que desvíen innecesariamente
+- se priorizarÃ¡n las capacidades necesarias para alcanzar un lanzamiento sÃ³lido;
+- se evitarÃ¡ incorporar funcionalidades secundarias que desvÃ­en innecesariamente
   el objetivo;
-- no se considerará cerrado un trabajo sin evidencia real;
-- no se omitirán pruebas o auditorías para cumplir una fecha;
-- si una tarea requiere más tiempo del previsto, se ajustará el cronograma;
-- cualquier modificación significativa del objetivo temporal deberá quedar
-  registrada en Roadmap y Bitácora con su motivo.
+- no se considerarÃ¡ cerrado un trabajo sin evidencia real;
+- no se omitirÃ¡n pruebas o auditorÃ­as para cumplir una fecha;
+- si una tarea requiere mÃ¡s tiempo del previsto, se ajustarÃ¡ el cronograma;
+- cualquier modificaciÃ³n significativa del objetivo temporal deberÃ¡ quedar
+  registrada en Roadmap y BitÃ¡cora con su motivo.
 
 **Principio rector:** avanzar con prioridad hacia enero de 2027, respetando
-los tiempos reales del proyecto y sin sacrificar la calidad técnica o
+los tiempos reales del proyecto y sin sacrificar la calidad tÃ©cnica o
 funcional de Agro Fields.
-## GAP-RWA-02 — Derechos, relaciones jurídicas y titularidad
+## GAP-RWA-02 â€” Derechos, relaciones jurÃ­dicas y titularidad
 
 ### Estado actual
 
-🟡 **AUDITORÍA EN CURSO**
+ðŸŸ¡ **AUDITORÃA EN CURSO**
 
-El GAP-RWA-02 continúa abierto como GAP general.
+El GAP-RWA-02 continÃºa abierto como GAP general.
 
-Se completó y validó técnicamente el requisito:
+Se completÃ³ y validÃ³ tÃ©cnicamente el requisito:
 
-**02.02 — Titular del derecho**
+**02.02 â€” Titular del derecho**
 
-### 02.02 — Titular del derecho
+### 02.02 â€” Titular del derecho
 
-🟢 **RESUELTO Y VALIDADO TÉCNICAMENTE**
+ðŸŸ¢ **RESUELTO Y VALIDADO TÃ‰CNICAMENTE**
 
-Se incorporó `RelacionJuridica` como modelo genérico asociado a `DerechoActivo`.
+Se incorporÃ³ `RelacionJuridica` como modelo genÃ©rico asociado a `DerechoActivo`.
 
 `ActivoAgroV2` incorpora:
 
 `List<RelacionJuridica> relacionesJuridicas`
 
-La relación conserva sujeto, tipo de sujeto, rol, estado, condiciones y temporalidad, vinculándose con el derecho mediante `derechoId`.
+La relaciÃ³n conserva sujeto, tipo de sujeto, rol, estado, condiciones y temporalidad, vinculÃ¡ndose con el derecho mediante `derechoId`.
 
-Validación realizada mediante:
+ValidaciÃ³n realizada mediante:
 
 * `derecho_activo_model_test.dart`;
 * `activo_agro_derechos_serializacion_test.dart`;
@@ -3076,7 +3076,7 @@ Resultado:
 
 `00:02 +5: All tests passed!`
 
-Análisis focalizado:
+AnÃ¡lisis focalizado:
 
 `flutter analyze lib/models/activos/activo_agro_model_v2.dart`
 
@@ -3084,17 +3084,17 @@ Resultado:
 
 `No issues found!`
 
-### 02.09 — Restricciones
+### 02.09 â€” Restricciones
 
-🟢 **RESUELTO Y VALIDADO TÉCNICAMENTE**
+ðŸŸ¢ **RESUELTO Y VALIDADO TÃ‰CNICAMENTE**
 
-El requisito 02.09 se resolvió inicialmente mediante:
+El requisito 02.09 se resolviÃ³ inicialmente mediante:
 
 `DerechoActivo.condiciones`
 
-más la infraestructura genérica existente de:
+mÃ¡s la infraestructura genÃ©rica existente de:
 
-`Evidencia + Documentación + Auditoría`
+`Evidencia + DocumentaciÃ³n + AuditorÃ­a`
 
 La evidencia queda vinculada al derecho mediante:
 
@@ -3104,9 +3104,9 @@ La evidencia queda vinculada al derecho mediante:
 
 `campoRelacionado = restricciones`
 
-No se creó `RestriccionActivo`, ya que la matriz establece inicialmente una resolución basada en condiciones y evidencia/documentación.
+No se creÃ³ `RestriccionActivo`, ya que la matriz establece inicialmente una resoluciÃ³n basada en condiciones y evidencia/documentaciÃ³n.
 
-Validación realizada mediante:
+ValidaciÃ³n realizada mediante:
 
 `integration_test/activo_agro_service_derecho_restriccion_evidencia_integration_test.dart`
 
@@ -3120,18 +3120,95 @@ Commit:
 
 El cierre corresponde exclusivamente al requisito **02.09**.
 
-GAP-RWA-02 continúa como **AUDITORÍA EN CURSO** hasta validar individualmente los restantes requisitos de la matriz.
+GAP-RWA-02 continÃºa como **AUDITORÃA EN CURSO** hasta validar individualmente los restantes requisitos de la matriz.
 
 ### Alcance
 
-El cierre corresponde únicamente al requisito **02.02**.
+El cierre corresponde Ãºnicamente al requisito **02.02**.
 
-Los restantes requisitos de GAP-RWA-02 permanecen pendientes de auditoría individual.
+Los restantes requisitos de GAP-RWA-02 permanecen pendientes de auditorÃ­a individual.
 
-### Próximo criterio
+### PrÃ³ximo criterio
 
 Continuar con la matriz RWA-02 requisito por requisito, aplicando:
 
-`Matriz → GAP → Auditoría del código real → cambio mínimo → test → evidencia → documentación → commit`
+`Matriz â†’ GAP â†’ AuditorÃ­a del cÃ³digo real â†’ cambio mÃ­nimo â†’ test â†’ evidencia â†’ documentaciÃ³n â†’ commit`
 
 No se debe marcar GAP-RWA-02 completo como resuelto hasta validar los requisitos restantes.
+
+## GAP-RWA-02 — 02.28 Cambios regulatorios
+
+### Estado
+
+🟢 **02.28 RESUELTO Y VALIDADO TÉCNICAMENTE**
+
+Durante la auditoría del requisito 02.28 se verificó que los cambios regulatorios pueden conservarse mediante el historial del Activo Agro, vinculando el evento con su norma de referencia y sus datos regulatorios relevantes.
+
+El evento HistorialActivo conserva:
+
+* tipoEvento = cambio_regulatorio;
+* entidadRelacionada = norma;
+* referenciaId = NORMA-2026-001;
+* norma anterior y nueva;
+* fechas de vigencia anterior y nueva;
+* tipo de cambio;
+* jurisdicción.
+
+La evidencia queda vinculada al evento mediante:
+
+* elementoTipo = HistorialActivo;
+* elementoId = eventoRegulatorio.eventoId;
+* campoRelacionado = cambio_regulatorio.
+
+### Validación
+
+Se creó y ejecutó:
+
+integration_test/activo_agro_service_derecho_cambio_regulatorio_integration_test.dart
+
+El test verificó:
+
+* persistencia del Activo Agro;
+* persistencia y recuperación del cambio regulatorio;
+* referencia de la norma;
+* datos del cambio regulatorio;
+* persistencia de la evidencia;
+* vinculación de la evidencia con el evento histórico;
+* auditoría asociada a la creación de la evidencia.
+
+Resultado:
+
+01:06 +1: All tests passed!
+
+### Auditoría arquitectónica
+
+No fue necesario modificar:
+
+* DerechoActivo;
+* Evidencia;
+* EvidenciaService;
+* ActivoAgroServiceV2;
+* ActivoAgroV2;
+* UI.
+
+Se reutilizó la infraestructura existente de historial, evidencia y auditoría.
+
+### Alcance
+
+Este cierre corresponde exclusivamente a:
+
+**GAP-RWA-02 / requisito 02.28 — Cambios regulatorios.**
+
+No implica el cierre completo de GAP-RWA-02.
+
+Los demás requisitos de la matriz RWA-02 continúan sujetos a auditoría individual.
+
+### Evidencia técnica
+
+Test de integración:
+
+integration_test/activo_agro_service_derecho_cambio_regulatorio_integration_test.dart
+
+Resultado:
+
+All tests passed

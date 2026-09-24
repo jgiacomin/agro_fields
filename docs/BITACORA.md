@@ -5780,3 +5780,83 @@ Commit:
 `eca3eb2`
 
 `Cerrar GAP-RWA-02 02.09 restricciones`
+
+
+## GAP-RWA-02 — 02.28 Cambios regulatorios
+
+### Estado
+
+🟢 **02.28 RESUELTO Y VALIDADO TÉCNICAMENTE**
+
+Durante la auditoría del requisito 02.28 se verificó que el Activo Agro puede conservar cambios regulatorios mediante `HistorialActivo`, manteniendo referencia normativa, temporalidad y datos del cambio.
+
+El evento probado utiliza:
+
+* `tipoEvento = cambio_regulatorio`;
+* `moduloOrigen = juridico`;
+* `entidadRelacionada = norma`;
+* `referenciaId = NORMA-2026-001`.
+
+Los datos del evento conservan la norma anterior, la norma nueva, las fechas de vigencia, el tipo de cambio y la jurisdicción.
+
+La evidencia documental se vinculó al evento histórico mediante:
+
+* `elementoTipo = HistorialActivo`;
+* `elementoId = eventoRegulatorio.eventoId`;
+* `campoRelacionado = cambio_regulatorio`.
+
+### Validación
+
+Se creó y ejecutó:
+
+`integration_test/activo_agro_service_derecho_cambio_regulatorio_integration_test.dart`
+
+El test verificó:
+
+* persistencia del Activo Agro;
+* recuperación del cambio regulatorio;
+* referencia normativa;
+* datos regulatorios;
+* persistencia de la evidencia;
+* relación entre evidencia y evento histórico;
+* auditoría de la evidencia.
+
+Resultado:
+
+`01:06 +1: All tests passed!`
+
+### Auditoría arquitectónica
+
+No se modificaron modelos ni servicios de producción para este requisito.
+
+No fue necesario modificar:
+
+* `DerechoActivo`;
+* `Evidencia`;
+* `EvidenciaService`;
+* `ActivoAgroServiceV2`;
+* `ActivoAgroV2`;
+* UI.
+
+Se reutilizó la infraestructura existente de historial, evidencia y auditoría.
+
+### Alcance
+
+Este cierre corresponde exclusivamente a:
+
+**GAP-RWA-02 / requisito 02.28 — Cambios regulatorios.**
+
+No implica el cierre completo de GAP-RWA-02.
+
+Los demás requisitos de la matriz RWA-02 continúan sujetos a auditoría individual.
+
+### Evidencia Git
+
+Archivo de prueba:
+
+`integration_test/activo_agro_service_derecho_cambio_regulatorio_integration_test.dart`
+
+Resultado:
+
+`All tests passed`
+
