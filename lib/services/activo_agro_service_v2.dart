@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/audit/audit_service.dart';
 import '../core/audit/audit_type.dart';
 
+import 'package:agro_fields/models/activos/relacion_juridica_model.dart';
 import '../models/activos/activo_agro_model_v2.dart';
 import '../models/activos/suelo_activo_model.dart';
 import '../models/activos/confianza_activo_model.dart';
@@ -14,6 +15,8 @@ import '../models/activos/modulo_produccion_model.dart';
 import '../models/activos/ciclo_productivo_model.dart';
 import '../models/activos/documentacion_activo_model.dart';
 import '../models/activos/economia_activo_model.dart';
+import '../models/activos/derecho_activo_model.dart';
+import '../models/activos/evento_afectacion_model.dart';
 import 'evidencia_service.dart';
 import 'confianza_activo_service.dart';
 
@@ -34,7 +37,6 @@ final ConfianzaActivoService _confianzaService =
 
     final EvidenciaService _evidenciaService =
      EvidenciaService();
-
 // =====================================================
 // GENERAR EVENTO DE HISTORIAL
 // =====================================================
@@ -44,9 +46,7 @@ HistorialActivo _crearEventoHistorial({
   required String descripcion,
   required String usuarioId,
   required String moduloOrigen,
-    }) 
-   
-    {
+}) {
 
   return HistorialActivo(
 
@@ -73,13 +73,14 @@ HistorialActivo _crearEventoHistorial({
   );
 
 }
-  // =====================================================
-  // CREAR ACTIVO
-  // =====================================================
 
-  Future<String> crearActivo(
-    ActivoAgroV2 activo,
-    ) async {
+// =====================================================
+// CREAR ACTIVO
+// =====================================================
+
+Future<String> crearActivo(
+  ActivoAgroV2 activo,
+) async {
 
   final existente = await _db
       .collection(coleccion)
@@ -97,22 +98,25 @@ HistorialActivo _crearEventoHistorial({
     );
 
   }
+
   final doc = _db
       .collection(coleccion)
       .doc(activo.activoId);
 
-final produccionesNormalizadas =
-    activo.producciones.map((modulo) {
-  final moduloId =
-      modulo.id ?? _db.collection(coleccion).doc().id;
+  final produccionesNormalizadas =
+      activo.producciones.map((modulo) {
 
-  return modulo.copyWith(
-    id: moduloId,
-    activoAgroId:
-        modulo.activoAgroId ?? activo.activoId,
-  );
-    })
-    .toList();
+    final moduloId =
+        modulo.id ?? _db.collection(coleccion).doc().id;
+
+    return modulo.copyWith(
+      id: moduloId,
+      activoAgroId:
+          modulo.activoAgroId ?? activo.activoId,
+    );
+
+  })
+  .toList();
 
   final historialInicial = _crearEventoHistorial(
 
@@ -131,185 +135,185 @@ final produccionesNormalizadas =
   );
 
   final activoConHistorial = activo.copyWith(
-  producciones: produccionesNormalizadas,
-  historial: [
-    ...activo.historial,
-    historialInicial,
-  ],
-);
+    producciones: produccionesNormalizadas,
+    historial: [
+      ...activo.historial,
+      historialInicial,
+    ],
+  );
 
-await doc.set(
-  activoConHistorial.toMap(),
-);
+  await doc.set(
+    activoConHistorial.toMap(),
+  );
 
-await _auditService.registrar(
-  activoId: activo.activoId,
-  usuarioId: activo.creadorId,
-  tipo: AuditType.creacion,
-  modulo: 'activo',
-  accion: 'crear_activo',
-  elementoAfectado: activo.activoId,
-  referencia: doc.id,
-  datos: {
-    'nombre': activo.nombre,
-    'tipoActivo': activo.tipoActivo.name,
-    'hashActivo': activo.hashActivo,
-    'modeloVersion': ActivoAgroV2.modeloVersion,
-  },
-);
+  await _auditService.registrar(
+    activoId: activo.activoId,
+    usuarioId: activo.creadorId,
+    tipo: AuditType.creacion,
+    modulo: 'activo',
+    accion: 'crear_activo',
+    elementoAfectado: activo.activoId,
+    referencia: doc.id,
+    datos: {
+      'nombre': activo.nombre,
+      'tipoActivo': activo.tipoActivo.name,
+      'hashActivo': activo.hashActivo,
+      'modeloVersion': ActivoAgroV2.modeloVersion,
+    },
+  );
 
-return doc.id;
+  return doc.id;
 
 }
 
-  // =====================================================
-  // OBTENER ACTIVO POR ID
-  // =====================================================
+// =====================================================
+// OBTENER ACTIVO POR ID
+// =====================================================
 
-  Future<ActivoAgroV2?> obtenerActivoPorId(
-      String id,
-      ) async {
+Future<ActivoAgroV2?> obtenerActivoPorId(
+    String id,
+) async {
 
-    final snapshot =
-        await _db
-            .collection(coleccion)
-            .doc(id)
-            .get();
+  final snapshot =
+      await _db
+          .collection(coleccion)
+          .doc(id)
+          .get();
 
-    if(!snapshot.exists){
+  if(!snapshot.exists){
 
-      return null;
-
-    }
-
-    return ActivoAgroV2.fromMap(
-      snapshot.data()!,
-      snapshot.id,
-    );
+    return null;
 
   }
 
-  // =====================================================
-  // OBTENER TODOS LOS ACTIVOS
-  // =====================================================
+  return ActivoAgroV2.fromMap(
+    snapshot.data()!,
+    snapshot.id,
+  );
 
-  Future<List<ActivoAgroV2>> obtenerActivos() async {
+}
 
-    final snapshot =
-        await _db
-            .collection(coleccion)
-            .get();
+// =====================================================
+// OBTENER TODOS LOS ACTIVOS
+// =====================================================
 
-    return snapshot.docs
-        .map(
+Future<List<ActivoAgroV2>> obtenerActivos() async {
 
-          (doc)=>
+  final snapshot =
+      await _db
+          .collection(coleccion)
+          .get();
 
-          ActivoAgroV2.fromMap(
-            doc.data(),
-            doc.id,
-          ),
+  return snapshot.docs
+      .map(
 
-    )
-        .toList();
+        (doc)=>
 
-  }
+        ActivoAgroV2.fromMap(
+          doc.data(),
+          doc.id,
+        ),
 
-  // =====================================================
-  // ACTIVOS PUBLICADOS PARA INVERSORES
-  // =====================================================
+  )
+      .toList();
 
-  Future<List<ActivoAgroV2>> obtenerActivosPublicados() async {
+}
 
-    final snapshot =
-        await _db
-            .collection(coleccion)
-            .where(
-              'estadoPublicacion',
-              isEqualTo: 'publicado',
-            )
-            .where(
-              'visible',
-              isEqualTo: true,
-            )
-            .get();
+// =====================================================
+// ACTIVOS PUBLICADOS PARA INVERSORES
+// =====================================================
 
-    return snapshot.docs
-        .map(
+Future<List<ActivoAgroV2>> obtenerActivosPublicados() async {
 
-          (doc)=>
+  final snapshot =
+      await _db
+          .collection(coleccion)
+          .where(
+            'estadoPublicacion',
+            isEqualTo: 'publicado',
+          )
+          .where(
+            'visible',
+            isEqualTo: true,
+          )
+          .get();
 
-          ActivoAgroV2.fromMap(
-            doc.data(),
-            doc.id,
-          ),
+  return snapshot.docs
+      .map(
 
-    )
-        .toList();
+        (doc)=>
 
-  }
+        ActivoAgroV2.fromMap(
+          doc.data(),
+          doc.id,
+        ),
 
-  // =====================================================
-  // ACTIVOS DEL PROPIETARIO
-  // =====================================================
+  )
+      .toList();
 
-  Future<List<ActivoAgroV2>> buscarPorPropietario(
-      String propietarioId,
-      ) async {
+}
 
-    final snapshot =
-        await _db
-            .collection(coleccion)
-            .where(
-              'propietarioId',
-              isEqualTo: propietarioId,
-            )
-            .get();
+// =====================================================
+// ACTIVOS DEL PROPIETARIO
+// =====================================================
 
-    return snapshot.docs
-        .map(
+Future<List<ActivoAgroV2>> buscarPorPropietario(
+    String propietarioId,
+) async {
 
-          (doc)=>
+  final snapshot =
+      await _db
+          .collection(coleccion)
+          .where(
+            'propietarioId',
+            isEqualTo: propietarioId,
+          )
+          .get();
 
-          ActivoAgroV2.fromMap(
-            doc.data(),
-            doc.id,
-          ),
+  return snapshot.docs
+      .map(
 
-    )
-        .toList();
+        (doc)=>
 
-  }
+        ActivoAgroV2.fromMap(
+          doc.data(),
+          doc.id,
+        ),
 
-  // =====================================================
-  // ACTIVOS PUBLICADOS POR INTERMEDIARIO
-  // =====================================================
+  )
+      .toList();
 
-  Future<List<ActivoAgroV2>> buscarPorPublicador(
-      String publicadorId,
-      ) async {
+}
 
-    final snapshot =
-        await _db
-            .collection(coleccion)
-            .where(
-              'publicadorId',
-              isEqualTo: publicadorId,
-            )
-            .get();
+// =====================================================
+// ACTIVOS PUBLICADOS POR INTERMEDIARIO
+// =====================================================
 
-    return snapshot.docs
-        .map(
+Future<List<ActivoAgroV2>> buscarPorPublicador(
+    String publicadorId,
+) async {
 
-          (doc)=>
+  final snapshot =
+      await _db
+          .collection(coleccion)
+          .where(
+            'publicadorId',
+            isEqualTo: publicadorId,
+          )
+          .get();
 
-          ActivoAgroV2.fromMap(
-            doc.data(),
-            doc.id,
-          ),
+  return snapshot.docs
+      .map(
 
-    )
-        .toList();
+        (doc)=>
+
+        ActivoAgroV2.fromMap(
+          doc.data(),
+          doc.id,
+        ),
+
+  )
+      .toList();
 }
 
 // =====================================================
@@ -319,6 +323,7 @@ return doc.id;
 Future<void> publicarActivo(
   String activoId,
 ) async {
+
   final activo =
       await obtenerActivoPorId(activoId);
 
@@ -344,7 +349,7 @@ Future<void> publicarActivo(
   }
 
   // =====================================================
-  // EVENTO DE HISTORIAL
+  // EVENTO DE HISTORIAL — PUBLICAR ACTIVO
   // =====================================================
 
   final evento =
@@ -360,7 +365,7 @@ Future<void> publicarActivo(
   );
 
   // =====================================================
-  // PUBLICAR
+  // PUBLICAR ACTIVO — ACTUALIZAR ESTADO
   // =====================================================
 
   final activoActualizado =
@@ -385,7 +390,7 @@ Future<void> publicarActivo(
   );
 
   // =====================================================
-  // AUDITORÍA
+  // AUDITORIA — PUBLICAR ACTIVO
   // =====================================================
 
   await _auditService.registrar(
@@ -416,6 +421,7 @@ Future<void> publicarActivo(
 Future<void> pausarActivo(
   String activoId,
 ) async {
+
   final activo =
       await obtenerActivoPorId(activoId);
 
@@ -458,8 +464,13 @@ Future<void> pausarActivo(
     activoActualizado.toMap(),
   );
 
+  // =====================================================
+  // AUDITORIA — PAUSAR ACTIVO
+  // =====================================================
+
   await _auditService.registrar(
-    activoId: activoId,
+    activoId:
+        activoId,
     usuarioId:
         activo.publicadorId,
     tipo:
@@ -486,6 +497,7 @@ Future<void> pausarActivo(
 Future<void> actualizarActivo(
   ActivoAgroV2 activo,
 ) async {
+
   final evento =
       _crearEventoHistorial(
     tipoEvento:
@@ -513,6 +525,10 @@ Future<void> actualizarActivo(
     activoActualizado.toMap(),
   );
 
+  // =====================================================
+  // AUDITORIA — ACTUALIZAR ACTIVO COMPLETO
+  // =====================================================
+
   await _auditService.registrar(
     activoId:
         activo.activoId,
@@ -528,6 +544,393 @@ Future<void> actualizarActivo(
         activo.activoId,
     referencia:
         activo.activoId,
+  );
+}
+
+// =====================================================
+// REGISTRAR DERECHO / CARGA JURIDICA
+// =====================================================
+
+Future<void> registrarDerechoActivo(
+  String activoId,
+  DerechoActivo derecho, {
+  Evidencia? evidencia,
+}) async {
+
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  // =====================================================
+  // VALIDAR VINCULO DEL DERECHO CON EL ACTIVO
+  // =====================================================
+
+  if (derecho.activoAgroId != activoId) {
+    throw ArgumentError(
+      'El DerechoActivo no corresponde al activo indicado.',
+    );
+  }
+
+  // =====================================================
+  // EVITAR DUPLICACIÓN DEL DERECHO
+  // =====================================================
+
+  final existeDerecho =
+      activo.derechos.any(
+    (item) =>
+        item.derechoId ==
+        derecho.derechoId,
+  );
+
+  if (existeDerecho) {
+    throw Exception(
+      'El DerechoActivo ya está registrado en el activo.',
+    );
+  }
+
+  // =====================================================
+  // EVIDENCIA OPCIONAL — DERECHO ACTIVO
+  // =====================================================
+
+  String? evidenciaId;
+
+  if (evidencia != null) {
+
+    if (evidencia.activoAgroId != activoId) {
+      throw ArgumentError(
+        'La evidencia no corresponde al activo indicado.',
+      );
+    }
+
+    evidenciaId =
+        await _evidenciaService.crearEvidencia(
+      evidencia: evidencia,
+      usuarioId: activo.creadorId,
+    );
+  }
+
+  // =====================================================
+  // HISTORIAL — DERECHO ACTIVO
+  // =====================================================
+
+  final eventoId =
+      DateTime.now()
+          .millisecondsSinceEpoch
+          .toString();
+
+  final evento = HistorialActivo(
+    eventoId:
+        eventoId,
+    tipoEvento:
+        'registro_derecho_activo',
+    descripcion:
+        'Registro de un derecho o carga jurídica asociada al Activo Agro',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'derecho',
+    fecha:
+        DateTime.now(),
+    entidadRelacionada:
+        'DerechoActivo',
+    referenciaId:
+        derecho.derechoId,
+    datosEvento: {
+      'derechoId':
+          derecho.derechoId,
+      'tipoDerecho':
+          derecho.tipoDerecho,
+      'tipoObjeto':
+          derecho.tipoObjeto,
+      'descripcionObjeto':
+          derecho.descripcionObjeto,
+      'tipoInstrumento':
+          derecho.tipoInstrumento,
+      'identificadorInstrumento':
+          derecho.identificadorInstrumento,
+      'estado':
+          derecho.estado,
+      'tieneEvidencia':
+          evidencia != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
+    },
+  );
+
+  // =====================================================
+  // ACTUALIZAR ACTIVO — DERECHO ACTIVO
+  // =====================================================
+
+  final derechosActualizados =
+      <DerechoActivo>[
+    ...activo.derechos,
+    derecho,
+  ];
+
+  final activoActualizado =
+      activo.copyWith(
+    derechos:
+        derechosActualizados,
+    historial: [
+      ...activo.historial,
+      evento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  // =====================================================
+  // AUDITORIA — DERECHO ACTIVO
+  // =====================================================
+
+  await _auditService.registrar(
+    activoId:
+        activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'derecho',
+    accion:
+        'registrar_derecho_activo',
+    elementoAfectado:
+        derecho.derechoId,
+    referencia:
+        activoId,
+    estadoAnterior:
+        'sin_derecho_registrado',
+    estadoNuevo:
+        derecho.estado,
+    datos: {
+      'derechoId':
+          derecho.derechoId,
+      'tipoDerecho':
+          derecho.tipoDerecho,
+      'tipoObjeto':
+          derecho.tipoObjeto,
+      'descripcionObjeto':
+          derecho.descripcionObjeto,
+      'tipoInstrumento':
+          derecho.tipoInstrumento,
+      'identificadorInstrumento':
+          derecho.identificadorInstrumento,
+      'estado':
+          derecho.estado,
+      'tieneEvidencia':
+          evidencia != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
+    },
+  );
+}
+
+// =====================================================
+// REGISTRAR RELACIÓN JURIDICA / OBLIGACIÓN
+// =====================================================
+
+Future<void> registrarRelacionJuridica(
+  String activoId,
+  RelacionJuridica relacion, {
+  Evidencia? evidencia,
+}) async {
+
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  // =====================================================
+  // VALIDAR VINCULO DE LA RELACIÓN CON EL ACTIVO
+  // =====================================================
+
+  final derechoExiste =
+      activo.derechos.any(
+    (derecho) =>
+        derecho.derechoId == relacion.derechoId,
+  );
+
+  if (!derechoExiste) {
+    throw ArgumentError(
+      'La relación jurídica referencia un derecho que no existe en el activo.',
+    );
+  }
+
+  // =====================================================
+  // EVITAR DUPLICADOS — RELACIÓN JURÍDICA
+  // =====================================================
+
+  final relacionDuplicada =
+      activo.relacionesJuridicas.any(
+    (relacionExistente) =>
+        relacionExistente.relacionId ==
+        relacion.relacionId,
+  );
+
+  if (relacionDuplicada) {
+    throw Exception(
+      'La relación jurídica ya existe en el activo.',
+    );
+  }
+
+  // =====================================================
+  // EVIDENCIA — RELACIÓN JURÍDICA
+  // =====================================================
+
+  String? evidenciaId;
+
+  if (evidencia != null) {
+
+    if (evidencia.activoAgroId != activoId) {
+      throw ArgumentError(
+        'La evidencia no corresponde al activo indicado.',
+      );
+    }
+
+    evidenciaId =
+        await _evidenciaService.crearEvidencia(
+      evidencia: evidencia,
+      usuarioId: activo.creadorId,
+    );
+  }
+
+  // =====================================================
+  // AGREGAR RELACIÓN JURÍDICA
+  // =====================================================
+
+  final relacionesActualizadas = [
+    ...activo.relacionesJuridicas,
+    relacion,
+  ];
+
+  final activoActualizado = activo.copyWith(
+    relacionesJuridicas:
+        relacionesActualizadas,
+  );
+
+  // =====================================================
+  // HISTORIAL — RELACIÓN JURÍDICA
+  // =====================================================
+
+  final eventoId =
+      DateTime.now()
+          .millisecondsSinceEpoch
+          .toString();
+
+  final evento = HistorialActivo(
+    eventoId: eventoId,
+    tipoEvento:
+        'registro_relacion_juridica',
+    descripcion:
+        'Registro de una relación jurídica asociada a un derecho del Activo Agro',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'derecho',
+    fecha:
+        DateTime.now(),
+    entidadRelacionada:
+        'RelacionJuridica',
+    referenciaId:
+        relacion.relacionId,
+    datosEvento: {
+      'relacionId':
+          relacion.relacionId,
+      'derechoId':
+          relacion.derechoId,
+      'sujetoId':
+          relacion.sujetoId,
+      'tipoSujeto':
+          relacion.tipoSujeto,
+      'rol':
+          relacion.rol,
+      'estado':
+          relacion.estado,
+      'tieneEvidencia':
+          evidenciaId != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
+    },
+  );
+
+  final historialActualizado = [
+    ...activoActualizado.historial,
+    evento,
+  ];
+
+  final activoConHistorial =
+      activoActualizado.copyWith(
+    historial:
+        historialActualizado,
+  );
+
+  // =====================================================
+  // PERSISTENCIA — RELACIÓN JURÍDICA
+  // =====================================================
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoConHistorial.toMap(),
+  );
+
+  // =====================================================
+  // AUDITORIA — RELACIÓN JURÍDICA
+  // =====================================================
+
+  await _auditService.registrar(
+    activoId: activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'derecho',
+    accion:
+        'registrar_relacion_juridica',
+    elementoAfectado:
+        relacion.relacionId,
+    referencia:
+        activoId,
+    estadoAnterior:
+        'sin_relacion_registrada',
+    estadoNuevo:
+        relacion.estado,
+    datos: {
+      'relacionId':
+          relacion.relacionId,
+      'derechoId':
+          relacion.derechoId,
+      'sujetoId':
+          relacion.sujetoId,
+      'tipoSujeto':
+          relacion.tipoSujeto,
+      'rol':
+          relacion.rol,
+      'tieneEvidencia':
+          evidenciaId != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
+    },
   );
 }
 
@@ -582,7 +985,7 @@ Future<void> actualizarSuelo(
   }
 
   // =====================================================
-  // HISTORIAL
+  // HISTORIAL — SUELO
   // =====================================================
 
   final evento =
@@ -598,7 +1001,7 @@ Future<void> actualizarSuelo(
   );
 
   // =====================================================
-  // ACTUALIZAR ACTIVO
+  // ACTUALIZAR ACTIVO — SUELO
   // =====================================================
 
   final activoActualizado =
@@ -619,7 +1022,7 @@ Future<void> actualizarSuelo(
   );
 
   // =====================================================
-  // AUDITORÍA
+  // AUDITORIA — SUELO
   // =====================================================
 
   await _auditService.registrar(
@@ -639,9 +1042,11 @@ Future<void> actualizarSuelo(
         activoId,
   );
 }
+
 // =====================================================
 // ACTUALIZAR DOCUMENTACIÓN
 // =====================================================
+
 Future<void> actualizarDocumentacion(
   String activoId,
   DocumentacionActivo documentacion, {
@@ -656,6 +1061,7 @@ Future<void> actualizarDocumentacion(
       'Activo no encontrado',
     );
   }
+
   // =====================================================
   // TRAZABILIDAD DOCUMENTAL: ESTADO ANTERIOR / NUEVO
   // =====================================================
@@ -671,6 +1077,7 @@ Future<void> actualizarDocumentacion(
   // =====================================================
 
   if (evidencia != null) {
+
     if (evidencia.activoAgroId != activoId) {
       throw ArgumentError(
         'La evidencia no corresponde al activo indicado.',
@@ -684,7 +1091,7 @@ Future<void> actualizarDocumentacion(
   }
 
   // =====================================================
-  // HISTORIAL
+  // HISTORIAL — DOCUMENTACIÓN
   // =====================================================
 
   final eventoId =
@@ -722,7 +1129,7 @@ Future<void> actualizarDocumentacion(
   );
 
   // =====================================================
-  // ACTUALIZAR ACTIVO
+  // ACTUALIZAR ACTIVO — DOCUMENTACIÓN
   // =====================================================
 
   final activoActualizado =
@@ -743,7 +1150,7 @@ Future<void> actualizarDocumentacion(
   );
 
   // =====================================================
-  // AUDITORÍA
+  // AUDITORIA — DOCUMENTACIÓN
   // =====================================================
 
   await _auditService.registrar(
@@ -780,8 +1187,9 @@ Future<void> actualizarDocumentacion(
     },
   );
 }
+
 // =====================================================
-// ACTUALIZAR ECONOMÍA
+// ACTUALIZAR ECONOMIA
 // =====================================================
 
 Future<void> actualizarEconomia(
@@ -789,6 +1197,7 @@ Future<void> actualizarEconomia(
   EconomiaActivo economia, {
   Evidencia? evidencia,
 }) async {
+
   final activo =
       await obtenerActivoPorId(activoId);
 
@@ -805,12 +1214,13 @@ Future<void> actualizarEconomia(
       economia.toMap();
 
   // =====================================================
-  // EVIDENCIA OPCIONAL DE LA ECONOMÍA
+  // EVIDENCIA OPCIONAL DE LA ECONOMIA
   // =====================================================
 
   String? evidenciaId;
 
   if (evidencia != null) {
+
     if (evidencia.activoAgroId != activoId) {
       throw ArgumentError(
         'La evidencia no corresponde al activo indicado.',
@@ -825,7 +1235,7 @@ Future<void> actualizarEconomia(
   }
 
   // =====================================================
-  // HISTORIAL
+  // HISTORIAL — ECONOMIA
   // =====================================================
 
   final eventoId =
@@ -863,7 +1273,7 @@ Future<void> actualizarEconomia(
   );
 
   // =====================================================
-  // ACTUALIZAR ACTIVO
+  // ACTUALIZAR ACTIVO — ECONOMIA
   // =====================================================
 
   final activoActualizado =
@@ -884,7 +1294,7 @@ Future<void> actualizarEconomia(
   );
 
   // =====================================================
-  // AUDITORÍA
+  // AUDITORIA — ECONOMIA
   // =====================================================
 
   await _auditService.registrar(
@@ -921,6 +1331,197 @@ Future<void> actualizarEconomia(
     },
   );
 }
+
+Future<void> registrarEventoAfectacion(
+  String activoId,
+  EventoAfectacion evento, {
+  Evidencia? evidencia,
+}) async {
+
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  // =====================================================
+  // VALIDAR VINCULO DEL EVENTO CON EL ACTIVO
+  // =====================================================
+
+  if (evento.activoAgroId != activoId) {
+    throw ArgumentError(
+      'El EventoAfectacion no corresponde al activo indicado.',
+    );
+  }
+
+  // =====================================================
+  // EVITAR DUPLICACION DEL EVENTO
+  // =====================================================
+
+  final eventoExistente =
+      await _db
+          .collection('eventos_afectacion')
+          .doc(evento.eventoId)
+          .get();
+
+  if (eventoExistente.exists) {
+    throw Exception(
+      'El EventoAfectacion ya está registrado.',
+    );
+  }
+
+  // =====================================================
+// EVIDENCIA OPCIONAL — EVENTO AFECTACION
+// =====================================================
+
+String? evidenciaId;
+
+if (evidencia != null) {
+
+  if (evidencia.activoAgroId != activoId) {
+    throw ArgumentError(
+      'La evidencia no corresponde al activo indicado.',
+    );
+  }
+
+  if (evidencia.elementoTipo != 'EventoAfectacion') {
+    throw ArgumentError(
+      'La evidencia debe estar vinculada a un EventoAfectacion.',
+    );
+  }
+
+  if (evidencia.elementoId != evento.eventoId) {
+    throw ArgumentError(
+      'La evidencia no corresponde al EventoAfectacion indicado.',
+    );
+  }
+
+  evidenciaId =
+      await _evidenciaService.crearEvidencia(
+    evidencia: evidencia,
+    usuarioId: activo.creadorId,
+  );
+}
+
+// =====================================================
+// PERSISTIR EVENTO — EVENTO AFECTACION
+// =====================================================
+
+  await _db
+      .collection('eventos_afectacion')
+      .doc(evento.eventoId)
+      .set(
+    evento.toMap(),
+  );
+
+  // =====================================================
+  // HISTORIAL — EVENTO AFECTACION
+  // =====================================================
+
+  final historialEvento =
+      HistorialActivo(
+    eventoId:
+        DateTime.now()
+            .millisecondsSinceEpoch
+            .toString(),
+    tipoEvento:
+        'registro_evento_afectacion',
+    descripcion:
+        'Registro de un evento de afectación del Activo Agro',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'afectacion',
+    fecha:
+        DateTime.now(),
+    entidadRelacionada:
+        'EventoAfectacion',
+    referenciaId:
+        evento.eventoId,
+    datosEvento: {
+      'eventoId':
+          evento.eventoId,
+      'tipoEvento':
+          evento.tipoEvento,
+      'subtipoEvento':
+          evento.subtipoEvento,
+      'origen':
+          evento.origen,
+      'estado':
+          evento.estado,
+      'cantidadAfectaciones':
+          evento.afectaciones.length,
+      'tieneEvidencia':
+          evidencia != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
+    },
+  );
+
+  // =====================================================
+  // ACTUALIZAR HISTORIAL DEL ACTIVO — EVENTO AFECTACION
+  // =====================================================
+
+  final activoActualizado =
+      activo.copyWith(
+    historial: [
+      ...activo.historial,
+      historialEvento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  // =====================================================
+  // AUDITORIA — EVENTO AFECTACION
+  // =====================================================
+
+  await _auditService.registrar(
+    activoId:
+        activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'afectacion',
+    accion:
+        'registrar_evento_afectacion',
+    elementoAfectado:
+        evento.eventoId,
+    referencia:
+        activoId,
+    datos: {
+      'eventoId':
+          evento.eventoId,
+      'tipoEvento':
+          evento.tipoEvento,
+      'subtipoEvento':
+          evento.subtipoEvento,
+      'origen':
+          evento.origen,
+      'estado':
+          evento.estado,
+      'cantidadAfectaciones':
+          evento.afectaciones.length,
+      'tieneEvidencia':
+          evidencia != null,
+      if (evidenciaId != null)
+        'evidenciaId':
+            evidenciaId,
+    },
+  );
+}
+
 // =====================================================
 // REGISTRAR CICLO PRODUCTIVO
 // =====================================================
@@ -931,6 +1532,7 @@ Future<void> registrarCicloProductivo(
   CicloProductivo ciclo, {
   Evidencia? evidencia,
 }) async {
+
   final activo =
       await obtenerActivoPorId(activoId);
 
@@ -968,10 +1570,11 @@ Future<void> registrarCicloProductivo(
   }
 
   // =====================================================
-  // EVIDENCIA OPCIONAL
+  // EVIDENCIA OPCIONAL — CICLO PRODUCTIVO
   // =====================================================
 
   if (evidencia != null) {
+
     if (evidencia.activoAgroId != activoId) {
       throw ArgumentError(
         'La evidencia no corresponde al activo indicado.',
@@ -990,8 +1593,10 @@ Future<void> registrarCicloProductivo(
 
   final cicloGuardar =
       CicloProductivo(
-    cicloId: ciclo.cicloId,
-    activoAgroId: activoId,
+    cicloId:
+        ciclo.cicloId,
+    activoAgroId:
+        activoId,
     moduloProduccionId:
         moduloProduccionId,
     fechaInicio:
@@ -1009,7 +1614,7 @@ Future<void> registrarCicloProductivo(
   );
 
   // =====================================================
-  // ACTUALIZAR MÓDULO
+  // ACTUALIZAR MÓDULO — CICLO PRODUCTIVO
   // =====================================================
 
   final moduloActual =
@@ -1053,7 +1658,7 @@ Future<void> registrarCicloProductivo(
       moduloActualizado;
 
   // =====================================================
-  // HISTORIAL
+  // HISTORIAL — CICLO PRODUCTIVO
   // =====================================================
 
   final evento =
@@ -1069,7 +1674,7 @@ Future<void> registrarCicloProductivo(
   );
 
   // =====================================================
-  // ACTUALIZAR ACTIVO
+  // ACTUALIZAR ACTIVO — CICLO PRODUCTIVO
   // =====================================================
 
   final activoActualizado =
@@ -1090,7 +1695,7 @@ Future<void> registrarCicloProductivo(
   );
 
   // =====================================================
-  // AUDITORÍA
+  // AUDITORIA — CICLO PRODUCTIVO
   // =====================================================
 
   await _auditService.registrar(
@@ -1124,6 +1729,7 @@ Future<void> registrarCicloProductivo(
     },
   );
 }
+
 // =====================================================
 // ACTUALIZAR SISTEMA DE CONFIANZA
 // =====================================================
@@ -1132,6 +1738,7 @@ Future<void> actualizarConfianza(
   String activoId,
   ConfianzaActivo confianza,
 ) async {
+
   final activo =
       await obtenerActivoPorId(activoId);
 
@@ -1170,6 +1777,10 @@ Future<void> actualizarConfianza(
     activoActualizado.toMap(),
   );
 
+  // =====================================================
+  // AUDITORIA — ACTUALIZAR SISTEMA DE CONFIANZA
+  // =====================================================
+
   await _auditService.registrar(
     activoId:
         activoId,
@@ -1196,6 +1807,7 @@ Future<void> actualizarEvaluacionConfianza(
   String activoId,
   EvaluacionConfianza evaluacion,
 ) async {
+
   final activo =
       await obtenerActivoPorId(activoId);
 
@@ -1237,7 +1849,7 @@ Future<void> actualizarEvaluacionConfianza(
   );
 
   // =====================================================
-  // ACTUALIZAR ACTIVO
+  // ACTUALIZAR ACTIVO — EVALUACIÓN DE CONFIANZA
   // =====================================================
 
   final activoActualizado =
@@ -1260,6 +1872,10 @@ Future<void> actualizarEvaluacionConfianza(
       .update(
     activoActualizado.toMap(),
   );
+
+  // =====================================================
+  // AUDITORIA — EVALUACIÓN DE CONFIANZA
+  // =====================================================
 
   await _auditService.registrar(
     activoId:
