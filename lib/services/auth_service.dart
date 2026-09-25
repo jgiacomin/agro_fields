@@ -17,15 +17,12 @@ class AuthService {
         final provider = GoogleAuthProvider();
 
         // Obliga a Google a mostrar el selector de cuentas.
-        provider.setCustomParameters({
-          'prompt': 'select_account',
-        });
+        provider.setCustomParameters({'prompt': 'select_account'});
 
         result = await _auth.signInWithPopup(provider);
       } else {
         // ANDROID / IOS: autenticación nativa de Google.
-        final GoogleSignInAccount? googleUser =
-            await GoogleSignIn().signIn();
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
         // El usuario canceló la selección de cuenta.
         if (googleUser == null) {
@@ -72,6 +69,7 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    await GoogleSignIn().disconnect();
     await _auth.signOut();
   }
 }

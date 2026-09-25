@@ -127,7 +127,7 @@ class ActivoAgroTestData {
 
         periodoEvaluacion: "",
 
-        datosEconomicos: {},
+        datosEconomicos: [],
 
         fechaActualizacion: DateTime.now(),
       ),

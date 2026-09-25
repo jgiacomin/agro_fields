@@ -28,376 +28,330 @@ void main() {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    FirebaseFirestore.instance.useFirestoreEmulator(
-      '10.0.2.2',
-      8080,
-    );
+    FirebaseFirestore.instance.useFirestoreEmulator('10.0.2.2', 8080);
   });
 
-  testWidgets(
-    'Paso 12.10 - actualiza suelo con historial y auditoria',
-    (tester) async {
-      final firestore = FirebaseFirestore.instance;
-      final activoService = ActivoAgroServiceV2();
-      final auditService = AuditService();
+  testWidgets('Paso 12.10 - actualiza suelo con historial y auditoria', (
+    tester,
+  ) async {
+    final firestore = FirebaseFirestore.instance;
+    final activoService = ActivoAgroServiceV2();
+    final auditService = AuditService();
 
-      final sufijo =
-          DateTime.now().microsecondsSinceEpoch.toString();
+    final sufijo = DateTime.now().microsecondsSinceEpoch.toString();
 
-      final activoId =
-          'activo-suelo-test-$sufijo';
+    final activoId = 'activo-suelo-test-$sufijo';
 
-      const usuarioId =
-          'usuario-suelo-test-001';
+    const usuarioId = 'usuario-suelo-test-001';
 
-      final fecha =
-          DateTime(2026, 9, 8, 10, 0);
+    final fecha = DateTime(2026, 9, 8, 10, 0);
 
-      // =========================================================
-      // 1. CREAR ACTIVO AGRO V2
-      // =========================================================
+    // =========================================================
+    // 1. CREAR ACTIVO AGRO V2
+    // =========================================================
 
-      final activo = ActivoAgroV2(
-        activoId: activoId,
-        nombre: 'Activo de prueba para Suelo',
-        descripcion:
-            'Activo técnico para validar actualización de suelo.',
-        tipoActivo: TipoActivo.agricola,
-        categorias: ['agricultura'],
-        ubicacion: UbicacionActivo(
-          pais: 'Argentina',
-          provincia: 'Buenos Aires',
-          departamento: 'La Plata',
-          localidad: 'La Plata',
-          codigoPostal: '1900',
-          latitud: 0,
-          longitud: 0,
+    final activo = ActivoAgroV2(
+      activoId: activoId,
+      nombre: 'Activo de prueba para Suelo',
+      descripcion: 'Activo técnico para validar actualización de suelo.',
+      tipoActivo: TipoActivo.agricola,
+      categorias: ['agricultura'],
+      ubicacion: UbicacionActivo(
+        pais: 'Argentina',
+        provincia: 'Buenos Aires',
+        departamento: 'La Plata',
+        localidad: 'La Plata',
+        codigoPostal: '1900',
+        latitud: 0,
+        longitud: 0,
+        superficie: 100,
+        regionProductiva: 'agricola',
+        tipoZona: 'rural',
+        descripcionEntorno: 'Prueba técnica',
+        accesoCaminos: 'camino rural',
+        disponibilidadServicios: '',
+        jurisdiccionLegal: 'Argentina',
+        zonaHoraria: 'America/Argentina/Buenos_Aires',
+        monedaLocal: 'ARS',
+      ),
+      suelo: SueloActivo.inicial(),
+      producciones: [
+        ModuloProduccion(
+          dominio: 'agricola',
+          actividad: 'produccion agricola',
+          descripcion: 'Producción de prueba para integración.',
           superficie: 100,
-          regionProductiva: 'agricola',
-          tipoZona: 'rural',
-          descripcionEntorno: 'Prueba técnica',
-          accesoCaminos: 'camino rural',
-          disponibilidadServicios: '',
-          jurisdiccionLegal: 'Argentina',
-          zonaHoraria:
-              'America/Argentina/Buenos_Aires',
-          monedaLocal: 'ARS',
+          unidad: 'hectareas',
+          capacidadActual: 100,
+          capacidadMaxima: 100,
+          activo: true,
+          datos: {},
+          ciclos: [],
         ),
-        suelo: SueloActivo.inicial(),
-        producciones: [
-          ModuloProduccion(
-            dominio: 'agricola',
-            actividad: 'produccion agricola',
-            descripcion:
-                'Producción de prueba para integración.',
-            superficie: 100,
-            unidad: 'hectareas',
-            capacidadActual: 100,
-            capacidadMaxima: 100,
-            activo: true,
-            datos: {},
-            ciclos: [],
-          ),
-        ],
-        economia: EconomiaActivo.inicial(),
-        documentacion: DocumentacionActivo.inicial(),
-        confianza: ConfianzaActivo(
-          nivelGeneral: 0,
-          identidadVerificada: false,
-          documentacionCompleta: false,
-          nivelDocumentacion: 0,
-          cantidadEvidencias: 0,
-          nivelEvidencias: 0,
-          informacionProductivaCompleta: false,
-          nivelProduccion: 0,
-          nivelInfraestructura: 0,
-          infraestructuraVerificada: false,
-          cantidadInfraestructuras: 0,
-          nivelTecnologia: 0,
-          tecnologiaVerificada: false,
-          cantidadTecnologias: 0,
-          nivelInversion: 0,
-          inversionDeclarada: false,
-          inversionVerificada: false,
-          montoInversionDeclarada: 0,
-          monedaInversion: 'USD',
-          participantesVerificados: false,
-          nivelGobernanza: 0,
-          ultimaVerificacion: fecha,
-          ultimaEvaluacion: fecha,
-          observaciones: '',
-        ),
-        evaluacion: EvaluacionConfianza.inicial(),
-        madurez: MadurezActivo(
-          porcentaje: 0,
-          faltantes: [],
-          etapa: '',
-          nivelTecnologico: '',
-          preparacionInversion: '',
-        ),
-        participantes: [],
-        propietarioId: usuarioId,
-        creadorId: usuarioId,
-        publicadorId: usuarioId,
-        tipoRelacionPropietario: 'propietario',
-        estado: EstadoActivo.borrador,
-        estadoPublicacion: 'borrador',
-        visible: false,
-        historial: [],
-        hashActivo:
-            'hash-suelo-test-$sufijo',
-        versionDatos: 1,
-        datos: null,
-        fechaCreacion: fecha,
-        ultimaActualizacion: fecha,
-      );
+      ],
+      economia: EconomiaActivo.inicial(),
+      documentacion: DocumentacionActivo.inicial(),
+      confianza: ConfianzaActivo(
+        nivelGeneral: 0,
+        identidadVerificada: false,
+        documentacionCompleta: false,
+        nivelDocumentacion: 0,
+        cantidadEvidencias: 0,
+        nivelEvidencias: 0,
+        informacionProductivaCompleta: false,
+        nivelProduccion: 0,
+        nivelInfraestructura: 0,
+        infraestructuraVerificada: false,
+        cantidadInfraestructuras: 0,
+        nivelTecnologia: 0,
+        tecnologiaVerificada: false,
+        cantidadTecnologias: 0,
+        nivelInversion: 0,
+        inversionDeclarada: false,
+        inversionVerificada: false,
+        montoInversionDeclarada: 0,
+        monedaInversion: 'USD',
+        participantesVerificados: false,
+        nivelGobernanza: 0,
+        ultimaVerificacion: fecha,
+        ultimaEvaluacion: fecha,
+        observaciones: '',
+      ),
+      evaluacion: EvaluacionConfianza.inicial(),
+      madurez: MadurezActivo(
+        porcentaje: 0,
+        faltantes: [],
+        etapa: '',
+        nivelTecnologico: '',
+        preparacionInversion: '',
+      ),
+      participantes: [],
+      propietarioId: usuarioId,
+      creadorId: usuarioId,
+      publicadorId: usuarioId,
+      tipoRelacionPropietario: 'propietario',
+      estado: EstadoActivo.borrador,
+      estadoPublicacion: 'borrador',
+      visible: false,
+      historial: [],
+      hashActivo: 'hash-suelo-test-$sufijo',
+      versionDatos: 1,
+      datos: null,
+      fechaCreacion: fecha,
+      ultimaActualizacion: fecha,
+    );
 
-      final activoCreado =
-          await activoService.crearActivo(activo);
+    final activoCreado = await activoService.crearActivo(activo);
 
-      expect(
-        activoCreado,
-        activoId,
-      );
+    expect(activoCreado, activoId);
 
-      // =========================================================
-      // 2. VERIFICAR ACTIVO CREADO
-      // =========================================================
+    // =========================================================
+    // 2. VERIFICAR ACTIVO CREADO
+    // =========================================================
 
-      final activoInicial =
-          await activoService.obtenerActivoPorId(
-        activoId,
-      );
+    final activoInicial = await activoService.obtenerActivoPorId(activoId);
 
-      expect(
-        activoInicial,
-        isNotNull,
-      );
+    expect(activoInicial, isNotNull);
 
-      expect(
-        activoInicial!.activoId,
-        activoId,
-      );
+    expect(activoInicial!.activoId, activoId);
 
-      expect(
-        activoInicial.suelo.estado,
-        'sin_evaluar',
-      );
+    expect(activoInicial.suelo.estado, 'sin_evaluar');
 
-      // =========================================================
-      // 3. CREAR NUEVA INFORMACIÓN DE SUELO
-      // =========================================================
+    // =========================================================
+    // 3. CREAR NUEVA INFORMACIÓN DE SUELO
+    // =========================================================
 
-      final sueloActualizado = SueloActivo(
-        estado: 'evaluado',
-        textura: 'franco',
-        drenaje: 'bueno',
-        ph: 6.5,
-        materiaOrganica: 3.2,
-        evidencias: [],
-        observaciones:
-            'Evaluación de suelo realizada para prueba.',
-        fechaEvaluacion:
-            DateTime(2026, 9, 8, 10, 15),
-      );
+    final sueloActualizado = SueloActivo(
+      estado: 'evaluado',
+      textura: 'franco',
+      drenaje: 'bueno',
+      ph: 6.5,
+      materiaOrganica: 3.2,
+      sistemaClasificacion: 'Clasificación de Capacidad de Uso',
+      clase: 'II',
+      subclase: 'IIe',
+      unidadTipo: 'Unidad cartográfica U-01',
+      descripcionClasificacion: 'Suelo agrícola con limitaciones moderadas.',
+      profundidad: '80 cm',
+      salinidad: 'baja',
+      fertilidad: 'media',
+      nutrientes: 'N, P, K',
+      pedregosidad: 'baja',
+      retencionAgua: 'media',
+      erosion: 'moderada',
+      limitaciones: 'Riesgo de erosión hídrica.',
+      evidencias: [],
+      observaciones: 'Evaluación de suelo realizada para prueba.',
+      fechaEvaluacion: DateTime(2026, 9, 8, 10, 15),
+    );
 
-      // =========================================================
-      // 4. ACTUALIZAR SUELO
-      // =========================================================
+    // =========================================================
+    // 4. ACTUALIZAR SUELO
+    // =========================================================
 
-      await activoService.actualizarSuelo(
-        activoId,
-        sueloActualizado,
-      );
+    await activoService.actualizarSuelo(activoId, sueloActualizado);
 
-      // =========================================================
-      // 5. VERIFICAR SUELO PERSISTIDO
-      // =========================================================
+    // =========================================================
+    // 5. VERIFICAR SUELO PERSISTIDO
+    // =========================================================
 
-      final activoDespues =
-          await activoService.obtenerActivoPorId(
-        activoId,
-      );
+    final activoDespues = await activoService.obtenerActivoPorId(activoId);
 
-      expect(
-        activoDespues,
-        isNotNull,
-      );
+    expect(activoDespues, isNotNull);
 
-      expect(
-        activoDespues!.suelo.estado,
-        'evaluado',
-      );
+    expect(activoDespues!.suelo.estado, 'evaluado');
 
-      expect(
-        activoDespues.suelo.textura,
-        'franco',
-      );
+    expect(activoDespues.suelo.textura, 'franco');
 
-      expect(
-        activoDespues.suelo.drenaje,
-        'bueno',
-      );
+    expect(activoDespues.suelo.drenaje, 'bueno');
 
-      expect(
-        activoDespues.suelo.ph,
-        6.5,
-      );
+    expect(activoDespues.suelo.ph, 6.5);
 
-      expect(
-        activoDespues.suelo.materiaOrganica,
-        3.2,
-      );
+    expect(activoDespues.suelo.materiaOrganica, 3.2);
 
-      expect(
-        activoDespues.suelo.observaciones,
-        'Evaluación de suelo realizada para prueba.',
-      );
+    expect(
+      activoDespues.suelo.sistemaClasificacion,
+      'Clasificación de Capacidad de Uso',
+    );
 
-      expect(
-        activoDespues.suelo.fechaEvaluacion,
-        isNotNull,
-      );
+    expect(activoDespues.suelo.clase, 'II');
 
-      // =========================================================
-      // 6. VERIFICAR HISTORIAL
-      // =========================================================
+    expect(activoDespues.suelo.subclase, 'IIe');
 
-      expect(
-        activoDespues.historial,
-        isNotEmpty,
-      );
+    expect(activoDespues.suelo.unidadTipo, 'Unidad cartográfica U-01');
 
-      final eventoSuelo =
-          activoDespues.historial.where(
-        (evento) =>
-            evento.tipoEvento ==
-                'actualizacion_suelo' &&
-            evento.moduloOrigen == 'suelo',
-      );
+    expect(
+      activoDespues.suelo.descripcionClasificacion,
+      'Suelo agrícola con limitaciones moderadas.',
+    );
 
-      expect(
-        eventoSuelo,
-        isNotEmpty,
-      );
+    expect(activoDespues.suelo.profundidad, '80 cm');
 
-      final evento =
-          eventoSuelo.last;
+    expect(activoDespues.suelo.salinidad, 'baja');
 
-      expect(
-        evento.descripcion,
-        'Actualización de información del suelo',
-      );
+    expect(activoDespues.suelo.fertilidad, 'media');
 
-      expect(
-        evento.usuarioId,
-        usuarioId,
-      );
+    expect(activoDespues.suelo.nutrientes, 'N, P, K');
 
-      // =========================================================
-      // 7. VERIFICAR AUDITORÍA
-      // =========================================================
+    expect(activoDespues.suelo.pedregosidad, 'baja');
 
-      final auditoria =
-          await auditService.obtenerPorActivo(
-        activoId,
-      );
+    expect(activoDespues.suelo.retencionAgua, 'media');
 
-      expect(
-        auditoria,
-        isNotEmpty,
-      );
+    expect(activoDespues.suelo.erosion, 'moderada');
 
-      final auditoriaSuelo =
-          auditoria.where(
-        (evento) =>
-            evento.modulo == 'suelo' &&
-            evento.accion == 'actualizar_suelo',
-      );
+    expect(activoDespues.suelo.limitaciones, 'Riesgo de erosión hídrica.');
 
-      expect(
-        auditoriaSuelo,
-        isNotEmpty,
-      );
+    expect(
+      activoDespues.suelo.observaciones,
+      'Evaluación de suelo realizada para prueba.',
+    );
 
-      final eventoAuditoria =
-          auditoriaSuelo.last;
+    expect(activoDespues.suelo.fechaEvaluacion, isNotNull);
 
-      expect(
-        eventoAuditoria.activoId,
-        activoId,
-      );
+    // =========================================================
+    // 6. VERIFICAR HISTORIAL
+    // =========================================================
 
-      expect(
-        eventoAuditoria.usuarioId,
-        usuarioId,
-      );
+    expect(activoDespues.historial, isNotEmpty);
 
-      expect(
-        eventoAuditoria.modulo,
-        'suelo',
-      );
+    final eventoSuelo = activoDespues.historial.where(
+      (evento) =>
+          evento.tipoEvento == 'actualizacion_suelo' &&
+          evento.moduloOrigen == 'suelo',
+    );
 
-      expect(
-        eventoAuditoria.accion,
-        'actualizar_suelo',
-      );
+    expect(eventoSuelo, isNotEmpty);
 
-      expect(
-        eventoAuditoria.elementoAfectado,
-        activoId,
-      );
+    final evento = eventoSuelo.last;
 
-      expect(
-        eventoAuditoria.referencia,
-        activoId,
-      );
+    expect(evento.descripcion, 'Actualización de información del suelo');
 
-      // =========================================================
-      // 8. VERIFICAR DOCUMENTO DIRECTAMENTE EN FIRESTORE
-      // =========================================================
+    expect(evento.usuarioId, usuarioId);
 
-      final firestoreSnapshot =
-          await firestore
-              .collection('activos_agro')
-              .doc(activoId)
-              .get();
+    // =========================================================
+    // 7. VERIFICAR AUDITORÍA
+    // =========================================================
 
-      expect(
-        firestoreSnapshot.exists,
-        true,
-      );
+    final auditoria = await auditService.obtenerPorActivo(activoId);
 
-      final data =
-          firestoreSnapshot.data()!;
+    expect(auditoria, isNotEmpty);
 
-      final sueloData =
-          data['suelo'] as Map<String, dynamic>;
+    final auditoriaSuelo = auditoria.where(
+      (evento) =>
+          evento.modulo == 'suelo' && evento.accion == 'actualizar_suelo',
+    );
 
-      expect(
-        sueloData['estado'],
-        'evaluado',
-      );
+    expect(auditoriaSuelo, isNotEmpty);
 
-      expect(
-        sueloData['textura'],
-        'franco',
-      );
+    final eventoAuditoria = auditoriaSuelo.last;
 
-      expect(
-        sueloData['drenaje'],
-        'bueno',
-      );
+    expect(eventoAuditoria.activoId, activoId);
 
-      expect(
-        sueloData['ph'],
-        6.5,
-      );
+    expect(eventoAuditoria.usuarioId, usuarioId);
 
-      expect(
-        sueloData['materiaOrganica'],
-        3.2,
-      );
-    },
-  );
+    expect(eventoAuditoria.modulo, 'suelo');
+
+    expect(eventoAuditoria.accion, 'actualizar_suelo');
+
+    expect(eventoAuditoria.elementoAfectado, activoId);
+
+    expect(eventoAuditoria.referencia, activoId);
+
+    // =========================================================
+    // 8. VERIFICAR DOCUMENTO DIRECTAMENTE EN FIRESTORE
+    // =========================================================
+
+    final firestoreSnapshot = await firestore
+        .collection('activos_agro')
+        .doc(activoId)
+        .get();
+
+    expect(firestoreSnapshot.exists, true);
+
+    final data = firestoreSnapshot.data()!;
+
+    final sueloData = data['suelo'] as Map<String, dynamic>;
+
+    expect(sueloData['estado'], 'evaluado');
+
+    expect(sueloData['textura'], 'franco');
+
+    expect(sueloData['drenaje'], 'bueno');
+
+    expect(sueloData['ph'], 6.5);
+
+    expect(sueloData['materiaOrganica'], 3.2);
+
+    expect(
+      sueloData['sistemaClasificacion'],
+      'Clasificación de Capacidad de Uso',
+    );
+
+    expect(sueloData['clase'], 'II');
+
+    expect(sueloData['subclase'], 'IIe');
+
+    expect(sueloData['unidadTipo'], 'Unidad cartográfica U-01');
+
+    expect(
+      sueloData['descripcionClasificacion'],
+      'Suelo agrícola con limitaciones moderadas.',
+    );
+
+    expect(sueloData['profundidad'], '80 cm');
+
+    expect(sueloData['salinidad'], 'baja');
+
+    expect(sueloData['fertilidad'], 'media');
+
+    expect(sueloData['nutrientes'], 'N, P, K');
+
+    expect(sueloData['pedregosidad'], 'baja');
+
+    expect(sueloData['retencionAgua'], 'media');
+
+    expect(sueloData['erosion'], 'moderada');
+
+    expect(sueloData['limitaciones'], 'Riesgo de erosión hídrica.');
+  });
 }

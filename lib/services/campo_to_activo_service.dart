@@ -8,7 +8,6 @@ import '../models/activos/ubicacion_activo_model.dart';
 import '../models/activos/modulo_produccion_model.dart';
 import '../models/activos/suelo_activo_model.dart';
 
-
 import '../models/activos/confianza_activo_model.dart';
 import '../models/activos/economia_activo_model.dart';
 import '../models/activos/documentacion_activo_model.dart';
@@ -84,7 +83,7 @@ class CampoToActivoService {
 
             'equipamiento': [],
           },
-           ciclos: [],
+          ciclos: [],
         ),
       ],
 
@@ -121,7 +120,7 @@ class CampoToActivoService {
 
         periodoEvaluacion: '',
 
-        datosEconomicos: {},
+        datosEconomicos: [],
 
         fechaActualizacion: DateTime.now(),
       ),

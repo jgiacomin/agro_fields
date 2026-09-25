@@ -11,7 +11,7 @@ void main() {
       final documento = DocumentoActivo(
         documentoId: 'doc-001',
         tipo: 'titulo_propiedad',
-        descripcion: 'TÃ­tulo de propiedad del inmueble',
+        descripcion: 'Título de propiedad del inmueble',
         fecha: fecha,
         estado: 'documentado',
         responsableId: 'usuario-001',
@@ -21,28 +21,16 @@ void main() {
 
       final map = documento.toMap();
 
-      final recuperado = DocumentoActivo.fromMap(
-        map,
-        'doc-001',
-      );
+      final recuperado = DocumentoActivo.fromMap(map, 'doc-001');
 
       expect(recuperado.documentoId, 'doc-001');
       expect(recuperado.tipo, 'titulo_propiedad');
-      expect(
-        recuperado.descripcion,
-        'TÃ­tulo de propiedad del inmueble',
-      );
+      expect(recuperado.descripcion, 'Título de propiedad del inmueble');
       expect(recuperado.fecha, fecha);
       expect(recuperado.estado, 'documentado');
       expect(recuperado.responsableId, 'usuario-001');
-      expect(
-        recuperado.evidenciaIds,
-        ['evidencia-001', 'evidencia-002'],
-      );
-      expect(
-        recuperado.observaciones,
-        'Documento recibido para revisiÃ³n.',
-      );
+      expect(recuperado.evidenciaIds, ['evidencia-001', 'evidencia-002']);
+      expect(recuperado.observaciones, 'Documento recibido para revisiÃ³n.');
     });
 
     test('fromMap convierte Timestamp a DateTime', () {
@@ -58,18 +46,12 @@ void main() {
         'observaciones': 'Validada.',
       };
 
-      final documento = DocumentoActivo.fromMap(
-        map,
-        'doc-002',
-      );
+      final documento = DocumentoActivo.fromMap(map, 'doc-002');
 
       expect(documento.documentoId, 'doc-002');
       expect(documento.fecha, fecha);
       expect(documento.estado, 'validado');
-      expect(
-        documento.evidenciaIds,
-        ['evidencia-003'],
-      );
+      expect(documento.evidenciaIds, ['evidencia-003']);
     });
 
     test('copyWith modifica solamente los campos indicados', () {
@@ -91,20 +73,10 @@ void main() {
 
       expect(actualizado.documentoId, 'doc-003');
       expect(actualizado.tipo, 'permiso_explotacion');
-      expect(
-        actualizado.descripcion,
-        'Permiso de explotaciÃ³n',
-      );
+      expect(actualizado.descripcion, 'Permiso de explotaciÃ³n');
       expect(actualizado.estado, 'validado');
-      expect(
-        actualizado.evidenciaIds,
-        ['evidencia-004', 'evidencia-005'],
-      );
-      expect(
-        actualizado.observaciones,
-        'Pendiente de revisiÃ³n.',
-      );
+      expect(actualizado.evidenciaIds, ['evidencia-004', 'evidencia-005']);
+      expect(actualizado.observaciones, 'Pendiente de revisiÃ³n.');
     });
-  }
-  )
-  }
+  });
+}

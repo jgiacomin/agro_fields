@@ -9,6 +9,23 @@ class SueloActivo {
   final double? ph;
   final double? materiaOrganica;
 
+  // Clasificación técnica del suelo
+  final String? sistemaClasificacion;
+  final String? clase;
+  final String? subclase;
+  final String? unidadTipo;
+  final String? descripcionClasificacion;
+
+  // Propiedades y limitaciones del suelo
+  final String? profundidad;
+  final String? salinidad;
+  final String? fertilidad;
+  final String? nutrientes;
+  final String? pedregosidad;
+  final String? retencionAgua;
+  final String? erosion;
+  final String? limitaciones;
+
   final List<String> evidencias;
 
   final String? observaciones;
@@ -21,7 +38,21 @@ class SueloActivo {
     this.drenaje,
     this.ph,
     this.materiaOrganica,
+    this.sistemaClasificacion,
+    this.clase,
+    this.subclase,
+    this.unidadTipo,
+    this.descripcionClasificacion,
+    this.profundidad,
+    this.salinidad,
+    this.fertilidad,
+    this.nutrientes,
+    this.pedregosidad,
+    this.retencionAgua,
+    this.erosion,
+    this.limitaciones,
     required this.evidencias,
+
     this.observaciones,
     this.fechaEvaluacion,
   });
@@ -37,6 +68,19 @@ class SueloActivo {
       drenaje: map['drenaje'],
       ph: (map['ph'] as num?)?.toDouble(),
       materiaOrganica: (map['materiaOrganica'] as num?)?.toDouble(),
+      sistemaClasificacion: map['sistemaClasificacion'],
+      clase: map['clase'],
+      subclase: map['subclase'],
+      unidadTipo: map['unidadTipo'],
+      descripcionClasificacion: map['descripcionClasificacion'],
+      profundidad: map['profundidad'],
+      salinidad: map['salinidad'],
+      fertilidad: map['fertilidad'],
+      nutrientes: map['nutrientes'],
+      pedregosidad: map['pedregosidad'],
+      retencionAgua: map['retencionAgua'],
+      erosion: map['erosion'],
+      limitaciones: map['limitaciones'],
       evidencias: List<String>.from(map['evidencias'] ?? []),
       observaciones: map['observaciones'],
       fechaEvaluacion: _leerFecha(map['fechaEvaluacion']),
@@ -50,6 +94,19 @@ class SueloActivo {
       'drenaje': drenaje,
       'ph': ph,
       'materiaOrganica': materiaOrganica,
+      'sistemaClasificacion': sistemaClasificacion,
+      'clase': clase,
+      'subclase': subclase,
+      'unidadTipo': unidadTipo,
+      'descripcionClasificacion': descripcionClasificacion,
+      'profundidad': profundidad,
+      'salinidad': salinidad,
+      'fertilidad': fertilidad,
+      'nutrientes': nutrientes,
+      'pedregosidad': pedregosidad,
+      'retencionAgua': retencionAgua,
+      'erosion': erosion,
+      'limitaciones': limitaciones,
       'evidencias': evidencias,
       'observaciones': observaciones,
       'fechaEvaluacion': fechaEvaluacion != null
@@ -64,6 +121,19 @@ class SueloActivo {
     String? drenaje,
     double? ph,
     double? materiaOrganica,
+    String? sistemaClasificacion,
+    String? clase,
+    String? subclase,
+    String? unidadTipo,
+    String? descripcionClasificacion,
+    String? profundidad,
+    String? salinidad,
+    String? fertilidad,
+    String? nutrientes,
+    String? pedregosidad,
+    String? retencionAgua,
+    String? erosion,
+    String? limitaciones,
     List<String>? evidencias,
     String? observaciones,
     DateTime? fechaEvaluacion,
@@ -74,6 +144,20 @@ class SueloActivo {
       drenaje: drenaje ?? this.drenaje,
       ph: ph ?? this.ph,
       materiaOrganica: materiaOrganica ?? this.materiaOrganica,
+      sistemaClasificacion: sistemaClasificacion ?? this.sistemaClasificacion,
+      clase: clase ?? this.clase,
+      subclase: subclase ?? this.subclase,
+      unidadTipo: unidadTipo ?? this.unidadTipo,
+      descripcionClasificacion:
+          descripcionClasificacion ?? this.descripcionClasificacion,
+      profundidad: profundidad ?? this.profundidad,
+      salinidad: salinidad ?? this.salinidad,
+      fertilidad: fertilidad ?? this.fertilidad,
+      nutrientes: nutrientes ?? this.nutrientes,
+      pedregosidad: pedregosidad ?? this.pedregosidad,
+      retencionAgua: retencionAgua ?? this.retencionAgua,
+      erosion: erosion ?? this.erosion,
+      limitaciones: limitaciones ?? this.limitaciones,
       evidencias: evidencias ?? this.evidencias,
       observaciones: observaciones ?? this.observaciones,
       fechaEvaluacion: fechaEvaluacion ?? this.fechaEvaluacion,
