@@ -5860,3 +5860,173 @@ Resultado:
 
 `All tests passed`
 
+
+# 25/09/2026 — CIERRE DE ETAPA GAP Y CONSOLIDACIÓN ARQUITECTÓNICA
+
+## Estado
+
+**ETAPA CERRADA — AUDITORÍA GAP / CONSOLIDACIÓN ARQUITECTÓNICA V8**
+
+Se finaliza la etapa de auditoría y consolidación de los GAP identificados durante la revisión arquitectónica de Agro Fields V8.
+
+El objetivo de esta etapa fue validar el estado real de la arquitectura y de las implementaciones existentes, evitando crear estructuras nuevas cuando el sistema ya disponía de mecanismos reutilizables.
+
+---
+
+## Arquitectura consolidada
+
+La arquitectura queda consolidada bajo el siguiente esquema:
+
+**ActivoAgroV2 → Módulos especializados → Evidencias → Historial → Auditoría → Confianza / Madurez**
+
+Se mantienen las siguientes decisiones:
+
+* No crear `ActivoAgroV3`.
+* No crear un modelo monolítico denominado `ExpedienteDigitalPermanente`.
+* El Expediente Digital Permanente se entiende como una composición de la información y trazabilidad del Activo Agro.
+* Mantener `Evidencia`, `Historial`, `Auditoría`, `Validez` y `Confianza` como conceptos independientes.
+* Mantener una única capa transversal de Evidencia.
+* No crear modelos específicos como `EvidenceSuelo`, `EvidenceProduccion` o `EvidenceEconomia`.
+* Mantener la trazabilidad mediante estado anterior → estado nuevo → Historial → Auditoría → Evidencia cuando corresponda.
+* No considerar automáticamente un dato histórico como desactualizado únicamente por su antigüedad.
+* Mantener diferenciadas `fechaActualizacion` y `estadoValidez`.
+* Registrar y auditar nuevos GAP antes de realizar modificaciones estructurales.
+
+---
+
+## GAPs generales cerrados técnicamente
+
+Dentro del alcance auditado, quedan cerrados técnicamente:
+
+* **EVID-01** — Evidencia transversal.
+* **SUELO-EVID** — Integración de evidencia en Suelo.
+* **PROD-01** — Integración de evidencia en Producción.
+* **PROD-ID-01** — Identidad de `ModuloProduccion`.
+* **DOC-01** — Documentación y trazabilidad.
+* **ECON-01** — Economía y trazabilidad.
+* **PART-01** — Participantes.
+* **VAL-01** — Estados de validez.
+* **TRACE-01** — Trazabilidad de cambios.
+
+No se identifican nuevos GAPs generales abiertos dentro del alcance auditado.
+
+---
+
+## RWA-01
+
+`GAP-RWA-01` queda registrado como **PARCIALMENTE RESUELTO**.
+
+El modelo `DatoEconomico` contempla temporalidad mediante:
+
+* `historico`
+* `actual`
+* `proyectado`
+* `escenario`
+
+La separación conceptual queda establecida:
+
+**Dato económico ≠ Evidencia ≠ Verificación ≠ Validez ≠ Confianza**
+
+La implementación técnica y la persistencia fueron validadas.
+
+### Pendiente concreto
+
+Queda pendiente validar la utilización de esta temporalidad en la **capa funcional de consulta y presentación**, verificando que el sistema diferencie correctamente:
+
+* datos históricos;
+* datos actuales;
+* datos proyectados;
+* datos correspondientes a escenarios.
+
+**No se modifica el modelo hasta identificar el GAP funcional concreto.**
+
+Este es el único pendiente concreto actualmente identificado dentro del alcance de esta auditoría.
+
+---
+
+## RWA-02
+
+El bloque **RWA-02 queda CERRADO TÉCNICAMENTE**, dentro del alcance auditado.
+
+**30/30 requisitos verdes.**
+
+Los cierres fueron realizados mediante reutilización de modelos, servicios, Evidencia, Historial y Auditoría existentes, evitando introducir estructuras paralelas innecesarias.
+
+Dentro del cierre se encuentran, entre otros:
+
+* **02.02** — Titular / relaciones jurídicas.
+* **02.09** — Restricciones.
+* **02.11** — Obligaciones.
+* **02.28** — Cambios regulatorios.
+
+RWA-02 queda documentado como bloque independiente y no se contabiliza como GAP general abierto.
+
+---
+
+## Evolución futura — NO GAPs abiertos
+
+Los siguientes elementos quedan fuera del alcance actual de GAP:
+
+* **AUD** — Evolución de consultas avanzadas de auditoría.
+* **MAD** — Evolución del algoritmo de madurez.
+* **CONF** — Evolución de la integración funcional avanzada de confianza.
+
+Estos elementos permanecen registrados como evolución futura y **no representan GAPs abiertos de esta etapa**.
+
+No justifican modificaciones estructurales mientras no exista un alcance funcional concreto que requiera su implementación.
+
+---
+
+## Criterio de trabajo mantenido
+
+Se mantiene como metodología oficial de trabajo:
+
+**Matriz → GAP → Auditoría → Código real → Cambio mínimo → Test → Evidencia → Historial → Auditoría → Bitácora → Roadmap → Commit**
+
+No se considerará cerrado ningún GAP sin evidencia suficiente.
+
+No se realizarán modificaciones arquitectónicas únicamente por anticipar funcionalidades futuras.
+
+---
+
+## Cierre de etapa
+
+Con esta entrada queda cerrada la etapa documental correspondiente a la consolidación de los GAP auditados.
+
+El código existente continúa representando la arquitectura técnica validada hasta esta fecha.
+
+La definición funcional definitiva del producto se realizará posteriormente y de manera independiente de este cierre técnico, evitando confundir:
+
+**arquitectura actualmente implementada**
+
+con
+
+**producto final que Agro Fields deberá ofrecer al usuario.**
+
+---
+
+## Próxima etapa
+
+El trabajo continuará en el siguiente orden:
+
+**BITÁCORA → CERRADA**
+
+↓
+
+**GAPs pendientes → auditoría individual**
+
+↓
+
+**CLIMA-01**
+
+↓
+
+**MATRIZ / ROADMAP**
+
+↓
+
+**ECON-02**
+
+Una vez finalizado el cierre de GAPs se podrá avanzar a la definición funcional integral de Agro Fields V8.
+
+**Estado de esta etapa: CERRADO.**
