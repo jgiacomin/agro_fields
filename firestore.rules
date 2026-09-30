@@ -1,0 +1,410 @@
+rules_version = '2';
+
+// =====================================================================
+// AGRO FIELDS V8 - FIRESTORE RULES (BORRADOR PARA PROBAR EN EMULADOR)
+//
+// Principios:
+//  1) Todo está prohibido salvo lo que se permite acá abajo.
+//  2) El expediente privado (activos_agro) solo lo ven su dueño
+//     (propietarioId) y quien lo cargó (publicadorId).
+//  3) El marketplace lee SOLO activos_publicos (resumen publicable),
+//     nunca el expediente privado.
+//  4) Publicar pasa por revisión: el dueño pide (pendienteRevision) y
+//     el administrador aprueba (publicado).
+//  5) El campo "rol" del usuario no lo puede cambiar la app.
+//  6) Auditoría y eventos son de solo agregar (no se editan ni borran).
+//  7) Cada colección nueva nace con su regla acá.
+// =====================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -----------------------------------------------------------------
+    // FUNCIONES AUXILIARES
+    // -----------------------------------------------------------------
+
+    // UIDs de administradores (v1 mínimo).
+    function adminUids() {
+      return ['RtUPcWdZHuQMNsDrza7firR2X2j1'];
+    }
+
+    function logueado() {
+      return request.auth != null;
+    }
+
+    // Administrador: por UID de la lista, o por custom claim "admin".
+    function esAdmin() {
+      return logueado()
+        && (request.auth.uid in adminUids()
+            || request.auth.token.get('admin', false) == true);
+    }
+
+    function esUsuario(uid) {
+      return logueado() && request.auth.uid == uid;
+    }
+
+    // true si la escritura modifica alguno de esos campos.
+    function cambia(campos) {
+      return request.resource.data.diff(resource.data)
+        .affectedKeys().hasAny(campos);
+    }
+
+    function activoDe(id) {
+      return get(/databases/$(database)/documents/activos_agro/$(id)).data;
+    }
+
+    // Dueño único del Activo.
+    function esDuenoActivo(id) {
+      return logueado() && activoDe(id).propietarioId == request.auth.uid;
+    }
+
+    // Dueño o quien cargó el expediente (ej: inmobiliaria o broker).
+    function puedeActivo(id) {
+      return logueado()
+        && (activoDe(id).propietarioId == request.auth.uid
+            || activoDe(id).get('publicadorId', '') == request.auth.uid);
+    }
+
+    // Sobre datos ya leídos (resource.data) de un activo.
+    function parteDeActivo(d) {
+      return d.propietarioId == request.auth.uid
+        || d.get('publicadorId', '') == request.auth.uid;
+    }
+
+    // -----------------------------------------------------------------
+    // USUARIOS
+    // Cada uno ve y edita solo lo suyo. El rol NO lo cambia la app.
+    // -----------------------------------------------------------------
+    match /usuarios/{uid} {
+      allow get: if esUsuario(uid) || esAdmin();
+      allow list: if esAdmin();
+
+      // Alta: solo el propio usuario y siempre como 'Comprador'.
+      allow create: if esUsuario(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.rol == 'Comprador';
+
+      // Edición: el usuario no puede tocar rol, uid ni fechaAlta.
+      allow update: if (esUsuario(uid)
+          && !cambia(['rol', 'uid', 'fechaAlta']))
+        || esAdmin();
+
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // ACTIVOS_AGRO = EXPEDIENTE PRIVADO
+    // El marketplace NO lee esta colección.
+    // -----------------------------------------------------------------
+    match /activos_agro/{activoId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null || parteDeActivo(resource.data)));
+
+      // Listar: solo lo propio (la app filtra por propietarioId o publicadorId).
+      allow list: if esAdmin()
+        || (logueado() && parteDeActivo(resource.data));
+
+      // Crear: quien crea debe ser el dueño o el publicador.
+      allow create: if esAdmin()
+        || (logueado()
+            && (request.resource.data.propietarioId == request.auth.uid
+                || request.resource.data.get('publicadorId', '') == request.auth.uid));
+
+      // Editar: dueño o publicador, sin cambiar quién es dueño ni publicador.
+      // (La toma de posesión del dueño se hará por un flujo aparte.)
+      allow update: if esAdmin()
+        || (logueado()
+            && parteDeActivo(resource.data)
+            && !cambia(['propietarioId', 'publicadorId']));
+
+      // Un expediente no se borra desde la app (trazabilidad).
+      allow delete: if esAdmin();
+    }
+
+    // -----------------------------------------------------------------
+    // ACTIVOS_PUBLICOS = RESUMEN PUBLICABLE (lo que lee el marketplace)
+    // El ID del documento es el mismo activoId del expediente.
+    // -----------------------------------------------------------------
+    match /activos_publicos/{activoId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null
+                || (resource.data.estadoPublicacion == 'publicado'
+                    && resource.data.visible == true)
+                || resource.data.propietarioId == request.auth.uid));
+
+      allow list: if esAdmin()
+        || (logueado()
+            && ((resource.data.estadoPublicacion == 'publicado'
+                 && resource.data.visible == true)
+                || resource.data.propietarioId == request.auth.uid));
+
+      // El dueño solo puede pedir revisión (nunca publicar directo).
+      allow create: if esAdmin()
+        || (esDuenoActivo(activoId)
+            && request.resource.data.propietarioId == request.auth.uid
+            && request.resource.data.estadoPublicacion == 'pendienteRevision'
+            && request.resource.data.visible == false);
+
+      // El dueño puede editar borrador/pendiente/pausar, pero NO poner 'publicado'.
+      allow update: if esAdmin()
+        || (esDuenoActivo(activoId)
+            && resource.data.propietarioId == request.auth.uid
+            && request.resource.data.propietarioId == resource.data.propietarioId
+            && request.resource.data.estadoPublicacion
+                 in ['borrador', 'pendienteRevision', 'pausado']
+            && request.resource.data.visible == false);
+
+      allow delete: if esAdmin();
+    }
+
+    // -----------------------------------------------------------------
+    // HASHES_ACTIVOS = detección de duplicados sin exponer expedientes
+    // El ID del documento es el hash. Solo se puede preguntar por un hash
+    // puntual (get); no se puede listar la colección.
+    // -----------------------------------------------------------------
+    match /hashes_activos/{hash} {
+      allow get: if logueado();
+      allow list: if false;
+
+      allow create: if logueado()
+        && request.resource.data.keys().hasOnly(['creadoPor', 'fecha'])
+        && request.resource.data.creadoPor == request.auth.uid;
+
+      allow update, delete: if esAdmin();
+    }
+
+    // -----------------------------------------------------------------
+    // EVENTOS_AFECTACION (de solo agregar)
+    // -----------------------------------------------------------------
+    match /eventos_afectacion/{eventoId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null || puedeActivo(resource.data.activoAgroId)));
+      allow list: if esAdmin()
+        || (logueado() && puedeActivo(resource.data.activoAgroId));
+
+      allow create: if esAdmin()
+        || puedeActivo(request.resource.data.activoAgroId);
+
+      allow update: if esAdmin()
+        || (puedeActivo(resource.data.activoAgroId)
+            && !cambia(['activoAgroId']));
+
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // EVIDENCIAS (se acceden por el Activo al que pertenecen)
+    // -----------------------------------------------------------------
+    match /evidencias/{evidenciaId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null || puedeActivo(resource.data.activoAgroId)));
+      allow list: if esAdmin()
+        || (logueado() && puedeActivo(resource.data.activoAgroId));
+
+      allow create: if esAdmin()
+        || puedeActivo(request.resource.data.activoAgroId);
+
+      allow update: if esAdmin()
+        || (puedeActivo(resource.data.activoAgroId)
+            && !cambia(['activoAgroId']));
+
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // AUDITORIA_ACTIVOS (de solo agregar: no se edita ni se borra)
+    // Endurecer más adelante: exigir usuarioId == request.auth.uid.
+    // -----------------------------------------------------------------
+    match /auditoria_activos/{eventoId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null || puedeActivo(resource.data.activoId)));
+      allow list: if esAdmin()
+        || (logueado() && puedeActivo(resource.data.activoId));
+
+      allow create: if esAdmin()
+        || puedeActivo(request.resource.data.activoId);
+
+      allow update, delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // OPORTUNIDADES_AGRO (representación temporal)
+    // Ojo: revisar qué datos guarda una oportunidad antes de publicar
+    // estas reglas, porque cualquier usuario logueado lee las 'activa'.
+    // -----------------------------------------------------------------
+    match /oportunidades_agro/{oportunidadId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null
+                || resource.data.estado == 'activa'
+                || puedeActivo(resource.data.activoId)));
+      allow list: if esAdmin()
+        || (logueado()
+            && (resource.data.estado == 'activa'
+                || puedeActivo(resource.data.activoId)));
+
+      allow create: if esAdmin()
+        || esDuenoActivo(request.resource.data.activoId);
+
+      allow update: if esAdmin()
+        || (esDuenoActivo(resource.data.activoId)
+            && !cambia(['activoId']));
+
+      allow delete: if esAdmin();
+    }
+
+    // -----------------------------------------------------------------
+    // SOLICITUDES_CONTACTO (entre interesado y propietario)
+    // -----------------------------------------------------------------
+    match /solicitudes_contacto/{solicitudId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null
+                || resource.data.interesadoId == request.auth.uid
+                || resource.data.propietarioId == request.auth.uid));
+      allow list: if esAdmin()
+        || (logueado()
+            && (resource.data.interesadoId == request.auth.uid
+                || resource.data.propietarioId == request.auth.uid));
+
+      allow create: if logueado()
+        && request.resource.data.interesadoId == request.auth.uid
+        && request.resource.data.propietarioId != request.auth.uid;
+
+      allow update: if esAdmin()
+        || (logueado()
+            && (resource.data.interesadoId == request.auth.uid
+                || resource.data.propietarioId == request.auth.uid)
+            && !cambia(['interesadoId', 'propietarioId', 'campoId']));
+
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // CHATS y MENSAJES (solo los dos participantes)
+    // -----------------------------------------------------------------
+    match /chats/{chatId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null
+                || resource.data.interesadoId == request.auth.uid
+                || resource.data.propietarioId == request.auth.uid));
+      allow list: if esAdmin()
+        || (logueado()
+            && (resource.data.interesadoId == request.auth.uid
+                || resource.data.propietarioId == request.auth.uid));
+
+      allow create: if logueado()
+        && (request.resource.data.interesadoId == request.auth.uid
+            || request.resource.data.propietarioId == request.auth.uid)
+        && request.resource.data.interesadoId
+             != request.resource.data.propietarioId;
+
+      allow update: if logueado()
+        && (resource.data.interesadoId == request.auth.uid
+            || resource.data.propietarioId == request.auth.uid)
+        && !cambia(['interesadoId', 'propietarioId', 'campoId']);
+
+      allow delete: if false;
+
+      match /mensajes/{mensajeId} {
+        function chatDe() {
+          return get(/databases/$(database)/documents/chats/$(chatId)).data;
+        }
+        function participaChat() {
+          return logueado()
+            && (chatDe().interesadoId == request.auth.uid
+                || chatDe().propietarioId == request.auth.uid);
+        }
+
+        allow read: if participaChat();
+        allow create: if participaChat()
+          && request.resource.data.senderId == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    // -----------------------------------------------------------------
+    // CAMPOS (modelo VIEJO, en convivencia con activos_agro)
+    // Se elimina cuando se migre todo a activos_agro + activos_publicos.
+    // -----------------------------------------------------------------
+    match /campos/{campoId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null
+                || resource.data.estadoPublicacion == 'disponible'
+                || parteDeActivo(resource.data)));
+      allow list: if esAdmin()
+        || (logueado()
+            && (resource.data.estadoPublicacion == 'disponible'
+                || parteDeActivo(resource.data)));
+
+      allow create: if logueado()
+        && (request.resource.data.propietarioId == request.auth.uid
+            || request.resource.data.get('publicadorId', '') == request.auth.uid);
+
+      allow update: if esAdmin()
+        || (logueado()
+            && parteDeActivo(resource.data)
+            && !cambia(['propietarioId']));
+
+      allow delete: if esAdmin()
+        || (logueado() && resource.data.propietarioId == request.auth.uid);
+    }
+
+    // -----------------------------------------------------------------
+    // INVERSIONES (las ve solo quien invierte)
+    // -----------------------------------------------------------------
+    match /inversiones/{inversionId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null
+                || resource.data.inversorId == request.auth.uid));
+      allow list: if esAdmin()
+        || (logueado() && resource.data.inversorId == request.auth.uid);
+
+      allow create: if logueado()
+        && request.resource.data.inversorId == request.auth.uid;
+
+      allow update, delete: if esAdmin();
+    }
+
+    // -----------------------------------------------------------------
+    // PUBLICACIONES_INVERSION
+    // -----------------------------------------------------------------
+    match /publicaciones_inversion/{publicacionId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null
+                || resource.data.estado == 'activa'
+                || resource.data.propietarioId == request.auth.uid));
+      allow list: if esAdmin()
+        || (logueado()
+            && (resource.data.estado == 'activa'
+                || resource.data.propietarioId == request.auth.uid));
+
+      allow create: if logueado()
+        && request.resource.data.propietarioId == request.auth.uid;
+
+      allow update: if esAdmin()
+        || (logueado()
+            && resource.data.propietarioId == request.auth.uid
+            && !cambia(['propietarioId']));
+
+      allow delete: if esAdmin()
+        || (logueado() && resource.data.propietarioId == request.auth.uid);
+    }
+
+    // -----------------------------------------------------------------
+    // TODO LO DEMAS: PROHIBIDO
+    // -----------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

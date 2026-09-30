@@ -1,0 +1,97 @@
+rules_version = '2';
+
+// =====================================================================
+// AGRO FIELDS V8 - STORAGE RULES (BORRADOR PARA PROBAR EN EMULADOR)
+//
+// Estructura de carpetas:
+//   activos/{activoId}/privado/...   -> documentos y evidencias del expediente
+//                                       (solo dueño o quien lo cargó)
+//   activos/{activoId}/publico/...   -> fotos del resumen público
+//                                       (las ve cualquier usuario logueado)
+//   usuarios/{uid}/...               -> foto de perfil
+//
+// Todo lo demás está prohibido.
+// Los archivos no se borran desde la app (trazabilidad): solo administrador.
+// =====================================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function adminUids() {
+      return ['RtUPcWdZHuQMNsDrza7firR2X2j1'];
+    }
+
+    function logueado() {
+      return request.auth != null;
+    }
+
+    function esAdmin() {
+      return logueado()
+        && (request.auth.uid in adminUids()
+            || request.auth.token.get('admin', false) == true);
+    }
+
+    // Lee el expediente en Firestore para saber quién es el dueño.
+    function activoDe(id) {
+      return firestore.get(
+        /databases/(default)/documents/activos_agro/$(id)
+      ).data;
+    }
+
+    function esDuenoActivo(id) {
+      return logueado() && activoDe(id).propietarioId == request.auth.uid;
+    }
+
+    function puedeActivo(id) {
+      return logueado()
+        && (activoDe(id).propietarioId == request.auth.uid
+            || activoDe(id).get('publicadorId', '') == request.auth.uid);
+    }
+
+    // Límites de subida.
+    function esImagen() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    function esDocumento() {
+      return request.resource.contentType.matches('image/.*|application/pdf');
+    }
+    function pesaMenosDe(mb) {
+      return request.resource.size < mb * 1024 * 1024;
+    }
+
+    // ---------------- EXPEDIENTE PRIVADO ----------------
+    match /activos/{activoId}/privado/{archivo=**} {
+      allow read: if esAdmin() || puedeActivo(activoId);
+
+      allow create: if (esAdmin() || puedeActivo(activoId))
+        && esDocumento() && pesaMenosDe(20);
+
+      // Un archivo ya subido no se reemplaza ni se borra desde la app.
+      allow update, delete: if esAdmin();
+    }
+
+    // ---------------- RESUMEN PUBLICO ----------------
+    match /activos/{activoId}/publico/{archivo=**} {
+      allow read: if logueado();
+
+      allow create: if (esAdmin() || esDuenoActivo(activoId))
+        && esImagen() && pesaMenosDe(10);
+
+      allow update, delete: if esAdmin() || esDuenoActivo(activoId);
+    }
+
+    // ---------------- FOTO DE PERFIL ----------------
+    match /usuarios/{uid}/{archivo=**} {
+      allow read: if logueado();
+
+      allow write: if logueado()
+        && request.auth.uid == uid
+        && esImagen() && pesaMenosDe(5);
+    }
+
+    // ---------------- TODO LO DEMAS: PROHIBIDO ----------------
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
