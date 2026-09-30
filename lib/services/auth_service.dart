@@ -44,8 +44,7 @@ class AuthService {
 
       if (user != null) {
         print("LOGIN SUCCESS");
-        print("USER EMAIL: ${user.email}");
-        print("USER UID: ${user.uid}");
+        
 
         final userModel = UserModel(
           uid: user.uid,
