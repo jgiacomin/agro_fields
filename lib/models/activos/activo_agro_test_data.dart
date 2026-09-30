@@ -93,7 +93,7 @@ class ActivoAgroTestData {
           ],
         ),
       ],
-
+      infraestructura: [],
       economia: EconomiaActivo(
         objetivoProyecto: "Producción avícola",
 

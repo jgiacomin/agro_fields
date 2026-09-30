@@ -35,7 +35,13 @@ La arquitectura existente es la referencia técnica.
 | Ubicación | | | | | | | | |
 | Superficie | | | | | | | | |
 | Producción | | | | | | | | |
-| Infraestructura | | | | | | | | |
+| Infraestructura | Tipo | 🔴 | 🔵 | 🔵 | 🟡 | 🟡 | 🟢 | Tipo de infraestructura: vivienda, galpón, silo, pozo, riego, pivote, mejora, etc. |
+| Infraestructura | Nombre | 🔴 | 🔵 | 🔵 | 🟡 | 🟡 | 🟢 | Nombre identificativo de la infraestructura |
+| Infraestructura | Descripción | 🔴 | 🔵 | 🔵 | 🟡 | 🟡 | 🟢 | Características relevantes de la infraestructura |
+| Infraestructura | Cantidad | 🔴 | 🔵 | 🔵 | 🟡 | 🟡 | 🟢 | Cantidad de unidades cuando corresponda |
+| Infraestructura | Estado | 🔴 | 🔵 | 🔵 | 🟡 | 🟡 | 🟢 | Estado declarado de la infraestructura |
+| Infraestructura | Identificador | 🔴 | 🔵 | 🔵 | 🟢 | 🟢 | 🟢 | Identificador propio para trazabilidad |
+| Infraestructura | Relación con producción | 🔴 | 🔵 | 🔵 | 🟡 | 🟡 | ⚪ | Relación opcional con un módulo productivo; no toda infraestructura es productiva |
 | Situación comercial | | | | | | | | |
 | Documentación | | | | | | | | |
 | Normativa | | | | | | | | |

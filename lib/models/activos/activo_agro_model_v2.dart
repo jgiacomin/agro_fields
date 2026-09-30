@@ -16,8 +16,7 @@ import 'participante_activo_model.dart';
 import 'derecho_activo_model.dart';
 import 'relacion_juridica_model.dart';
 import 'historial_activo_model.dart';
-
-
+import 'infraestructura_activo_model.dart';
 
 /// Modelo principal del ecosistema Agro Fields.
 ///
@@ -50,8 +49,6 @@ import 'historial_activo_model.dart';
 class ActivoAgroV2 {
 
   static const int modeloVersion = 2;
-
-
   // Identidad
   final String activoId;
 
@@ -59,51 +56,36 @@ class ActivoAgroV2 {
 
   final String descripcion;
 
-
-
   // Clasificación
   final TipoActivo tipoActivo;
 
   final List<String> categorias;
 
-
-
   // Ubicación
   final UbicacionActivo ubicacion;
-
   // Suelo
   final SueloActivo suelo;
-
 
   // Producción
   final List<ModuloProduccion> producciones;
 
-
+  // Infraestructura
+  final List<InfraestructuraActivo> infraestructura;
 
   // Economía
   final EconomiaActivo economia;
 
-
-
   // Documentación
   final DocumentacionActivo documentacion;
-
-
 
   // Confianza
   final ConfianzaActivo confianza;
 
-
-
   // Evaluación
   final EvaluacionConfianza evaluacion;
 
-
-
   // Madurez
   final MadurezActivo madurez;
-
-
 
   // Participantes del ecosistema
   final List<ParticipanteActivo> participantes;
@@ -119,36 +101,25 @@ class ActivoAgroV2 {
   /// Dueño real del activo
   final String propietarioId;
 
-
   /// Usuario que creó el registro
   final String creadorId;
-
 
   /// Usuario que publica o administra comercialmente
   final String publicadorId;
 
-
   /// propietario, arrendatario, administrador, representante
   final String tipoRelacionPropietario;
 
-
-
   // Estado interno del activo
   final EstadoActivo estado;
-
-
 
   // Estado comercial
 
   /// borrador, publicado, pausado, cerrado
   final String estadoPublicacion;
 
-
-
   /// Permite separar existencia del activo de su exposición pública
   final bool visible;
-
-
 
   /// Historial de eventos del Activo Agro.
   ///
@@ -164,12 +135,9 @@ class ActivoAgroV2 {
   /// Complementa la trazabilidad del negocio.
   final List<HistorialActivo> historial;
 
-
-
   // Auditoría
 
   final String hashActivo;
-
 
   final int versionDatos;
 
@@ -177,15 +145,9 @@ class ActivoAgroV2 {
   /// Permite extender trazabilidad sin modificar estructura base.
    final Map<String,dynamic>? datos;
 
-
   final DateTime fechaCreacion;
 
-
   final DateTime ultimaActualizacion;
-
-
-
-
 
   ActivoAgroV2({
 
@@ -202,6 +164,8 @@ class ActivoAgroV2 {
     required this.ubicacion,
 
     required this.producciones,
+
+    this.infraestructura = const [],
 
     required this.economia,
 
@@ -249,26 +213,15 @@ class ActivoAgroV2 {
 
   });
 
-
-
-
-
   ModuloProduccion? get produccionPrincipal {
 
     if(producciones.isEmpty){
 
       return null;
-
     }
 
     return producciones.first;
-
   }
-
-
-
-
-
 
   factory ActivoAgroV2.fromMap(
       Map<String,dynamic> map,
@@ -279,13 +232,9 @@ class ActivoAgroV2 {
 
       activoId: id,
 
-
       nombre: map['nombre'] ?? '',
 
-
       descripcion: map['descripcion'] ?? '',
-
-
 
       tipoActivo:
 
@@ -296,18 +245,12 @@ class ActivoAgroV2 {
         orElse: ()=>TipoActivo.otro,
 
       ),
-
-
-
       categorias:
 
       List<String>.from(
 
         map['categorias'] ?? [],
-
       ),
-
-
 
       ubicacion:
 
@@ -320,9 +263,6 @@ class ActivoAgroV2 {
         ),
 
       ),
-
-
-
       producciones:
 
       (map['producciones'] ?? [])
@@ -336,13 +276,16 @@ class ActivoAgroV2 {
               Map<String,dynamic>.from(e),
 
             ),
-
       )
-
           .toList(),
 
-
-
+          infraestructura: (map['infraestructura'] ?? [])
+    .map<InfraestructuraActivo>(
+      (e) => InfraestructuraActivo.fromMap(
+        Map<String, dynamic>.from(e),
+      ),
+    )
+    .toList(),
       economia:
 
       EconomiaActivo.fromMap(
@@ -355,8 +298,6 @@ class ActivoAgroV2 {
 
       ),
 
-
-
       documentacion:
 
       DocumentacionActivo.fromMap(
@@ -366,10 +307,7 @@ class ActivoAgroV2 {
           map['documentacion'] ?? {},
 
         ),
-
       ),
-
-
 
       confianza:
 
@@ -383,8 +321,6 @@ class ActivoAgroV2 {
 
       ),
 
-
-
       evaluacion:
 
       EvaluacionConfianza.fromMap(
@@ -394,10 +330,7 @@ class ActivoAgroV2 {
           map['evaluacion'] ?? {},
 
         ),
-
       ),
-
-
 
       madurez:
 
@@ -406,7 +339,6 @@ class ActivoAgroV2 {
         Map<String,dynamic>.from(
 
           map['madurez'] ?? {},
-
         ),
 
       ),
@@ -416,7 +348,6 @@ class ActivoAgroV2 {
         map['suelo'] ?? {},
          ),
       ),
-
 
       participantes:
 
@@ -431,13 +362,8 @@ class ActivoAgroV2 {
               Map<String,dynamic>.from(e),
 
             ),
-
       )
-
           .toList(),
-
-
-
       derechos:
 
       (map['derechos'] ?? [])
@@ -453,7 +379,6 @@ class ActivoAgroV2 {
             ),
 
           )
-
               .toList(),
 
               relacionesJuridicas:
@@ -471,32 +396,23 @@ class ActivoAgroV2 {
       ),
 
     )
-
         .toList(),
 
       propietarioId:
 
       map['propietarioId'] ?? '',
 
-
-
       creadorId:
 
       map['creadorId'] ?? '',
-
-
 
       publicadorId:
 
       map['publicadorId'] ?? map['creadorId'] ?? '',
 
-
-
       tipoRelacionPropietario:
 
       map['tipoRelacionPropietario'] ?? 'propietario',
-
-
 
       estado:
 
@@ -508,19 +424,12 @@ class ActivoAgroV2 {
 
       ),
 
-
-
       estadoPublicacion:
 
       map['estadoPublicacion'] ?? 'borrador',
-
-
-
       visible:
 
       map['visible'] ?? false,
-
-
 
       historial:
 
@@ -542,13 +451,9 @@ class ActivoAgroV2 {
 
           .toList(),
 
-
-
       hashActivo:
 
       map['hashActivo'] ?? '',
-
-
 
       versionDatos:
 
@@ -561,26 +466,17 @@ class ActivoAgroV2 {
     ? Map<String,dynamic>.from(map['datos'])
     : null,
 
-
-
       fechaCreacion:
 
       _leerFecha(map['fechaCreacion']),
-
-
 
       ultimaActualizacion:
 
       _leerFecha(map['ultimaActualizacion']),
 
-
     );
 
   }
-
-
-
-
 
   static DateTime _leerFecha(dynamic valor){
 
@@ -609,9 +505,6 @@ class ActivoAgroV2 {
   return DateTime.now();
 
 }
-
-
-
 
   Map<String,dynamic> toMap(){
 
@@ -645,6 +538,7 @@ class ActivoAgroV2 {
       'producciones':
       producciones.map((e)=>e.toMap()).toList(),
 
+      'infraestructura': infraestructura.map((e) => e.toMap()).toList(),
 
       'economia':
       economia.toMap(),
@@ -733,12 +627,6 @@ class ActivoAgroV2 {
     };
 
   }
-
-
-
-
-
-
   ActivoAgroV2 copyWith({
 
     String? nombre,
@@ -752,6 +640,8 @@ class ActivoAgroV2 {
     UbicacionActivo? ubicacion,
 
     List<ModuloProduccion>? producciones,
+
+    List<InfraestructuraActivo>? infraestructura,
 
     EconomiaActivo? economia,
 
@@ -798,6 +688,8 @@ class ActivoAgroV2 {
       ubicacion: ubicacion ?? this.ubicacion,
 
       producciones: producciones ?? this.producciones,
+
+      infraestructura: infraestructura ?? this.infraestructura,
 
       economia: economia ?? this.economia,
 
