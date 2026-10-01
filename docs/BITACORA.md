@@ -6030,3 +6030,176 @@ El trabajo continuará en el siguiente orden:
 Una vez finalizado el cierre de GAPs se podrá avanzar a la definición funcional integral de Agro Fields V8.
 
 **Estado de esta etapa: CERRADO.**
+
+# 30/09/2026 — INFRA-01 — INFRAESTRUCTURA DEL ACTIVO
+
+## Estado
+
+🟢 **INFRA-01 — RESUELTO Y VALIDADO TÉCNICAMENTE EN SU ALCANCE**
+
+Durante la auditoría de INFRA-01 se verificó la necesidad de representar la infraestructura propia del Activo Agro sin crear una estructura paralela ni modificar la arquitectura general de `ActivoAgroV2`.
+
+La resolución se realizó mediante un modelo especializado:
+
+`InfraestructuraActivo`
+
+integrado directamente en:
+
+`ActivoAgroV2.infraestructura`
+
+---
+
+## Alcance implementado
+
+`InfraestructuraActivo` representa:
+
+* identificador propio;
+* tipo;
+* nombre;
+* descripción;
+* cantidad;
+* estado;
+* relación opcional con un módulo de producción mediante `moduloProduccionId`.
+
+La integración en `ActivoAgroV2` contempla:
+
+* importación del modelo;
+* lista `infraestructura`;
+* valor inicial vacío;
+* recuperación mediante `fromMap`;
+* persistencia mediante `toMap`;
+* conservación mediante `copyWith`.
+
+La estructura permite representar infraestructura productiva y no productiva, manteniendo la relación con producción como opcional.
+
+---
+
+## Matriz Ficha Maestra
+
+La matriz histórica de la Ficha Maestra contempla los siguientes conceptos:
+
+* Tipo;
+* Nombre;
+* Descripción;
+* Cantidad;
+* Estado;
+* Identificador;
+* Relación con producción.
+
+Los siete conceptos quedan cubiertos por `InfraestructuraActivo`.
+
+---
+
+## Validación
+
+Se recuperaron y ejecutaron los tests correspondientes al alcance histórico de INFRA-01.
+
+### Test del modelo
+
+`test/infraestructura_activo_model_test.dart`
+
+Resultado:
+
+`00:08 +4: All tests passed!`
+
+### Test de serialización
+
+`test/models/activos/activo_agro_infraestructura_serializacion_test.dart`
+
+Resultado:
+
+`00:03 +1: All tests passed!`
+
+---
+
+## Auditoría técnica
+
+Se verificó que la integración actual de `ActivoAgroV2` contiene únicamente las piezas funcionales necesarias para INFRA-01, evitando incorporar el ruido de formato presente en el archivo histórico del commit de origen.
+
+El commit histórico de referencia es:
+
+`9ca0425e828cfe2882045f6eea0510cc6b340e18`
+
+Fecha:
+
+`30/09/2026 13:02:56 -0300`
+
+Mensaje:
+
+`INFRA-01: modelo de infraestructura del activo, tests y matriz`
+
+El commit constituye evidencia histórica del origen de INFRA-01.
+
+No se reutilizó mediante cherry-pick ni se sobrescribió el archivo actual, debido a que el commit histórico contenía cambios de formato y otras modificaciones que no correspondía trasladar al árbol actual.
+
+---
+
+## Validación de análisis y compilación
+
+`flutter analyze`
+
+Resultado:
+
+**0 errores.**
+
+Se mantienen informaciones y advertencias existentes que no forman parte del alcance de INFRA-01.
+
+La aplicación Android fue compilada correctamente mediante:
+
+`flutter run --verbose`
+
+Resultado:
+
+`BUILD SUCCESSFUL`
+
+El APK fue posteriormente instalado en el emulador y el lanzamiento de la aplicación fue ejecutado correctamente mediante `adb`.
+
+---
+
+## Auditoría arquitectónica
+
+No se creó:
+
+* `ActivoAgroV3`;
+* un modelo monolítico de infraestructura;
+* una estructura paralela de expediente.
+
+Se mantuvo:
+
+`Screen → Service → Model → Firebase`
+
+La infraestructura queda integrada como parte del Activo Agro, reutilizando la arquitectura existente.
+
+---
+
+## Alcance y limitaciones
+
+Este cierre corresponde exclusivamente a:
+
+**INFRA-01 — modelo, integración, matriz y validación de serialización.**
+
+No se considera dentro de esta evidencia una prueba específica de persistencia y recuperación de infraestructura mediante Firestore, ya que no existe actualmente un test específico de integración Firestore para INFRA-01.
+
+Por lo tanto, no se afirma una validación específica de ese comportamiento.
+
+Los demás GAP continúan sujetos a su propia auditoría.
+
+---
+
+## Estado final
+
+**INFRA-01 — RESUELTO Y VALIDADO TÉCNICAMENTE EN EL ALCANCE AUDITADO.**
+
+La implementación queda preparada para continuar posteriormente con la evolución funcional de infraestructura, si la matriz o el producto requieren nuevos comportamientos.
+
+---
+
+## Evidencia
+
+* Commit histórico: `9ca0425`
+* Test de modelo: `infraestructura_activo_model_test.dart`
+* Test de serialización: `activo_agro_infraestructura_serializacion_test.dart`
+* Matriz: `docs/MATRIZ_FICHA_MAESTRA_ACTIVO_AGRO_V1.md`
+* Análisis: `flutter analyze`
+* Build Android: `BUILD SUCCESSFUL`
+* Instalación APK: `Success`

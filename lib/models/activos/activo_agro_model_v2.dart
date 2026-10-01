@@ -16,6 +16,7 @@ import 'participante_activo_model.dart';
 import 'derecho_activo_model.dart';
 import 'relacion_juridica_model.dart';
 import 'historial_activo_model.dart';
+import 'infraestructura_activo_model.dart';
 
 
 
@@ -78,7 +79,8 @@ class ActivoAgroV2 {
   // Producción
   final List<ModuloProduccion> producciones;
 
-
+  // Infraestructura
+  final List<InfraestructuraActivo> infraestructura;
 
   // Economía
   final EconomiaActivo economia;
@@ -203,6 +205,7 @@ class ActivoAgroV2 {
 
     required this.producciones,
 
+   this.infraestructura = const [],
     required this.economia,
 
     required this.documentacion,
@@ -341,7 +344,13 @@ class ActivoAgroV2 {
 
           .toList(),
 
-
+      infraestructura: (map['infraestructura'] ?? [])
+          .map<InfraestructuraActivo>(
+           (e) => InfraestructuraActivo.fromMap(
+             Map<String, dynamic>.from(e),
+           ),
+      )
+         .toList(),
 
       economia:
 
@@ -645,6 +654,7 @@ class ActivoAgroV2 {
       'producciones':
       producciones.map((e)=>e.toMap()).toList(),
 
+      'infraestructura': infraestructura.map((e) => e.toMap()).toList(),
 
       'economia':
       economia.toMap(),
@@ -753,6 +763,8 @@ class ActivoAgroV2 {
 
     List<ModuloProduccion>? producciones,
 
+    List<InfraestructuraActivo>? infraestructura,
+
     EconomiaActivo? economia,
 
     DocumentacionActivo? documentacion,
@@ -798,6 +810,8 @@ class ActivoAgroV2 {
       ubicacion: ubicacion ?? this.ubicacion,
 
       producciones: producciones ?? this.producciones,
+
+      infraestructura: infraestructura ?? this.infraestructura,
 
       economia: economia ?? this.economia,
 
