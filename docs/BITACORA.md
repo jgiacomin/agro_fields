@@ -6203,3 +6203,102 @@ La implementación queda preparada para continuar posteriormente con la evoluci�
 * Análisis: `flutter analyze`
 * Build Android: `BUILD SUCCESSFUL`
 * Instalación APK: `Success`
+
+---
+
+## Auditoría Firebase Rules — Chats y Eventos de Afectación
+
+Fecha: 01/10/2026
+
+Se realizó auditoría de las reglas de seguridad de Firestore sobre el código real y los accesos utilizados por la aplicación.
+
+### Alcance auditado
+
+Se verificaron específicamente:
+
+* `chats`
+* `chats/{chatId}/mensajes`
+* `eventos_afectacion`
+
+En `chats` se verificó el comportamiento utilizado por `ChatService`, incluyendo:
+
+* creación de un chat por uno de sus participantes;
+* lectura restringida a los participantes;
+* consulta del chat existente;
+* listado mediante `participantes array-contains`;
+* validación de exactamente dos participantes;
+* coincidencia entre propietario/interesado y participantes;
+* imposibilidad de incorporar terceros;
+* imposibilidad de modificar `participantes`.
+
+En `eventos_afectacion` se verificó:
+
+* creación por usuario autorizado sobre su Activo;
+* rechazo de creación por terceros;
+* prohibición de borrado;
+* prohibición de modificación por terceros;
+* prohibición de modificación por el propietario;
+* protección del `activoAgroId`;
+* rechazo de consultas de terceros sobre eventos de otro Activo.
+
+### Validación
+
+La suite `test_rules/rules.test.mjs` fue ampliada y ejecutada contra Firebase Emulator.
+
+Resultado final:
+
+`51 tests`
+`51 pass`
+`0 fail`
+
+La suite fue ejecutada nuevamente después de la limpieza del diff, obteniendo nuevamente:
+
+**51/51 tests aprobados.**
+
+Los mensajes `PERMISSION_DENIED` observados durante la ejecución corresponden a operaciones que los propios tests esperan que sean rechazadas y no representan fallos de la suite.
+
+### Cambios mínimos realizados
+
+`firestore.rules`:
+
+* `eventos_afectacion.update` queda restringido a administración;
+* `chats.list` contempla los participantes reales del chat;
+* `chats.create` valida la composición de participantes;
+* `chats.update` impide modificar `participantes` y los identificadores protegidos.
+
+`test_rules/rules.test.mjs`:
+
+* configuración explícita del Firebase Emulator (`127.0.0.1:8080`);
+* pruebas adicionales de `chats`;
+* pruebas adicionales de `eventos_afectacion`.
+
+### Alcance y limitaciones
+
+Este cierre corresponde exclusivamente a las reglas y escenarios de Firestore efectivamente auditados.
+
+No implica el cierre completo de la auditoría de seguridad de Firebase.
+
+Quedan sujetos a auditoría específica, entre otros:
+
+* `oportunidades_agro`;
+* `solicitudes_contacto`;
+* `campos`;
+* `inversiones`;
+* `publicaciones_inversion`;
+* reglas de Cloud Storage;
+* demás controles que requieran cobertura adicional.
+
+No se realizó deploy de estas reglas a Firebase durante esta etapa.
+
+No se realizó modificación de código Dart como parte de este cierre.
+
+### Estado
+
+**FIREBASE RULES — CHATS + EVENTOS_AFECTACION: VALIDADO TÉCNICAMENTE EN EL ALCANCE AUDITADO.**
+
+Evidencia principal:
+
+* `firestore.rules`
+* `test_rules/rules.test.mjs`
+* Firebase Emulator
+* resultado `51/51` tests aprobados

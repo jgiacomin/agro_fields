@@ -27,6 +27,8 @@ before(async () => {
   env = await initializeTestEnvironment({
     projectId: 'demo-agro-rules',
     firestore: {
+      host: '127.0.0.1',
+      port: 8080,
       rules: readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8'),
     },
   });
@@ -212,4 +214,132 @@ test('7c. Un participante envía un mensaje con su propio ID [PERMITIDO]', async
 
 test('7d. NO se puede enviar un mensaje haciéndose pasar por otro [PROHIBIDO]', async () => {
   await assertFails(addDoc(collection(como(DUENO), 'chats/c1/mensajes'), { senderId: COMPRADOR, text: 'trampa' }));
+});
+
+// =====================================================================
+// 8 y 9. PRUEBAS NUEVAS: CHATS y EVENTOS_AFECTACION
+// =====================================================================
+
+const cargar = (fn) =>
+  env.withSecurityRulesDisabled(async (ctx) => fn(ctx.firestore()));
+
+// Un chat tal cual lo crea ChatService.crearChat (con "participantes").
+const chatComoLoCreaLaApp = () => ({
+  campoId: 'a1',
+  propietarioId: DUENO,
+  interesadoId: COMPRADOR,
+  participantes: [DUENO, COMPRADOR],
+  estado: 'activo',
+  fechaCreacion: new Date(),
+});
+
+// Un evento con los campos del modelo EventoAfectacion.
+const eventoDeEjemplo = (usuario) => ({
+  eventoId: 'ev1',
+  activoAgroId: 'a1',
+  usuarioRegistrador: usuario,
+  tipoEvento: 'ejemplo',
+  subtipoEvento: 'ejemplo',
+  fechaInicio: new Date(),
+  fechaFin: null,
+  descripcion: 'evento de prueba',
+  origen: 'manual',
+  estado: 'activo',
+  afectaciones: [],
+});
+
+// ------------------------- 8. CHATS -------------------------
+test('8a. Un participante lee su chat [PERMITIDO]', async () => {
+  await assertSucceeds(getDoc(doc(como(COMPRADOR), 'chats/c1')));
+});
+
+test('8b. Un tercero NO lee el chat [PROHIBIDO]', async () => {
+  await assertFails(getDoc(doc(como(OTRO), 'chats/c1')));
+});
+
+test('8c. Un interesado crea un chat como lo hace la app [PERMITIDO]', async () => {
+  await assertSucceeds(addDoc(collection(como(COMPRADOR), 'chats'), chatComoLoCreaLaApp()));
+});
+
+test('8d. Un tercero NO puede crear un chat entre otros dos [PROHIBIDO]', async () => {
+  await assertFails(addDoc(collection(como(OTRO), 'chats'), chatComoLoCreaLaApp()));
+});
+
+test('8e. Buscar si el chat ya existe (la consulta de crearChat) [PERMITIDO]', async () => {
+  const q = query(
+    collection(como(COMPRADOR), 'chats'),
+    where('campoId', '==', 'a1'),
+    where('propietarioId', '==', DUENO),
+    where('interesadoId', '==', COMPRADOR),
+  );
+  await assertSucceeds(getDocs(q));
+});
+
+test('8f. Listar mis chats COMO LO HACE LA APP (participantes array-contains) [PERMITIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'chats/c2'), chatComoLoCreaLaApp()));
+  const q = query(collection(como(COMPRADOR), 'chats'), where('participantes', 'array-contains', COMPRADOR));
+  await assertSucceeds(getDocs(q));
+});
+
+test('8g. Listar mis chats filtrando por interesadoId (alternativa) [PERMITIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'chats/c2'), chatComoLoCreaLaApp()));
+  const q = query(collection(como(COMPRADOR), 'chats'), where('interesadoId', '==', COMPRADOR));
+  await assertSucceeds(getDocs(q));
+});
+
+// ------------------------- 9. EVENTOS_AFECTACION -------------------------
+test('9a. El dueño registra un evento en su Activo [PERMITIDO]', async () => {
+  await assertSucceeds(addDoc(collection(como(DUENO), 'eventos_afectacion'), eventoDeEjemplo(DUENO)));
+});
+
+test('9b. Un tercero NO registra un evento en un Activo ajeno [PROHIBIDO]', async () => {
+  await assertFails(addDoc(collection(como(OTRO), 'eventos_afectacion'), eventoDeEjemplo(OTRO)));
+});
+
+test('9c. Nadie borra un evento [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'eventos_afectacion/ev1'), eventoDeEjemplo(DUENO)));
+  await assertFails(deleteDoc(doc(como(DUENO), 'eventos_afectacion/ev1')));
+});
+
+test('9d. Un tercero NO modifica un evento ajeno [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'eventos_afectacion/ev1'), eventoDeEjemplo(DUENO)));
+  await assertFails(updateDoc(doc(como(OTRO), 'eventos_afectacion/ev1'), { descripcion: 'cambiado' }));
+});
+
+test('9e. El dueño NO modifica un evento (la Rule dice "de solo agregar") [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'eventos_afectacion/ev1'), eventoDeEjemplo(DUENO)));
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_afectacion/ev1'), { descripcion: 'cambiado' }));
+});
+
+test('9f. El dueño NO puede mover un evento a otro Activo [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'eventos_afectacion/ev1'), eventoDeEjemplo(DUENO)));
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_afectacion/ev1'), { activoAgroId: 'otroActivo' }));
+});
+
+test('9g. Un tercero NO lista los eventos de un Activo ajeno [PROHIBIDO]', async () => {
+  const q = query(collection(como(OTRO), 'eventos_afectacion'), where('activoAgroId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
+// ------------------------- 8h-8k. CHATS: candado de "participantes" -------------------------
+test('8h. NO se puede crear un chat con un tercero metido en participantes [PROHIBIDO]', async () => {
+  await assertFails(addDoc(collection(como(COMPRADOR), 'chats'), {
+    ...chatComoLoCreaLaApp(), participantes: [DUENO, COMPRADOR, 'victima'],
+  }));
+});
+
+test('8i. NO se puede crear un chat con participantes que no coinciden [PROHIBIDO]', async () => {
+  await assertFails(addDoc(collection(como(COMPRADOR), 'chats'), {
+    ...chatComoLoCreaLaApp(), participantes: [COMPRADOR, 'victima'],
+  }));
+});
+
+test('8j. Un participante NO puede cambiar participantes [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'chats/c2'), chatComoLoCreaLaApp()));
+  await assertFails(updateDoc(doc(como(COMPRADOR), 'chats/c2'), { participantes: [COMPRADOR, 'victima'] }));
+});
+
+test('8k. Un tercero NO lista los chats de otro usando participantes [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'chats/c2'), chatComoLoCreaLaApp()));
+  const q = query(collection(como(OTRO), 'chats'), where('participantes', 'array-contains', COMPRADOR));
+  await assertFails(getDocs(q));
 });

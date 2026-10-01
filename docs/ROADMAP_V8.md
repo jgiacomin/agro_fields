@@ -3212,3 +3212,31 @@ integration_test/activo_agro_service_derecho_cambio_regulatorio_integration_test
 Resultado:
 
 All tests passed
+
+---
+
+## Seguridad Firebase — Auditoría Firestore
+
+### Estado
+
+🟢 **VALIDADO TÉCNICAMENTE EN EL ALCANCE AUDITADO**
+
+Se validaron mediante Firebase Emulator las reglas de:
+
+* `chats`;
+* `chats/{chatId}/mensajes`;
+* `eventos_afectacion`.
+
+La suite de reglas alcanzó:
+
+**51/51 tests aprobados — 0 fallos.**
+
+La validación incluye escenarios permitidos y prohibidos, consultas utilizadas por la aplicación, protección de participantes de chats y protección de eventos de afectación.
+
+Este estado **no representa el cierre completo de la seguridad Firebase**. Permanecen pendientes de auditoría específica otras colecciones y Cloud Storage.
+
+No se realizó deploy a Firebase.
+
+Referencia documental:
+
+`docs/BITACORA.md`

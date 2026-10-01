@@ -188,9 +188,7 @@ service cloud.firestore {
       allow create: if esAdmin()
         || puedeActivo(request.resource.data.activoAgroId);
 
-      allow update: if esAdmin()
-        || (puedeActivo(resource.data.activoAgroId)
-            && !cambia(['activoAgroId']));
+      allow update: if esAdmin();
 
       allow delete: if false;
     }
@@ -297,18 +295,22 @@ service cloud.firestore {
       allow list: if esAdmin()
         || (logueado()
             && (resource.data.interesadoId == request.auth.uid
-                || resource.data.propietarioId == request.auth.uid));
+                || resource.data.propietarioId == request.auth.uid
+                || request.auth.uid in resource.data.participantes));
 
       allow create: if logueado()
         && (request.resource.data.interesadoId == request.auth.uid
             || request.resource.data.propietarioId == request.auth.uid)
         && request.resource.data.interesadoId
-             != request.resource.data.propietarioId;
+             != request.resource.data.propietarioId
+        && request.resource.data.participantes.size() == 2
+        && request.resource.data.propietarioId in request.resource.data.participantes
+        && request.resource.data.interesadoId in request.resource.data.participantes;
 
       allow update: if logueado()
         && (resource.data.interesadoId == request.auth.uid
             || resource.data.propietarioId == request.auth.uid)
-        && !cambia(['interesadoId', 'propietarioId', 'campoId']);
+        && !cambia(['interesadoId', 'propietarioId', 'campoId', 'participantes']);
 
       allow delete: if false;
 
