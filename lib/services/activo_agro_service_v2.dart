@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../core/audit/audit_service.dart';
 import '../core/audit/audit_type.dart';
+import 'dart:convert';
 
 import 'package:agro_fields/models/activos/relacion_juridica_model.dart';
 import '../models/activos/activo_agro_model_v2.dart';
@@ -82,22 +83,14 @@ Future<String> crearActivo(
   ActivoAgroV2 activo,
 ) async {
 
-  final existente = await _db
-      .collection(coleccion)
-      .where(
-        'hashActivo',
-        isEqualTo: activo.hashActivo,
-      )
-      .limit(1)
-      .get();
+  final hashSeguro =
+      base64Url.encode(
+        utf8.encode(activo.hashActivo),
+      );
 
-  if(existente.docs.isNotEmpty){
-
-    throw Exception(
-      'Ya existe un activo similar registrado',
-    );
-
-  }
+  final hashRef = _db
+      .collection('hashes_activos')
+      .doc(hashSeguro);
 
   final doc = _db
       .collection(coleccion)
@@ -142,9 +135,32 @@ Future<String> crearActivo(
     ],
   );
 
-  await doc.set(
-    activoConHistorial.toMap(),
-  );
+  await _db.runTransaction((transaction) async {
+
+    final hashSnapshot =
+        await transaction.get(hashRef);
+
+    if (hashSnapshot.exists) {
+
+      throw Exception(
+        'Ya existe un activo similar registrado',
+      );
+
+    }
+
+    transaction.set(
+      hashRef,
+      {
+        'creadoPor': activo.creadorId,
+        'fecha': FieldValue.serverTimestamp(),
+      },
+    );
+
+    transaction.set(
+      doc,
+      activoConHistorial.toMap(),
+    );
+  });
 
   await _auditService.registrar(
     activoId: activo.activoId,
