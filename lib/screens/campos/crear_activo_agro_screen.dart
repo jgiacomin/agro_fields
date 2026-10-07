@@ -14,6 +14,7 @@ import '../../models/activos/confianza_activo_model.dart';
 import '../../models/activos/economia_activo_model.dart';
 import '../../models/activos/documentacion_activo_model.dart';
 import '../../models/activos/evaluacion_confianza_model.dart';
+import '../../models/activos/participante_activo_model.dart';
 
 import '../../services/activo_agro_service_v2.dart';
 
@@ -236,7 +237,14 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
         ),
          suelo: SueloActivo.inicial(),
 
-        participantes: [],
+         participantes: [
+           ParticipanteActivo(
+            usuarioId: user.uid,
+            rol: 'propietario',
+            estado: 'activo',
+            fechaIngreso: ahora,
+          ),
+         ],
 
         propietarioId: user.uid,
 
