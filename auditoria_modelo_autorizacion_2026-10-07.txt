@@ -1,0 +1,36 @@
+﻿AUDITORIA MODELO AUTORIZACION ACTIVO
+Fecha: 2026-10-07
+
+GAP: Modelo de autorización atómica por permiso y ámbito.
+
+Resultado:
+- Modelo creado: lib/models/activos/autorizacion_activo_model.dart
+- Test: test/models/activos/autorizacion_activo_model_test.dart
+- Tests ejecutados: 9
+- Tests aprobados: 9
+- Tests fallidos: 0
+- flutter analyze: limpio
+
+Validaciones:
+- Serialización toMap/fromMap: OK
+- Campos opcionales: OK
+- copyWith: OK
+- Ámbito inválido: rechazado con FormatException
+- Rol inválido: rechazado con FormatException
+- Permiso inválido: rechazado con FormatException
+- Estado inválido: rechazado con FormatException
+- Modalidad inválida: rechazada con FormatException
+- Tipo de exclusividad inválido: rechazado con FormatException
+- Exclusividad ausente: permitida
+
+Criterio de seguridad:
+Los valores enumerados inválidos no se transforman silenciosamente en valores válidos.
+Los objetos opcionales pueden estar ausentes, pero si están presentes y contienen valores inválidos son rechazados.
+
+Alcance:
+No se modificaron servicios.
+No se modificaron Firestore Rules.
+No se modificaron pantallas.
+No se modificaron modelos existentes.
+
+Estado: CERRADO - MODELO DE AUTORIZACION
