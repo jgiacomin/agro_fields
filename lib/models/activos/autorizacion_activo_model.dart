@@ -133,16 +133,30 @@ class AmbitoAutorizacion {
   }
 }
 
+/// Estados del ciclo de vida de una evidencia de autorización.
+enum EstadoEvidenciaAutorizacion {
+  informada,
+  presentada,
+  enRevision,
+  verificada,
+  observada,
+  rechazada,
+  vencida,
+  reemplazada,
+}
+
 /// Evidencia que respalda una autorización.
 class EvidenciaAutorizacion {
   final String tipo;
   final String? referenciaId;
   final String? descripcion;
+  final EstadoEvidenciaAutorizacion estado;
 
   const EvidenciaAutorizacion({
     required this.tipo,
     this.referenciaId,
     this.descripcion,
+    this.estado = EstadoEvidenciaAutorizacion.presentada,
   });
 
   factory EvidenciaAutorizacion.fromMap(Map<String, dynamic> map) {
@@ -150,6 +164,7 @@ class EvidenciaAutorizacion {
       tipo: map['tipo'] as String? ?? '',
       referenciaId: map['referenciaId'] as String?,
       descripcion: map['descripcion'] as String?,
+      estado: _estadoDesdeString(map['estado']),
     );
   }
 
@@ -158,6 +173,7 @@ class EvidenciaAutorizacion {
       'tipo': tipo,
       'referenciaId': referenciaId,
       'descripcion': descripcion,
+      'estado': estado.name,
     };
   }
 
@@ -165,12 +181,32 @@ class EvidenciaAutorizacion {
     String? tipo,
     String? referenciaId,
     String? descripcion,
+    EstadoEvidenciaAutorizacion? estado,
   }) {
     return EvidenciaAutorizacion(
       tipo: tipo ?? this.tipo,
       referenciaId: referenciaId ?? this.referenciaId,
       descripcion: descripcion ?? this.descripcion,
+      estado: estado ?? this.estado,
     );
+  }
+
+  static EstadoEvidenciaAutorizacion _estadoDesdeString(dynamic valor) {
+    if (valor == null) {
+      return EstadoEvidenciaAutorizacion.presentada;
+    }
+
+    final encontrado = EstadoEvidenciaAutorizacion.values.where(
+      (item) => item.name == valor,
+    );
+
+    if (encontrado.isEmpty) {
+      throw FormatException(
+        'EstadoEvidenciaAutorizacion inválido: $valor',
+      );
+    }
+
+    return encontrado.first;
   }
 }
 
@@ -237,6 +273,7 @@ class ExclusividadAutorizacion {
 class AutorizacionActivo {
   final String autorizacionId;
   final String? grupoAutorizacionId;
+  final String? autorizacionOrigenId;
   final String activoId;
   final String usuarioAutorizado;
   final String quienOtorga;
@@ -257,6 +294,7 @@ class AutorizacionActivo {
   const AutorizacionActivo({
     required this.autorizacionId,
     this.grupoAutorizacionId,
+    this.autorizacionOrigenId,
     required this.activoId,
     required this.usuarioAutorizado,
     required this.quienOtorga,
@@ -279,6 +317,7 @@ class AutorizacionActivo {
     return AutorizacionActivo(
       autorizacionId: map['autorizacionId'] as String? ?? '',
       grupoAutorizacionId: map['grupoAutorizacionId'] as String?,
+      autorizacionOrigenId: map['autorizacionOrigenId'] as String?,
       activoId: map['activoId'] as String? ?? '',
       usuarioAutorizado: map['usuarioAutorizado'] as String? ?? '',
       quienOtorga: map['quienOtorga'] as String? ?? '',
@@ -323,6 +362,7 @@ class AutorizacionActivo {
     return {
       'autorizacionId': autorizacionId,
       'grupoAutorizacionId': grupoAutorizacionId,
+      'autorizacionOrigenId': autorizacionOrigenId,
       'activoId': activoId,
       'usuarioAutorizado': usuarioAutorizado,
       'quienOtorga': quienOtorga,
@@ -346,6 +386,7 @@ class AutorizacionActivo {
   AutorizacionActivo copyWith({
     String? autorizacionId,
     String? grupoAutorizacionId,
+    String? autorizacionOrigenId,
     String? activoId,
     String? usuarioAutorizado,
     String? quienOtorga,
@@ -367,6 +408,8 @@ class AutorizacionActivo {
       autorizacionId: autorizacionId ?? this.autorizacionId,
       grupoAutorizacionId:
           grupoAutorizacionId ?? this.grupoAutorizacionId,
+      autorizacionOrigenId:
+          autorizacionOrigenId ?? this.autorizacionOrigenId,
       activoId: activoId ?? this.activoId,
       usuarioAutorizado:
           usuarioAutorizado ?? this.usuarioAutorizado,

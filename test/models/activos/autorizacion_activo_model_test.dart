@@ -20,6 +20,7 @@ void main() {
         tipo: 'contrato_intermediacion',
         referenciaId: 'documento-001',
         descripcion: 'Contrato comercial vigente',
+        estado: EstadoEvidenciaAutorizacion.verificada,
       );
 
       final exclusividad = ExclusividadAutorizacion(
@@ -31,6 +32,7 @@ void main() {
       final autorizacion = AutorizacionActivo(
         autorizacionId: 'aut-001',
         grupoAutorizacionId: 'grupo-001',
+        autorizacionOrigenId: 'aut-origen-001',
         activoId: 'activo-001',
         usuarioAutorizado: 'broker-001',
         quienOtorga: 'propietario-001',
@@ -57,6 +59,7 @@ void main() {
 
       expect(map['autorizacionId'], 'aut-001');
       expect(map['grupoAutorizacionId'], 'grupo-001');
+      expect(map['autorizacionOrigenId'], 'aut-origen-001');
       expect(map['activoId'], 'activo-001');
       expect(map['usuarioAutorizado'], 'broker-001');
       expect(map['quienOtorga'], 'propietario-001');
@@ -117,6 +120,10 @@ void main() {
         evidenciaMap['descripcion'],
         'Contrato comercial vigente',
       );
+      expect(
+        evidenciaMap['estado'],
+        'verificada',
+      );
 
       expect(
         map['exclusividad'],
@@ -143,6 +150,10 @@ void main() {
       expect(
         reconstruida.grupoAutorizacionId,
         autorizacion.grupoAutorizacionId,
+      );
+      expect(
+        reconstruida.autorizacionOrigenId,
+        autorizacion.autorizacionOrigenId,
       );
       expect(
         reconstruida.activoId,
@@ -202,6 +213,10 @@ void main() {
         'contrato_intermediacion',
       );
       expect(
+        reconstruida.evidenciaAutorizacion!.estado,
+        EstadoEvidenciaAutorizacion.verificada,
+      );
+      expect(
         reconstruida.exclusividad!.activa,
         false,
       );
@@ -232,6 +247,7 @@ void main() {
       final map = autorizacion.toMap();
 
       expect(map['grupoAutorizacionId'], isNull);
+      expect(map['autorizacionOrigenId'], isNull);
       expect(map['fechaFin'], isNull);
       expect(map['modalidadRepresentacion'], isNull);
       expect(map['exclusividad'], isNull);
@@ -273,6 +289,7 @@ void main() {
       final modificada = original.copyWith(
         permiso: PermisoAutorizacion.compartir,
         estado: EstadoAutorizacion.activa,
+        autorizacionOrigenId: 'aut-origen-003',
       );
 
       expect(
@@ -282,6 +299,10 @@ void main() {
       expect(
         modificada.activoId,
         original.activoId,
+      );
+      expect(
+        modificada.autorizacionOrigenId,
+        'aut-origen-003',
       );
       expect(
         modificada.usuarioAutorizado,
@@ -310,7 +331,96 @@ void main() {
     });
   });
 
+  group('AutorizacionActivo - evidencia y delegación', () {
+    test('debe aceptar evidencia existente sin estado y usar presentada', () {
+      final evidencia = EvidenciaAutorizacion.fromMap({
+        'tipo': 'contrato',
+        'referenciaId': 'doc-001',
+        'descripcion': 'Documento histórico',
+      });
+
+      expect(
+        evidencia.estado,
+        EstadoEvidenciaAutorizacion.presentada,
+      );
+    });
+
+    test('debe permitir una autorización original sin origen', () {
+      final autorizacion = AutorizacionActivo(
+        autorizacionId: 'aut-original',
+        activoId: 'activo-001',
+        usuarioAutorizado: 'usuario-001',
+        quienOtorga: 'propietario-001',
+        rol: RolAutorizacion.broker,
+        permiso: PermisoAutorizacion.ver,
+        ambito: const AmbitoAutorizacion(
+          tipo: TipoAmbitoAutorizacion.marketplace,
+        ),
+        fechaInicio: DateTime(2027, 1, 1),
+        estado: EstadoAutorizacion.activa,
+        fechaOtorgamiento: DateTime(2026, 12, 20),
+      );
+
+      expect(autorizacion.autorizacionOrigenId, isNull);
+    });
+
+    test('debe conservar el origen de una autorización delegada', () {
+      final autorizacion = AutorizacionActivo(
+        autorizacionId: 'aut-delegada',
+        autorizacionOrigenId: 'aut-original',
+        activoId: 'activo-001',
+        usuarioAutorizado: 'usuario-002',
+        quienOtorga: 'usuario-001',
+        rol: RolAutorizacion.broker,
+        permiso: PermisoAutorizacion.ver,
+        ambito: const AmbitoAutorizacion(
+          tipo: TipoAmbitoAutorizacion.marketplace,
+        ),
+        fechaInicio: DateTime(2027, 1, 1),
+        estado: EstadoAutorizacion.activa,
+        fechaOtorgamiento: DateTime(2026, 12, 20),
+      );
+
+      final reconstruida =
+          AutorizacionActivo.fromMap(autorizacion.toMap());
+
+      expect(
+        reconstruida.autorizacionOrigenId,
+        'aut-original',
+      );
+    });
+
+    test('debe permitir cambiar el estado de evidencia con copyWith', () {
+      const evidencia = EvidenciaAutorizacion(
+        tipo: 'contrato',
+      );
+
+      final modificada = evidencia.copyWith(
+        estado: EstadoEvidenciaAutorizacion.verificada,
+      );
+
+      expect(
+        evidencia.estado,
+        EstadoEvidenciaAutorizacion.presentada,
+      );
+      expect(
+        modificada.estado,
+        EstadoEvidenciaAutorizacion.verificada,
+      );
+    });
+  });
+
   group('AutorizacionActivo - valores inválidos', () {
+    test('debe rechazar un estado de evidencia inválido', () {
+      expect(
+        () => EvidenciaAutorizacion.fromMap({
+          'tipo': 'contrato',
+          'estado': 'estado_inexistente',
+        }),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('debe rechazar un ámbito inválido', () {
       expect(
         () => AutorizacionActivo.fromMap({
