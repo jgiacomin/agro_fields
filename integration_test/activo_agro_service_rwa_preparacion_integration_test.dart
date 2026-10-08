@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:agro_fields/firebase_options.dart';
 import 'package:agro_fields/models/activos/activo_agro_model_v2.dart';
@@ -23,12 +24,30 @@ void main() {
   late FirebaseFirestore firestore;
   late ActivoAgroServiceV2 activoService;
 
-  const String usuarioId = 'usuario_test_rwa_preparacion';
+  late String usuarioId;
 
   setUpAll(() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    await FirebaseAuth.instance.useAuthEmulator(
+      '10.0.2.2',
+      9099,
+    );
+
+    final credential =
+        await FirebaseAuth.instance.signInAnonymously();
+
+    final user = credential.user;
+
+    if (user == null) {
+      throw Exception(
+        'No se pudo crear el usuario anonimo del test',
+      );
+    }
+
+    usuarioId = user.uid;
 
     firestore = FirebaseFirestore.instance;
 
