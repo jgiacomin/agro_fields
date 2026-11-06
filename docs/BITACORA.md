@@ -6485,14 +6485,13 @@ Se incorporaron los casos:
 
 Validación ejecutada:
 
-
-ode --test rules.test.mjs --test-name-pattern="RECURSOS-0"
+`node --test rules.test.mjs --test-name-pattern="RECURSOS-0"`
 
 Resultado:
 
 **60/60 tests aprobados.**
 
-Los rechazos PERMISSION_DENIED observados durante la ejecución corresponden a los casos assertFails() esperados y forman parte de la validación negativa de las reglas.
+Los rechazos PERMISSION_DENIED observados durante la ejecución corresponden a los casos `assertFails()` esperados y forman parte de la validación negativa de las reglas.
 
 ### Arquitectura
 
@@ -6516,14 +6515,14 @@ Este cierre corresponde exclusivamente a la autorización Firestore de `recursos
 
 Evidencia principal:
 
-* irestore.rules
-* 	est_rules/rules.test.mjs
+* `firestore.rules`
+* `test_rules/rules.test.mjs`
 * lib/models/activos/recurso_agro_model.dart
-* 	est/recurso_agro_model_test.dart
+* `test/recurso_agro_model_test.dart`
 * lib/models/activos/movimiento_stock_model.dart
-* 	est/movimiento_stock_model_test.dart
+* `test/movimiento_stock_model_test.dart`
 * lib/models/activos/uso_recurso_trabajo_model.dart
-* 	test/uso_recurso_trabajo_model_test.dart
+* `test/uso_recurso_trabajo_model_test.dart`
 * Firebase Firestore Emulator
 * resultado 60/60 tests aprobados
 
@@ -6562,3 +6561,71 @@ La revisión documental existente establece continuidad conceptual entre Campo y
 **Criterio de cierre:** identidad y mapeo documentados, circuito validado con pruebas y estrategia de portabilidad Firestore → SQL respaldada por evidencia.
 
 **Resultado actual:** GAP detectado; no corregido ni validado todavía.
+
+---
+
+# 06/11/2026 - Orden del trabajo pendiente en Git
+
+Antes de seguir con los GAPs se guardó en Git el trabajo que estaba en la PC sin commitear, separado por tema, en la rama `gap-stock-reglas`. No se usó `git add .` (quedan fuera backups, `.tmp`, `.zip` y `node_modules`).
+
+| Commit | Contenido |
+| --- | --- |
+| `856e08e` | Stock, recursos y trabajos: modelos, servicios, tests e integration tests |
+| `75e5078` | Autorizaciones: servicios, test e integration test |
+| `e930fdb` | Pantalla de detalle del activo: Ubicación, Economía, Infraestructura y Confianza (se borró un título "Estado del activo" repetido) |
+| `e3fdeab` | Integration test de evidencias con Auth Emulator |
+| `6d801c0` | Roadmap |
+| `3e65e69` | Bitácora (finales de línea unificados) |
+
+Hallazgos:
+
+* El Cambio 2 (`crearActivo` con `hashes_activos`) ya estaba commiteado. Los cambios locales de `activo_agro_service_v2.dart` solo quitaban tildes de textos visibles y agregaban un BOM; se descartaron con `git restore`. Lo mismo con líneas en blanco en `activo_agro_model_v2.dart` e `historial_activo_model.dart`.
+* Quedan sin commitear a propósito: `AndroidManifest.xml` (`usesCleartextTraffic`, solo para emulador) y `lib/main.dart` (emulador comentado).
+* `test/trabajo_service_test.dart` falla por conexión a Firebase en un test común; queda pendiente.
+
+Línea base: `flutter analyze` sin errores; `flutter test` 76 aprobados y 2 fallas conocidas de conexión a Firebase (`oportunidad_agro_service_test.dart` y `trabajo_service_test.dart`).
+
+---
+
+# 06/11/2026 - Paso 1: Publicación sobre resumen público (`activos_publicos`)
+
+**Estado: VALIDADO TÉCNICAMENTE.**
+
+### Problema
+
+`publicarActivo` marcaba el expediente privado (`activos_agro`) como publicado y visible, sin revisión, y el marketplace leía ese mismo expediente. Con las reglas nuevas el marketplace quedaba vacío (pruebas 10a y 10b) y el dueño podía publicarse solo (10c).
+
+### Solución (cambio mínimo)
+
+* Nuevo modelo `ActivoPublico`: resumen con 13 datos publicables (nombre, descripción, tipo, país, provincia, localidad, superficie, nivel de confianza, madurez, nombres de producciones, dueño, estado de publicación y fecha) más `visible`. No lleva economía, documentos, suelo, historial, participantes ni datos personales.
+* `publicarActivo`: en un mismo batch deja el expediente privado (`pendienteRevision`, `visible: false`) y guarda el resumen en `activos_publicos/{activoId}` como `pendienteRevision`, no visible.
+* `obtenerActivosPublicados`: lee solo `activos_publicos` publicados y visibles.
+* `pausarActivo`: también pausa el resumen si existe.
+* Pantallas del comprador (`campos_screen`, `detalle_campo_screen`, `campo_card`) usan el resumen. `mis_activos_screen` muestra "En revisión". En `campo_card` se cambió "Verificado Agro Fields" por "Publicado" (publicar no es verificar).
+* `firestore.rules` no se modificó: ya estaba preparada.
+
+### Decisiones
+
+* Por ahora el administrador aprueba desde la consola de Firebase (`estadoPublicacion: publicado`, `visible: true`). La pantalla de administrador queda para después.
+* Solo el dueño puede mandar a publicar; el broker queda para la toma de posesión.
+
+### Validación
+
+* `flutter analyze`: 0 errores.
+* `flutter test`: 80 aprobados (76 + 4 de `test/activo_publico_model_test.dart`) y las 2 fallas conocidas de conexión a Firebase.
+* `npm test` (emulador de Firestore): **81/81** (71 + PUB-01 a PUB-10).
+* Las pruebas 10a a 10c se renombraron como registro de la publicación vieja.
+
+### Pendiente
+
+* Prueba 10c: el dueño todavía puede marcar el expediente como publicado. No afecta al marketplace, pero conviene bloquearlo en las reglas.
+* Probar el recorrido en la app real cuando se publiquen las reglas nuevas en Firebase.
+* Checks de qué datos compartir, pantalla de administrador y publicación por broker.
+
+### Evidencia
+
+* Rama `gap-publicacion-resumen`, commit `0872e15`
+* `lib/models/activos/activo_publico_model.dart`
+* `lib/services/activo_agro_service_v2.dart`
+* `test/activo_publico_model_test.dart`
+* `test_rules/rules.test.mjs` (PUB-01 a PUB-10)

@@ -348,11 +348,12 @@ test('8k. Un tercero NO lista los chats de otro usando participantes [PROHIBIDO]
   const q = query(collection(como(OTRO), 'chats'), where('participantes', 'array-contains', COMPRADOR));
   await assertFails(getDocs(q));
 });
-// ------------------------- 10. HALLAZGO: PUBLICACIÓN ACTUAL DE LA APP -------------------------
-// Estas pruebas copian lo que hoy hace activo_agro_service_v2.dart.
-// No arreglan nada: documentan el comportamiento actual.
+// ------------------------- 10. PUBLICACIÓN VIEJA (RETIRADA EN EL PASO 1) -------------------------
+// Estas pruebas copiaban lo que hacía la app antes del paso 1 (commit 0872e15),
+// cuando el marketplace leía el expediente. Ahora publica sobre activos_publicos
+// (ver pruebas PUB-01 a PUB-10). Se dejan como registro.
 
-test('10a. HALLAZGO: el feed actual (lista activos_agro por publicado+visible) lo rechaza para un comprador [PROHIBIDO]', async () => {
+test('10a. RETIRADO: el feed viejo (listar activos_agro por publicado+visible) sigue rechazado para un comprador [PROHIBIDO]', async () => {
   const q = query(
     collection(como(COMPRADOR), 'activos_agro'),
     where('estadoPublicacion', '==', 'publicado'),
@@ -361,7 +362,7 @@ test('10a. HALLAZGO: el feed actual (lista activos_agro por publicado+visible) l
   await assertFails(getDocs(q));
 });
 
-test('10b. HALLAZGO: el feed actual también lo rechaza para el dueño [PROHIBIDO]', async () => {
+test('10b. RETIRADO: el feed viejo también sigue rechazado para el dueño [PROHIBIDO]', async () => {
   const q = query(
     collection(como(DUENO), 'activos_agro'),
     where('estadoPublicacion', '==', 'publicado'),
@@ -370,7 +371,7 @@ test('10b. HALLAZGO: el feed actual también lo rechaza para el dueño [PROHIBID
   await assertFails(getDocs(q));
 });
 
-test('10c. HALLAZGO: el dueño se publica directo en el expediente, sin revisión (como hace publicarActivo) [PERMITIDO]', async () => {
+test('10c. PENDIENTE: el dueño todavía puede marcar el expediente como publicado; no afecta al marketplace, que lee activos_publicos [PERMITIDO]', async () => {
   await assertSucceeds(updateDoc(doc(como(DUENO), 'activos_agro/a1'), {
     estado: 'publicado', estadoPublicacion: 'publicado', visible: true,
   }));

@@ -3303,3 +3303,21 @@ Referencia documental:
 **Criterio de aceptación:** los identificadores y las relaciones permanecen coherentes en el circuito actual y existe un mapeo explícito y verificable para SQL/PostgreSQL.
 
 La implementación queda sujeta al resultado de la auditoría y a las pruebas correspondientes.
+
+---
+
+## Marketplace — Publicación sobre resumen público — Estado
+
+🟢 **PASO 1 VALIDADO TÉCNICAMENTE** (06/11/2026, rama `gap-publicacion-resumen`, commit `0872e15`)
+
+El marketplace ya no lee el expediente privado (`activos_agro`). Lee solo `activos_publicos`, un resumen de 13 datos publicables que nace pendiente de revisión y se ve recién cuando lo aprueba el administrador.
+
+Evidencia: `flutter test` 80 aprobados (2 fallas conocidas de conexión), reglas 81/81 (PUB-01 a PUB-10).
+
+Pendiente: bloquear en reglas que el dueño marque el expediente como publicado (prueba 10c), pantalla de administrador, checks de qué compartir, publicación por broker y prueba en la app real.
+
+Próximo paso del plan: **Paso 2 — Oportunidades sin datos privados.**
+
+Referencia documental:
+
+`docs/BITACORA.md`
