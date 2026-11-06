@@ -12,7 +12,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   doc, getDoc, setDoc, updateDoc, deleteDoc,
-  addDoc, collection, getDocs, query, where,
+  addDoc, collection, getDocs, query, where, runTransaction,
 } from 'firebase/firestore';
 
 const ADMIN = 'RtUPcWdZHuQMNsDrza7firR2X2j1'; // tu UID
@@ -50,6 +50,11 @@ beforeEach(async () => {
     await setDoc(doc(db, 'evidencias/e1'), { activoAgroId: 'a1', tipo: 'foto' });
     await setDoc(doc(db, 'auditoria_activos/au1'), { activoId: 'a1', usuarioId: DUENO, accion: 'crear' });
     await setDoc(doc(db, 'hashes_activos/h1'), { creadoPor: DUENO, fecha: new Date() });
+    await setDoc(doc(db, 'recursos/recurso_001'), {
+    activoAgroId: 'a1',
+     tipo: 'maquinaria',
+    nombre: 'Tractor de prueba',
+    });
     await setDoc(doc(db, 'chats/c1'), { propietarioId: DUENO, interesadoId: COMPRADOR, campoId: 'a1' });
     await setDoc(doc(db, 'chats/c1/mensajes/m1'), { senderId: COMPRADOR, text: 'hola' });
   });
@@ -341,5 +346,184 @@ test('8j. Un participante NO puede cambiar participantes [PROHIBIDO]', async () 
 test('8k. Un tercero NO lista los chats de otro usando participantes [PROHIBIDO]', async () => {
   await cargar((db) => setDoc(doc(db, 'chats/c2'), chatComoLoCreaLaApp()));
   const q = query(collection(como(OTRO), 'chats'), where('participantes', 'array-contains', COMPRADOR));
+  await assertFails(getDocs(q));
+});
+// ------------------------- 10. HALLAZGO: PUBLICACIÓN ACTUAL DE LA APP -------------------------
+// Estas pruebas copian lo que hoy hace activo_agro_service_v2.dart.
+// No arreglan nada: documentan el comportamiento actual.
+
+test('10a. HALLAZGO: el feed actual (lista activos_agro por publicado+visible) lo rechaza para un comprador [PROHIBIDO]', async () => {
+  const q = query(
+    collection(como(COMPRADOR), 'activos_agro'),
+    where('estadoPublicacion', '==', 'publicado'),
+    where('visible', '==', true),
+  );
+  await assertFails(getDocs(q));
+});
+
+test('10b. HALLAZGO: el feed actual también lo rechaza para el dueño [PROHIBIDO]', async () => {
+  const q = query(
+    collection(como(DUENO), 'activos_agro'),
+    where('estadoPublicacion', '==', 'publicado'),
+    where('visible', '==', true),
+  );
+  await assertFails(getDocs(q));
+});
+
+test('10c. HALLAZGO: el dueño se publica directo en el expediente, sin revisión (como hace publicarActivo) [PERMITIDO]', async () => {
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'activos_agro/a1'), {
+    estado: 'publicado', estadoPublicacion: 'publicado', visible: true,
+  }));
+});
+// ------------------------- RECURSOS / INVENTARIO V1 -------------------------
+test('RECURSOS-01. El dueño puede leer un recurso de su Activo [PERMITIDO]', async () => {
+  await assertSucceeds(
+    getDoc(doc(como(DUENO), 'recursos/recurso_001'))
+  );
+});
+test('RECURSOS-02. Un tercero NO puede leer un recurso de un Activo ajeno [PROHIBIDO]', async () => {
+  await assertFails(
+    getDoc(doc(como(OTRO), 'recursos/recurso_001'))
+  );
+});
+test('RECURSOS-03. El dueño puede crear un recurso en su Activo [PERMITIDO]', async () => {
+  await assertSucceeds(
+    setDoc(
+      doc(como(DUENO), 'recursos/recurso_002'),
+      {
+        activoAgroId: 'a1',
+        tipo: 'herramienta',
+        nombre: 'Herramienta de prueba',
+      }
+    )
+  );
+});
+test('RECURSOS-04. Un tercero NO puede crear un recurso en un Activo ajeno [PROHIBIDO]', async () => {
+  await assertFails(
+    setDoc(
+      doc(como(OTRO), 'recursos/recurso_003'),
+      {
+        activoAgroId: 'a1',
+        tipo: 'insumo',
+        nombre: 'Insumo no autorizado',
+      }
+    )
+  );
+});
+test('RECURSOS-05. El dueño NO puede modificar un recurso [PROHIBIDO]', async () => {
+  await assertFails(
+    updateDoc(
+      doc(como(DUENO), 'recursos/recurso_001'),
+      {
+        nombre: 'Tractor modificado',
+      }
+    )
+  );
+});
+test('RECURSOS-06. El dueño NO puede eliminar un recurso [PROHIBIDO]', async () => {
+  await assertFails(
+    deleteDoc(
+      doc(como(DUENO), 'recursos/recurso_001')
+    )
+  );
+});
+
+// ------------------------- STOCK: MOVIMIENTOS_STOCK -------------------------
+// Copian lo que hace movimiento_stock_service.registrarMovimiento:
+// en UNA transaccion actualiza el saldo del recurso, crea el movimiento
+// y crea el evento de auditoria.
+const cargarRecursoConSaldo = () => cargar((db) =>
+  setDoc(doc(db, 'recursos/rec_stock'), {
+    activoAgroId: 'a1', tipo: 'insumo', nombre: 'Maíz', cantidadActual: 10,
+  }));
+
+const cargarMovimiento = () => cargar((db) =>
+  setDoc(doc(db, 'movimientos_stock/m1'), {
+    movimientoId: 'm1', activoAgroId: 'a1', recursoId: 'rec_stock', usuarioId: DUENO,
+  }));
+
+const movimientoComoLaApp = (db, { usuario = DUENO, saldoNuevo = 15, saldoGuardado = 15 } = {}) =>
+  runTransaction(db, async (tx) => {
+    const recursoRef = doc(db, 'recursos/rec_stock');
+    const movimientoRef = doc(db, 'movimientos_stock/mov1');
+    const auditoriaRef = doc(db, 'auditoria_activos/aud_mov1');
+    const recurso = await tx.get(recursoRef);
+    const saldoAnterior = recurso.data().cantidadActual;
+    tx.update(recursoRef, {
+      cantidadActual: saldoGuardado,
+      ultimoMovimientoId: 'mov1',
+      ultimoMovimientoAuditoriaId: 'aud_mov1',
+    });
+    tx.set(movimientoRef, {
+      movimientoId: 'mov1', activoAgroId: 'a1', recursoId: 'rec_stock',
+      tipoMovimiento: 'entrada', cantidad: 5, unidad: 'kg',
+      usuarioId: usuario, auditoriaId: 'aud_mov1',
+      saldoAnterior, saldoNuevo,
+    });
+    tx.set(auditoriaRef, {
+      eventoId: 'aud_mov1', activoId: 'a1', usuarioId: usuario,
+      tipo: 'modificacion', modulo: 'stock', accion: 'registrar_movimiento_stock',
+      elementoAfectado: 'rec_stock', referencia: 'mov1',
+    });
+  });
+
+test('STOCK-01. El dueño registra un movimiento como lo hace la app (transacción completa) [PERMITIDO]', async () => {
+  await cargarRecursoConSaldo();
+  await assertSucceeds(movimientoComoLaApp(como(DUENO)));
+});
+
+test('STOCK-02. Un tercero NO registra un movimiento en un Activo ajeno [PROHIBIDO]', async () => {
+  await cargarRecursoConSaldo();
+  await assertFails(movimientoComoLaApp(como(OTRO), { usuario: OTRO }));
+});
+
+test('STOCK-03. NO se registra un movimiento a nombre de otro usuario [PROHIBIDO]', async () => {
+  await cargarRecursoConSaldo();
+  await assertFails(movimientoComoLaApp(como(DUENO), { usuario: COMPRADOR }));
+});
+
+test('STOCK-04. NO se acepta un saldo del recurso distinto al del movimiento [PROHIBIDO]', async () => {
+  await cargarRecursoConSaldo();
+  await assertFails(movimientoComoLaApp(como(DUENO), { saldoNuevo: 15, saldoGuardado: 20 }));
+});
+
+test('STOCK-05. NO se cambia el saldo de un recurso a mano, sin movimiento [PROHIBIDO]', async () => {
+  await cargarRecursoConSaldo();
+  await assertFails(updateDoc(doc(como(DUENO), 'recursos/rec_stock'), {
+    cantidadActual: 999,
+    ultimoMovimientoId: 'no_existe',
+    ultimoMovimientoAuditoriaId: 'no_existe',
+  }));
+});
+
+test('STOCK-06. Un movimiento NO se edita [PROHIBIDO]', async () => {
+  await cargarMovimiento();
+  await assertFails(updateDoc(doc(como(DUENO), 'movimientos_stock/m1'), { saldoNuevo: 1 }));
+});
+
+test('STOCK-07. Un movimiento NO se borra [PROHIBIDO]', async () => {
+  await cargarMovimiento();
+  await assertFails(deleteDoc(doc(como(DUENO), 'movimientos_stock/m1')));
+});
+
+test('STOCK-08. El dueño lee un movimiento de su Activo [PERMITIDO]', async () => {
+  await cargarMovimiento();
+  await assertSucceeds(getDoc(doc(como(DUENO), 'movimientos_stock/m1')));
+});
+
+test('STOCK-09. Un tercero NO lee un movimiento de un Activo ajeno [PROHIBIDO]', async () => {
+  await cargarMovimiento();
+  await assertFails(getDoc(doc(como(OTRO), 'movimientos_stock/m1')));
+});
+
+test('STOCK-10. El dueño lista los movimientos de su Activo [PERMITIDO]', async () => {
+  await cargarMovimiento();
+  const q = query(collection(como(DUENO), 'movimientos_stock'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('STOCK-11. Un tercero NO lista los movimientos de un Activo ajeno [PROHIBIDO]', async () => {
+  await cargarMovimiento();
+  const q = query(collection(como(OTRO), 'movimientos_stock'), where('activoAgroId', '==', 'a1'));
   await assertFails(getDocs(q));
 });

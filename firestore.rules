@@ -4,16 +4,16 @@ rules_version = '2';
 // AGRO FIELDS V8 - FIRESTORE RULES (BORRADOR PARA PROBAR EN EMULADOR)
 //
 // Principios:
-//  1) Todo está prohibido salvo lo que se permite acá abajo.
-//  2) El expediente privado (activos_agro) solo lo ven su dueño
-//     (propietarioId) y quien lo cargó (publicadorId).
+//  1) Todo estÃ¡ prohibido salvo lo que se permite acÃ¡ abajo.
+//  2) El expediente privado (activos_agro) solo lo ven su dueÃ±o
+//     (propietarioId) y quien lo cargÃ³ (publicadorId).
 //  3) El marketplace lee SOLO activos_publicos (resumen publicable),
 //     nunca el expediente privado.
-//  4) Publicar pasa por revisión: el dueño pide (pendienteRevision) y
+//  4) Publicar pasa por revisiÃ³n: el dueÃ±o pide (pendienteRevision) y
 //     el administrador aprueba (publicado).
 //  5) El campo "rol" del usuario no lo puede cambiar la app.
-//  6) Auditoría y eventos son de solo agregar (no se editan ni borran).
-//  7) Cada colección nueva nace con su regla acá.
+//  6) AuditorÃ­a y eventos son de solo agregar (no se editan ni borran).
+//  7) Cada colecciÃ³n nueva nace con su regla acÃ¡.
 // =====================================================================
 
 service cloud.firestore {
@@ -23,7 +23,7 @@ service cloud.firestore {
     // FUNCIONES AUXILIARES
     // -----------------------------------------------------------------
 
-    // UIDs de administradores (v1 mínimo).
+    // UIDs de administradores (v1 mÃ­nimo).
     function adminUids() {
       return ['RtUPcWdZHuQMNsDrza7firR2X2j1'];
     }
@@ -53,19 +53,19 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/activos_agro/$(id)).data;
     }
 
-    // Dueño único del Activo.
+    // DueÃ±o Ãºnico del Activo.
     function esDuenoActivo(id) {
       return logueado() && activoDe(id).propietarioId == request.auth.uid;
     }
 
-    // Dueño o quien cargó el expediente (ej: inmobiliaria o broker).
+    // DueÃ±o o quien cargÃ³ el expediente (ej: inmobiliaria o broker).
     function puedeActivo(id) {
       return logueado()
         && (activoDe(id).propietarioId == request.auth.uid
             || activoDe(id).get('publicadorId', '') == request.auth.uid);
     }
 
-    // Sobre datos ya leídos (resource.data) de un activo.
+    // Sobre datos ya leÃ­dos (resource.data) de un activo.
     function parteDeActivo(d) {
       return d.propietarioId == request.auth.uid
         || d.get('publicadorId', '') == request.auth.uid;
@@ -84,7 +84,7 @@ service cloud.firestore {
         && request.resource.data.uid == uid
         && request.resource.data.rol == 'Comprador';
 
-      // Edición: el usuario no puede tocar rol, uid ni fechaAlta.
+      // EdiciÃ³n: el usuario no puede tocar rol, uid ni fechaAlta.
       allow update: if (esUsuario(uid)
           && !cambia(['rol', 'uid', 'fechaAlta']))
         || esAdmin();
@@ -94,7 +94,7 @@ service cloud.firestore {
 
     // -----------------------------------------------------------------
     // ACTIVOS_AGRO = EXPEDIENTE PRIVADO
-    // El marketplace NO lee esta colección.
+    // El marketplace NO lee esta colecciÃ³n.
     // -----------------------------------------------------------------
     match /activos_agro/{activoId} {
       allow get: if esAdmin()
@@ -105,14 +105,14 @@ service cloud.firestore {
       allow list: if esAdmin()
         || (logueado() && parteDeActivo(resource.data));
 
-      // Crear: quien crea debe ser el dueño o el publicador.
+      // Crear: quien crea debe ser el dueÃ±o o el publicador.
       allow create: if esAdmin()
         || (logueado()
             && (request.resource.data.propietarioId == request.auth.uid
                 || request.resource.data.get('publicadorId', '') == request.auth.uid));
 
-      // Editar: dueño o publicador, sin cambiar quién es dueño ni publicador.
-      // (La toma de posesión del dueño se hará por un flujo aparte.)
+      // Editar: dueÃ±o o publicador, sin cambiar quiÃ©n es dueÃ±o ni publicador.
+      // (La toma de posesiÃ³n del dueÃ±o se harÃ¡ por un flujo aparte.)
       allow update: if esAdmin()
         || (logueado()
             && parteDeActivo(resource.data)
@@ -140,14 +140,14 @@ service cloud.firestore {
                  && resource.data.visible == true)
                 || resource.data.propietarioId == request.auth.uid));
 
-      // El dueño solo puede pedir revisión (nunca publicar directo).
+      // El dueÃ±o solo puede pedir revisiÃ³n (nunca publicar directo).
       allow create: if esAdmin()
         || (esDuenoActivo(activoId)
             && request.resource.data.propietarioId == request.auth.uid
             && request.resource.data.estadoPublicacion == 'pendienteRevision'
             && request.resource.data.visible == false);
 
-      // El dueño puede editar borrador/pendiente/pausar, pero NO poner 'publicado'.
+      // El dueÃ±o puede editar borrador/pendiente/pausar, pero NO poner 'publicado'.
       allow update: if esAdmin()
         || (esDuenoActivo(activoId)
             && resource.data.propietarioId == request.auth.uid
@@ -160,9 +160,9 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
-    // HASHES_ACTIVOS = detección de duplicados sin exponer expedientes
+    // HASHES_ACTIVOS = detecciÃ³n de duplicados sin exponer expedientes
     // El ID del documento es el hash. Solo se puede preguntar por un hash
-    // puntual (get); no se puede listar la colección.
+    // puntual (get); no se puede listar la colecciÃ³n.
     // -----------------------------------------------------------------
     match /hashes_activos/{hash} {
       allow get: if logueado();
@@ -215,7 +215,7 @@ service cloud.firestore {
 
     // -----------------------------------------------------------------
     // AUDITORIA_ACTIVOS (de solo agregar: no se edita ni se borra)
-    // Endurecer más adelante: exigir usuarioId == request.auth.uid.
+    // Endurecer mÃ¡s adelante: exigir usuarioId == request.auth.uid.
     // -----------------------------------------------------------------
     match /auditoria_activos/{eventoId} {
       allow get: if esAdmin()
@@ -229,10 +229,116 @@ service cloud.firestore {
 
       allow update, delete: if false;
     }
+        // -----------------------------------------------------------------
+    // RECURSOS = RECURSOS E INVENTARIO V1
+    // El recurso pertenece al Activo Agro y hereda su autorización.
+    // V1: se consulta y crea; no se modifica ni elimina desde la app.
+    // -----------------------------------------------------------------
+    match /recursos/{recursoId} {
+  allow get: if esAdmin()
+    || (logueado()
+        && puedeActivo(resource.data.activoAgroId));
+
+  allow list: if esAdmin()
+    || (logueado()
+        && puedeActivo(resource.data.activoAgroId));
+
+  allow create: if esAdmin()
+    || (logueado()
+        && puedeActivo(request.resource.data.activoAgroId));
+
+  allow update: if esAdmin()
+    || (
+      logueado()
+      && puedeActivo(resource.data.activoAgroId)
+      && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'cantidadActual',
+            'ultimoMovimientoId',
+            'ultimoMovimientoAuditoriaId'
+          ])
+      && request.resource.data.diff(resource.data).affectedKeys()
+          .hasAll([
+            'cantidadActual',
+            'ultimoMovimientoId',
+            'ultimoMovimientoAuditoriaId'
+          ])
+      && request.resource.data.cantidadActual is number
+      && request.resource.data.cantidadActual >= 0
+      && request.resource.data.ultimoMovimientoId is string
+      && request.resource.data.ultimoMovimientoAuditoriaId is string
+      && existsAfter(
+        /databases/$(database)/documents/movimientos_stock/$(request.resource.data.ultimoMovimientoId)
+      )
+      && existsAfter(
+        /databases/$(database)/documents/auditoria_activos/$(request.resource.data.ultimoMovimientoAuditoriaId)
+      )
+      && getAfter(
+        /databases/$(database)/documents/movimientos_stock/$(request.resource.data.ultimoMovimientoId)
+      ).data.recursoId == recursoId
+      && getAfter(
+        /databases/$(database)/documents/movimientos_stock/$(request.resource.data.ultimoMovimientoId)
+      ).data.activoAgroId == resource.data.activoAgroId
+      && getAfter(
+        /databases/$(database)/documents/movimientos_stock/$(request.resource.data.ultimoMovimientoId)
+      ).data.usuarioId == request.auth.uid
+      && getAfter(
+        /databases/$(database)/documents/movimientos_stock/$(request.resource.data.ultimoMovimientoId)
+      ).data.auditoriaId == request.resource.data.ultimoMovimientoAuditoriaId
+      && getAfter(
+        /databases/$(database)/documents/movimientos_stock/$(request.resource.data.ultimoMovimientoId)
+      ).data.saldoAnterior == resource.data.cantidadActual
+      && getAfter(
+        /databases/$(database)/documents/movimientos_stock/$(request.resource.data.ultimoMovimientoId)
+      ).data.saldoNuevo == request.resource.data.cantidadActual
+      && getAfter(
+        /databases/$(database)/documents/auditoria_activos/$(request.resource.data.ultimoMovimientoAuditoriaId)
+      ).data.usuarioId == request.auth.uid
+      && getAfter(
+        /databases/$(database)/documents/auditoria_activos/$(request.resource.data.ultimoMovimientoAuditoriaId)
+      ).data.activoId == resource.data.activoAgroId
+      && getAfter(
+        /databases/$(database)/documents/auditoria_activos/$(request.resource.data.ultimoMovimientoAuditoriaId)
+      ).data.referencia == request.resource.data.ultimoMovimientoId
+      && getAfter(
+        /databases/$(database)/documents/auditoria_activos/$(request.resource.data.ultimoMovimientoAuditoriaId)
+      ).data.elementoAfectado == recursoId
+      && getAfter(
+        /databases/$(database)/documents/auditoria_activos/$(request.resource.data.ultimoMovimientoAuditoriaId)
+      ).data.accion == 'registrar_movimiento_stock'
+    );
+
+  allow delete: if false;
+}
 
     // -----------------------------------------------------------------
-    // OPORTUNIDADES_AGRO (representación temporal)
-    // Ojo: revisar qué datos guarda una oportunidad antes de publicar
+    // MOVIMIENTOS_STOCK = movimientos de inventario (solo se agregan)
+    // Cada movimiento pertenece a un Activo y hereda su autorizacion.
+    // Lo crea movimiento_stock_service dentro de una transaccion, junto con
+    // el evento de auditoria y la actualizacion del saldo del recurso
+    // (ver la regla de RECURSOS, que exige que este documento exista).
+    // Nunca se edita ni se borra: un error se corrige con otro movimiento.
+    // -----------------------------------------------------------------
+    match /movimientos_stock/{movimientoId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && puedeActivo(resource.data.activoAgroId));
+
+      allow list: if esAdmin()
+        || (logueado()
+            && puedeActivo(resource.data.activoAgroId));
+
+      allow create: if esAdmin()
+        || (logueado()
+            && puedeActivo(request.resource.data.activoAgroId)
+            && request.resource.data.usuarioId == request.auth.uid);
+
+      allow update, delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // OPORTUNIDADES_AGRO (representacion temporal)
+    // Ojo: revisar quÃ© datos guarda una oportunidad antes de publicar
     // estas reglas, porque cualquier usuario logueado lee las 'activa'.
     // -----------------------------------------------------------------
     match /oportunidades_agro/{oportunidadId} {
@@ -401,8 +507,79 @@ service cloud.firestore {
       allow delete: if esAdmin()
         || (logueado() && resource.data.propietarioId == request.auth.uid);
     }
+    // -----------------------------------------------------------------
+    // TRABAJOS = TRABAJO OPERACIONAL V1
+    // El trabajo pertenece al Activo Agro y hereda su autorizaciÃ³n.
+    // V1: se crea y consulta; no se modifica ni elimina desde la app.
+    // -----------------------------------------------------------------
+    match /trabajos/{trabajoId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && puedeActivo(resource.data.activoAgroId));
+
+      allow list: if esAdmin()
+        || (logueado()
+            && puedeActivo(resource.data.activoAgroId));
+
+      allow create: if esAdmin()
+        || (logueado()
+            && puedeActivo(request.resource.data.activoAgroId));
+
+      allow update, delete: if false;
+    }
 
     // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // AUTORIZACIONES_ACTIVOS
+    // Autorizaciones de acceso/acción sobre un Activo Agro.
+    //
+    // Regla v1:
+    // - Solo un usuario autenticado puede otorgar.
+    // - quienOtorga debe ser el usuario autenticado.
+    // - quienOtorga debe ser propietario del Activo o administrador.
+    // - La autorización queda vinculada al Activo.
+    // - No se permite modificar identidad, origen ni alcance estructural.
+    // - Las autorizaciones no se borran desde la app.
+    // -----------------------------------------------------------------
+    match /autorizaciones_activos/{autorizacionId} {
+
+      allow get: if esAdmin()
+        || (logueado()
+            && (
+              activoDe(resource.data.activoId).propietarioId
+                == request.auth.uid
+              || resource.data.usuarioAutorizado
+                == request.auth.uid
+            ));
+
+      allow list: if esAdmin();
+
+      allow create: if esAdmin()
+        || (
+          logueado()
+          && request.resource.data.autorizacionId == autorizacionId
+          && request.resource.data.activoId is string
+          && request.resource.data.activoId != ''
+          && request.resource.data.usuarioAutorizado is string
+          && request.resource.data.usuarioAutorizado != ''
+          && request.resource.data.quienOtorga == request.auth.uid
+          && activoDe(request.resource.data.activoId).propietarioId
+               == request.auth.uid
+        );
+
+      allow update: if esAdmin()
+        || (
+          logueado()
+          && resource.data.quienOtorga == request.auth.uid
+          && resource.data.activoId == request.resource.data.activoId
+          && resource.data.usuarioAutorizado
+               == request.resource.data.usuarioAutorizado
+          && resource.data.autorizacionId
+               == request.resource.data.autorizacionId
+        );
+
+      allow delete: if false;
+    }
     // TODO LO DEMAS: PROHIBIDO
     // -----------------------------------------------------------------
     match /{document=**} {
@@ -410,3 +587,5 @@ service cloud.firestore {
     }
   }
 }
+
+
