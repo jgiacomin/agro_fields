@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:agro_fields/models/activos/relacion_juridica_model.dart';
 import '../models/activos/activo_agro_model_v2.dart';
+import '../models/activos/activo_publico_model.dart';
 import '../models/activos/suelo_activo_model.dart';
 import '../models/activos/confianza_activo_model.dart';
 import '../models/activos/evaluacion_confianza_model.dart';
@@ -29,6 +30,10 @@ class ActivoAgroServiceV2 {
 
   final String coleccion =
       'activos_agro';
+
+  // Resumen publico: lo unico que lee el marketplace.
+  final String coleccionPublica =
+      'activos_publicos';
 
 final ConfianzaActivoService _confianzaService =
       ConfianzaActivoService();
@@ -236,14 +241,15 @@ Future<List<ActivoAgroV2>> obtenerActivos() async {
 }
 
 // =====================================================
-// ACTIVOS PUBLICADOS PARA INVERSORES
+// ACTIVOS PUBLICADOS (MARKETPLACE)
+// Lee solo el resumen publico aprobado, nunca el expediente.
 // =====================================================
 
-Future<List<ActivoAgroV2>> obtenerActivosPublicados() async {
+Future<List<ActivoPublico>> obtenerActivosPublicados() async {
 
   final snapshot =
       await _db
-          .collection(coleccion)
+          .collection(coleccionPublica)
           .where(
             'estadoPublicacion',
             isEqualTo: 'publicado',
@@ -256,15 +262,11 @@ Future<List<ActivoAgroV2>> obtenerActivosPublicados() async {
 
   return snapshot.docs
       .map(
-
-        (doc)=>
-
-        ActivoAgroV2.fromMap(
+        (doc) => ActivoPublico.fromMap(
           doc.data(),
           doc.id,
         ),
-
-  )
+      )
       .toList();
 
 }
@@ -373,7 +375,7 @@ Future<void> publicarActivo(
     tipoEvento:
         'publicacion_activo',
     descripcion:
-        'El Activo Agro fue publicado',
+        'El Activo Agro fue enviado a revisión para publicarse',
     usuarioId:
         activoEvaluado.publicadorId,
     moduloOrigen:
@@ -381,29 +383,42 @@ Future<void> publicarActivo(
   );
 
   // =====================================================
-  // PUBLICAR ACTIVO — ACTUALIZAR ESTADO
+  // PUBLICAR ACTIVO — PEDIR REVISION
+  // El expediente queda privado (visible: false) y se arma el
+  // resumen publico como pendiente. Solo el administrador lo
+  // aprueba (estadoPublicacion 'publicado' y visible true).
   // =====================================================
 
   final activoActualizado =
       activoEvaluado.copyWith(
     estado:
-        EstadoActivo.publicado,
+        EstadoActivo.pendienteRevision,
     estadoPublicacion:
-        'publicado',
+        'pendienteRevision',
     visible:
-        true,
+        false,
     historial: [
       ...activoEvaluado.historial,
       evento,
     ],
   );
 
-  await _db
-      .collection(coleccion)
-      .doc(activoId)
-      .update(
+  final resumen =
+      ActivoPublico.desdeActivo(activoActualizado);
+
+  final batch = _db.batch();
+
+  batch.update(
+    _db.collection(coleccion).doc(activoId),
     activoActualizado.toMap(),
   );
+
+  batch.set(
+    _db.collection(coleccionPublica).doc(activoId),
+    resumen.toMap(),
+  );
+
+  await batch.commit();
 
   // =====================================================
   // AUDITORIA — PUBLICAR ACTIVO
@@ -424,7 +439,7 @@ Future<void> publicarActivo(
     estadoAnterior:
         activoEvaluado.estadoPublicacion,
     estadoNuevo:
-        'publicado',
+        'pendienteRevision',
     referencia:
         activoId,
   );
@@ -473,12 +488,31 @@ Future<void> pausarActivo(
     ],
   );
 
-  await _db
-      .collection(coleccion)
-      .doc(activoId)
-      .update(
+  // Si ya tiene resumen publico, tambien se pausa y deja de verse.
+  final resumenRef =
+      _db.collection(coleccionPublica).doc(activoId);
+
+  final resumenDoc = await resumenRef.get();
+
+  final batch = _db.batch();
+
+  batch.update(
+    _db.collection(coleccion).doc(activoId),
     activoActualizado.toMap(),
   );
+
+  if (resumenDoc.exists) {
+    batch.update(
+      resumenRef,
+      {
+        'estadoPublicacion': 'pausado',
+        'visible': false,
+        'ultimaActualizacion': Timestamp.now(),
+      },
+    );
+  }
+
+  await batch.commit();
 
   // =====================================================
   // AUDITORIA — PAUSAR ACTIVO

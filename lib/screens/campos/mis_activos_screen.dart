@@ -96,6 +96,9 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
       case "verificado":
         return "Verificado";
 
+      case "pendienteRevision":
+        return "En revisión";
+
       default:
         return estado;
     }
@@ -110,7 +113,11 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Activo publicado correctamente 🚜")),
+        const SnackBar(
+          content: Text(
+            "Enviado a revisión: se verá en el marketplace cuando se apruebe 🚜",
+          ),
+        ),
       );
 
       await cargarActivos();
@@ -238,10 +245,13 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
                                 label: Text(
                                   activo.estado.name == "publicado"
                                       ? "Publicado"
-                                      : "Publicar",
+                                      : activo.estado.name == "pendienteRevision"
+                                          ? "En revisión"
+                                          : "Publicar",
                                 ),
 
-                                onPressed: activo.estado.name == "publicado"
+                                onPressed: activo.estado.name == "publicado" ||
+                                        activo.estado.name == "pendienteRevision"
                                     ? null
                                     : () {
                                         publicar(activo.activoId);

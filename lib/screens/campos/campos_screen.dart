@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../models/activos/activo_agro_model_v2.dart';
+import '../../models/activos/activo_publico_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 
 import 'detalle_campo_screen.dart';
@@ -47,7 +47,7 @@ class CamposScreen extends StatelessWidget {
 
       body:
 
-      FutureBuilder<List<ActivoAgroV2>>(
+      FutureBuilder<List<ActivoPublico>>(
 
 
         future:
@@ -186,7 +186,7 @@ class CamposScreen extends StatelessWidget {
 class _ActivoCard extends StatelessWidget {
 
 
-  final ActivoAgroV2 activo;
+  final ActivoPublico activo;
 
 
 
@@ -389,8 +389,8 @@ class _ActivoCard extends StatelessWidget {
 
                   Text(
 
-                    "${activo.ubicacion.localidad}, "
-                    "${activo.ubicacion.provincia}",
+                    "${activo.localidad}, "
+                    "${activo.provincia}",
 
                   ),
 
@@ -413,7 +413,7 @@ class _ActivoCard extends StatelessWidget {
 
               Text(
 
-                "Tipo: ${activo.tipoActivo.name}",
+                "Tipo: ${activo.tipoActivo}",
 
               ),
 
@@ -423,7 +423,7 @@ class _ActivoCard extends StatelessWidget {
 
               Text(
 
-                "Superficie: ${activo.ubicacion.superficie} ha",
+                "Superficie: ${activo.superficie} ha",
 
               ),
 

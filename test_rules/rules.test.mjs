@@ -12,7 +12,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   doc, getDoc, setDoc, updateDoc, deleteDoc,
-  addDoc, collection, getDocs, query, where, runTransaction,
+  addDoc, collection, getDocs, query, where, runTransaction, writeBatch,
 } from 'firebase/firestore';
 
 const ADMIN = 'RtUPcWdZHuQMNsDrza7firR2X2j1'; // tu UID
@@ -526,4 +526,115 @@ test('STOCK-11. Un tercero NO lista los movimientos de un Activo ajeno [PROHIBID
   await cargarMovimiento();
   const q = query(collection(como(OTRO), 'movimientos_stock'), where('activoAgroId', '==', 'a1'));
   await assertFails(getDocs(q));
+});
+
+// ------------------------- PUB. PUBLICAR SOBRE EL RESUMEN PUBLICO -------------------------
+// Repiten lo que hace la app: publicarActivo escribe en un mismo batch
+// el expediente (activos_agro, privado) y el resumen (activos_publicos).
+// El administrador aprueba desde la consola de Firebase.
+
+const resumenDe = (estado, visible) => ({
+  activoId: 'a1',
+  nombre: 'Campo de prueba',
+  descripcion: 'Campo para pruebas',
+  tipoActivo: 'agricola',
+  pais: 'Argentina',
+  provincia: 'Buenos Aires',
+  localidad: 'Carlos Tejedor',
+  superficie: 3290,
+  nivelConfianza: 40,
+  madurezPorcentaje: 45,
+  producciones: ['Ganadería de cría'],
+  propietarioId: DUENO,
+  estadoPublicacion: estado,
+  visible: visible,
+  ultimaActualizacion: new Date(),
+});
+
+const publicarComoLaApp = (uid) => {
+  const db = como(uid);
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'activos_agro/a1'), {
+    estadoPublicacion: 'pendienteRevision',
+    visible: false,
+  });
+  batch.set(doc(db, 'activos_publicos/a1'), resumenDe('pendienteRevision', false));
+  return batch.commit();
+};
+
+const aprobarComoAdmin = () => env.withSecurityRulesDisabled(async (ctx) => {
+  await updateDoc(doc(ctx.firestore(), 'activos_publicos/a1'), {
+    estadoPublicacion: 'publicado',
+    visible: true,
+  });
+});
+
+test('PUB-01. El dueño publica como la app (expediente + resumen pendiente) [PERMITIDO]', async () => {
+  await assertSucceeds(publicarComoLaApp(DUENO));
+});
+
+test('PUB-02. El broker NO puede mandar a publicar (solo el dueño) [PROHIBIDO]', async () => {
+  await assertFails(publicarComoLaApp(BROKER));
+});
+
+test('PUB-03. El dueño ve su resumen pendiente [PERMITIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await assertSucceeds(getDoc(doc(como(DUENO), 'activos_publicos/a1')));
+});
+
+test('PUB-04. Un comprador NO ve el resumen mientras está pendiente [PROHIBIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await assertFails(getDoc(doc(como(COMPRADOR), 'activos_publicos/a1')));
+});
+
+test('PUB-05. Aprobado por el admin, el comprador lo ve en el marketplace [PERMITIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await aprobarComoAdmin();
+  const q = query(
+    collection(como(COMPRADOR), 'activos_publicos'),
+    where('estadoPublicacion', '==', 'publicado'),
+    where('visible', '==', true),
+  );
+  await assertSucceeds(getDocs(q));
+});
+
+test('PUB-06. El comprador sigue sin poder leer el expediente privado [PROHIBIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await aprobarComoAdmin();
+  await assertFails(getDoc(doc(como(COMPRADOR), 'activos_agro/a1')));
+});
+
+test('PUB-07. El dueño pausa como la app y deja de verse [PERMITIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await aprobarComoAdmin();
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'activos_publicos/a1'), {
+    estadoPublicacion: 'pausado',
+    visible: false,
+    ultimaActualizacion: new Date(),
+  }));
+  await assertFails(getDoc(doc(como(COMPRADOR), 'activos_publicos/a1')));
+});
+
+test('PUB-08. El dueño NO puede hacerse visible solo [PROHIBIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await assertFails(updateDoc(doc(como(DUENO), 'activos_publicos/a1'), {
+    visible: true,
+  }));
+});
+
+test('PUB-09. El dueño vuelve a publicar después de pausar (vuelve a revisión) [PERMITIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await aprobarComoAdmin();
+  await updateDoc(doc(como(DUENO), 'activos_publicos/a1'), {
+    estadoPublicacion: 'pausado', visible: false,
+  });
+  await assertSucceeds(publicarComoLaApp(DUENO));
+});
+
+test('PUB-10. Un tercero NO puede pausar el resumen de otro [PROHIBIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  await aprobarComoAdmin();
+  await assertFails(updateDoc(doc(como(OTRO), 'activos_publicos/a1'), {
+    estadoPublicacion: 'pausado', visible: false,
+  }));
 });

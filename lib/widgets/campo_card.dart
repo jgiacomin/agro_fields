@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../models/activos/activo_agro_model_v2.dart';
+import '../models/activos/activo_publico_model.dart';
 import '../screens/campos/detalle_campo_screen.dart';
 
 
 class CampoCard extends StatelessWidget {
 
 
-  final ActivoAgroV2 activo;
+  final ActivoPublico activo;
 
 
   const CampoCard({
@@ -110,8 +110,8 @@ class CampoCard extends StatelessWidget {
 
               Text(
 
-                '📍 ${activo.ubicacion.provincia} - '
-                '${activo.ubicacion.localidad}',
+                '📍 ${activo.provincia} - '
+                '${activo.localidad}',
 
                 style:
                 TextStyle(
@@ -133,7 +133,7 @@ class CampoCard extends StatelessWidget {
 
               Text(
 
-                '🌱 ${activo.ubicacion.superficie} hectáreas',
+                '🌱 ${activo.superficie} hectáreas',
 
               ),
 
@@ -153,7 +153,7 @@ class CampoCard extends StatelessWidget {
 
                   Icon(
 
-                    activo.estado.name == 'verificado'
+                    activo.estadoPublicacion == 'publicado'
 
                     ? Icons.verified
 
@@ -161,7 +161,7 @@ class CampoCard extends StatelessWidget {
 
                     color:
 
-                    activo.estado.name == 'verificado'
+                    activo.estadoPublicacion == 'publicado'
 
                     ? Colors.green
 
@@ -177,9 +177,9 @@ class CampoCard extends StatelessWidget {
 
                   Text(
 
-                    activo.estado.name == 'verificado'
+                    activo.estadoPublicacion == 'publicado'
 
-                    ? 'Verificado Agro Fields'
+                    ? 'Publicado'
 
                     : 'Pendiente de verificación',
 
@@ -190,7 +190,7 @@ class CampoCard extends StatelessWidget {
 
                       color:
 
-                      activo.estado.name == 'verificado'
+                      activo.estadoPublicacion == 'publicado'
 
                       ? Colors.green[700]
 
@@ -221,7 +221,7 @@ class CampoCard extends StatelessWidget {
 
               Text(
 
-                '🌾 Tipo: ${activo.tipoActivo.name}',
+                '🌾 Tipo: ${activo.tipoActivo}',
 
               ),
 
@@ -263,7 +263,7 @@ class CampoCard extends StatelessWidget {
 
                 child: Text(
 
-                  activo.estado.name.toUpperCase(),
+                  activo.estadoPublicacion.toUpperCase(),
 
 
                   style:

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../models/activos/activo_agro_model_v2.dart';
+import '../../models/activos/activo_publico_model.dart';
 import '../../models/solicitud_contacto_model.dart';
 import '../../services/solicitud_contacto_service.dart';
 import '../../enums/solicitud_estado.dart';
@@ -11,7 +11,7 @@ import '../../enums/solicitud_estado.dart';
 class DetalleCampoScreen extends StatefulWidget {
 
 
-  final ActivoAgroV2 activo;
+  final ActivoPublico activo;
 
 
   const DetalleCampoScreen({
@@ -45,7 +45,7 @@ class _DetalleCampoScreenState
   String estadoTexto(){
 
 
-    switch(widget.activo.estado.name){
+    switch(widget.activo.estadoPublicacion){
 
 
       case 'publicado':
@@ -56,12 +56,16 @@ class _DetalleCampoScreenState
         return 'Borrador';
 
 
-      case 'verificado':
-        return 'Verificado';
+      case 'pendienteRevision':
+        return 'En revisión';
+
+
+      case 'pausado':
+        return 'Pausado';
 
 
       default:
-        return widget.activo.estado.name;
+        return widget.activo.estadoPublicacion;
 
 
     }
@@ -376,9 +380,9 @@ class _DetalleCampoScreenState
 
                     Text(
 
-                      "${activo.ubicacion.localidad}, "
-                      "${activo.ubicacion.provincia}, "
-                      "${activo.ubicacion.pais}",
+                      "${activo.localidad}, "
+                      "${activo.provincia}, "
+                      "${activo.pais}",
 
                     ),
 
@@ -395,7 +399,7 @@ class _DetalleCampoScreenState
                     Text(
 
                       "🌱 Superficie: "
-                      "${activo.ubicacion.superficie} ha",
+                      "${activo.superficie} ha",
 
                     ),
 
@@ -491,7 +495,7 @@ class _DetalleCampoScreenState
                     Text(
 
                       "Confianza: "
-                      "${activo.confianza.nivelGeneral}%",
+                      "${activo.nivelConfianza}%",
 
                     ),
 
@@ -502,7 +506,7 @@ class _DetalleCampoScreenState
                     Text(
 
                       "Madurez: "
-                      "${activo.madurez.porcentaje}%",
+                      "${activo.madurezPorcentaje}%",
 
                     ),
 
@@ -635,15 +639,7 @@ class _DetalleCampoScreenState
                   title:
 
                   Text(
-                    p.actividad,
-                  ),
-
-
-
-                  subtitle:
-
-                  Text(
-                    p.descripcion,
+                    p,
                   ),
 
 
@@ -706,7 +702,7 @@ class _DetalleCampoScreenState
                 onPressed:
 
 
-                activo.estado.name != 'publicado'
+                activo.estadoPublicacion != 'publicado'
 
 
                     ?
