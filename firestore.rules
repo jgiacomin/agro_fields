@@ -337,20 +337,25 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
-    // OPORTUNIDADES_AGRO (representacion temporal)
-    // Ojo: revisar quÃ© datos guarda una oportunidad antes de publicar
-    // estas reglas, porque cualquier usuario logueado lee las 'activa'.
+    // OPORTUNIDADES_AGRO (representacion temporal) - PRIVADA
+    // Guarda datos privados (montos, ubicacion exacta, participantes,
+    // documentos, evidencias, historial). Por eso solo la leen el admin
+    // y quien tiene el Activo (dueno o quien cargo el expediente).
+    // Cuando las oportunidades vayan al marketplace, se publicara un
+    // resumen aparte, como activos_publicos (paso 2, 06/11/2026).
+    // Una oportunidad sin Activo por ahora solo la crea el admin.
     // -----------------------------------------------------------------
     match /oportunidades_agro/{oportunidadId} {
       allow get: if esAdmin()
         || (logueado()
             && (resource == null
-                || resource.data.estado == 'activa'
-                || puedeActivo(resource.data.activoId)));
+                || (resource.data.get('activoId', null) is string
+                    && puedeActivo(resource.data.activoId))));
+
       allow list: if esAdmin()
         || (logueado()
-            && (resource.data.estado == 'activa'
-                || puedeActivo(resource.data.activoId)));
+            && resource.data.get('activoId', null) is string
+            && puedeActivo(resource.data.activoId));
 
       allow create: if esAdmin()
         || esDuenoActivo(request.resource.data.activoId);

@@ -639,3 +639,73 @@ test('PUB-10. Un tercero NO puede pausar el resumen de otro [PROHIBIDO]', async 
     estadoPublicacion: 'pausado', visible: false,
   }));
 });
+
+// ------------------------- OPOR. OPORTUNIDADES PRIVADAS (PASO 2) -------------------------
+// Una oportunidad guarda montos, ubicacion exacta, documentos y evidencias.
+// Solo la leen el admin y quien tiene el Activo. Antes del paso 2,
+// cualquier usuario logueado leia las oportunidades 'activa' completas.
+
+const oportunidadDe = (activoId) => ({
+  oportunidadId: 'o1',
+  creadorId: DUENO,
+  titulo: 'Busco produccion de maiz',
+  activoId: activoId,
+  estado: 'activa',
+  montoObjetivo: 100000,
+  costosEstimados: 40000,
+  ubicacionEspecifica: 'Lote 4, camino vecinal km 12',
+  documentacion: ['doc_privado'],
+});
+
+const cargarOportunidad = () => cargar((db) =>
+  setDoc(doc(db, 'oportunidades_agro/o1'), oportunidadDe('a1')));
+
+test('OPOR-01. El dueño lee su oportunidad [PERMITIDO]', async () => {
+  await cargarOportunidad();
+  await assertSucceeds(getDoc(doc(como(DUENO), 'oportunidades_agro/o1')));
+});
+
+test('OPOR-02. Un tercero NO lee una oportunidad activa ajena (con montos y documentos) [PROHIBIDO]', async () => {
+  await cargarOportunidad();
+  await assertFails(getDoc(doc(como(OTRO), 'oportunidades_agro/o1')));
+});
+
+test('OPOR-03. Un tercero NO lista las oportunidades activas [PROHIBIDO]', async () => {
+  await cargarOportunidad();
+  const q = query(collection(como(OTRO), 'oportunidades_agro'), where('estado', '==', 'activa'));
+  await assertFails(getDocs(q));
+});
+
+test('OPOR-04. El dueño lista las oportunidades de su Activo [PERMITIDO]', async () => {
+  await cargarOportunidad();
+  const q = query(collection(como(DUENO), 'oportunidades_agro'), where('activoId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('OPOR-05. El dueño crea una oportunidad de su Activo [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'oportunidades_agro/o2'), oportunidadDe('a1')));
+});
+
+test('OPOR-06. Un tercero NO crea una oportunidad en un Activo ajeno [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), 'oportunidades_agro/o2'), oportunidadDe('a1')));
+});
+
+test('OPOR-07. Sin Activo, un usuario NO crea una oportunidad (por ahora solo el admin) [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), 'oportunidades_agro/o2'), oportunidadDe(null)));
+});
+
+test('OPOR-08. El dueño NO puede mover una oportunidad a otro Activo [PROHIBIDO]', async () => {
+  await cargarOportunidad();
+  await assertFails(updateDoc(doc(como(DUENO), 'oportunidades_agro/o1'), { activoId: 'otro_activo' }));
+});
+
+test('OPOR-09. El administrador lee cualquier oportunidad [PERMITIDO]', async () => {
+  await cargarOportunidad();
+  await assertSucceeds(getDoc(doc(como(ADMIN), 'oportunidades_agro/o1')));
+});
+
+test('OPOR-10. El comprador tampoco lista las de un Activo ajeno filtrando por activoId [PROHIBIDO]', async () => {
+  await cargarOportunidad();
+  const q = query(collection(como(COMPRADOR), 'oportunidades_agro'), where('activoId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
