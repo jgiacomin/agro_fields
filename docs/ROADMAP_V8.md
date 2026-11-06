@@ -3240,3 +3240,66 @@ No se realizó deploy a Firebase.
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Trabajo Operacional V1 — Estado
+
+🟢 **VALIDADO TÉCNICAMENTE**
+
+Se completó la implementación y validación de `TrabajoService` para `TrabajoOperacional V1`.
+
+### Capacidades validadas
+
+* creación de trabajos vinculados a un Activo Agro;
+* persistencia en `trabajos`;
+* generación de Auto-ID de Firestore;
+* recuperación por ID;
+* consulta por `activoAgroId`;
+* auditoría mediante `AuditService`;
+* registro en `auditoria_activos`;
+* reglas Firestore específicas para `trabajos`;
+* integración Firebase Auth + Firestore Emulator;
+* ejecución real sobre Android Emulator.
+
+### Evidencia
+
+Test:
+
+`integration_test/trabajo_service_integration_test.dart`
+
+Resultado:
+
+**+1: All tests passed!**
+
+### Alcance V1
+
+Trabajo Operacional queda técnicamente preparado como registro operativo vinculado al Activo Agro y su Expediente Digital.
+
+Las capacidades de actualización, eliminación, reprogramación, incidentes, recursos, resultados y costos quedan como trabajo posterior y no forman parte de este cierre.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+### GAP-ID-01 — Identidad persistente y portabilidad Firestore → SQL
+
+**Prioridad:** alta; requisito estructural previo a una migración de base de datos.
+
+**Estado:** pendiente de auditoría y corrección.
+
+**Objetivo:** preservar la identidad del Activo Agro y todas sus relaciones durante la evolución de Agro Fields V8 y una futura migración a SQL/PostgreSQL.
+
+**Trabajo pendiente:**
+1. Auditar el circuito `Campo → ActivoAgroV2 → persistencia`.
+2. Definir la correspondencia entre ID documental de Firestore, `campoId`, `activoId` y futuras claves SQL.
+3. Verificar dependencias, relaciones, historial, evidencias y auditoría.
+4. Implementar el cambio mínimo que garantice una identidad persistente y recuperable.
+5. Ejecutar pruebas de creación, conversión, persistencia, recuperación e integridad referencial.
+6. Documentar resultados y evidencias antes de cerrar el GAP.
+
+**Condiciones:** mantener `ActivoAgroV2`, preservar los IDs existentes, no migrar globalmente las referencias sin auditoría y no declarar la arquitectura lista para migración hasta comprobar la portabilidad.
+
+**Criterio de aceptación:** los identificadores y las relaciones permanecen coherentes en el circuito actual y existe un mapeo explícito y verificable para SQL/PostgreSQL.
+
+La implementación queda sujeta al resultado de la auditoría y a las pruebas correspondientes.
