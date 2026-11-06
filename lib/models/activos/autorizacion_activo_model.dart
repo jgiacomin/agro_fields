@@ -22,6 +22,8 @@ enum RolAutorizacion {
   inversor,
   verificador,
   administrador,
+  encargado,
+  profesional,
 }
 
 /// Estados del ciclo de vida de una autorización.
@@ -271,6 +273,31 @@ class ExclusividadAutorizacion {
 
 /// Autorización atómica de una capacidad concreta sobre un ámbito.
 class AutorizacionActivo {
+  /// Nombre fijo del documento en Firestore.
+  ///
+  /// Las Firestore Rules no pueden buscar: solo abren un documento por su
+  /// nombre. Por eso cada autorizacion se guarda con un nombre armado con
+  /// Activo + usuario + permiso + ambito (y la referencia, si la tiene).
+  /// Asi la regla puede comprobar si un usuario tiene un permiso, y la misma
+  /// autorizacion no se duplica aunque se cargue dos veces (offline).
+  static String construirId({
+    required String activoId,
+    required String usuarioAutorizado,
+    required PermisoAutorizacion permiso,
+    required AmbitoAutorizacion ambito,
+  }) {
+    final base =
+        '${activoId}__${usuarioAutorizado}__${permiso.name}__${ambito.tipo.name}';
+
+    final referencia = ambito.referenciaId?.trim();
+
+    if (referencia == null || referencia.isEmpty) {
+      return base;
+    }
+
+    return '${base}__$referencia';
+  }
+
   final String autorizacionId;
   final String? grupoAutorizacionId;
   final String? autorizacionOrigenId;

@@ -23,13 +23,18 @@ class AutorizacionActivoService {
       );
     }
 
-    final autorizacionRef = autorizacion.autorizacionId.trim().isEmpty
-        ? _db.collection(coleccion).doc()
-        : _db.collection(coleccion).doc(
-            autorizacion.autorizacionId,
-          );
+    // Nombre armado (ver AutorizacionActivo.construirId): lo exigen las
+    // Firestore Rules para poder comprobar la autorizacion.
+    final autorizacionId = AutorizacionActivo.construirId(
+      activoId: autorizacion.activoId,
+      usuarioAutorizado: autorizacion.usuarioAutorizado,
+      permiso: autorizacion.permiso,
+      ambito: autorizacion.ambito,
+    );
 
-    final autorizacionId = autorizacionRef.id;
+    final autorizacionRef = _db.collection(coleccion).doc(
+      autorizacionId,
+    );
 
     final autorizacionGuardar = autorizacion.autorizacionId == autorizacionId
         ? autorizacion

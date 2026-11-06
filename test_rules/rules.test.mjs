@@ -709,3 +709,143 @@ test('OPOR-10. El comprador tampoco lista las de un Activo ajeno filtrando por a
   const q = query(collection(como(COMPRADOR), 'oportunidades_agro'), where('activoId', '==', 'a1'));
   await assertFails(getDocs(q));
 });
+
+// ------------------------- AUT. AUTORIZACIONES EN LAS REGLAS (PASO 3) -------------------------
+// Un encargado puede trabajar sobre el Activo si el dueño le dio una
+// autorización ACTIVA y VIGENTE para ese permiso y ese ámbito.
+// Nombre armado del documento: activoId__usuario__permiso__ambito.
+
+const ENCARGADO = 'encargado';
+const AYER = new Date(Date.now() - 24 * 60 * 60 * 1000);
+const MANANA = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+const idAut = (permiso, ambito, usuario = ENCARGADO, activo = 'a1') =>
+  `${activo}__${usuario}__${permiso}__${ambito}`;
+
+const autorizacionDe = (permiso, ambito, extra = {}) => ({
+  autorizacionId: idAut(permiso, ambito, extra.usuarioAutorizado ?? ENCARGADO, extra.activoId ?? 'a1'),
+  activoId: 'a1',
+  usuarioAutorizado: ENCARGADO,
+  quienOtorga: DUENO,
+  rol: 'encargado',
+  permiso,
+  ambito: { tipo: ambito, referenciaId: null, descripcion: null },
+  fechaInicio: AYER,
+  fechaFin: null,
+  estado: 'activa',
+  condiciones: [],
+  puedeDelegar: false,
+  fechaOtorgamiento: AYER,
+  ...extra,
+});
+
+const darAutorizacion = (permiso, ambito, extra = {}) => cargar((db) =>
+  setDoc(doc(db, 'autorizaciones_activos', idAut(permiso, ambito)), autorizacionDe(permiso, ambito, extra)));
+
+const trabajoDe = (uid) => ({
+  trabajoId: 't_enc', activoAgroId: 'a1', actividad: 'Siembra', estado: 'PLANIFICADO', responsableId: uid,
+});
+
+test('AUT-01. El encargado con permiso "crear trabajo" carga un trabajo [PERMITIDO]', async () => {
+  await darAutorizacion('crear', 'trabajo');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-02. Sin autorización, el encargado NO carga un trabajo [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-03. Una autorización revocada NO sirve [PROHIBIDO]', async () => {
+  await darAutorizacion('crear', 'trabajo', { estado: 'revocada' });
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-04. Una autorización vencida NO sirve [PROHIBIDO]', async () => {
+  await darAutorizacion('crear', 'trabajo', { fechaFin: new Date(Date.now() - 60 * 60 * 1000) });
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-05. Una autorización que empieza mañana todavía NO sirve [PROHIBIDO]', async () => {
+  await darAutorizacion('crear', 'trabajo', { fechaInicio: MANANA });
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-06. El permiso "ver" NO alcanza para crear [PROHIBIDO]', async () => {
+  await darAutorizacion('ver', 'trabajo');
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-07. Con "ver trabajo", el encargado lista los trabajos del Activo [PERMITIDO]', async () => {
+  await darAutorizacion('ver', 'trabajo');
+  await cargar((db) => setDoc(doc(db, 'trabajos/t1'), trabajoDe(DUENO)));
+  const q = query(collection(como(ENCARGADO), 'trabajos'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('AUT-08. El encargado registra stock como la app (ver + crear en recursos e inventario) [PERMITIDO]', async () => {
+  await darAutorizacion('ver', 'recursosInventario');
+  await darAutorizacion('crear', 'recursosInventario');
+  await cargarRecursoConSaldo();
+  await assertSucceeds(movimientoComoLaApp(como(ENCARGADO), { usuario: ENCARGADO }));
+});
+
+test('AUT-09. El encargado NO registra stock a nombre del dueño [PROHIBIDO]', async () => {
+  await darAutorizacion('ver', 'recursosInventario');
+  await darAutorizacion('crear', 'recursosInventario');
+  await cargarRecursoConSaldo();
+  await assertFails(movimientoComoLaApp(como(ENCARGADO), { usuario: DUENO }));
+});
+
+test('AUT-10. El encargado sube una evidencia con "crear evidencias" [PERMITIDO]', async () => {
+  await darAutorizacion('crear', 'evidencias');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'evidencias/e_enc'), { activoAgroId: 'a1', tipo: 'foto' }));
+});
+
+test('AUT-11. Autorizado en trabajos, el encargado NO lee el expediente privado [PROHIBIDO]', async () => {
+  await darAutorizacion('ver', 'trabajo');
+  await assertFails(getDoc(doc(como(ENCARGADO), 'activos_agro/a1')));
+});
+
+test('AUT-12. El encargado NO lee la auditoría del Activo [PROHIBIDO]', async () => {
+  await darAutorizacion('crear', 'trabajo');
+  await assertFails(getDoc(doc(como(ENCARGADO), 'auditoria_activos/au1')));
+});
+
+test('AUT-13. Una autorización para un lote puntual NO cuenta en V1 [PROHIBIDO]', async () => {
+  await darAutorizacion('crear', 'trabajo', { ambito: { tipo: 'trabajo', referenciaId: 'lote-1', descripcion: null } });
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-14. El dueño da una autorización con el nombre armado [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('crear', 'trabajo')),
+    autorizacionDe('crear', 'trabajo')));
+});
+
+test('AUT-15. NO se guarda una autorización con un nombre al azar [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'autorizaciones_activos/x7Gk2azar'),
+    autorizacionDe('crear', 'trabajo', { autorizacionId: 'x7Gk2azar' })));
+});
+
+test('AUT-16. El encargado NO se da una autorización a sí mismo [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(ENCARGADO), 'autorizaciones_activos', idAut('crear', 'trabajo')),
+    autorizacionDe('crear', 'trabajo', { quienOtorga: ENCARGADO })));
+});
+
+test('AUT-17. El dueño revoca una autorización y deja de servir [PERMITIDO]', async () => {
+  await darAutorizacion('crear', 'trabajo');
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('crear', 'trabajo')),
+    { estado: 'revocada' }));
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});
+
+test('AUT-18. El dueño NO puede cambiarle el permiso a una autorización existente [PROHIBIDO]', async () => {
+  await darAutorizacion('ver', 'trabajo');
+  await assertFails(updateDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('ver', 'trabajo')),
+    { permiso: 'crear' }));
+});
+
+test('AUT-19. Una autorización de otro Activo NO sirve para este [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'autorizaciones_activos', idAut('crear', 'trabajo', ENCARGADO, 'otro_activo')),
+    autorizacionDe('crear', 'trabajo', { activoId: 'otro_activo' })));
+  await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
+});

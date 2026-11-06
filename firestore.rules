@@ -72,6 +72,34 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
+    // AUTORIZACIONES (paso 3, 06/11/2026)
+    // Un tercero (encargado, profesional, etc.) puede actuar sobre un
+    // Activo si el dueno le dio una autorizacion ACTIVA y VIGENTE para ese
+    // permiso y ese ambito. Como las reglas no pueden buscar, la
+    // autorizacion tiene un nombre armado:
+    //   activoId__usuario__permiso__ambito
+    // (ver AutorizacionActivo.construirId en la app).
+    // V1: solo cuentan las autorizaciones para el ambito entero (sin
+    // referencia a un lote o modulo puntual).
+    // -----------------------------------------------------------------
+    function rutaAutorizacion(activoId, permiso, ambito) {
+      return /databases/$(database)/documents/autorizaciones_activos/$(activoId + '__' + request.auth.uid + '__' + permiso + '__' + ambito);
+    }
+
+    function tieneAutorizacion(activoId, permiso, ambito) {
+      return logueado()
+        && activoId is string
+        && exists(rutaAutorizacion(activoId, permiso, ambito))
+        && get(rutaAutorizacion(activoId, permiso, ambito)).data.estado == 'activa'
+        && get(rutaAutorizacion(activoId, permiso, ambito)).data.activoId == activoId
+        && get(rutaAutorizacion(activoId, permiso, ambito)).data.usuarioAutorizado == request.auth.uid
+        && get(rutaAutorizacion(activoId, permiso, ambito)).data.fechaInicio <= request.time
+        && (get(rutaAutorizacion(activoId, permiso, ambito)).data.get('fechaFin', null) == null
+            || get(rutaAutorizacion(activoId, permiso, ambito)).data.fechaFin > request.time)
+        && get(rutaAutorizacion(activoId, permiso, ambito)).data.ambito.get('referenciaId', null) == null;
+    }
+
+    // -----------------------------------------------------------------
     // USUARIOS
     // Cada uno ve y edita solo lo suyo. El rol NO lo cambia la app.
     // -----------------------------------------------------------------
@@ -199,15 +227,21 @@ service cloud.firestore {
     match /evidencias/{evidenciaId} {
       allow get: if esAdmin()
         || (logueado()
-            && (resource == null || puedeActivo(resource.data.activoAgroId)));
+            && (resource == null
+                || puedeActivo(resource.data.activoAgroId)
+                || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'evidencias')));
       allow list: if esAdmin()
-        || (logueado() && puedeActivo(resource.data.activoAgroId));
+        || (logueado()
+            && (puedeActivo(resource.data.activoAgroId)
+                || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'evidencias')));
 
       allow create: if esAdmin()
-        || puedeActivo(request.resource.data.activoAgroId);
+        || puedeActivo(request.resource.data.activoAgroId)
+        || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'evidencias');
 
       allow update: if esAdmin()
-        || (puedeActivo(resource.data.activoAgroId)
+        || ((puedeActivo(resource.data.activoAgroId)
+             || tieneAutorizacion(resource.data.activoAgroId, 'modificar', 'evidencias'))
             && !cambia(['activoAgroId']));
 
       allow delete: if false;
@@ -224,8 +258,14 @@ service cloud.firestore {
       allow list: if esAdmin()
         || (logueado() && puedeActivo(resource.data.activoId));
 
+      // Un autorizado solo agrega registros a su propio nombre, del trabajo
+      // que tiene permitido crear. No lee la auditoria (es del dueno).
       allow create: if esAdmin()
-        || puedeActivo(request.resource.data.activoId);
+        || puedeActivo(request.resource.data.activoId)
+        || (request.resource.data.usuarioId == request.auth.uid
+            && (tieneAutorizacion(request.resource.data.activoId, 'crear', 'trabajo')
+                || tieneAutorizacion(request.resource.data.activoId, 'crear', 'recursosInventario')
+                || tieneAutorizacion(request.resource.data.activoId, 'crear', 'evidencias')));
 
       allow update, delete: if false;
     }
@@ -237,20 +277,26 @@ service cloud.firestore {
     match /recursos/{recursoId} {
   allow get: if esAdmin()
     || (logueado()
-        && puedeActivo(resource.data.activoAgroId));
+        && (puedeActivo(resource.data.activoAgroId)
+            || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
   allow list: if esAdmin()
     || (logueado()
-        && puedeActivo(resource.data.activoAgroId));
+        && (puedeActivo(resource.data.activoAgroId)
+            || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
   allow create: if esAdmin()
     || (logueado()
-        && puedeActivo(request.resource.data.activoAgroId));
+        && (puedeActivo(request.resource.data.activoAgroId)
+            || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'recursosInventario')));
 
+  // El saldo solo cambia junto con un movimiento (registrar un movimiento
+  // es "crear" en recursos e inventario).
   allow update: if esAdmin()
     || (
       logueado()
-      && puedeActivo(resource.data.activoAgroId)
+      && (puedeActivo(resource.data.activoAgroId)
+          || tieneAutorizacion(resource.data.activoAgroId, 'crear', 'recursosInventario'))
       && request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly([
             'cantidadActual',
@@ -322,15 +368,18 @@ service cloud.firestore {
     match /movimientos_stock/{movimientoId} {
       allow get: if esAdmin()
         || (logueado()
-            && puedeActivo(resource.data.activoAgroId));
+            && (puedeActivo(resource.data.activoAgroId)
+                || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
       allow list: if esAdmin()
         || (logueado()
-            && puedeActivo(resource.data.activoAgroId));
+            && (puedeActivo(resource.data.activoAgroId)
+                || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
       allow create: if esAdmin()
         || (logueado()
-            && puedeActivo(request.resource.data.activoAgroId)
+            && (puedeActivo(request.resource.data.activoAgroId)
+                || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'recursosInventario'))
             && request.resource.data.usuarioId == request.auth.uid);
 
       allow update, delete: if false;
@@ -520,15 +569,18 @@ service cloud.firestore {
     match /trabajos/{trabajoId} {
       allow get: if esAdmin()
         || (logueado()
-            && puedeActivo(resource.data.activoAgroId));
+            && (puedeActivo(resource.data.activoAgroId)
+                || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'trabajo')));
 
       allow list: if esAdmin()
         || (logueado()
-            && puedeActivo(resource.data.activoAgroId));
+            && (puedeActivo(resource.data.activoAgroId)
+                || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'trabajo')));
 
       allow create: if esAdmin()
         || (logueado()
-            && puedeActivo(request.resource.data.activoAgroId));
+            && (puedeActivo(request.resource.data.activoAgroId)
+                || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'trabajo')));
 
       allow update, delete: if false;
     }
@@ -570,6 +622,23 @@ service cloud.firestore {
           && request.resource.data.quienOtorga == request.auth.uid
           && activoDe(request.resource.data.activoId).propietarioId
                == request.auth.uid
+          // Nombre armado (paso 3): activoId__usuario__permiso__ambito
+          // y, si tiene referencia, __referencia al final.
+          && request.resource.data.permiso is string
+          && request.resource.data.ambito.tipo is string
+          && (
+            (request.resource.data.ambito.get('referenciaId', null) == null
+             && autorizacionId == request.resource.data.activoId + '__'
+                  + request.resource.data.usuarioAutorizado + '__'
+                  + request.resource.data.permiso + '__'
+                  + request.resource.data.ambito.tipo)
+            || (request.resource.data.ambito.get('referenciaId', null) is string
+             && autorizacionId == request.resource.data.activoId + '__'
+                  + request.resource.data.usuarioAutorizado + '__'
+                  + request.resource.data.permiso + '__'
+                  + request.resource.data.ambito.tipo + '__'
+                  + request.resource.data.ambito.referenciaId)
+          )
         );
 
       allow update: if esAdmin()
@@ -581,6 +650,9 @@ service cloud.firestore {
                == request.resource.data.usuarioAutorizado
           && resource.data.autorizacionId
                == request.resource.data.autorizacionId
+          // El nombre depende del permiso y el ambito: no se cambian.
+          && resource.data.permiso == request.resource.data.permiso
+          && resource.data.ambito == request.resource.data.ambito
         );
 
       allow delete: if false;
