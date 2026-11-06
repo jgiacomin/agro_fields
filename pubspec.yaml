@@ -38,6 +38,7 @@ dependencies:
   firebase_auth: ^6.5.4
   cloud_firestore: ^6.6.0
   google_sign_in: ^6.2.1
+  firebase_storage: ^13.6.1
 
 
 dev_dependencies:

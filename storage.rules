@@ -6,6 +6,9 @@ rules_version = '2';
 // Estructura de carpetas:
 //   activos/{activoId}/privado/...   -> documentos y evidencias del expediente
 //                                       (solo dueño o quien lo cargó)
+//   activos/{activoId}/privado/documentos/{documentoId}/{archivo}
+//                                    -> además, quien tenga autorización en el
+//                                       ámbito "documentacion" (paso 4b)
 //   activos/{activoId}/publico/...   -> fotos del resumen público
 //                                       (las ve cualquier usuario logueado)
 //   usuarios/{uid}/...               -> foto de perfil
@@ -48,6 +51,25 @@ service firebase.storage {
             || activoDe(id).get('publicadorId', '') == request.auth.uid);
     }
 
+    // Autorización del paso 3 (nombre armado activoId__usuario__permiso__ambito).
+    // Ojo: las Storage Rules consultan como máximo 2 documentos de
+    // Firestore por pedido: el Activo y esta autorización. No agregar más.
+    function rutaAutorizacion(activoId, permiso, ambito) {
+      return /databases/(default)/documents/autorizaciones_activos/$(activoId + '__' + request.auth.uid + '__' + permiso + '__' + ambito);
+    }
+
+    function tieneAutorizacion(activoId, permiso, ambito) {
+      return logueado()
+        && firestore.exists(rutaAutorizacion(activoId, permiso, ambito))
+        && firestore.get(rutaAutorizacion(activoId, permiso, ambito)).data.estado == 'activa'
+        && firestore.get(rutaAutorizacion(activoId, permiso, ambito)).data.activoId == activoId
+        && firestore.get(rutaAutorizacion(activoId, permiso, ambito)).data.usuarioAutorizado == request.auth.uid
+        && firestore.get(rutaAutorizacion(activoId, permiso, ambito)).data.fechaInicio <= request.time
+        && (firestore.get(rutaAutorizacion(activoId, permiso, ambito)).data.get('fechaFin', null) == null
+            || firestore.get(rutaAutorizacion(activoId, permiso, ambito)).data.fechaFin > request.time)
+        && firestore.get(rutaAutorizacion(activoId, permiso, ambito)).data.ambito.get('referenciaId', null) == null;
+    }
+
     // Límites de subida.
     function esImagen() {
       return request.resource.contentType.matches('image/.*');
@@ -63,11 +85,26 @@ service firebase.storage {
     match /activos/{activoId}/privado/{archivo=**} {
       allow read: if esAdmin() || puedeActivo(activoId);
 
+      // resource == null: solo si el archivo todavía no existe. Subir con el
+      // mismo nombre de uno existente cuenta como "crear" y lo pisaría.
       allow create: if (esAdmin() || puedeActivo(activoId))
+        && resource == null
         && esDocumento() && pesaMenosDe(20);
 
       // Un archivo ya subido no se reemplaza ni se borra desde la app.
       allow update, delete: if esAdmin();
+    }
+
+    // ---------------- DOCUMENTOS DEL EXPEDIENTE (paso 4b) ----------------
+    // El dueño ya entra por la regla de arriba (privado). Acá se suma quien
+    // tenga autorización: "ver" para leer y "crear" para subir, en el
+    // ámbito "documentacion". Nadie reemplaza ni borra desde la app.
+    match /activos/{activoId}/privado/documentos/{documentoId}/{archivo} {
+      allow read: if tieneAutorizacion(activoId, 'ver', 'documentacion');
+
+      allow create: if tieneAutorizacion(activoId, 'crear', 'documentacion')
+        && resource == null
+        && esDocumento() && pesaMenosDe(20);
     }
 
     // ---------------- RESUMEN PUBLICO ----------------
