@@ -1,4 +1,4 @@
-code docs\BITACORA.md\# Bitácora Agro Fields
+﻿code docs\BITACORA.md\# Bitácora Agro Fields
 
 
 
@@ -6302,3 +6302,263 @@ Evidencia principal:
 * `test_rules/rules.test.mjs`
 * Firebase Emulator
 * resultado `51/51` tests aprobados
+
+---
+
+## Trabajo Operacional V1 — Validación técnica
+
+Fecha: 05/10/2026
+
+Se completó la implementación y validación técnica de `TrabajoService` para `TrabajoOperacional V1`.
+
+### Alcance validado
+
+Se verificó:
+
+* creación de un Trabajo Operacional vinculado a un `activoAgroId`;
+* generación de ID mediante Auto-ID de Firestore;
+* persistencia en la colección `trabajos`;
+* recuperación del trabajo por ID;
+* consulta de trabajos por `activoAgroId`;
+* registro de auditoría mediante `AuditService`;
+* persistencia de la auditoría en `auditoria_activos`;
+* autorización mediante las reglas Firestore de `trabajos`;
+* integración con Firebase Auth Emulator;
+* integración con Firebase Firestore Emulator;
+* ejecución real sobre dispositivo Android Emulator.
+
+### Validación
+
+Se ejecutó:
+
+`integration_test/trabajo_service_integration_test.dart`
+
+Resultado:
+
+**+1: All tests passed!**
+
+Evidencia del flujo:
+
+* `TRABAJO-04`: usuario autenticado;
+* `TRABAJO-06`: Activo de prueba creado;
+* `TRABAJO-07`: trabajo creado;
+* `TRABAJO-08`: trabajo recuperado por ID;
+* `TRABAJO-09`: consulta por Activo correcta;
+* `TRABAJO-10`: auditoría registrada correctamente.
+
+### Auditoría arquitectónica
+
+Se reutilizó:
+
+* `TrabajoOperacional`;
+* `AuditService`;
+* `AuditType`;
+* Firebase Auth;
+* Firestore.
+
+No se creó una colección de historial independiente para este V1.
+
+La auditoría se registra en la infraestructura existente:
+
+`auditoria_activos`
+
+### Reglas Firestore
+
+Se incorporó y validó el acceso a:
+
+`trabajos/{trabajoId}`
+
+En V1:
+
+* creación: permitida al administrador o usuario autorizado sobre el Activo;
+* lectura individual: permitida al administrador o usuario autorizado sobre el Activo;
+* listado: permitido al administrador o usuario autorizado sobre el Activo;
+* actualización: no permitida;
+* eliminación: no permitida.
+
+### Alcance y limitaciones
+
+Este cierre corresponde exclusivamente a **Trabajo Operacional V1**.
+
+Quedan para GAPs posteriores:
+
+* actualización de trabajos;
+* eliminación;
+* reprogramación;
+* incidentes;
+* recursos utilizados;
+* resultados;
+* costos;
+* capacidades operativas avanzadas.
+
+### Estado
+
+**TRABAJO OPERACIONAL V1: VALIDADO TÉCNICAMENTE.**
+
+Evidencia principal:
+
+* `lib/services/trabajo_service.dart`
+* `lib/models/activos/trabajo_operacional_model.dart`
+* `integration_test/trabajo_service_integration_test.dart`
+* `firestore.rules`
+* Firebase Auth Emulator
+* Firebase Firestore Emulator
+* resultado `+1: All tests passed!`
+
+---
+
+
+---
+
+# 08/10/2026 - Validacion test RWA-02 con Firebase Auth
+
+Se audito el rechazo permission-denied del test activo_agro_service_rwa_preparacion_integration_test.dart.
+
+Se comprobo que el test no autenticaba contra Firebase Auth Emulator, mientras las reglas Firestore vigentes requieren usuario autenticado.
+
+Se aplico un cambio minimo exclusivamente al test:
+* conexion con Auth Emulator;
+* signInAnonymously();
+* uso del UID real como usuarioId.
+
+No se modificaron ActivoAgroServiceV2, crearActivo(), firestore.rules, Cambio 2 ni el cierre historico de RWA-02.
+
+Validacion:
+flutter test .\integration_test\activo_agro_service_rwa_preparacion_integration_test.dart
+Resultado: +1: All tests passed!
+
+Conclusion: el test queda compatible con el modelo actual de autenticacion y reglas de Firestore. RWA-02 y Cambio 2 permanecen cerrados.
+
+Evidencia:
+* integration_test/activo_agro_service_rwa_preparacion_integration_test.dart
+* Firebase Auth Emulator
+* Firebase Firestore Emulator
+* +1: All tests passed!
+* git diff --check sin errores
+
+---
+
+# 08/10/2026 - Recursos e Inventario V1 - Validación técnica
+
+Se completó la primera validación técnica del bloque Recursos e Inventario V1.
+
+### Alcance validado
+
+Se incorporó y validó la colección lógica:
+
+`recursos/{recursoId}`
+
+El recurso pertenece a un Activo Agro y hereda su autorización.
+
+En V1 se definió:
+
+* consulta individual;
+* listado;
+* creación;
+* actualización no permitida;
+* eliminación no permitida.
+
+### Reglas Firestore
+
+Se incorporó y auditó:
+
+match /recursos/{recursoId}
+
+Permisos validados:
+
+* get: administrador o usuario autorizado sobre el Activo;
+* list: administrador o usuario autorizado sobre el Activo;
+* create: administrador o usuario autorizado sobre el Activo;
+* update: no permitido;
+* delete: no permitido.
+
+### Tests de reglas
+
+Se incorporaron los casos:
+
+* RECURSOS-01: dueño puede leer;
+* RECURSOS-02: tercero no puede leer;
+* RECURSOS-03: dueño puede crear;
+* RECURSOS-04: tercero no puede crear;
+* RECURSOS-05: dueño no puede modificar;
+* RECURSOS-06: dueño no puede eliminar.
+
+Validación ejecutada:
+
+
+ode --test rules.test.mjs --test-name-pattern="RECURSOS-0"
+
+Resultado:
+
+**60/60 tests aprobados.**
+
+Los rechazos PERMISSION_DENIED observados durante la ejecución corresponden a los casos assertFails() esperados y forman parte de la validación negativa de las reglas.
+
+### Arquitectura
+
+El bloque Recursos e Inventario V1 se mantiene separado de:
+
+* Trabajo Operacional;
+* Movimiento de Stock;
+* Uso de Recurso en Trabajo;
+* Economía;
+* Evidencias;
+* Historial;
+* Auditoría.
+
+No se modificó ActivoAgroV2 para incorporar estos datos.
+
+### Estado
+
+**RECURSOS E INVENTARIO V1: VALIDADO TÉCNICAMENTE.**
+
+Este cierre corresponde exclusivamente a la autorización Firestore de `recursos` y a la validación estructural del bloque V1.
+
+Evidencia principal:
+
+* irestore.rules
+* 	est_rules/rules.test.mjs
+* lib/models/activos/recurso_agro_model.dart
+* 	est/recurso_agro_model_test.dart
+* lib/models/activos/movimiento_stock_model.dart
+* 	est/movimiento_stock_model_test.dart
+* lib/models/activos/uso_recurso_trabajo_model.dart
+* 	test/uso_recurso_trabajo_model_test.dart
+* Firebase Firestore Emulator
+* resultado 60/60 tests aprobados
+
+
+## GAP-ID-01 — Identidad persistente Campo / Activo Agro y portabilidad Firestore → SQL
+
+**Estado:** GAP detectado. Solución y validación pendientes.
+
+### Objetivo
+Garantizar la continuidad de la identidad del Activo Agro y de sus relaciones, historial, evidencias y auditoría, tanto en la arquitectura actual basada en Firestore como ante una futura migración a SQL/PostgreSQL.
+
+### Hallazgos comprobados en el código
+- `CampoService.crearCampo()` utiliza `.add(campo.toMap())`, pero devuelve `Future<void>` y no entrega al llamador el ID generado por Firestore.
+- `CrearCampoScreen` construye el objeto inicial con `campoId: ''`.
+- `CampoToActivoService.convertir()` utiliza `campo.campoId` como `activoId`.
+- `ActivoAgroServiceV2.crearActivo()` persiste el activo en el documento identificado por `activo.activoId`.
+
+### GAP
+Debe verificarse y garantizarse la continuidad entre el ID documental de Firestore, `campoId`, `activoId` y las futuras claves primarias y foráneas SQL.
+
+La revisión documental existente establece continuidad conceptual entre Campo y Activo Agro, pero no demuestra por sí sola que el circuito completo de creación y persistencia esté integrado y validado.
+
+### Alcance de la auditoría pendiente
+1. Determinar la identidad canónica y el mapeo entre entidades.
+2. Verificar creación, persistencia, conversión y recuperación por ID.
+3. Revisar las relaciones que actualmente dependen de `campoId` y `activoId`.
+4. Definir cómo conservar IDs, relaciones e historial en una futura migración SQL.
+5. Incorporar pruebas y evidencias antes de declarar el GAP resuelto.
+
+### Restricciones
+- No crear `ActivoAgroV3`.
+- No migrar globalmente `campoId` sin auditar sus dependencias.
+- No cambiar IDs existentes ni perder relaciones históricas.
+- No decidir todavía UUID/ULID sin evaluar la arquitectura y los datos actuales.
+
+**Criterio de cierre:** identidad y mapeo documentados, circuito validado con pruebas y estrategia de portabilidad Firestore → SQL respaldada por evidencia.
+
+**Resultado actual:** GAP detectado; no corregido ni validado todavía.
