@@ -6867,3 +6867,44 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 * Rama `gap-campo-migracion`, commit `9360b06`
 * `lib/services/chat_service.dart`, `lib/models/chat_preview_model.dart`
 * `lib/services/campo_to_activo_service.dart`, `test/campo_to_activo_test.dart`
+
+---
+
+# 06/11/2026 - Paso 5c y 5d: Colección `campos` congelada como archivo histórico
+
+**Estado: VALIDADO TÉCNICAMENTE. Paso 5 cerrado.**
+
+### Auditoría de datos (consola de Firebase, proyecto real)
+
+* `campos`: **4 documentos**, confirmados por el dueño como **datos de prueba**.
+* `activos_agro`: 12 documentos.
+
+### Decisión (Concepto General §2 y §3.5)
+
+* **No se migran:** pasarlos a `activos_agro` metería datos de prueba en el sistema real.
+* **No se borran:** archivar no es borrar.
+* Se **congela** `campos` como archivo histórico.
+
+### Solución
+
+* `firestore.rules`: en `campos` se puede leer lo que ya existe (chats viejos), pero crear, modificar y borrar quedan **solo para el administrador**. Antes cualquiera podía crear, y el dueño podía modificar y borrar.
+* Se retiró `lib/screens/campos/crear_campo_screen.dart` (ninguna pantalla la abría y con las reglas nuevas no podría guardar). Queda en el historial de Git.
+* Se mantienen el modelo `Campo` y `CampoService`: el chat los usa para leer los chats viejos (Concepto §2: no se borran modelos sin comprobar la transición).
+* `test_rules/storage.test.mjs`: las pruebas que suben archivos usan una carpeta distinta en cada corrida, porque el emulador de Storage no siempre se vacía y la regla anti-reemplazo (correcta) rechazaba la segunda corrida.
+
+### Validación
+
+* `flutter analyze`: 0 errores. `flutter test`: **108 aprobados** (2 fallas conocidas de conexión).
+* `npm test`: **134/134** (127 + CAMPOS-01 a CAMPOS-07), corrido dos veces seguidas.
+
+### Pendiente
+
+* Cuando ya no haya chats viejos sobre `campos`, retirar la búsqueda doble de `ChatService` y evaluar el retiro del modelo `Campo`.
+* Ubicación en 0,0 de los Activos convertidos: hacer opcionales latitud y longitud en `UbicacionActivo`.
+* GAP-ID-01 (identidad y portabilidad a SQL) sigue abierto como tema propio.
+
+### Evidencia
+
+* Rama `gap-campo-migracion`, commits `67b42c5` y `65197ee`
+* `firestore.rules` (bloque `campos`), `test_rules/rules.test.mjs` (CAMPOS-01 a CAMPOS-07)
+* `test_rules/storage.test.mjs`

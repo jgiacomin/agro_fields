@@ -3396,7 +3396,7 @@ Referencia documental:
 
 ## Migración Campo → Activo Agro V2 — Estado
 
-🟡 **PASOS 5a y 5b VALIDADOS TÉCNICAMENTE; 5c y 5d pendientes** (06/11/2026, rama `gap-campo-migracion`, commit `9360b06`)
+🟢 **PASO 5 CERRADO** (5a y 5b: commit `9360b06`; 5c y 5d: ver sección siguiente) (06/11/2026, rama `gap-campo-migracion`, commit `9360b06`)
 
 * 5a: la lista de chats del comprador lee el resumen público (ya no se rompe por no poder leer el expediente).
 * 5b: el conversor Campo → Activo no inventa datos; el Activo migrado nace privado y conserva su ID.
@@ -3404,6 +3404,22 @@ Referencia documental:
 Evidencia: `flutter test` 108 aprobados (2 fallas conocidas de conexión).
 
 Próximo: **5c — migración controlada de `campos`** (previo conteo de documentos en la consola) y **5d — retiro de lo viejo** una vez comprobada la migración. Relacionado con GAP-ID-01.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Colección `campos` congelada — Estado
+
+🟢 **PASO 5c/5d VALIDADO TÉCNICAMENTE** (06/11/2026, rama `gap-campo-migracion`, commits `67b42c5` y `65197ee`)
+
+`campos` tenía 4 documentos de prueba: no se migraron ni se borraron. Quedó como archivo histórico de solo lectura (solo el administrador escribe) y se retiró la pantalla vieja que nadie abría.
+
+Evidencia: `flutter test` 108 aprobados (2 fallas conocidas de conexión); reglas 134/134.
+
+Próximo paso del plan: **Paso 6 — Producción por especie y operación protegida.**
 
 Referencia documental:
 
