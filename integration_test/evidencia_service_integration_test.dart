@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:agro_fields/firebase_options.dart';
 
@@ -11,10 +12,28 @@ import 'package:agro_fields/services/evidencia_service.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  late String usuarioId;
+
   setUpAll(() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    await FirebaseAuth.instance.useAuthEmulator(
+      '10.0.2.2',
+      9099,
+    );
+
+    final credential =
+        await FirebaseAuth.instance.signInAnonymously();
+
+    final user = credential.user;
+
+    if (user == null) {
+      throw Exception('No se pudo crear el usuario anónimo del test');
+    }
+
+    usuarioId = user.uid;
 
     FirebaseFirestore.instance.useFirestoreEmulator(
       '10.0.2.2',
@@ -34,8 +53,15 @@ void main() {
       final activoId =
           'activo-evidencia-test-$sufijo';
 
-      final usuarioId =
-          'usuario-evidencia-test-$sufijo';
+
+      await firestore
+          .collection('activos_agro')
+          .doc(activoId)
+          .set({
+        'propietarioId': usuarioId,
+        'publicadorId': usuarioId,
+        'nombre': 'Activo Agro de prueba',
+      });
 
       final fechaHecho =
           DateTime(2026, 9, 8, 10, 0);
