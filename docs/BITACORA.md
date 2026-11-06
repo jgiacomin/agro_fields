@@ -6629,3 +6629,42 @@ Línea base: `flutter analyze` sin errores; `flutter test` 76 aprobados y 2 fall
 * `lib/services/activo_agro_service_v2.dart`
 * `test/activo_publico_model_test.dart`
 * `test_rules/rules.test.mjs` (PUB-01 a PUB-10)
+
+---
+
+# 06/11/2026 - Paso 2: Oportunidades privadas (`oportunidades_agro`)
+
+**Estado: VALIDADO TÉCNICAMENTE.**
+
+### Problema
+
+Una oportunidad guarda en un mismo documento datos publicables (título, descripción, actividad, ubicación general) y datos privados (montos objetivo y mínimo, inversión, costos, ingresos, resultado, precio estimado, ubicación exacta, participantes, documentos, evidencias e historial). Las reglas dejaban que cualquier usuario logueado leyera y listara completas las oportunidades con estado `activa`.
+
+Ninguna pantalla usa oportunidades todavía (solo existen el modelo, el servicio y sus tests), así que el riesgo estaba en las reglas.
+
+### Solución (cambio mínimo, opción A)
+
+* `firestore.rules`: `oportunidades_agro` pasa a ser privada. `get` y `list` solo para el administrador y para quien tiene el Activo (dueño o quien cargó el expediente). Se quitó la lectura pública de las `activa`.
+* Crear, modificar y borrar quedan como estaban.
+* No se tocó código de la app.
+
+### Decisiones
+
+* Cuando las oportunidades vayan al marketplace se publicará un resumen aparte aprobado por el administrador, igual que `activos_publicos` en el paso 1. Recién ahí se decide qué datos son públicos.
+* Por ahora una oportunidad sin Activo solo la crea el administrador.
+
+### Validación
+
+* `npm test` (emulador de Firestore): **91/91** (81 + OPOR-01 a OPOR-10).
+* OPOR-02 confirma que un tercero ya no lee una oportunidad activa ajena con montos y documentos.
+
+### Pendiente
+
+* `OportunidadAgroService.obtenerOportunidadesActivas()` ahora solo funciona para el administrador. No la usa ninguna pantalla; cambiarla cuando exista el resumen público de oportunidades.
+* `test/oportunidad_agro_service_test.dart` sigue fallando por conexión a Firebase en un test común (falla conocida).
+
+### Evidencia
+
+* Rama `gap-oportunidades-privadas`, commit `c1bd17b`
+* `firestore.rules` (bloque `oportunidades_agro`)
+* `test_rules/rules.test.mjs` (OPOR-01 a OPOR-10)

@@ -3316,7 +3316,25 @@ Evidencia: `flutter test` 80 aprobados (2 fallas conocidas de conexión), reglas
 
 Pendiente: bloquear en reglas que el dueño marque el expediente como publicado (prueba 10c), pantalla de administrador, checks de qué compartir, publicación por broker y prueba en la app real.
 
-Próximo paso del plan: **Paso 2 — Oportunidades sin datos privados.**
+Paso 2 cerrado: ver sección siguiente.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Oportunidades privadas — Estado
+
+🟢 **PASO 2 VALIDADO TÉCNICAMENTE** (06/11/2026, rama `gap-oportunidades-privadas`, commit `c1bd17b`)
+
+`oportunidades_agro` deja de ser legible por cualquier usuario logueado: solo la leen el administrador y quien tiene el Activo. Los montos, la ubicación exacta, los documentos y las evidencias ya no quedan expuestos.
+
+Evidencia: reglas 91/91 (OPOR-01 a OPOR-10).
+
+Pendiente: resumen público de oportunidades cuando exista la pantalla del marketplace, y adaptar `obtenerOportunidadesActivas()`.
+
+Próximo paso del plan: **Paso 3 — Autorizaciones aplicadas en las reglas** (que las reglas consulten `autorizaciones_activos`).
 
 Referencia documental:
 
