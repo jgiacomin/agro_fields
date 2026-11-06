@@ -6725,3 +6725,50 @@ Cumple §6 (recurso, acción, alcance, vigencia, revocación), §9 (validación 
 * `firestore.rules`
 * `test/autorizacion_activo_id_test.dart`
 * `test_rules/rules.test.mjs` (AUT-01 a AUT-19)
+
+---
+
+# 06/11/2026 - Paso 4a: Documentos con vigencia, transferibilidad y jurisdicción
+
+**Estado: VALIDADO TÉCNICAMENTE.**
+
+### Problema
+
+`DocumentoActivo` guardaba tipo, descripción, una sola fecha, estado, responsable, evidencias y observaciones. Faltaban: emisor, número, vencimiento, jurisdicción, transferibilidad, marca de datos personales y referencia al archivo. Sin vencimiento no se podían armar alertas.
+
+### Decisión: dividir el paso 4
+
+* **4a (este):** completar el modelo del documento.
+* **4b (pendiente):** subir el archivo a Storage (instalar `firebase_storage`, servicio de subida, reglas de Storage con autorizaciones y sus primeras pruebas).
+
+### Solución (cambio mínimo, retrocompatible)
+
+* Nuevos campos opcionales en `DocumentoActivo`: `emisor`, `numero`, `fechaVencimiento`, `pais`, `provinciaEstado`, `transferibilidad`, `contieneDatosPersonales`, `archivoRuta`.
+* La fecha que ya existía (`fecha`) queda como fecha de emisión; no se duplicó.
+* Enum `TransferibilidadDocumento`: transferible, noTransferible, requiereTramite, desconocida.
+* Función `estadoVigencia()`: sinVencimiento, vigente, porVencer (30 días por defecto, `diasAvisoVencimiento`) o vencido. Es la base de las alertas.
+* Valores seguros por defecto: la transferibilidad arranca en `desconocida` (un valor raro también se lee así) y se asume que el documento tiene datos personales hasta que se indique lo contrario.
+* Los documentos ya guardados se leen igual.
+
+### Cruce con el Concepto General V2
+
+§4.2 (documentación, estados y vigencia), §4.8 (vencimientos y faltantes), §2 (el expediente permanece con el cambio de dueño: transferibilidad por documento), §9 (privacidad desde el diseño: datos personales ocultos por defecto) y §3.8 (fuente, fecha y vigencia del dato).
+
+### Validación
+
+* `flutter analyze`: 0 errores.
+* `flutter test`: **95 aprobados** (84 + 11 de `test/documento_activo_model_test.dart`) y las 2 fallas conocidas de conexión a Firebase.
+* No se modificaron reglas.
+
+### Pendiente
+
+* Paso 4b: subida de archivos a Storage con sus reglas y pruebas.
+* Pantalla de documentos y alertas de vencimiento visibles.
+* Catálogo de tipos de documento por jurisdicción, con versión.
+* Documentos dentro del expediente: para alertas entre varios campos podría convenir una colección propia (evaluar más adelante).
+
+### Evidencia
+
+* Rama `gap-documentos-vigencia`, commit `a718fc1`
+* `lib/models/activos/documento_activo_model.dart`
+* `test/documento_activo_model_test.dart`

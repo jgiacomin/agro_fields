@@ -3352,7 +3352,23 @@ Evidencia: `flutter test` 84 aprobados (2 fallas conocidas de conexión), reglas
 
 Pendiente: autorizaciones por lote o módulo, acceso parcial al expediente, pantalla para otorgar permisos y delegación.
 
-Próximo paso del plan: **Paso 4 — Documentos con vigencia, transferibilidad y subida a Storage.**
+Paso 4a cerrado: ver sección siguiente.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Documentos con vigencia — Estado
+
+🟢 **PASO 4a VALIDADO TÉCNICAMENTE** (06/11/2026, rama `gap-documentos-vigencia`, commit `a718fc1`)
+
+`DocumentoActivo` ahora guarda emisor, número, vencimiento, jurisdicción, transferibilidad (arranca en "desconocida"), marca de datos personales (se asume que sí) y ruta del archivo, y sabe si está vigente, por vencer (30 días) o vencido. Los documentos ya guardados se leen igual.
+
+Evidencia: `flutter test` 95 aprobados (2 fallas conocidas de conexión).
+
+Próximo paso del plan: **Paso 4b — Subida de documentos a Storage** (instalar `firebase_storage`, servicio de subida, reglas de Storage con autorizaciones y sus pruebas).
 
 Referencia documental:
 
