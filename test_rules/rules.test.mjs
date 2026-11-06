@@ -849,3 +849,49 @@ test('AUT-19. Una autorización de otro Activo NO sirve para este [PROHIBIDO]', 
     autorizacionDe('crear', 'trabajo', { activoId: 'otro_activo' })));
   await assertFails(setDoc(doc(como(ENCARGADO), 'trabajos/t_enc'), trabajoDe(ENCARGADO)));
 });
+
+// ------------------------- CAMPOS. ARCHIVO HISTÓRICO CONGELADO (PASO 5) -------------------------
+// La colección vieja "campos" solo tenía datos de prueba. No se migra ni se
+// borra: se puede leer lo que ya existe, pero nadie escribe desde la app.
+
+const campoViejo = (estado = 'disponible') => ({
+  propietarioId: DUENO, publicadorId: DUENO, tipoRelacion: 'propietario',
+  nombre: 'Campo viejo', hectareas: 10, estadoPublicacion: estado,
+});
+
+const cargarCampoViejo = (estado) => cargar((db) =>
+  setDoc(doc(db, 'campos/c_viejo'), campoViejo(estado)));
+
+test('CAMPOS-01. El dueño lee su campo viejo [PERMITIDO]', async () => {
+  await cargarCampoViejo('pausado');
+  await assertSucceeds(getDoc(doc(como(DUENO), 'campos/c_viejo')));
+});
+
+test('CAMPOS-02. Un usuario logueado lee un campo viejo disponible (chats viejos) [PERMITIDO]', async () => {
+  await cargarCampoViejo('disponible');
+  await assertSucceeds(getDoc(doc(como(COMPRADOR), 'campos/c_viejo')));
+});
+
+test('CAMPOS-03. NO se crean campos nuevos en la colección vieja [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'campos/c_nuevo'), campoViejo()));
+});
+
+test('CAMPOS-04. El dueño NO modifica un campo viejo [PROHIBIDO]', async () => {
+  await cargarCampoViejo('disponible');
+  await assertFails(updateDoc(doc(como(DUENO), 'campos/c_viejo'), { nombre: 'Cambiado' }));
+});
+
+test('CAMPOS-05. El dueño NO borra un campo viejo (archivar no es borrar) [PROHIBIDO]', async () => {
+  await cargarCampoViejo('disponible');
+  await assertFails(deleteDoc(doc(como(DUENO), 'campos/c_viejo')));
+});
+
+test('CAMPOS-06. Un tercero NO lee un campo viejo que no estaba disponible [PROHIBIDO]', async () => {
+  await cargarCampoViejo('pausado');
+  await assertFails(getDoc(doc(como(OTRO), 'campos/c_viejo')));
+});
+
+test('CAMPOS-07. El administrador sí puede corregir un campo viejo [PERMITIDO]', async () => {
+  await cargarCampoViejo('disponible');
+  await assertSucceeds(updateDoc(doc(como(ADMIN), 'campos/c_viejo'), { nombre: 'Corregido' }));
+});

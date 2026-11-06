@@ -492,8 +492,11 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
-    // CAMPOS (modelo VIEJO, en convivencia con activos_agro)
-    // Se elimina cuando se migre todo a activos_agro + activos_publicos.
+    // CAMPOS (modelo VIEJO) - ARCHIVO HISTORICO CONGELADO (paso 5, 06/11/2026)
+    // Solo tenia 4 documentos de prueba: no se migran ni se borran
+    // (Concepto §3.5: archivar no es borrar). Se sigue pudiendo leer lo que
+    // ya existe (chats viejos), pero nadie crea, modifica ni borra desde la
+    // app. Los campos nuevos se cargan como activos_agro.
     // -----------------------------------------------------------------
     match /campos/{campoId} {
       allow get: if esAdmin()
@@ -506,17 +509,7 @@ service cloud.firestore {
             && (resource.data.estadoPublicacion == 'disponible'
                 || parteDeActivo(resource.data)));
 
-      allow create: if logueado()
-        && (request.resource.data.propietarioId == request.auth.uid
-            || request.resource.data.get('publicadorId', '') == request.auth.uid);
-
-      allow update: if esAdmin()
-        || (logueado()
-            && parteDeActivo(resource.data)
-            && !cambia(['propietarioId']));
-
-      allow delete: if esAdmin()
-        || (logueado() && resource.data.propietarioId == request.auth.uid);
+      allow create, update, delete: if esAdmin();
     }
 
     // -----------------------------------------------------------------
