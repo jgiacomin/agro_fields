@@ -3334,7 +3334,25 @@ Evidencia: reglas 91/91 (OPOR-01 a OPOR-10).
 
 Pendiente: resumen público de oportunidades cuando exista la pantalla del marketplace, y adaptar `obtenerOportunidadesActivas()`.
 
-Próximo paso del plan: **Paso 3 — Autorizaciones aplicadas en las reglas** (que las reglas consulten `autorizaciones_activos`).
+Paso 3 cerrado: ver sección siguiente.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Autorizaciones en las reglas — Estado
+
+🟢 **PASO 3 VALIDADO TÉCNICAMENTE (V1)** (06/11/2026, rama `gap-autorizaciones-reglas`, commit `d11f766`)
+
+Un encargado o profesional invitado puede trabajar sobre el Activo con una autorización activa y vigente: cargar trabajos, recursos, movimientos de stock y evidencias. No lee el expediente privado ni la auditoría.
+
+Evidencia: `flutter test` 84 aprobados (2 fallas conocidas de conexión), reglas 110/110 (AUT-01 a AUT-19).
+
+Pendiente: autorizaciones por lote o módulo, acceso parcial al expediente, pantalla para otorgar permisos y delegación.
+
+Próximo paso del plan: **Paso 4 — Documentos con vigencia, transferibilidad y subida a Storage.**
 
 Referencia documental:
 

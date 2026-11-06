@@ -6668,3 +6668,60 @@ Ninguna pantalla usa oportunidades todavía (solo existen el modelo, el servicio
 * Rama `gap-oportunidades-privadas`, commit `c1bd17b`
 * `firestore.rules` (bloque `oportunidades_agro`)
 * `test_rules/rules.test.mjs` (OPOR-01 a OPOR-10)
+
+---
+
+# 06/11/2026 - Paso 3: Autorizaciones aplicadas en las reglas
+
+**Estado: VALIDADO TÉCNICAMENTE (V1).**
+
+### Problema
+
+Existían el modelo `AutorizacionActivo`, `AuthorizationService` y `AutorizacionActivoService`, pero las Firestore Rules solo reconocían al dueño (`propietarioId`) y a quien cargó el expediente (`publicadorId`). Un encargado o profesional invitado no podía trabajar, aunque tuviera una autorización.
+
+El Concepto General V2 (§6 y §9) pide autorizaciones con recurso, acción, alcance, vigencia y revocación, validadas en servicios **y** en reglas.
+
+### Obstáculo técnico
+
+Las reglas no pueden buscar documentos: solo abren uno por su nombre. Las autorizaciones se guardaban con un ID al azar.
+
+### Solución (cambio mínimo)
+
+* Nombre armado del documento: `activoId__usuario__permiso__ambito` (y `__referencia` si tiene una). Nueva función `AutorizacionActivo.construirId`; `AutorizacionActivoService.guardar` la usa siempre. Además evita duplicados al cargar sin conexión y equivale a una clave única para una futura migración a SQL.
+* Nuevos roles: `encargado` y `profesional` (Concepto §6).
+* `firestore.rules`: funciones `rutaAutorizacion` y `tieneAutorizacion`. Revisan que la autorización exista, esté `activa`, haya empezado, no esté vencida, sea de ese Activo y valga para el ámbito entero.
+* Se aplica en `trabajos` (ámbito `trabajo`), `recursos` y `movimientos_stock` (`recursosInventario`) y `evidencias` (`evidencias`), con `ver` para leer, `crear` para crear y `modificar` para editar.
+* `auditoria_activos`: el autorizado solo agrega registros a su propio nombre; no la lee.
+* `autorizaciones_activos`: una autorización nueva debe tener el nombre armado; después no se cambian el permiso ni el ámbito (solo se puede revocar).
+
+### Cruce con el Concepto General V2
+
+Cumple §6 (recurso, acción, alcance, vigencia, revocación), §9 (validación en reglas), §3.3 (permisos separados de la identidad), §8 (sin duplicados offline), §7 (portabilidad SQL) y §12 (núcleo: seguridad y permisos). El permiso `verificar` no se abre (§9: aportante ≠ verificador).
+
+### Validación
+
+* `flutter analyze`: 0 errores.
+* `flutter test`: 84 aprobados (80 + 4 de `test/autorizacion_activo_id_test.dart`) y las 2 fallas conocidas de conexión a Firebase.
+* `npm test` (emulador de Firestore): **110/110** (91 + AUT-01 a AUT-19).
+* AUT-08 confirma que el encargado registra stock como la app (transacción con recurso, movimiento y auditoría). AUT-11 y AUT-12 confirman que no lee el expediente ni la auditoría.
+
+### Notas
+
+* Para registrar stock el encargado necesita `ver` y `crear` en recursos e inventario (la app lee el saldo antes de actualizarlo).
+* `integration_test/autorizacion_activo_service_integration_test.dart` no necesitó cambios: no depende del formato del ID.
+
+### Pendiente
+
+* Autorizaciones para un lote o módulo puntual (V1 solo acepta el ámbito entero).
+* Acceso parcial al expediente (`activos_agro` mezcla economía y documentos en un mismo documento).
+* Pantalla para que el dueño invite y otorgue permisos.
+* Delegación (`puedeDelegar`).
+
+### Evidencia
+
+* Rama `gap-autorizaciones-reglas`, commit `d11f766`
+* `lib/models/activos/autorizacion_activo_model.dart`
+* `lib/services/autorizacion_activo_service.dart`
+* `firestore.rules`
+* `test/autorizacion_activo_id_test.dart`
+* `test_rules/rules.test.mjs` (AUT-01 a AUT-19)
