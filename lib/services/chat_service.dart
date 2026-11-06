@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/chat_model.dart';
 import '../models/chat_preview_model.dart';
 import '../models/activos/activo_agro_model_v2.dart';
+import '../models/activos/activo_publico_model.dart';
+import '../models/campo_model.dart';
 
 import 'campo_service.dart';
 import 'activo_agro_service_v2.dart';
@@ -226,31 +228,56 @@ Future<String> crearChat({
             continue;
           }
 
-          // 1. Buscar primero en Campos V1
-          final campo = await campoService.obtenerCampoPorId(
-            campoId,
-          );
+          final esDueno =
+              data['propietarioId'] == uid;
 
-          // 2. Si no existe, buscar en Activos Agro V2
-          ActivoAgroV2? activo;
-
-          if (campo == null) {
-            activo = await activoService.obtenerActivoPorId(
+          // 1. Buscar primero en Campos V1 (sistema anterior).
+          //    Si las reglas no dejan leerlo, se sigue buscando.
+          Campo? campo;
+          try {
+            campo = await campoService.obtenerCampoPorId(
               campoId,
             );
+          } on FirebaseException {
+            campo = null;
           }
 
-          // 3. Si no existe en ninguno de los dos sistemas,
-          // no podemos construir correctamente el preview.
-          if (campo == null && activo == null) {
-            continue;
+          // 2. Si no es un Campo V1, buscar el Activo Agro V2:
+          //    - el dueño lee su expediente;
+          //    - el interesado lee SOLO el resumen público (paso 1:
+          //      el expediente privado no se comparte).
+          // 3. Si no se encuentra nada (por ejemplo, la publicación se
+          //    pausó), la conversación se muestra igual, sin datos del campo.
+          ActivoAgroV2? activo;
+          ActivoPublico? resumen;
+
+          if (campo == null) {
+            try {
+              if (esDueno) {
+                activo = await activoService.obtenerActivoPorId(
+                  campoId,
+                );
+              } else {
+                final resumenDoc = await _firestore
+                    .collection('activos_publicos')
+                    .doc(campoId)
+                    .get();
+
+                if (resumenDoc.exists && resumenDoc.data() != null) {
+                  resumen = ActivoPublico.fromMap(
+                    resumenDoc.data()!,
+                    resumenDoc.id,
+                  );
+                }
+              }
+            } on FirebaseException {
+              activo = null;
+              resumen = null;
+            }
           }
 
           // 4. Determinar el otro participante
-          final esPropietario =
-              data['propietarioId'] == uid;
-
-          final contactoId = esPropietario
+          final contactoId = esDueno
               ? data['interesadoId']
               : data['propietarioId'];
 
@@ -278,6 +305,7 @@ Future<String> crearChat({
               chatId: doc.id,
               campo: campo,
               activo: activo,
+              resumen: resumen,
               contacto: contacto,
               estado: data['estado'] ?? 'activo',
               fechaCreacion: fechaCreacion,

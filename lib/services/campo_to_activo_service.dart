@@ -5,7 +5,6 @@ import '../models/activos/tipo_activo.dart';
 import '../models/activos/estado_activo.dart';
 
 import '../models/activos/ubicacion_activo_model.dart';
-import '../models/activos/modulo_produccion_model.dart';
 import '../models/activos/suelo_activo_model.dart';
 
 import '../models/activos/confianza_activo_model.dart';
@@ -17,7 +16,40 @@ import '../models/activos/historial_activo_model.dart';
 import '../models/activos/participante_activo_model.dart';
 import 'package:agro_fields/models/activos/factor_confianza_model.dart';
 
+/// Convierte un Campo del sistema anterior (colección `campos`) en un
+/// Activo Agro V2, conservando su identidad (mismo ID).
+///
+/// Regla (Concepto General §3.6 y §3.7): no se inventan datos. Lo que el
+/// Campo no tenía queda vacío o como faltante, y el "verificado" del
+/// sistema anterior NO cuenta como verificación (no tiene evidencia).
+/// El Activo migrado nace PRIVADO (borrador): para volver al marketplace
+/// el dueño lo publica de nuevo y pasa por revisión (paso 1).
 class CampoToActivoService {
+
+  /// Zona horaria según el país. Si no se conoce, queda vacía.
+  static String zonaHorariaDe(String pais) {
+    switch (pais.trim().toLowerCase()) {
+      case 'argentina':
+        return 'America/Argentina/Buenos_Aires';
+      case 'paraguay':
+        return 'America/Asuncion';
+      default:
+        return '';
+    }
+  }
+
+  /// Moneda según el país. Si no se conoce, queda vacía.
+  static String monedaDe(String pais) {
+    switch (pais.trim().toLowerCase()) {
+      case 'argentina':
+        return 'ARS';
+      case 'paraguay':
+        return 'PYG';
+      default:
+        return '';
+    }
+  }
+
   ActivoAgroV2 convertir(Campo campo) {
     return ActivoAgroV2(
       activoId: campo.campoId,
@@ -47,9 +79,9 @@ class CampoToActivoService {
 
         superficie: campo.hectareas,
 
-        tipoZona: 'rural',
+        tipoZona: '',
 
-        zonaHoraria: 'America/Argentina/Buenos_Aires',
+        zonaHoraria: zonaHorariaDe(campo.pais),
 
         accesoCaminos: '',
 
@@ -59,33 +91,13 @@ class CampoToActivoService {
 
         jurisdiccionLegal: '',
 
-        regionProductiva: campo.provincia,
+        regionProductiva: '',
 
-        monedaLocal: 'ARS',
+        monedaLocal: monedaDe(campo.pais),
       ),
 
-      producciones: [
-        ModuloProduccion(
-          dominio: 'agropecuario',
-
-          actividad: 'agricultura',
-
-          descripcion: 'Producción inicial',
-
-          superficie: campo.hectareas,
-
-          unidad: 'hectáreas',
-
-          datos: {
-            'capacidadProductiva': '',
-
-            'infraestructura': [],
-
-            'equipamiento': [],
-          },
-          ciclos: [],
-        ),
-      ],
+      // El Campo no tenía datos de producción: no se inventan.
+      producciones: [],
 
       economia: EconomiaActivo(
         objetivoProyecto: '',
@@ -100,13 +112,13 @@ class CampoToActivoService {
 
         riesgosIdentificados: '',
 
-        origenInformacion: 'productor',
+        origenInformacion: 'sistema_anterior_campos',
 
         responsableDeclaracion: campo.propietarioId,
 
         valorSolicitado: 0,
 
-        moneda: 'USD',
+        moneda: '',
 
         tipoOperacion: '',
 
@@ -144,12 +156,12 @@ class CampoToActivoService {
       suelo: SueloActivo.inicial(),
 
       confianza: ConfianzaActivo(
-        nivelGeneral: campo.verificado ? 50 : 0,
+        nivelGeneral: 0,
 
         // =====================================================
         // IDENTIDAD
         // =====================================================
-        identidadVerificada: campo.verificado,
+        identidadVerificada: false,
 
         // =====================================================
         // DOCUMENTACIÓN
@@ -201,7 +213,7 @@ class CampoToActivoService {
 
         montoInversionDeclarada: 0,
 
-        monedaInversion: 'USD',
+        monedaInversion: '',
 
         // =====================================================
         // PARTICIPANTES
@@ -220,11 +232,14 @@ class CampoToActivoService {
 
         ultimaEvaluacion: DateTime.now(),
 
-        observaciones: '',
+        observaciones: campo.verificado
+            ? 'Migrado desde Campos V1. Figuraba como verificado en el '
+                'sistema anterior, sin evidencia: queda como dato declarado.'
+            : 'Migrado desde Campos V1.',
       ),
 
       evaluacion: EvaluacionConfianza(
-        nivelGeneral: campo.verificado ? 50 : 0,
+        nivelGeneral: 0,
 
         documental: FactorConfianza.inicial(),
 
@@ -238,7 +253,12 @@ class CampoToActivoService {
 
         fortalezas: ['Campo registrado'],
 
-        pendientes: ['Documentación', 'Verificación'],
+        pendientes: [
+          'Ubicación en el mapa',
+          'Producción',
+          'Documentación',
+          'Verificación',
+        ],
 
         resumen: 'Evaluación inicial',
 
@@ -248,11 +268,13 @@ class CampoToActivoService {
       ),
 
       madurez: MadurezActivo(
-        porcentaje: campo.verificado ? 50 : 10,
+        porcentaje: 10,
 
-        faltantes: ['Documentación'],
+        // La latitud y longitud quedan en 0 porque el modelo de ubicación
+        // todavía no admite "sin dato": se marca como faltante.
+        faltantes: ['Ubicación en el mapa', 'Producción', 'Documentación'],
 
-        etapa: campo.verificado ? 'validado' : 'inicial',
+        etapa: 'inicial',
 
         nivelTecnologico: 'bajo',
 
@@ -277,25 +299,26 @@ class CampoToActivoService {
 
       publicadorId: campo.publicadorId,
 
-      tipoRelacionPropietario: 'propietario',
+      tipoRelacionPropietario: campo.tipoRelacion,
 
-      estadoPublicacion: campo.estadoPublicacion,
+      // Nace privado: se publica de nuevo con revisión (paso 1).
+      estadoPublicacion: 'borrador',
 
-      visible: campo.estadoPublicacion == 'publicado',
+      visible: false,
 
       versionDatos: ActivoAgroV2.modeloVersion,
 
-      estado: campo.estadoPublicacion == 'publicado'
-          ? EstadoActivo.publicado
-          : EstadoActivo.borrador,
+      estado: EstadoActivo.borrador,
 
       historial: [
         HistorialActivo(
-          eventoId: 'creacion_${campo.campoId}',
+          eventoId: 'migracion_${campo.campoId}',
 
-          tipoEvento: 'creacion',
+          tipoEvento: 'migracion_desde_campo',
 
-          descripcion: 'Activo generado desde Campo',
+          descripcion:
+              'Activo generado desde campos/${campo.campoId} '
+              '(sistema anterior), conservando su identidad',
 
           usuarioId: campo.publicadorId,
 
