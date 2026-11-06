@@ -27,6 +27,12 @@ const RUTA_PRIVADO_OTRO = 'activos/a1/privado/otros/nota.pdf';
 const RUTA_PUBLICA = 'activos/a1/publico/foto.jpg';
 
 const PDF = { contentType: 'application/pdf' };
+
+// El emulador de Storage no siempre se vacía entre pruebas ni entre
+// corridas. Las pruebas que SUBEN un archivo nuevo usan una carpeta con la
+// hora de esta corrida, para no chocar con archivos viejos (no se puede
+// pisar un archivo: ST-15 y ST-17).
+const CORRIDA = Date.now();
 const bytes = (n = 16) => new Uint8Array(n);
 
 let env;
@@ -95,7 +101,7 @@ const cargarArchivo = (ruta, meta = PDF) =>
 // Las pruebas que SUBEN un archivo nuevo usan su propia carpeta, para no
 // depender de lo que dejó la prueba anterior (no se puede pisar un archivo).
 test('ST-01. El dueño sube un PDF a los documentos de su campo [PERMITIDO]', async () => {
-  await assertSucceeds(uploadBytes(ref(como(DUENO), 'activos/a1/privado/documentos/doc_dueno/escritura.pdf'), bytes(), PDF));
+  await assertSucceeds(uploadBytes(ref(como(DUENO), `activos/a1/privado/documentos/doc_dueno_${CORRIDA}/escritura.pdf`), bytes(), PDF));
 });
 
 test('ST-02. El dueño lee un documento de su campo [PERMITIDO]', async () => {
@@ -120,7 +126,7 @@ test('ST-05. Sin sesión no se lee nada [PROHIBIDO]', async () => {
 // ------------------------- AUTORIZACIONES (documentacion) -------------------------
 test('ST-06. El encargado con "crear documentacion" sube un documento [PERMITIDO]', async () => {
   await darAutorizacion('crear');
-  await assertSucceeds(uploadBytes(ref(como(ENCARGADO), 'activos/a1/privado/documentos/doc_encargado/escritura.pdf'), bytes(), PDF));
+  await assertSucceeds(uploadBytes(ref(como(ENCARGADO), `activos/a1/privado/documentos/doc_encargado_${CORRIDA}/escritura.pdf`), bytes(), PDF));
 });
 
 test('ST-07. El encargado con "ver documentacion" lee un documento [PERMITIDO]', async () => {
