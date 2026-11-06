@@ -3386,7 +3386,24 @@ Evidencia: `flutter test` 103 aprobados (2 fallas conocidas de conexión); regla
 
 Pendiente: pantalla de subida, archivos de evidencias y subida sin conexión.
 
-Próximo paso del plan: **Paso 5 — Migrar `Campo` a `ActivoAgroV2`** (con `CampoToActivoService` como punto de partida y relacionado con GAP-ID-01).
+Paso 5 en curso: ver sección siguiente.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Migración Campo → Activo Agro V2 — Estado
+
+🟡 **PASOS 5a y 5b VALIDADOS TÉCNICAMENTE; 5c y 5d pendientes** (06/11/2026, rama `gap-campo-migracion`, commit `9360b06`)
+
+* 5a: la lista de chats del comprador lee el resumen público (ya no se rompe por no poder leer el expediente).
+* 5b: el conversor Campo → Activo no inventa datos; el Activo migrado nace privado y conserva su ID.
+
+Evidencia: `flutter test` 108 aprobados (2 fallas conocidas de conexión).
+
+Próximo: **5c — migración controlada de `campos`** (previo conteo de documentos en la consola) y **5d — retiro de lo viejo** una vez comprobada la migración. Relacionado con GAP-ID-01.
 
 Referencia documental:
 

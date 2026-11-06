@@ -6818,3 +6818,52 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 * `storage.rules`
 * `test_rules/storage.test.mjs`, `test_rules/package.json`
 * `pubspec.yaml`, `pubspec.lock`
+
+---
+
+# 06/11/2026 - Paso 5a y 5b: Chat del comprador y conversor Campo → Activo sin datos inventados
+
+**Estado: VALIDADO TÉCNICAMENTE.** (El paso 5c, migración real de datos, queda pendiente.)
+
+### Auditoría previa (Concepto General §2 y §12)
+
+* `crear_campo_screen.dart` no la abre ninguna pantalla: hoy no se crean campos nuevos en `campos`.
+* `CampoToActivoService` existía pero solo lo usaba su test, y nunca se migró ningún campo.
+* `CampoService` solo lo usan la pantalla vieja y `ChatService`.
+* Las reglas de `campos` dejan borrar al dueño (choca con §3.5: archivar no es borrar). Queda para el 5d.
+
+### 5a — Chat del comprador
+
+**Problema:** la lista de chats buscaba el campo en `campos` y, si no estaba, en `activos_agro` (expediente privado). Desde el paso 1 el comprador no puede leer el expediente, así que se le rompía la lista.
+
+**Solución:** `ChatService.obtenerChatsPreviewUsuario` busca según quién mira: el dueño lee su expediente; el interesado lee solo `activos_publicos`. Si no puede leer nada (por ejemplo, publicación pausada), la conversación se muestra igual, sin datos del campo. `ChatPreviewModel` suma el resumen público (nombre, provincia y hectáreas).
+
+### 5b — Conversor sin datos inventados
+
+**Problema:** `CampoToActivoService` ponía latitud y longitud 0, inventaba una producción de "agricultura", fijaba zona horaria y moneda de Argentina, y el "verificado" del sistema anterior daba confianza 50 e identidad verificada (§3.6 y §3.7).
+
+**Solución:**
+* Sin producción inventada (lista vacía, figura como faltante).
+* Zona horaria y moneda según el país (Argentina ARS, Paraguay PYG); vacías si no se conoce.
+* El "verificado" viejo queda como nota ("sin evidencia"), con confianza 0 e identidad no verificada.
+* El Activo migrado nace privado (`borrador`, no visible): vuelve al marketplace solo con publicación y revisión (paso 1).
+* Respeta `tipoRelacion` del Campo y el historial registra `migracion_desde_campo` con el origen `campos/{id}`.
+* Se conserva el mismo ID (identidad persistente, §3.1).
+
+### Validación
+
+* `flutter analyze`: 0 errores.
+* `flutter test`: **108 aprobados** (103 + 5 nuevos en `test/campo_to_activo_test.dart`, que pasó de 1 a 6 tests) y las 2 fallas conocidas de conexión a Firebase.
+* No se modificaron reglas.
+
+### Pendiente
+
+* **5c:** migración controlada de los documentos de `campos` (mismo ID, vínculo en el campo de origen, sin borrar, sin duplicar si se corre dos veces). Antes: contar los documentos de `campos` y `activos_agro` en la consola.
+* **5d:** recién con la migración comprobada, retirar la pantalla vieja, la búsqueda doble del chat y el permiso de borrar en `campos`.
+* La ubicación migrada queda en 0,0 porque `UbicacionActivo` no admite "sin dato": se marca como faltante "Ubicación en el mapa". Hacer opcionales latitud y longitud es un cambio aparte.
+
+### Evidencia
+
+* Rama `gap-campo-migracion`, commit `9360b06`
+* `lib/services/chat_service.dart`, `lib/models/chat_preview_model.dart`
+* `lib/services/campo_to_activo_service.dart`, `test/campo_to_activo_test.dart`
