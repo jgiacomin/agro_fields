@@ -6772,3 +6772,49 @@ Cumple §6 (recurso, acción, alcance, vigencia, revocación), §9 (validación 
 * Rama `gap-documentos-vigencia`, commit `a718fc1`
 * `lib/models/activos/documento_activo_model.dart`
 * `test/documento_activo_model_test.dart`
+
+---
+
+# 06/11/2026 - Paso 4b: Subida de documentos a Storage
+
+**Estado: VALIDADO TÉCNICAMENTE.**
+
+### Problema
+
+Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la app no tenía `firebase_storage`, y las Storage Rules estaban escritas pero nunca se habían probado ni usaban autorizaciones.
+
+### Solución
+
+* Se instaló `firebase_storage` 13.6.1 (`flutter pub add`). De paso se actualizaron, dentro de lo compatible, `cloud_firestore`, `firebase_auth` y `firebase_core`; todos los tests siguieron en verde.
+* Nuevo `DocumentoArchivoService`: sube el archivo a `activos/{activoId}/privado/documentos/{documentoId}/{archivo}` y devuelve la ruta para guardar en `DocumentoActivo.archivoRuta`. Antes de subir revisa PDF o imagen, que no esté vacío y que pese menos de 20 MB, y limpia el nombre del archivo.
+* `storage.rules`: en `privado/documentos/` también entra quien tenga autorización `ver` o `crear` en el ámbito `documentacion` (mismo nombre armado del paso 3). El resto de la carpeta privada sigue solo para el dueño o quien cargó el expediente.
+* **Hallazgo corregido con las pruebas (ST-15):** subir con el nombre de un archivo existente cuenta como "crear" y lo pisaba. Se agregó `resource == null` a las reglas de subida de la carpeta privada: nadie reemplaza ni borra un documento ya subido.
+* Límite técnico respetado: las Storage Rules consultan como máximo 2 documentos de Firestore por pedido (el Activo y la autorización).
+
+### Cómo se prueban ahora las reglas
+
+* Emuladores juntos y con el proyecto de prueba (sin conexión al Firebase real):
+  `firebase emulators:start --only firestore,storage --project demo-agro-rules`
+* `npm test` en `test_rules` corre Firestore y Storage uno después del otro (`npm run test:firestore` o `npm run test:storage` por separado).
+* Si el emulador no arranca por "port taken", cerrar el emulador viejo antes.
+
+### Validación
+
+* `flutter analyze`: 0 errores.
+* `flutter test`: **103 aprobados** (95 + 8 de `test/documento_archivo_service_test.dart`) y las 2 fallas conocidas de conexión a Firebase.
+* `npm test`: **127/127** (110 de Firestore + 17 de Storage, ST-01 a ST-17). Son las primeras pruebas de Storage del proyecto.
+
+### Pendiente
+
+* Pantalla para elegir y subir el archivo, y guardar la ruta en el documento.
+* Archivos de evidencias (fotos) con el mismo sistema, en su propia carpeta.
+* Subida sin conexión (cola de pendientes, Concepto §8).
+
+### Evidencia
+
+* Rama `gap-documentos-storage`, commit `83b671d`
+* `lib/services/documento_archivo_service.dart`
+* `test/documento_archivo_service_test.dart`
+* `storage.rules`
+* `test_rules/storage.test.mjs`, `test_rules/package.json`
+* `pubspec.yaml`, `pubspec.lock`

@@ -3368,7 +3368,25 @@ Referencia documental:
 
 Evidencia: `flutter test` 95 aprobados (2 fallas conocidas de conexión).
 
-Próximo paso del plan: **Paso 4b — Subida de documentos a Storage** (instalar `firebase_storage`, servicio de subida, reglas de Storage con autorizaciones y sus pruebas).
+Paso 4b cerrado: ver sección siguiente.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Subida de documentos a Storage — Estado
+
+🟢 **PASO 4b VALIDADO TÉCNICAMENTE** (06/11/2026, rama `gap-documentos-storage`, commit `83b671d`)
+
+Los documentos del expediente se suben a la carpeta privada del Activo. Sube y lee el dueño, quien cargó el expediente o quien tenga autorización en "documentación". Nadie reemplaza ni borra un documento ya subido.
+
+Evidencia: `flutter test` 103 aprobados (2 fallas conocidas de conexión); reglas 127/127 (110 Firestore + 17 Storage, las primeras de Storage).
+
+Pendiente: pantalla de subida, archivos de evidencias y subida sin conexión.
+
+Próximo paso del plan: **Paso 5 — Migrar `Campo` a `ActivoAgroV2`** (con `CampoToActivoService` como punto de partida y relacionado con GAP-ID-01).
 
 Referencia documental:
 
