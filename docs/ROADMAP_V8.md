@@ -3486,3 +3486,39 @@ Próximo: reglas de Storage (previa verificación de que Storage esté activado)
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Storage en el proyecto real — Estado
+
+🟢 **ACTIVADO Y PUBLICADO** (10/11/2026)
+
+Proyecto en plan Blaze (alerta de presupuesto de USD 10), depósito en US-EAST1 sin costo y reglas de Storage publicadas. Probado subiendo un archivo.
+
+Pendiente: App Check antes del lanzamiento.
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Operación Agropecuaria Protegida — Estado
+
+🟢 **GAP-OPER-01 CERRADO Y EN EL PROYECTO REAL** (10/11/2026, rama `gap-oper-01`, `main` = `140926f`)
+
+Antes de entregar hacienda, granos u otro producto, el productor carga la venta: comprador, quién firma, importe, forma de pago, cheques y garantías. El sistema muestra la **lista de control antes de entregar (7 puntos)**, avisa los cheques **7 días antes** del vencimiento y marca los vencidos y rebotados. Solo lo ve el dueño (o un encargado autorizado); el broker no. Agro Fields no garantiza el pago.
+
+* 7a-1: modelos y reglas (`061961d`)
+* 7a-2: servicio y cálculos (`8100745`)
+* 7a-3: pantallas, botón único para adjuntar y regla propia de Storage (`140926f`)
+
+Evidencia: `flutter test` 184 aprobados (2 fallas conocidas de conexión); reglas 184/184; reglas de Firestore y Storage publicadas; prueba manual en Chrome con el proyecto real.
+
+🟢 Después del lanzamiento: red de cheques entre productores (con revisión legal), bancos, SGR, aseguradoras y financiación.
+
+Próximo: **botón "Adjuntar" en los Documentos del campo** (cierra la pantalla pendiente del paso 4b).
+
+Referencia documental:
+
+`docs/BITACORA.md`

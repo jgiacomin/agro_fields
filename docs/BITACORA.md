@@ -7051,3 +7051,134 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 ### Regla de trabajo (10/11/2026)
 
 * Claude solo trabaja dentro de la carpeta `agro_fields` de la PC y usa internet solo para buscar información; no entra a los servidores ni a la red de la institución.
+
+---
+
+# 10/11/2026 - Storage activado y reglas de Storage publicadas en el proyecto real
+
+**Estado: PUBLICADO Y PROBADO.**
+
+* El primer `firebase deploy --only storage` falló: Storage nunca se había activado en `agro-conecta-887df`.
+* Desde octubre de 2024, Google exige el plan **Blaze** (pago por uso) para crear el depósito de archivos. Javier pasó el proyecto a Blaze, con **alerta de presupuesto de USD 10**.
+* Depósito creado en **US-EAST1** ("ubicación sin costo", clase Standard), con nombre `agro-conecta-887df.firebasestorage.app` (el mismo que ya tenía `firebase_options.dart`; no hubo que tocar código).
+* `firebase deploy --only storage`: compiló sin errores. Se aceptó darle a Storage el permiso para consultar Firestore (las reglas leen el dueño del Activo y las autorizaciones).
+* Prueba: Javier subió un PDF desde la consola y apareció en el depósito (después se borró).
+
+### Pendiente
+
+* **App Check** (verificación de aplicaciones) antes del lanzamiento con usuarios reales.
+
+---
+
+# 10/11/2026 - Concepto General Integral guardado en la carpeta
+
+* Javier pasó el **Concepto General Integral del Sistema** (20 secciones). Quedó como `CONCEPTO_GENERAL_INTEGRAL_AGRO_FIELDS_V8.md`.
+* La **Operación Agropecuaria Protegida** está en la sección 6.2; la acompañan la 6.1 (Protección Comercial y Confianza) y la 6.3 (Red de Inteligencia y Verificación de Cheques).
+* El Control de Coherencia y Validación de Movimientos Ganaderos está en la sección 12.
+
+---
+
+# 10/11/2026 - Paso 7a-1: GAP-OPER-01 Modelos y reglas de la Operación Protegida
+
+**Estado: VALIDADO TÉCNICAMENTE.**
+
+### Decisiones (aprobadas por Javier)
+
+* Se parte en **🔴 versión chica para el lanzamiento** (cada productor ve solo sus operaciones) y **🟢 después**: red de cheques compartida entre productores (comparte datos de terceros; revisar con un abogado antes), conexión con bancos, SGR y aseguradoras, y mercado de financiación.
+* Un solo tipo de operación, con el producto como opción: hacienda, granos u otro.
+* Agro Fields **no garantiza el pago ni evalúa al comprador**: organiza la información y avisa lo que falta.
+
+### Solución
+
+* `lib/models/activos/operacion_protegida_model.dart` (nuevo): la ficha del negocio (comprador con CUIT/RUC, quién firma, con qué carácter y su poder; producto, cantidad, importe, moneda, forma de pago, garantías, contrato y estado). Un estado desconocido se lee "en curso" (nunca se asume cerrada).
+* `lib/models/activos/evento_operacion_model.dart` (nuevo): lo que va pasando (pago acordado, entrega, cobro, rechazo, incumplimiento y nota). Es de solo agregar.
+* `lib/models/activos/autorizacion_activo_model.dart`: ámbito nuevo `operaciones`.
+* `firestore.rules`: colecciones `operaciones_protegidas` y `eventos_operacion`.
+  * Solo el **dueño** del Activo, o quien tenga autorización en `operaciones`. **Quien cargó el expediente (broker) NO entra**: son datos de plata.
+  * La operación se corrige solo en curso. Nunca cambia de Activo ni de autor, y no se borra.
+  * Los eventos no se editan ni se borran. La operación tiene que ser del mismo Activo y no estar cancelada. Importe y cantidad, si vienen, tienen que ser mayores a cero.
+
+### Validación
+
+* `flutter test`: **165 aprobados** (141 + 24 nuevos) y las 2 fallas conocidas de conexión a Firebase.
+* `npm test`: **178/178** (154 + OPER-01 a OPER-24).
+
+### Evidencia
+
+* Rama `gap-oper-01`, commit `061961d`
+
+---
+
+# 10/11/2026 - Paso 7a-2: GAP-OPER-01 Servicio y cálculo de la Operación Protegida
+
+**Estado: VALIDADO TÉCNICAMENTE.**
+
+### Solución
+
+* `lib/services/control_operacion.dart` (nuevo, sin Firebase, como `calculo_existencias.dart`):
+  * Estado de cada pago: pendiente, **por vencer (aviso 7 días antes, aprobado por Javier)**, vencido, cobrado o rechazado. Un cheque rechazado que después se cobra pasa a cobrado.
+  * Totales: acordado, cobrado, rechazado, falta cobrar y parte sin ningún pago cargado.
+  * **Lista de control antes de entregar (7 puntos):** CUIT/RUC, quién firma, poder adjunto, contrato adjunto, pagos que cubren el importe, garantía (no obligatoria), sin rechazos ni incumplimientos. Revisa la operación, no al comprador.
+  * Lo que no cierra queda como **discrepancia** (cobrar de más, otra moneda, entregar de más, cobro de un pago inexistente). Un evento corregido por otro deja de contar.
+* `lib/services/operacion_service.dart` (nuevo): crea, corrige y cierra operaciones; registra eventos revisados con `validar()`. IDs armados en el teléfono.
+
+### Validación
+
+* `flutter test`: **184 aprobados** (165 + 19 nuevos) y las 2 fallas conocidas de conexión.
+
+### Evidencia
+
+* Rama `gap-oper-01`, commit `8100745`
+
+---
+
+# 10/11/2026 - Paso 7a-3: GAP-OPER-01 Pantallas de la Operación Protegida
+
+**Estado: VALIDADO EN LA APP, CON EL PROYECTO REAL.**
+
+### Solución
+
+* `lib/screens/operaciones/` (nuevos): lista de operaciones (con "Necesita atención" arriba), nueva operación, detalle (lista de control "X de 7", cheques con "Se cobró" y "Rebotó", cuentas e historia) y registrar lo que pasó (paso 1 "¿qué pasó?", paso 2 solo los datos de ese tipo). Textos en `operaciones_textos.dart`; se reutiliza `produccion_estilo.dart`.
+* `lib/widgets/adjuntar_archivo_boton.dart` (nuevo): **botón único para adjuntar PDF o foto**, pensado para reutilizarse en los Documentos del campo. Usa `file_picker` 13 (agregado a `pubspec.yaml`).
+* `lib/services/documento_archivo_service.dart`: se agregó `subirArchivoOperacion` (no se cambió lo que ya existía).
+* **Mejora de privacidad:** los archivos de operaciones van a `activos/{activo}/operaciones/{operacion}/...`, con **regla propia en `storage.rules`** (dueño o autorizado en `operaciones`). En la carpeta privada general, el broker los podía leer.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: solo se agregó el botón "Operaciones protegidas".
+
+### Validación
+
+* `flutter analyze`: sin errores (los avisos que quedan son viejos).
+* `flutter test`: **184 aprobados** y las 2 fallas conocidas de conexión.
+* `npm test`: **184/184** (178 + ST-18 a ST-23).
+* Reglas de Firestore y de Storage publicadas en `agro-conecta-887df` (`firebase deploy --only firestore:rules,storage`).
+* Prueba manual de Javier en Chrome, campo "La tranquera": operación de prueba guardada, lista de control 4 de 7, contrato adjuntado (prueba la regla nueva de Storage en el proyecto real), cheque cargado y **cheque rebotado funcionando**.
+
+### Pendiente
+
+* Usar el botón "Adjuntar" en los Documentos del campo (pantalla pendiente del paso 4b).
+* Ver o descargar los archivos adjuntos desde la app.
+* Unir la entrega con la baja de animales del rodeo (`eventoProductivoId` ya está preparado).
+* Botón "Corregir" un evento (como en producción).
+* Fila de GAP-OPER-01 en la Matriz Maestra.
+* `macos/Flutter/GeneratedPluginRegistrant.swift` (generado por `file_picker`) sin commit todavía.
+* Los datos de la operación de prueba quedaron en el proyecto real.
+
+### Para la auditoría
+
+* `test/trabajo_service_test.dart` nunca se guardó en Git y es una de las 2 pruebas que fallan siempre (igual que `oportunidad_agro_service_test.dart`: intentan conectarse a Firebase de verdad).
+
+### Evidencia
+
+* Rama `gap-oper-01`, commit `140926f`; unido a `main` y subido a GitHub (`main` = `140926f`)
+
+---
+
+# 10/11/2026 - Referencia conceptual: SNIG Uruguay (ampliada)
+
+**Estado: CONCEPTO AMPLIADO. Sin código ni GAP.**
+
+* Fuente oficial: comunicados del MGAP del 05/11 y del 06/11/2026 (hojas informativas H202 y H203). Vigencia: 10/11/2026.
+* Capacidad: **Control de Coherencia, Identificación y Validación de Movimientos Ganaderos** (Concepto General Integral, sección 12), con 5 funciones: control de identidad, control de cantidades (declarados, previstos y leídos), control documental, motor de reglas por jurisdicción e historial de correcciones.
+* No se copian las reglas uruguayas a Argentina: el diseño tiene que ser configurable por país y organismo.
+* Requisito previo: identificación individual de los animales (hoy los rodeos se manejan por lote).
+* Se puede reutilizar: eventos de movimiento (cantidad), entregas de la Operación Protegida e historial de correcciones.
+* Prioridad propuesta: 🟡 preparado para el lanzamiento, 🟢 completo después. Antes hay que estudiar las normas del SENASA (Argentina) y del SENACSA (Paraguay) con fuentes oficiales.
