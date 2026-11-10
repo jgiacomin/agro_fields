@@ -3456,3 +3456,19 @@ Próximo: pantallas de producción y unión de la rama `gap-prod-01` a `main`.
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Pantallas de producción ganadera — Estado
+
+🟢 **PASO 6a-3 VALIDADO EN LA APP** (10/11/2026, rama `gap-prod-01-pantallas`, GAP-PROD-01)
+
+Desde el detalle del campo, el botón "Producción" lleva a rodeos y potreros; se registran entradas, salidas, cambios de potrero, cambios de categoría y vacunas, y las cuentas que no cierran se muestran en rojo para revisar. Probado a mano con datos de prueba.
+
+Evidencia: `flutter test` 141 aprobados (2 fallas conocidas de conexión); prueba manual en Chrome.
+
+Próximo: botón "Corregir" un evento, archivar y cerrar desde la pantalla, y publicar las reglas nuevas en Firebase.
+
+Referencia documental:
+
+`docs/BITACORA.md`

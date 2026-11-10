@@ -6995,3 +6995,39 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 
 * Rama `gap-prod-01`
 * `test/calculo_existencias_test.dart`, `test/evento_productivo_model_test.dart`
+
+---
+
+# 10/11/2026 - Paso 6a-3: GAP-PROD-01 Pantallas de producción ganadera
+
+**Estado: VALIDADO EN LA APP (prueba manual en Chrome con datos de prueba).**
+
+### Diseño previo
+
+* Hoja de diseño "Agro Fields — Pantallas de producción ganadera" (5 pantallas de celular), aprobada por Javier: lo más eficiente y sencillo posible, botones grandes, se elige tocando, "una pantalla, una pregunta".
+
+### Solución
+
+* `lib/screens/produccion/produccion_activo_screen.dart`: rodeos con total de cabezas, lugares y cuentas para revisar; potreros (lo que no se sabe dice "Sin información").
+* `lib/screens/produccion/nuevo_potrero_screen.dart` y `nuevo_rodeo_screen.dart`: formularios cortos; las hectáreas vacías quedan sin dato, nunca en cero.
+* `lib/screens/produccion/detalle_rodeo_screen.dart`: aviso rojo de discrepancias arriba, cuántos hay, dónde están e historia (del más nuevo al más viejo).
+* `lib/screens/produccion/registrar_evento_screen.dart`: paso 1 "¿qué pasó?" y paso 2 con solo los datos de ese tipo. ID del evento armado al abrir la pantalla (no se duplica al tocar dos veces). La categoría muestra cuántos hay; la fecha no admite días futuros; el destino de un movimiento no puede ser el mismo potrero. Vacuna con "Descontar del stock" opcional.
+* `lib/screens/produccion/produccion_estilo.dart`: colores, botón grande y textos en castellano compartidos.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: solo se agregó el botón "Producción".
+
+### Validación
+
+* `flutter test`: **141 aprobados** (2 fallas conocidas de conexión). La app compila y corre.
+* Prueba manual en un campo de prueba: Potrero 1 (45 ha) y Potrero 2 (sin hectáreas); "Rodeo de prueba"; entrada de 10 terneros, cambio de potrero de 4 y salida de 12 cargada a propósito. Resultado correcto: Potrero 1 −6, Potrero 2 4, total −2, aviso "Revisá: Salida · 12 terneros…" y el evento marcado en rojo en la historia.
+
+### Pendiente
+
+* Hecho en el Firebase real con las reglas provisorias: los datos de la prueba quedaron en el proyecto. Publicar las reglas nuevas antes de usuarios reales.
+* Corregir un error se hace con otro evento; falta un botón "Corregir" que lo arme vinculado (`corrigeEventoId`).
+* Archivar potreros y cerrar rodeos desde la pantalla; editar nombres.
+* Fila de GAP-PROD-01 en la Matriz Maestra.
+
+### Evidencia
+
+* Rama `gap-prod-01-pantallas`
+* Captura del detalle del rodeo de prueba (10/11/2026)

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../produccion/produccion_activo_screen.dart';
 
 class DetalleActivoAgroScreen extends StatefulWidget {
   final ActivoAgroV2 activo;
@@ -160,6 +161,24 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
               )
             else
               const Text("Sin producción registrada"),
+
+            // Paso 6a (GAP-PROD-01): rodeos, potreros y eventos.
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ProduccionActivoScreen(
+                      activoAgroId: activo.activoId,
+                      nombreActivo: activo.nombre,
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.pets),
+                label: const Text('Producción'),
+              ),
+            ),
 
                         const Divider(height: 30),
 
