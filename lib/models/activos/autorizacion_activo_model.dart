@@ -68,6 +68,7 @@ enum TipoAmbitoAutorizacion {
   datosPrivados,
   participantesAccesos,
   produccion, // paso 6a: unidades, grupos y eventos productivos
+  operaciones, // paso 7a: operaciones protegidas y sus eventos
 }
 
 /// Tipo de exclusividad comercial.

@@ -1032,3 +1032,162 @@ test('PROD-20. Con "ver produccion" el encargado lista los eventos pero NO crea 
   await assertSucceeds(getDocs(q));
   await assertFails(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev2'), eventoProdDe(ENCARGADO, { eventoId: 'ev2' })));
 });
+
+// ------------------------- OPER. OPERACIONES PROTEGIDAS (PASO 7a, GAP-OPER-01) -------------------------
+// La ficha del negocio (operaciones_protegidas) y lo que va pasando
+// (eventos_operacion). Datos de plata: SOLO el dueño o quien tenga permiso
+// en el ámbito "operaciones". Quien cargó el expediente (broker) NO entra.
+// La operación se corrige en curso; cerrada queda fija. Los eventos son de solo agregar.
+
+const AHORA_OPER = new Date();
+
+const operacionDe = (uid, extra = {}) => ({
+  operacionId: 'op1', activoAgroId: 'a1', creadoPor: uid, fechaCreacion: AHORA_OPER,
+  producto: 'hacienda', descripcionProducto: null, cantidad: 40, unidad: 'cabezas', grupoId: null,
+  importe: 15000000, moneda: 'ARS', formaPago: 'cheque',
+  comprador: { nombre: 'Frigorifico Ejemplo SA', identificacionFiscal: '30-12345678-9',
+    representanteNombre: 'Juan Perez', representanteCaracter: 'apoderado', facultadArchivoRuta: null },
+  garantias: [], contratoArchivoRuta: null, estado: 'enCurso', fechaCierre: null, observaciones: null,
+  ...extra,
+});
+
+const eventoOperDe = (uid, extra = {}) => ({
+  eventoId: 'eo1', operacionId: 'op1', activoAgroId: 'a1', tipo: 'pagoAcordado',
+  fechaHecho: AHORA_OPER, fechaCarga: AHORA_OPER, cargadoPor: uid, estadoDato: 'declarado',
+  archivoRutas: [], medioPago: 'cheque', importe: 5000000, moneda: 'ARS',
+  fechaVencimiento: MANANA, banco: 'Banco Ejemplo', numero: '00012345', ...extra,
+});
+
+const cargarOperacion = (extra = {}) =>
+  cargar((db) => setDoc(doc(db, 'operaciones_protegidas/op1'), operacionDe(DUENO, extra)));
+const cargarEventoOper = () =>
+  cargar((db) => setDoc(doc(db, 'eventos_operacion/eo1'), eventoOperDe(DUENO)));
+
+test('OPER-01. El dueño crea una operación protegida en su Activo [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), operacionDe(DUENO)));
+});
+
+test('OPER-02. Quien cargó el expediente (broker) NO crea ni lee operaciones [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(BROKER), 'operaciones_protegidas/op1'), operacionDe(BROKER)));
+  await cargarOperacion();
+  await assertFails(getDoc(doc(como(BROKER), 'operaciones_protegidas/op1')));
+});
+
+test('OPER-03. Un tercero NO crea una operación en un Activo ajeno [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), 'operaciones_protegidas/op1'), operacionDe(OTRO)));
+});
+
+test('OPER-04. NO se crea una operación a nombre de otro usuario [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), operacionDe(ENCARGADO)));
+});
+
+test('OPER-05. Una operación NO nace cerrada [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), operacionDe(DUENO, { estado: 'cumplida' })));
+});
+
+test('OPER-06. NO se crea una operación con importe cero [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), operacionDe(DUENO, { importe: 0 })));
+});
+
+test('OPER-07. El dueño lista las operaciones de su Activo [PERMITIDO]', async () => {
+  await cargarOperacion();
+  const q = query(collection(como(DUENO), 'operaciones_protegidas'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('OPER-08. Un tercero NO lista las operaciones de un Activo ajeno [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  const q = query(collection(como(OTRO), 'operaciones_protegidas'), where('activoAgroId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
+
+test('OPER-09. El dueño corrige el importe mientras está en curso [PERMITIDO]', async () => {
+  await cargarOperacion();
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), { importe: 16000000 }));
+});
+
+test('OPER-10. Una operación NO se pasa a otro Activo [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await assertFails(updateDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), { activoAgroId: 'a2' }));
+});
+
+test('OPER-11. El dueño cierra la operación como cumplida [PERMITIDO]', async () => {
+  await cargarOperacion();
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), { estado: 'cumplida', fechaCierre: AHORA_OPER }));
+});
+
+test('OPER-12. Una operación cerrada NO se modifica [PROHIBIDO]', async () => {
+  await cargarOperacion({ estado: 'cumplida', fechaCierre: AHORA_OPER });
+  await assertFails(updateDoc(doc(como(DUENO), 'operaciones_protegidas/op1'), { importe: 1 }));
+});
+
+test('OPER-13. Una operación NO se borra [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await assertFails(deleteDoc(doc(como(DUENO), 'operaciones_protegidas/op1')));
+});
+
+test('OPER-14. El dueño registra un cheque acordado [PERMITIDO]', async () => {
+  await cargarOperacion();
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_operacion/eo1'), eventoOperDe(DUENO)));
+});
+
+test('OPER-15. Un evento de operación NO se edita [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await cargarEventoOper();
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_operacion/eo1'), { importe: 1 }));
+});
+
+test('OPER-16. Un evento de operación NO se borra [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await cargarEventoOper();
+  await assertFails(deleteDoc(doc(como(DUENO), 'eventos_operacion/eo1')));
+});
+
+test('OPER-17. NO se registra un evento con una operación de otro Activo [PROHIBIDO]', async () => {
+  await cargar(async (db) => {
+    await setDoc(doc(db, 'activos_agro/a2'), { propietarioId: OTRO, nombre: 'Campo ajeno' });
+    await setDoc(doc(db, 'operaciones_protegidas/op2'), operacionDe(OTRO, { operacionId: 'op2', activoAgroId: 'a2' }));
+  });
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_operacion/eo1'), eventoOperDe(DUENO, { operacionId: 'op2' })));
+});
+
+test('OPER-18. NO se registran eventos en una operación cancelada [PROHIBIDO]', async () => {
+  await cargarOperacion({ estado: 'cancelada', fechaCierre: AHORA_OPER });
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_operacion/eo1'), eventoOperDe(DUENO)));
+});
+
+test('OPER-19. NO se registra un evento de un tipo inventado [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_operacion/eo1'), eventoOperDe(DUENO, { tipo: 'inventado' })));
+});
+
+test('OPER-20. NO se registra un importe negativo [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_operacion/eo1'), eventoOperDe(DUENO, { importe: -5 })));
+});
+
+test('OPER-21. NO se registra un evento a nombre de otro usuario [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_operacion/eo1'), eventoOperDe(ENCARGADO)));
+});
+
+test('OPER-22. El encargado con "crear operaciones" registra un evento [PERMITIDO]', async () => {
+  await cargarOperacion();
+  await darAutorizacion('crear', 'operaciones');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_operacion/eo1'), eventoOperDe(ENCARGADO)));
+});
+
+test('OPER-23. Con permiso solo en producción, el encargado NO ve las operaciones [PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await darAutorizacion('ver', 'produccion');
+  await assertFails(getDoc(doc(como(ENCARGADO), 'operaciones_protegidas/op1')));
+});
+
+test('OPER-24. Con "ver operaciones" el encargado lista los eventos pero NO crea [PERMITIDO + PROHIBIDO]', async () => {
+  await cargarOperacion();
+  await cargarEventoOper();
+  await darAutorizacion('ver', 'operaciones');
+  const q = query(collection(como(ENCARGADO), 'eventos_operacion'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+  await assertFails(setDoc(doc(como(ENCARGADO), 'eventos_operacion/eo2'), eventoOperDe(ENCARGADO, { eventoId: 'eo2' })));
+});

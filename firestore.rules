@@ -728,6 +728,102 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // -----------------------------------------------------------------
+    // OPERACIONES PROTEGIDAS (paso 7a, GAP-OPER-01, 10/11/2026)
+    // Concepto General Integral 6.2: proteger al productor ANTES de
+    // entregar hacienda, granos u otros productos.
+    //   operaciones_protegidas = la ficha del negocio (comprador, importe,
+    //                            forma de pago, garantias)
+    //   eventos_operacion      = que paso (cheque acordado, entrega,
+    //                            cobro, rechazo, incumplimiento, nota)
+    // Son datos de plata: las ve y carga SOLO el dueno del Activo (no
+    // quien cargo el expediente) o quien tenga una autorizacion en el
+    // ambito "operaciones".
+    // La operacion se corrige mientras esta en curso; cerrada, queda fija.
+    // Nunca se borra. Los eventos son de SOLO AGREGAR.
+    // Agro Fields no garantiza el pago: organiza y avisa.
+    // -----------------------------------------------------------------
+    function puedeOperaciones(activoId, permiso) {
+      return esAdmin()
+        || (logueado()
+            && activoId is string
+            && (esDuenoActivo(activoId)
+                || tieneAutorizacion(activoId, permiso, 'operaciones')));
+    }
+
+    function productosOperacion() {
+      return ['hacienda', 'granos', 'otro'];
+    }
+
+    function formasPagoOperacion() {
+      return ['contado', 'transferencia', 'cheque', 'echeq', 'mixto', 'otro'];
+    }
+
+    function estadosOperacion() {
+      return ['enCurso', 'cumplida', 'conIncumplimiento', 'cancelada'];
+    }
+
+    function tiposEventoOperacion() {
+      return ['pagoAcordado', 'entrega', 'cobro', 'rechazo',
+              'incumplimiento', 'nota'];
+    }
+
+    // Lo que tiene que cumplir una operacion al guardarse.
+    function operacionValida(d) {
+      return d.producto in productosOperacion()
+        && d.formaPago in formasPagoOperacion()
+        && d.importe is number
+        && d.importe > 0;
+    }
+
+    match /operaciones_protegidas/{operacionId} {
+      allow get, list: if puedeOperaciones(resource.data.activoAgroId, 'ver');
+
+      allow create: if puedeOperaciones(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.operacionId == operacionId
+        && request.resource.data.creadoPor == request.auth.uid
+        && request.resource.data.estado == 'enCurso'
+        && operacionValida(request.resource.data);
+
+      // Solo mientras esta en curso. Nunca cambia de Activo, de autor ni
+      // de fecha de creacion.
+      allow update: if puedeOperaciones(resource.data.activoAgroId, 'modificar')
+        && resource.data.estado == 'enCurso'
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['producto', 'descripcionProducto', 'cantidad', 'unidad',
+                      'grupoId', 'importe', 'moneda', 'formaPago', 'comprador',
+                      'garantias', 'contratoArchivoRuta', 'estado',
+                      'fechaCierre', 'observaciones'])
+        && request.resource.data.estado in estadosOperacion()
+        && operacionValida(request.resource.data);
+
+      allow delete: if false;
+    }
+
+    match /eventos_operacion/{eventoId} {
+      allow get, list: if puedeOperaciones(resource.data.activoAgroId, 'ver');
+
+      allow create: if puedeOperaciones(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.eventoId == eventoId
+        && request.resource.data.cargadoPor == request.auth.uid
+        && request.resource.data.tipo in tiposEventoOperacion()
+        && request.resource.data.operacionId is string
+        // La operacion tiene que ser del mismo Activo y no estar cancelada.
+        && get(/databases/$(database)/documents/operaciones_protegidas/$(request.resource.data.operacionId)).data.activoAgroId
+             == request.resource.data.activoAgroId
+        && get(/databases/$(database)/documents/operaciones_protegidas/$(request.resource.data.operacionId)).data.estado
+             != 'cancelada'
+        // Importe y cantidad, si estan, mayores a cero.
+        && (request.resource.data.get('importe', null) == null
+            || (request.resource.data.importe is number
+                && request.resource.data.importe > 0))
+        && (request.resource.data.get('cantidad', null) == null
+            || (request.resource.data.cantidad is number
+                && request.resource.data.cantidad > 0));
+
+      allow update, delete: if false;
+    }
+
     // TODO LO DEMAS: PROHIBIDO
     // -----------------------------------------------------------------
     match /{document=**} {
