@@ -7031,3 +7031,23 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 
 * Rama `gap-prod-01-pantallas`
 * Captura del detalle del rodeo de prueba (10/11/2026)
+
+---
+
+# 10/11/2026 - Reglas de Firestore publicadas en el proyecto real
+
+**Estado: PUBLICADO Y PROBADO.**
+
+* `firebase deploy --only firestore:rules` sobre `agro-conecta-887df`: compiló sin errores y quedó publicado (versión de `main` `e770b13`, 154/154 pruebas de reglas en el emulador).
+* Reemplaza a las reglas provisorias (`request.auth != null`): ahora cada usuario ve solo lo suyo; el comprador ve solo el resumen publicado; el encargado entra solo donde tiene permiso.
+* Prueba manual de Javier después de publicar: inicio de sesión, Mis Activos, detalle de un campo, Producción, Ver campos disponibles, Mis conversaciones y Solicitudes recibidas funcionan.
+* Vuelta atrás, si hiciera falta: consola de Firebase → Firestore → Reglas → historial.
+
+### Pendiente
+
+* Reglas de Storage: confirmar primero que Storage esté activado en el proyecto y después publicarlas.
+* Los datos de la prueba de producción quedaron en el proyecto real.
+
+### Regla de trabajo (10/11/2026)
+
+* Claude solo trabaja dentro de la carpeta `agro_fields` de la PC y usa internet solo para buscar información; no entra a los servidores ni a la red de la institución.

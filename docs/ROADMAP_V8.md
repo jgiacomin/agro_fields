@@ -3472,3 +3472,17 @@ Próximo: botón "Corregir" un evento, archivar y cerrar desde la pantalla, y pu
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Reglas de Firestore en el proyecto real — Estado
+
+🟢 **PUBLICADAS** (10/11/2026, `main` `e770b13`)
+
+Las reglas probadas en el emulador (154/154) ya protegen el proyecto real; la app se probó a mano después de publicar y funciona.
+
+Próximo: reglas de Storage (previa verificación de que Storage esté activado).
+
+Referencia documental:
+
+`docs/BITACORA.md`
