@@ -3440,3 +3440,19 @@ Próximo: **6a-2 — servicio de eventos y cálculo de existencias**; la sanidad
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Servicio de producción y existencias — Estado
+
+🟢 **PASO 6a-2 VALIDADO TÉCNICAMENTE** (10/11/2026, rama `gap-prod-01`, GAP-PROD-01)
+
+Las existencias se calculan desde los eventos, por categoría y por unidad, y las cuentas que no cierran quedan como discrepancia. La vacuna descuenta el insumo del stock antes de guardar el evento.
+
+Evidencia: `flutter test` 141 aprobados (2 fallas conocidas de conexión); reglas sin cambios (154/154).
+
+Próximo: pantallas de producción y unión de la rama `gap-prod-01` a `main`.
+
+Referencia documental:
+
+`docs/BITACORA.md`

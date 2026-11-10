@@ -86,6 +86,10 @@ class EventoProductivo {
   final String? dosis;
   final String? responsable;
 
+  /// Si el evento desconto un insumo del stock (paso 6a-2), el
+  /// movimiento de stock que lo hizo.
+  final String? movimientoStockId;
+
   const EventoProductivo({
     required this.eventoId,
     required this.activoAgroId,
@@ -111,6 +115,7 @@ class EventoProductivo {
     this.recursoId,
     this.dosis,
     this.responsable,
+    this.movimientoStockId,
   });
 
   bool get esDelLanzamiento => tiposEventoLanzamiento.contains(tipo);
@@ -206,6 +211,7 @@ class EventoProductivo {
       recursoId: map['recursoId'] as String?,
       dosis: map['dosis'] as String?,
       responsable: map['responsable'] as String?,
+      movimientoStockId: map['movimientoStockId'] as String?,
     );
   }
 
@@ -235,6 +241,7 @@ class EventoProductivo {
       'recursoId': recursoId,
       'dosis': dosis,
       'responsable': responsable,
+      'movimientoStockId': movimientoStockId,
     };
   }
 

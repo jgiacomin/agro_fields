@@ -115,6 +115,18 @@ void main() {
       expect(leido.estadoDato, EstadoDatoEvento.declarado);
     });
 
+    test('el movimiento de stock de una vacuna se guarda (paso 6a-2)', () {
+      final leido = EventoProductivo.fromMap({
+        'tipo': 'sanidad',
+        'tratamiento': 'Aftosa',
+        'recursoId': 'r1',
+        'movimientoStockId': 'mov1',
+      }, 'ev4');
+
+      expect(leido.movimientoStockId, 'mov1');
+      expect(leido.toMap()['movimientoStockId'], 'mov1');
+    });
+
     test('declarado no es verificado: por defecto queda declarado', () {
       final leido = EventoProductivo.fromMap({'tipo': 'baja'}, 'ev2');
       expect(leido.estadoDato, EstadoDatoEvento.declarado);

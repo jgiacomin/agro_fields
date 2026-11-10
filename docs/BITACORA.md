@@ -6959,3 +6959,39 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 * Rama `gap-prod-01`
 * `test/unidad_productiva_model_test.dart`, `test/grupo_productivo_model_test.dart`, `test/evento_productivo_model_test.dart`
 * `test_rules/rules.test.mjs` (PROD-01 a PROD-20)
+
+---
+
+# 10/11/2026 - Paso 6a-2: GAP-PROD-01 Servicio de producción y cálculo de existencias
+
+**Estado: VALIDADO TÉCNICAMENTE. GAP-PROD-01 cerrado en código (faltan las pantallas).**
+
+### Solución
+
+* `lib/services/calculo_existencias.dart` (nuevo): calcula cuántos animales hay de cada categoría y en qué unidad, sumando los eventos del grupo en el orden en que pasaron (no en el que se cargaron). No usa Firebase.
+  * Una cuenta negativa no se esconde: queda el número y una **discrepancia** (Concepto: los datos contradictorios se conservan).
+  * Un evento incompleto no se cuenta y queda como discrepancia.
+  * Si el evento no dice la unidad, se usa donde arrancó el grupo; si tampoco se sabe, queda "sin ubicación".
+  * La sanidad, el pesaje y los demás tipos no mueven existencias.
+* `lib/services/produccion_service.dart` (nuevo): crea, archiva y cierra unidades y grupos; registra eventos (revisados con `validar()`); lee los eventos de un grupo y calcula sus existencias. IDs armados en el teléfono.
+  * `registrarSanidadConStock`: primero descuenta el insumo con `MovimientoStockService` (no deja el stock bajo cero y audita), después guarda el evento con el `movimientoStockId`. Si no hay insumo, no se guarda nada. El movimiento lleva el ID del evento en las observaciones.
+* `lib/models/activos/evento_productivo_model.dart`: campo nuevo `movimientoStockId`.
+* No se modificaron reglas.
+
+### Validación
+
+* `flutter analyze` de los 3 archivos: sin avisos.
+* `flutter test`: **141 aprobados** (131 + 10 nuevos) y las 2 fallas conocidas de conexión a Firebase.
+
+### Pendiente
+
+* Pantallas de producción (potreros, rodeos, carga de eventos, existencias).
+* Fila de GAP-PROD-01 en la Matriz Maestra.
+* El encargado que vacuna con stock necesita permiso en `produccion` y en `recursosInventario`.
+* Registrar el descuento de stock y el evento en una sola transacción, si hiciera falta.
+* Confirmar la fecha de lanzamiento (decide si entran los eventos preparados).
+
+### Evidencia
+
+* Rama `gap-prod-01`
+* `test/calculo_existencias_test.dart`, `test/evento_productivo_model_test.dart`
