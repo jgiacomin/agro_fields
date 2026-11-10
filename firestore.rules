@@ -650,6 +650,84 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+    // -----------------------------------------------------------------
+    // PRODUCCION (paso 6a, GAP-PROD-01, 10/11/2026)
+    // Tres colecciones colgadas del Activo (activoAgroId):
+    //   unidades_productivas = donde (potrero, corral, galpon...)
+    //   grupos_productivos   = que (rodeo o lote de animales)
+    //   eventos_productivos  = que paso (alta, baja, movimiento...)
+    // Las ve y carga el dueno (o quien cargo el expediente) o quien tenga
+    // una autorizacion en el ambito "produccion".
+    // Unidades y grupos no se borran: se archivan o se cierran.
+    // Los eventos son de SOLO AGREGAR: no se editan ni se borran.
+    // -----------------------------------------------------------------
+    function puedeProduccion(activoId, permiso) {
+      return esAdmin()
+        || (logueado()
+            && (puedeActivo(activoId)
+                || tieneAutorizacion(activoId, permiso, 'produccion')));
+    }
+
+    function tiposEventoProductivo() {
+      return ['alta', 'baja', 'movimiento', 'cambioCategoria', 'sanidad',
+              'reproduccion', 'pesaje', 'alimentacion', 'siembra', 'cosecha'];
+    }
+
+    match /unidades_productivas/{unidadId} {
+      allow get, list: if puedeProduccion(resource.data.activoAgroId, 'ver');
+
+      allow create: if puedeProduccion(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.unidadId == unidadId
+        && request.resource.data.creadoPor == request.auth.uid
+        && request.resource.data.estado == 'activa';
+
+      // Se corrige el nombre o los datos, o se archiva. Nunca cambia de
+      // Activo ni de autor.
+      allow update: if puedeProduccion(resource.data.activoAgroId, 'modificar')
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['nombre', 'superficieHa', 'capacidad',
+                      'infraestructuraId', 'estado', 'observaciones'])
+        && request.resource.data.estado in ['activa', 'archivada'];
+
+      allow delete: if false;
+    }
+
+    match /grupos_productivos/{grupoId} {
+      allow get, list: if puedeProduccion(resource.data.activoAgroId, 'ver');
+
+      allow create: if puedeProduccion(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.grupoId == grupoId
+        && request.resource.data.creadoPor == request.auth.uid
+        && request.resource.data.estado == 'activo';
+
+      // Solo se corrige el nombre o se cierra. La etapa y la tenencia
+      // cambian con un evento, para que quede la historia.
+      allow update: if puedeProduccion(resource.data.activoAgroId, 'modificar')
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['nombre', 'estado', 'observaciones'])
+        && request.resource.data.estado in ['activo', 'cerrado'];
+
+      allow delete: if false;
+    }
+
+    match /eventos_productivos/{eventoId} {
+      allow get, list: if puedeProduccion(resource.data.activoAgroId, 'ver');
+
+      allow create: if puedeProduccion(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.eventoId == eventoId
+        && request.resource.data.cargadoPor == request.auth.uid
+        && request.resource.data.tipo in tiposEventoProductivo()
+        // El grupo tiene que ser del mismo Activo.
+        && get(/databases/$(database)/documents/grupos_productivos/$(request.resource.data.grupoId)).data.activoAgroId
+             == request.resource.data.activoAgroId
+        // Si dice una cantidad, tiene que ser un entero mayor a cero.
+        && (request.resource.data.get('cantidad', null) == null
+            || (request.resource.data.cantidad is int
+                && request.resource.data.cantidad > 0));
+
+      allow update, delete: if false;
+    }
+
     // TODO LO DEMAS: PROHIBIDO
     // -----------------------------------------------------------------
     match /{document=**} {

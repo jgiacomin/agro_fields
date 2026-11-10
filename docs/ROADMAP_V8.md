@@ -3424,3 +3424,19 @@ Próximo paso del plan: **Paso 6 — Producción por especie y operación proteg
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Núcleo productivo ganadero — Estado
+
+🟢 **PASO 6a-1 VALIDADO TÉCNICAMENTE** (10/11/2026, rama `gap-prod-01`, GAP-PROD-01, AF-083)
+
+Existen las unidades productivas (potreros, corrales), los grupos (rodeos o lotes) y los eventos de solo agregar (alta, baja, movimiento, cambio de categoría y sanidad), con su regla en Firestore y el permiso nuevo "producción" para el encargado.
+
+Evidencia: `flutter test` 131 aprobados (2 fallas conocidas de conexión); reglas 154/154.
+
+Próximo: **6a-2 — servicio de eventos y cálculo de existencias**; la sanidad descuenta stock.
+
+Referencia documental:
+
+`docs/BITACORA.md`

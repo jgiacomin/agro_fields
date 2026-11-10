@@ -67,6 +67,7 @@ enum TipoAmbitoAutorizacion {
   marketplace,
   datosPrivados,
   participantesAccesos,
+  produccion, // paso 6a: unidades, grupos y eventos productivos
 }
 
 /// Tipo de exclusividad comercial.

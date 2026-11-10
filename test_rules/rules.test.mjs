@@ -895,3 +895,140 @@ test('CAMPOS-07. El administrador sí puede corregir un campo viejo [PERMITIDO]'
   await cargarCampoViejo('disponible');
   await assertSucceeds(updateDoc(doc(como(ADMIN), 'campos/c_viejo'), { nombre: 'Corregido' }));
 });
+
+// ------------------------- PROD. PRODUCCION (PASO 6a, GAP-PROD-01) -------------------------
+// Unidades (donde), grupos (que) y eventos (que paso), colgados del Activo.
+// Los ve y carga el dueño o quien tenga permiso en el ámbito "produccion".
+// Los eventos son de solo agregar.
+
+const HOY = new Date();
+
+const unidadDe = (uid, extra = {}) => ({
+  unidadId: 'u1', activoAgroId: 'a1', tipo: 'potrero', nombre: 'Potrero 1',
+  superficieHa: null, capacidad: null, estado: 'activa', creadoPor: uid, fechaCreacion: HOY, ...extra,
+});
+
+const grupoDe = (uid, extra = {}) => ({
+  grupoId: 'g1', activoAgroId: 'a1', actividad: 'ganaderia', nombre: 'Rodeo de cría',
+  etapa: 'cria', tenencia: 'propios', modoIdentificacion: 'porLote', estado: 'activo',
+  creadoPor: uid, fechaCreacion: HOY, ...extra,
+});
+
+const eventoProdDe = (uid, extra = {}) => ({
+  eventoId: 'ev1', activoAgroId: 'a1', grupoId: 'g1', tipo: 'alta', cantidad: 10,
+  categoria: 'ternero', origen: 'compra', fechaHecho: HOY, fechaCarga: HOY,
+  cargadoPor: uid, estadoDato: 'declarado', evidenciaIds: [], ...extra,
+});
+
+const cargarUnidad = () => cargar((db) => setDoc(doc(db, 'unidades_productivas/u1'), unidadDe(DUENO)));
+const cargarGrupo = () => cargar((db) => setDoc(doc(db, 'grupos_productivos/g1'), grupoDe(DUENO)));
+const cargarEventoProd = () => cargar((db) => setDoc(doc(db, 'eventos_productivos/ev1'), eventoProdDe(DUENO)));
+
+test('PROD-01. El dueño crea un potrero en su Activo [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'unidades_productivas/u1'), unidadDe(DUENO)));
+});
+
+test('PROD-02. Un tercero NO crea un potrero en un Activo ajeno [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), 'unidades_productivas/u1'), unidadDe(OTRO)));
+});
+
+test('PROD-03. NO se crea una unidad a nombre de otro usuario [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'unidades_productivas/u1'), unidadDe(OTRO)));
+});
+
+test('PROD-04. El dueño lista las unidades de su Activo [PERMITIDO]', async () => {
+  await cargarUnidad();
+  const q = query(collection(como(DUENO), 'unidades_productivas'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('PROD-05. Un tercero NO lista las unidades de un Activo ajeno [PROHIBIDO]', async () => {
+  await cargarUnidad();
+  const q = query(collection(como(OTRO), 'unidades_productivas'), where('activoAgroId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
+
+test('PROD-06. El dueño archiva un potrero (archivar no es borrar) [PERMITIDO]', async () => {
+  await cargarUnidad();
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'unidades_productivas/u1'), { estado: 'archivada' }));
+});
+
+test('PROD-07. Una unidad NO se pasa a otro Activo [PROHIBIDO]', async () => {
+  await cargarUnidad();
+  await assertFails(updateDoc(doc(como(DUENO), 'unidades_productivas/u1'), { activoAgroId: 'a2' }));
+});
+
+test('PROD-08. Una unidad NO se borra [PROHIBIDO]', async () => {
+  await cargarUnidad();
+  await assertFails(deleteDoc(doc(como(DUENO), 'unidades_productivas/u1')));
+});
+
+test('PROD-09. El dueño crea un rodeo en su Activo [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'grupos_productivos/g1'), grupoDe(DUENO)));
+});
+
+test('PROD-10. La tenencia de un rodeo NO se cambia a mano (va con un evento) [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await assertFails(updateDoc(doc(como(DUENO), 'grupos_productivos/g1'), { tenencia: 'hoteleria' }));
+});
+
+test('PROD-11. El dueño registra un alta de 10 terneros [PERMITIDO]', async () => {
+  await cargarGrupo();
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev1'), eventoProdDe(DUENO)));
+});
+
+test('PROD-12. Un evento NO se edita [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await cargarEventoProd();
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_productivos/ev1'), { cantidad: 100 }));
+});
+
+test('PROD-13. Un evento NO se borra [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await cargarEventoProd();
+  await assertFails(deleteDoc(doc(como(DUENO), 'eventos_productivos/ev1')));
+});
+
+test('PROD-14. NO se registra un evento con un rodeo de otro Activo [PROHIBIDO]', async () => {
+  await cargar(async (db) => {
+    await setDoc(doc(db, 'activos_agro/a2'), { propietarioId: OTRO, nombre: 'Campo ajeno' });
+    await setDoc(doc(db, 'grupos_productivos/g2'), grupoDe(OTRO, { grupoId: 'g2', activoAgroId: 'a2' }));
+  });
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev1'), eventoProdDe(DUENO, { grupoId: 'g2' })));
+});
+
+test('PROD-15. NO se registra un evento de un tipo inventado [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev1'), eventoProdDe(DUENO, { tipo: 'inventado' })));
+});
+
+test('PROD-16. NO se registra una cantidad negativa [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev1'), eventoProdDe(DUENO, { cantidad: -5 })));
+});
+
+test('PROD-17. NO se registra un evento a nombre de otro usuario [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev1'), eventoProdDe(ENCARGADO)));
+});
+
+test('PROD-18. El encargado con "crear produccion" registra un evento [PERMITIDO]', async () => {
+  await cargarGrupo();
+  await darAutorizacion('crear', 'produccion');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev1'), eventoProdDe(ENCARGADO)));
+});
+
+test('PROD-19. Con permiso solo en trabajos, el encargado NO registra eventos [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await darAutorizacion('crear', 'trabajo');
+  await assertFails(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev1'), eventoProdDe(ENCARGADO)));
+});
+
+test('PROD-20. Con "ver produccion" el encargado lista los eventos pero NO crea [PERMITIDO + PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await cargarEventoProd();
+  await darAutorizacion('ver', 'produccion');
+  const q = query(collection(como(ENCARGADO), 'eventos_productivos'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+  await assertFails(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev2'), eventoProdDe(ENCARGADO, { eventoId: 'ev2' })));
+});

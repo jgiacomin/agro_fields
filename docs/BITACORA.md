@@ -6908,3 +6908,54 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 * Rama `gap-campo-migracion`, commits `67b42c5` y `65197ee`
 * `firestore.rules` (bloque `campos`), `test_rules/rules.test.mjs` (CAMPOS-01 a CAMPOS-07)
 * `test_rules/storage.test.mjs`
+
+---
+
+# 10/11/2026 - Paso 6a-1: GAP-PROD-01 Núcleo productivo ganadero (modelos y reglas)
+
+**Estado: VALIDADO TÉCNICAMENTE.**
+
+### Diseño previo
+
+* Documento "Agro Fields V8 — Paso 6a: Núcleo productivo común" (Concepto General §5, §5.2, §8 y §19). Decisiones tomadas el 10/11/2026, eligiendo la opción más eficiente para el sistema:
+  * Primera actividad: **ganadería** (AF-083).
+  * Identificación **por lote** (cantidad por categoría); el registro por animal con caravana queda preparado (caso de referencia SNIG Uruguay).
+  * 7 categorías base (vaca, vaquillona, toro, ternero, ternera, novillito, novillo); cada productor puede sumar las suyas.
+  * Ámbito de autorización nuevo `produccion`.
+  * Unidades productivas en colección propia, con vínculo opcional a la infraestructura.
+  * Eventos del lanzamiento: alta, baja, movimiento, cambio de categoría y sanidad. Reproducción, pesaje, alimentación, siembra y cosecha quedan preparados.
+
+### Las 5 preguntas de la Matriz Maestra
+
+1. Problema real: el productor no puede registrar sus animales, dónde están ni qué les pasó.
+2. Dato: unidades, grupos y eventos de solo agregar; las existencias se calculan desde los eventos.
+3. Usuario: el dueño y el encargado con permiso `produccion`.
+4. Se reutiliza: autorizaciones (paso 3), evidencias, auditoría, recursos y stock, infraestructura, `ModuloProduccion`.
+5. Lanzamiento: sí (🔴, AF-083).
+
+### Solución
+
+* `lib/models/activos/unidad_productiva_model.dart` (nuevo): dónde se produce. Lo desconocido queda en null, nunca en 0. Se archiva, no se borra.
+* `lib/models/activos/grupo_productivo_model.dart` (nuevo): el rodeo o lote, con etapa, tenencia (propios, capitalización, hotelería, desconocida) y modo de identificación. No guarda existencias.
+* `lib/models/activos/evento_productivo_model.dart` (nuevo): qué pasó. `validar()` revisa lo mínimo de cada tipo. El ID se arma en el teléfono (uso sin señal). Distinto de `EventoAfectacion`.
+* `lib/models/activos/autorizacion_activo_model.dart`: se agregó `produccion` al final de `TipoAmbitoAutorizacion`.
+* `firestore.rules`: colecciones `unidades_productivas`, `grupos_productivos` y `eventos_productivos`, con la función `puedeProduccion`. Los eventos no se editan ni se borran, el rodeo tiene que ser del mismo Activo, el tipo tiene que estar en la lista y la cantidad, si viene, tiene que ser un entero mayor a cero. La etapa y la tenencia del rodeo no se cambian a mano.
+
+### Validación
+
+* `flutter analyze`: sin avisos en los archivos nuevos (los 101 avisos son de pruebas viejas).
+* `flutter test`: **131 aprobados** (108 + 23 nuevos) y las 2 fallas conocidas de conexión a Firebase.
+* `npm test`: **154/154** (134 + PROD-01 a PROD-20).
+
+### Pendiente
+
+* **6a-2:** servicio que registra eventos y calcula existencias por categoría y ubicación; el evento de sanidad descuenta stock.
+* Fila de GAP-PROD-01 en la Matriz Maestra.
+* Pantallas de producción.
+* Confirmar la fecha de lanzamiento (enero o marzo-abril), que decide si entran los eventos preparados.
+
+### Evidencia
+
+* Rama `gap-prod-01`
+* `test/unidad_productiva_model_test.dart`, `test/grupo_productivo_model_test.dart`, `test/evento_productivo_model_test.dart`
+* `test_rules/rules.test.mjs` (PROD-01 a PROD-20)
