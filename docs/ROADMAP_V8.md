@@ -3522,3 +3522,19 @@ Próximo: **botón "Adjuntar" en los Documentos del campo** (cierra la pantalla 
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Pantalla de Documentos del campo — Estado
+
+🟢 **PASO 4b COMPLETO, CON PANTALLA** (10/11/2026, rama `paso-4b-pantalla-documentos`, `main` = `68a6a25`)
+
+Desde la ficha del campo, el botón "Documentos" muestra los documentos con su vigencia (avisa los vencidos y los que vencen en 30 días) y permite cargar uno nuevo con su archivo, usando el mismo botón "Adjuntar" de las operaciones. Probado a mano con el proyecto real.
+
+Evidencia: `flutter test` 184 aprobados (2 fallas conocidas de conexión); prueba manual en Chrome.
+
+Pendiente: agregar archivo a un documento existente, carga por el encargado (cambio de reglas), ver o descargar el archivo y catálogo por provincia.
+
+Referencia documental:
+
+`docs/BITACORA.md`

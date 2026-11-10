@@ -7182,3 +7182,36 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 * Requisito previo: identificación individual de los animales (hoy los rodeos se manejan por lote).
 * Se puede reutilizar: eventos de movimiento (cantidad), entregas de la Operación Protegida e historial de correcciones.
 * Prioridad propuesta: 🟡 preparado para el lanzamiento, 🟢 completo después. Antes hay que estudiar las normas del SENASA (Argentina) y del SENACSA (Paraguay) con fuentes oficiales.
+
+---
+
+# 10/11/2026 - Paso 4b: pantalla de Documentos del campo
+
+**Estado: VALIDADO EN LA APP, CON EL PROYECTO REAL.**
+
+### Solución
+
+* `lib/screens/documentos/documentos_activo_screen.dart` (nuevo): lista de documentos del campo. Arriba, "Necesita atención" con los vencidos (rojo) y los que vencen en 30 días (amarillo). Cada documento muestra si vence, si tiene archivo, si pasa al nuevo dueño y si tiene datos personales.
+* `lib/screens/documentos/nuevo_documento_screen.dart` (nuevo): tipo elegido tocando (escritura, mensura, permiso, bosques nativos/OTBN, arrendamiento, certificado u otro), emisor, número, fechas de emisión y vencimiento, provincia, transferibilidad (arranca en "No sé"), datos personales (arranca en "sí") y **el botón único "Adjuntar"** del paso 7a-3. Queda "declarado", o "con_documento" si tiene archivo.
+* Reutiliza lo ya validado: `DocumentoActivo` (paso 4a), `DocumentoArchivoService.subirArchivo` (paso 4b) y `ActivoAgroServiceV2.actualizarDocumentacion` (historial y auditoría). Antes de guardar se relee el campo, para no pisar documentos cargados mientras tanto.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: solo se agregó el botón "Documentos".
+* Sin cambios en modelos, servicios ni reglas.
+
+### Validación
+
+* `flutter test`: **184 aprobados** y las 2 fallas conocidas de conexión.
+* Prueba manual de Javier en Chrome, campo "La tranquera": escritura con vencimiento al 20/11/2026 cargada sin archivo y otra con PDF ("Con archivo"); las dos aparecen en "Necesita atención".
+
+### Pendiente
+
+* Agregar un archivo a un documento ya cargado (hoy hay que cargarlo de nuevo).
+* El encargado con permiso en "documentación" sube el archivo pero no puede guardar el documento: las reglas de `activos_agro` solo dejan modificar la ficha al dueño o a quien la cargó. Requiere un cambio de reglas.
+* Ver o descargar el archivo desde la app (`url_launcher`).
+* `actualizarDocumentacion` anota en historial y auditoría al **creador** del campo, no al usuario que hizo el cambio (revisar en la auditoría).
+* En `detalle_activo_agro_screen.dart`, `activo = widget.activo` se ejecuta en cada redibujo y pisa el resultado de "Evaluar confianza" (revisar en la auditoría).
+* Catálogo de documentos por provincia (pendiente del paso 4a).
+* Los dos documentos de prueba quedaron en el proyecto real.
+
+### Evidencia
+
+* Rama `paso-4b-pantalla-documentos`, commit `68a6a25`; unido a `main` y subido a GitHub (`main` = `68a6a25`)
