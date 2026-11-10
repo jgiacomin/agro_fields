@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'firebase_options.dart';
 import 'core/auth/auth_gate.dart';
+import 'core/theme/agro_tema.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,12 +14,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  if (kDebugMode) {
-    FirebaseFirestore.instance.useFirestoreEmulator(
-      '127.0.0.1',
-      8080,
-    );
-  }
+  //if (kDebugMode) {
+    //FirebaseFirestore.instance.useFirestoreEmulator(
+      //'127.0.0.1',
+      //8080,
+    //);
+ // }
 
   runApp(const AgroApp());
 }
@@ -31,6 +32,7 @@ class AgroApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Agro Fields',
+      theme: AgroTema.tema,
       home: const AuthGate(),
     );
   }

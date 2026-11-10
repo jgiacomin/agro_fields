@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/agro_tema.dart';
 import '../../models/activos/evento_productivo_model.dart';
 import '../../models/activos/grupo_productivo_model.dart';
 import '../../models/activos/unidad_productiva_model.dart';
@@ -8,16 +9,20 @@ import '../../services/calculo_existencias.dart';
 /// Colores, piezas y textos compartidos por las pantallas de produccion
 /// (paso 6a, GAP-PROD-01). Botones grandes para usar con el dedo en el
 /// campo; se elige tocando en lugar de escribir.
+///
+/// Los colores salen de AgroTema (lib/core/theme/agro_tema.dart), para que
+/// toda la app use la misma paleta (referencia visual del 10/11/2026).
 class EstiloProduccion {
-  static const Color fondo = Color(0xFFF6F7F3);
-  static const Color verde = Color(0xFF2F6B3A);
-  static const Color verdeClaro = Color(0xFFE7F0E5);
-  static const Color texto = Color(0xFF1C2419);
-  static const Color textoSuave = Color(0xFF4A5547);
-  static const Color borde = Color(0xFFE3E6DE);
-  static const Color rojo = Color(0xFF912018);
-  static const Color rojoFondo = Color(0xFFFEF3F2);
-  static const Color rojoBorde = Color(0xFFF4C7C2);
+  static const Color fondo = AgroTema.crema;
+  static const Color terracota = AgroTema.terracota;
+  static const Color verde = AgroTema.verde;
+  static const Color verdeClaro = AgroTema.verdeClaro;
+  static const Color texto = AgroTema.pizarra;
+  static const Color textoSuave = AgroTema.pizarraSuave;
+  static const Color borde = AgroTema.borde;
+  static const Color rojo = AgroTema.rojo;
+  static const Color rojoFondo = AgroTema.rojoFondo;
+  static const Color rojoBorde = AgroTema.rojoBorde;
 }
 
 class BotonGrande extends StatelessWidget {
@@ -58,9 +63,9 @@ class BotonGrande extends StatelessWidget {
           ? OutlinedButton(
               onPressed: ocupado ? null : onPressed,
               style: OutlinedButton.styleFrom(
-                foregroundColor: EstiloProduccion.verde,
+                foregroundColor: EstiloProduccion.terracota,
                 side: const BorderSide(
-                  color: EstiloProduccion.verde,
+                  color: EstiloProduccion.terracota,
                   width: 1.5,
                 ),
                 shape: forma,
@@ -70,7 +75,7 @@ class BotonGrande extends StatelessWidget {
           : ElevatedButton(
               onPressed: ocupado ? null : onPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: EstiloProduccion.verde,
+                backgroundColor: EstiloProduccion.terracota,
                 foregroundColor: Colors.white,
                 shape: forma,
               ),
