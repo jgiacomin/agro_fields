@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
 
 class DetalleActivoAgroScreen extends StatefulWidget {
@@ -177,6 +178,23 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
                 ),
                 icon: const Icon(Icons.pets),
                 label: const Text('Producción'),
+              ),
+            ),
+            // Paso 7a (GAP-OPER-01): ventas protegidas antes de entregar.
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => OperacionesActivoScreen(
+                      activoAgroId: activo.activoId,
+                      nombreActivo: activo.nombre,
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.verified_user),
+                label: const Text('Operaciones protegidas'),
               ),
             ),
 

@@ -189,3 +189,59 @@ test('ST-17. El dueño tampoco reemplaza un documento ya subido [PROHIBIDO]', as
   await cargarArchivo(RUTA_DOC);
   await assertFails(uploadBytes(ref(como(DUENO), RUTA_DOC), bytes(), PDF));
 });
+
+// ------------------------- OPERACIONES PROTEGIDAS (PASO 7a-3) -------------------------
+// Carpeta propia: activos/{activo}/operaciones/{operacion}/...
+// Solo el dueño o quien tenga permiso en el ámbito "operaciones". El broker NO.
+const RUTA_CHEQUE = 'activos/a1/operaciones/op1/cheque.jpg';
+const JPG = { contentType: 'image/jpeg' };
+
+const idAutOper = (permiso, ambito) => `a1__${ENCARGADO}__${permiso}__${ambito}`;
+
+const darAutorizacionEn = (permiso, ambito) =>
+  env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'autorizaciones_activos', idAutOper(permiso, ambito)), {
+      autorizacionId: idAutOper(permiso, ambito),
+      activoId: 'a1',
+      usuarioAutorizado: ENCARGADO,
+      quienOtorga: DUENO,
+      rol: 'encargado',
+      permiso,
+      ambito: { tipo: ambito, referenciaId: null, descripcion: null },
+      fechaInicio: AYER,
+      fechaFin: null,
+      estado: 'activa',
+      condiciones: [],
+      puedeDelegar: false,
+      fechaOtorgamiento: AYER,
+    });
+  });
+
+test('ST-18. El dueño sube la foto de un cheque a su operación [PERMITIDO]', async () => {
+  await assertSucceeds(uploadBytes(ref(como(DUENO), `activos/a1/operaciones/op_${CORRIDA}/cheque.jpg`), bytes(), JPG));
+});
+
+test('ST-19. Quien cargó el expediente (broker) NO ve archivos de operaciones [PROHIBIDO]', async () => {
+  await cargarArchivo(RUTA_CHEQUE, JPG);
+  await assertFails(getMetadata(ref(como(BROKER), RUTA_CHEQUE)));
+});
+
+test('ST-20. El broker NO sube archivos a operaciones [PROHIBIDO]', async () => {
+  await assertFails(uploadBytes(ref(como(BROKER), `activos/a1/operaciones/op_broker_${CORRIDA}/cheque.jpg`), bytes(), JPG));
+});
+
+test('ST-21. El encargado con "crear operaciones" sube un archivo [PERMITIDO]', async () => {
+  await darAutorizacionEn('crear', 'operaciones');
+  await assertSucceeds(uploadBytes(ref(como(ENCARGADO), `activos/a1/operaciones/op_enc_${CORRIDA}/contrato.pdf`), bytes(), PDF));
+});
+
+test('ST-22. Con permiso solo en documentos, el encargado NO ve operaciones [PROHIBIDO]', async () => {
+  await darAutorizacionEn('ver', 'documentacion');
+  await cargarArchivo(RUTA_CHEQUE, JPG);
+  await assertFails(getMetadata(ref(como(ENCARGADO), RUTA_CHEQUE)));
+});
+
+test('ST-23. El dueño NO borra la foto de un cheque [PROHIBIDO]', async () => {
+  await cargarArchivo(RUTA_CHEQUE, JPG);
+  await assertFails(deleteObject(ref(como(DUENO), RUTA_CHEQUE)));
+});

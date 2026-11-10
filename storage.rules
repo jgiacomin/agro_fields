@@ -126,6 +126,26 @@ service firebase.storage {
         && esImagen() && pesaMenosDe(5);
     }
 
+    // ---------------- OPERACIONES PROTEGIDAS (paso 7a) ----------------
+    // Foto del cheque, contrato, poder del firmante. Son datos de plata:
+    // solo el dueño o quien tenga autorización en el ámbito "operaciones".
+    // Quien cargó el expediente (broker) NO entra, igual que en Firestore.
+    // Consulta 2 documentos de Firestore como máximo (Activo y autorización).
+    // Nadie reemplaza ni borra desde la app.
+    match /activos/{activoId}/operaciones/{operacionId}/{archivo} {
+      allow read: if esAdmin()
+        || esDuenoActivo(activoId)
+        || tieneAutorizacion(activoId, 'ver', 'operaciones');
+
+      allow create: if (esAdmin()
+          || esDuenoActivo(activoId)
+          || tieneAutorizacion(activoId, 'crear', 'operaciones'))
+        && resource == null
+        && esDocumento() && pesaMenosDe(20);
+
+      allow update, delete: if esAdmin();
+    }
+
     // ---------------- TODO LO DEMAS: PROHIBIDO ----------------
     match /{allPaths=**} {
       allow read, write: if false;

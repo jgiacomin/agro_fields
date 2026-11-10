@@ -99,6 +99,64 @@ class DocumentoArchivoService {
     return ruta;
   }
 
+  // =====================================================
+  // PASO 7a-3 — ARCHIVOS DE OPERACIONES PROTEGIDAS
+  // Foto del cheque, contrato, poder del firmante.
+  // Van a una carpeta APARTE de la privada, con su propia regla en
+  // storage.rules: solo el dueño o quien tenga autorización en el ámbito
+  // "operaciones" (quien cargó el expediente no entra).
+  // =====================================================
+
+  /// Ruta: activos/{activoId}/operaciones/{operacionId}/{archivo}
+  static String construirRutaOperacion({
+    required String activoId,
+    required String operacionId,
+    required String nombreArchivo,
+  }) {
+    return 'activos/$activoId/operaciones/$operacionId/'
+        '${limpiarNombre(nombreArchivo)}';
+  }
+
+  /// Sube un archivo de una operación y devuelve su ruta en Storage.
+  /// Al nombre se le agrega la hora, porque un archivo subido no se
+  /// puede pisar (las reglas lo impiden) y se pueden subir varios.
+  Future<String> subirArchivoOperacion({
+    required String activoId,
+    required String operacionId,
+    required String nombreArchivo,
+    required Uint8List bytes,
+    required String contentType,
+  }) async {
+    if (activoId.trim().isEmpty || operacionId.trim().isEmpty) {
+      throw ArgumentError(
+        'El Activo Agro y la operación son obligatorios.',
+      );
+    }
+
+    final error = validar(
+      contentType: contentType,
+      tamanioBytes: bytes.length,
+    );
+
+    if (error != null) {
+      throw ArgumentError(error);
+    }
+
+    final ruta = construirRutaOperacion(
+      activoId: activoId,
+      operacionId: operacionId,
+      nombreArchivo:
+          '${DateTime.now().millisecondsSinceEpoch}_$nombreArchivo',
+    );
+
+    await _storage.ref(ruta).putData(
+          bytes,
+          SettableMetadata(contentType: contentType),
+        );
+
+    return ruta;
+  }
+
   /// Link temporal para ver o descargar el archivo (lo controlan las
   /// Storage Rules: solo quien puede leerlo).
   Future<String> obtenerUrlDescarga(String ruta) {
