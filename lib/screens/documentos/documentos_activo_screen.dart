@@ -243,7 +243,8 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
     };
 
     final detalle = [
-      nombreTipoDocumento(d.tipo),
+      // Si no hay descripcion, el titulo ya es el tipo: no se repite.
+      if (_nombre(d) != nombreTipoDocumento(d.tipo)) nombreTipoDocumento(d.tipo),
       if (d.emisor != null) d.emisor!,
       if (d.numero != null) 'Nº ${d.numero}',
       if (d.provinciaEstado != null) d.provinciaEstado!,
@@ -265,8 +266,9 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
                 _nombre(d),
                 style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: 4),
-              Text(
+              if (detalle.isNotEmpty) const SizedBox(height: 4),
+              if (detalle.isNotEmpty)
+                Text(
                 detalle,
                 style: const TextStyle(
                   fontSize: 14,
