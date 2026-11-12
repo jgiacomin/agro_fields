@@ -24,6 +24,9 @@ void main() async {
   runApp(const AgroApp());
 }
 
+/// Ancho máximo de la app en pantallas grandes (12/11/2026).
+const double anchoMaximoApp = 860;
+
 class AgroApp extends StatelessWidget {
   const AgroApp({super.key});
 
@@ -33,6 +36,17 @@ class AgroApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Agro Fields',
       theme: AgroTema.tema,
+      // En pantallas grandes (compu), toda la app queda centrada con un
+      // ancho máximo, como una tablet. En el celular no cambia nada.
+      builder: (context, child) => ColoredBox(
+        color: AgroTema.crema,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: anchoMaximoApp),
+            child: child,
+          ),
+        ),
+      ),
       home: const AuthGate(),
     );
   }

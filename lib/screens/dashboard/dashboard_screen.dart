@@ -405,7 +405,9 @@ debugPrint(
   /// Margen a los costados: 16 en el celular; en la compu, lo que haga
   /// falta para que el contenido no pase de 760 de ancho.
   double _margen(BuildContext context) {
-    final ancho = MediaQuery.sizeOf(context).width;
+    // La app ya tiene un ancho máximo de 860 (main.dart): se calcula
+    // sobre ese ancho, no sobre el de toda la pantalla.
+    final ancho = MediaQuery.sizeOf(context).width.clamp(0, 860).toDouble();
     return ancho > 792 ? (ancho - 760) / 2 : 16;
   }
 
