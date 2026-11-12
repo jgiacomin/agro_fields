@@ -3582,3 +3582,17 @@ Próximo 🔴: AF-092 emergencia + "disponible para recibir", AF-093 invitar al 
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Logo e Inicio nuevos — Estado
+
+🟢 **DISEÑO DEL INICIO VALIDADO** (12/11/2026, rama `diseno-inicio-v8`)
+
+Logo nuevo como imagen; Inicio con barra oscura, saludo de atardecer, resumen con datos reales, accesos en columnas y botón central para crear campo. Probado en Chrome.
+
+Próximo 🔴: AF-092 emergencia + "disponible para recibir", AF-093 invitar al profesional, AF-089 traslado simple.
+
+Referencia documental:
+
+`docs/BITACORA.md`

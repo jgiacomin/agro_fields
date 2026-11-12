@@ -7309,3 +7309,26 @@ El campo guardaba latitud y longitud en 0 al crearse (punto en el océano, frent
 ### Evidencia
 
 * Rama `gap-terr-01`.
+
+---
+
+# 12/11/2026 - Diseño: logo nuevo e Inicio según la demo
+
+**Estado: VALIDADO EN LA APP (Chrome).**
+
+* Referencia: demo de Javier en `Desktop\App` (versión cálida, coincide con la paleta terracota/pizarra/crema).
+* `assets/logo_agro_fields.png` (nuevo): logo (engranaje, sol y surcos) recortado de la demo, esquinas transparentes, 512 px. `pubspec.yaml`: sección `assets`.
+* `lib/widgets/logo_agro_fields.dart`: ahora muestra la imagen (se quitó el logo dibujado por código, ya no se usa). Se ve en el ingreso y en el Inicio.
+* `lib/screens/dashboard/dashboard_screen.dart`: barra oscura con logo, "Agro Fields" y "Conectar · Crecer · Resolver"; cartel de atardecer con saludo según la hora; "Tu campo en resumen" solo con datos reales (campos, hectáreas, documentos con aviso, campos en el mapa); accesos en columnas con flecha; "Próximamente" para Territorio Inteligente, Economía y Gestión y Red Agropecuaria; menú inferior oscuro con botón central "Crear campo"; contenido centrado con ancho máximo 760 en pantallas grandes. Se quitó el dibujo `_SolYSurcos`.
+* La carga de datos y las pantallas que se abren no cambiaron. Sin cambios en datos ni reglas.
+* No se usaron datos inventados de la demo ("Producción 12,5 tn", "Actividad +8%") ni fotos de terceros.
+
+### Pendiente
+
+* Ganado (cabezas) en el resumen (requiere consultar rodeos; hacerlo sin hacer lento el Inicio).
+* Campanita de avisos sin función todavía.
+* Logo original en alta calidad (hoy es un recorte de la demo).
+
+### Evidencia
+
+* Rama `diseno-inicio-v8`; capturas de Javier en Chrome (ingreso e Inicio).

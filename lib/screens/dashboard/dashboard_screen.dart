@@ -7,6 +7,7 @@ import '../../services/activo_agro_service_v2.dart';
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../models/activos/documento_activo_model.dart';
+import '../../widgets/logo_agro_fields.dart';
 import '../campos/detalle_activo_agro_screen.dart';
 
 import '../campos/crear_activo_agro_screen.dart';
@@ -267,13 +268,14 @@ debugPrint(
   }
 
   // =====================================================
-  // BUILD — INICIO V8 (referencia visual del 10/11/2026,
-  // docs/diseno/referencia_visual_v8.png)
+  // BUILD — INICIO V8 (referencia visual del 10/11/2026, rediseño con
+  // la demo aprobada el 12/11/2026: encabezado oscuro, saludo de
+  // atardecer, resumen, accesos en dos columnas y botón central)
   //
   // Solo cambia lo visual: la carga del usuario y las
   // pantallas que se abren son las mismas de antes.
   // No se muestra nada sin datos reales (clima, mapa y
-  // alertas quedan como "Pronto").
+  // alertas quedan como "Próximamente").
   // =====================================================
 
   String get _primerNombre {
@@ -346,28 +348,22 @@ debugPrint(
                 : RefreshIndicator(
                     onRefresh: cargarUsuario,
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      // En pantallas grandes el contenido queda centrado
+                      // con un ancho máximo (como en el celular).
+                      padding: EdgeInsets.fromLTRB(_margen(context), 12,
+                          _margen(context), 24),
                       children: [
                         _encabezado(),
-                        const SizedBox(height: 20),
-                        _tarjetaPrincipal(),
+                        const SizedBox(height: 14),
+                        _saludo(),
                         if (esPropietario) ...[
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 14),
                           _resumen(),
                         ],
-                        const SizedBox(height: 28),
-                        const Text(
-                          'Accesos rápidos',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: AgroTema.pizarra,
-                          ),
-                        ),
                         const SizedBox(height: 14),
                         _accesosRapidos(),
                         if (activos.isNotEmpty) ...[
-                          const SizedBox(height: 28),
+                          const SizedBox(height: 24),
                           _tituloConAccion(
                             'Mis campos',
                             'Ver todos',
@@ -380,155 +376,123 @@ debugPrint(
                     ),
                   ),
       ),
-      bottomNavigationBar: loading || usuario == null
-          ? null
-          : NavigationBar(
-              selectedIndex: 0,
-              backgroundColor: Colors.white,
-              indicatorColor: AgroTema.terracota.withValues(alpha: 0.15),
-              onDestinationSelected: (indice) {
-                switch (indice) {
-                  case 1:
-                    abrirMisActivos();
-                    break;
-                  case 2:
-                    abrirConversaciones();
-                    break;
-                  case 3:
-                    _abrirMenu();
-                    break;
-                }
-              },
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home, color: AgroTema.terracota),
-                  label: 'Inicio',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.agriculture_outlined),
-                  label: 'Mis campos',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.chat_bubble_outline),
-                  label: 'Mensajes',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.menu),
-                  label: 'Menú',
-                ),
-              ],
-            ),
+      bottomNavigationBar:
+          loading || usuario == null ? null : _menuInferior(),
     );
   }
+
+  /// Margen a los costados: 16 en el celular; en la compu, lo que haga
+  /// falta para que el contenido no pase de 760 de ancho.
+  double _margen(BuildContext context) {
+    final ancho = MediaQuery.sizeOf(context).width;
+    return ancho > 792 ? (ancho - 760) / 2 : 16;
+  }
+
+  // ---------------- ENCABEZADO (diseño del 12/11/2026) ----------------
 
   Widget _encabezado() {
-    final inicial = _primerNombre.isEmpty ? '?' : _primerNombre[0];
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundColor: AgroTema.terracota,
-          child: Text(
-            inicial,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Hola, $_primerNombre',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: AgroTema.pizarra,
-                ),
-              ),
-              Text(
-                esPropietario
-                    ? 'Propietario de $cantidadActivosPropios '
-                        '${cantidadActivosPropios == 1 ? 'campo' : 'campos'}'
-                    : 'Participante de Agro Fields',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AgroTema.pizarraSuave,
-                ),
-              ),
-            ],
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.logout, color: AgroTema.pizarraSuave),
-          tooltip: 'Cerrar sesión',
-          onPressed: cerrarSesion,
-        ),
-      ],
-    );
-  }
-
-  Widget _tarjetaPrincipal() {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.fromLTRB(12, 12, 6, 12),
       decoration: BoxDecoration(
         color: AgroTema.pizarra,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
+          const LogoAgroFields(tamano: 52),
+          const SizedBox(width: 12),
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Tu campo, tu historia,\nen un solo lugar.',
+                Text(
+                  'Agro Fields',
                   style: TextStyle(
-                    fontSize: 21,
-                    height: 1.25,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 12),
-                Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AgroTema.terracota,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Conectar con confianza. Crecer con datos.',
-                  style: TextStyle(fontSize: 14, color: AgroTema.crema),
+                SizedBox(height: 2),
+                Text(
+                  'Conectar · Crecer · Resolver',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13, color: AgroTema.crema),
                 ),
               ],
             ),
           ),
-          const SizedBox(
-            width: 86,
-            height: 70,
-            child: CustomPaint(painter: _SolYSurcos()),
+          IconButton(
+            icon: const Icon(Icons.notifications_none, color: Colors.white),
+            tooltip: 'Avisos (pronto)',
+            onPressed: null,
+            disabledColor: Colors.white,
           ),
         ],
       ),
     );
   }
 
+  String get _saludoSegunHora {
+    final hora = DateTime.now().hour;
+    if (hora < 12) return 'Buenos días';
+    if (hora < 20) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
+
+  /// Cartel de atardecer (dibujado, sin fotos de terceros).
+  Widget _saludo() {
+    final nombre = _primerNombre.isEmpty ? 'productor' : _primerNombre;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 22, 18, 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFF2A65A), Color(0xFFD96A2B), Color(0xFF6B4A2E)],
+          stops: [0.0, 0.55, 1.0],
+        ),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.grass, color: Color(0xFFFBE3C8), size: 40),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$_saludoSegunHora, $nombre',
+                  style: const TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  esPropietario
+                      ? 'Que tengas una excelente jornada.'
+                      : 'Cargá tu primer campo para empezar.',
+                  style: const TextStyle(fontSize: 14, color: Color(0xFFFFF3E6)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------- ACCESOS (dos columnas) ----------------
+
   Widget _accesosRapidos() {
     final accesos = <_Acceso>[
       if (esPropietario)
-        _Acceso(Icons.agriculture, 'Mis campos', AgroTema.verde,
-            abrirMisActivos),
+        _Acceso(Icons.eco, 'Mis Activos Agro', AgroTema.verde, abrirMisActivos),
       _Acceso(Icons.add_business, 'Crear campo', AgroTema.terracota,
           abrirCrearActivo),
       _Acceso(Icons.storefront, 'Mercado de campos', const Color(0xFFE8893A),
@@ -537,27 +501,98 @@ debugPrint(
         _Acceso(Icons.inbox, 'Solicitudes', AgroTema.azul, abrirSolicitudes),
       _Acceso(Icons.chat_bubble, 'Conversaciones', AgroTema.pizarra,
           abrirConversaciones),
-      const _Acceso(Icons.map, 'Mapa territorial', AgroTema.azul, null),
-      const _Acceso(Icons.warning_amber, 'Alertas', AgroTema.rojo, null),
+      const _Acceso(Icons.map, 'Territorio Inteligente', AgroTema.azul, null),
+      const _Acceso(
+          Icons.bar_chart, 'Economía y Gestión', AgroTema.verde, null),
+      const _Acceso(Icons.groups, 'Red Agropecuaria', AgroTema.pizarra, null),
     ];
 
-    // Alto fijo y ancho que se acomoda: el texto nunca se sale del cuadro,
-    // sea la pantalla de un celular o de una compu.
+    // Dos columnas en el celular; más en pantallas grandes.
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: accesos.length,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 150,
-        mainAxisExtent: 124,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
+        maxCrossAxisExtent: 260,
+        mainAxisExtent: 76,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
       ),
       itemBuilder: (_, i) => _cuadroAcceso(accesos[i]),
     );
   }
 
-  // ---------------- RESUMEN (datos reales) ----------------
+  // ---------------- MENÚ INFERIOR (botón central) ----------------
+
+  Widget _menuInferior() {
+    Widget item(IconData icono, String texto, VoidCallback? alTocar,
+        {bool activo = false}) {
+      final color = activo ? AgroTema.terracota : Colors.white;
+      return Expanded(
+        child: InkWell(
+          onTap: alTocar,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icono, color: color),
+                const SizedBox(height: 2),
+                Text(
+                  texto,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, color: color),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      color: AgroTema.pizarra,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 66,
+          child: Row(
+            children: [
+              item(Icons.home, 'Inicio', null, activo: true),
+              item(Icons.agriculture, 'Mis campos', abrirMisActivos),
+              Expanded(
+                child: Center(
+                  child: Tooltip(
+                    message: 'Crear campo',
+                    child: Material(
+                      color: AgroTema.terracota,
+                      shape: const CircleBorder(
+                        side: BorderSide(color: Color(0xFFF2C08F), width: 2),
+                      ),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: abrirCrearActivo,
+                        child: const SizedBox(
+                          width: 54,
+                          height: 54,
+                          child: Icon(Icons.add, color: Colors.white, size: 30),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              item(Icons.chat_bubble_outline, 'Mensajes', abrirConversaciones),
+              item(Icons.menu, 'Menú', _abrirMenu),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------- RESUMEN (solo datos reales) ----------------
 
   Widget _resumen() {
     var vencidos = 0;
@@ -571,63 +606,92 @@ debugPrint(
     }
     final hectareas = activos.fold<double>(
         0, (suma, a) => suma + (a.ubicacion.superficie > 0 ? a.ubicacion.superficie : 0));
+    final enMapa = activos.where((a) => a.ubicacion.tieneCoordenadas).length;
 
-    return Row(
-      children: [
-        Expanded(
-          child: _dato(
-            Icons.agriculture,
-            AgroTema.verde,
-            '$cantidadActivosPropios',
-            cantidadActivosPropios == 1 ? 'campo' : 'campos',
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _dato(
-            Icons.straighten,
-            AgroTema.azul,
-            hectareas > 0 ? _miles(hectareas) : '—',
-            'hectáreas',
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _dato(
-            Icons.description,
-            vencidos > 0
-                ? AgroTema.rojo
-                : porVencer > 0
-                    ? AgroTema.terracota
-                    : AgroTema.pizarraSuave,
-            '${vencidos + porVencer}',
-            vencidos > 0 ? 'docs. vencidos' : 'docs. por vencer',
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _dato(IconData icono, Color color, String valor, String texto) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: AgroTema.borde),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icono, color: color, size: 22),
-          const SizedBox(height: 6),
+          const Text(
+            'Tu campo en resumen',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: AgroTema.pizarra,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: _dato(
+                  Icons.agriculture,
+                  AgroTema.verde,
+                  '$cantidadActivosPropios',
+                  cantidadActivosPropios == 1 ? 'campo' : 'campos',
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _dato(
+                  Icons.straighten,
+                  AgroTema.azul,
+                  hectareas > 0 ? _miles(hectareas) : '—',
+                  'hectáreas',
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _dato(
+                  Icons.description,
+                  vencidos > 0
+                      ? AgroTema.rojo
+                      : porVencer > 0
+                          ? AgroTema.terracota
+                          : AgroTema.pizarraSuave,
+                  '${vencidos + porVencer}',
+                  vencidos > 0 ? 'docs. vencidos' : 'docs. por vencer',
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _dato(
+                  Icons.location_on,
+                  AgroTema.terracota,
+                  '$enMapa/$cantidadActivosPropios',
+                  'en el mapa',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _dato(IconData icono, Color color, String valor, String texto) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      decoration: BoxDecoration(
+        color: AgroTema.crema,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          Icon(icono, color: color, size: 24),
+          const SizedBox(height: 4),
           FittedBox(
             fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
             child: Text(
               valor,
               style: const TextStyle(
-                fontSize: 22,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: AgroTema.pizarra,
               ),
@@ -637,7 +701,8 @@ debugPrint(
             texto,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12, color: AgroTema.pizarraSuave),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 11, color: AgroTema.pizarraSuave),
           ),
         ],
       ),
@@ -773,7 +838,7 @@ debugPrint(
   Widget _cuadroAcceso(_Acceso acceso) {
     final pronto = acceso.alTocar == null;
     return Material(
-      color: Colors.white,
+      color: pronto ? const Color(0xFFF3EEE5) : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: const BorderSide(color: AgroTema.borde),
@@ -782,37 +847,42 @@ debugPrint(
       child: InkWell(
         onTap: pronto ? null : acceso.alTocar,
         child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor:
-                    pronto ? AgroTema.borde : acceso.color,
-                child: Icon(
-                  acceso.icono,
-                  color: pronto ? AgroTema.pizarraSuave : Colors.white,
-                  size: 24,
+              Icon(
+                acceso.icono,
+                size: 32,
+                color: pronto ? AgroTema.pizarraSuave : acceso.color,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      acceso.texto,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.2,
+                        fontWeight: FontWeight.w600,
+                        color: pronto ? AgroTema.pizarraSuave : AgroTema.pizarra,
+                      ),
+                    ),
+                    if (pronto)
+                      const Text(
+                        'Próximamente',
+                        style: TextStyle(
+                            fontSize: 11, color: AgroTema.pizarraSuave),
+                      ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                acceso.texto,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: pronto ? AgroTema.pizarraSuave : AgroTema.pizarra,
-                ),
-              ),
-              if (pronto)
-                const Text(
-                  'Pronto',
-                  style: TextStyle(fontSize: 11, color: AgroTema.pizarraSuave),
-                ),
+              if (!pronto)
+                const Icon(Icons.chevron_right, color: AgroTema.pizarraSuave),
             ],
           ),
         ),
@@ -821,7 +891,7 @@ debugPrint(
   }
 }
 
-/// Un cuadro de "Accesos rapidos". Sin accion = todavia no existe ("Pronto").
+/// Un cuadro de "Accesos rapidos". Sin accion = todavia no existe ("Próximamente").
 class _Acceso {
   final IconData icono;
   final String texto;
@@ -829,46 +899,4 @@ class _Acceso {
   final VoidCallback? alTocar;
 
   const _Acceso(this.icono, this.texto, this.color, this.alTocar);
-}
-
-/// Dibujo del logo en la tarjeta principal: el sol del atardecer y los
-/// surcos del campo (sin fotos: no se inventa una imagen).
-class _SolYSurcos extends CustomPainter {
-  const _SolYSurcos();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-
-    // Sol (medio circulo).
-    final sol = Paint()..color = const Color(0xFFE8893A);
-    canvas.drawArc(
-      Rect.fromCircle(center: Offset(w * 0.5, h * 0.55), radius: h * 0.38),
-      3.1416,
-      3.1416,
-      true,
-      sol,
-    );
-
-    // Surcos (tres curvas).
-    final colores = [AgroTema.terracota, AgroTema.crema, AgroTema.terracota];
-    for (var i = 0; i < 3; i++) {
-      final y = h * (0.62 + i * 0.14);
-      final camino = Path()
-        ..moveTo(0, y + 6)
-        ..quadraticBezierTo(w * 0.5, y - 10, w, y + 2);
-      canvas.drawPath(
-        camino,
-        Paint()
-          ..color = colores[i]
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
