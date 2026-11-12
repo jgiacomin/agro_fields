@@ -40,6 +40,9 @@ dependencies:
   google_sign_in: ^6.2.1
   firebase_storage: ^13.6.1
   file_picker: ^13.3.3
+  # AF-090: mapa con OpenStreetMap (gratis, sin clave).
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
 
 
 dev_dependencies:

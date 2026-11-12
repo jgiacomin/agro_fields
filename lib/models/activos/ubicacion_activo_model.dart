@@ -266,4 +266,48 @@ class UbicacionActivo {
   }
 
 
+
+  // =====================================================
+  // AF-090 — UBICACIÓN EN EL MAPA (12/11/2026)
+  // =====================================================
+
+  /// Las coordenadas son posibles en el planeta.
+  static bool coordenadasValidas(double latitud, double longitud) {
+    return latitud >= -90 &&
+        latitud <= 90 &&
+        longitud >= -180 &&
+        longitud <= 180;
+  }
+
+  /// El campo tiene su punto marcado en el mapa.
+  /// 0 y 0 (lo que se guardaba al crear el campo) es "sin ubicación":
+  /// lo desconocido no se toma como dato.
+  bool get tieneCoordenadas =>
+      !(latitud == 0 && longitud == 0) &&
+      coordenadasValidas(latitud, longitud);
+
+  /// Copia con el punto nuevo; el resto de la ubicación no cambia.
+  UbicacionActivo conCoordenadas(double nuevaLatitud, double nuevaLongitud) {
+    if (!coordenadasValidas(nuevaLatitud, nuevaLongitud)) {
+      throw ArgumentError('Coordenadas fuera de rango.');
+    }
+    return UbicacionActivo(
+      pais: pais,
+      provincia: provincia,
+      departamento: departamento,
+      localidad: localidad,
+      codigoPostal: codigoPostal,
+      latitud: nuevaLatitud,
+      longitud: nuevaLongitud,
+      superficie: superficie,
+      regionProductiva: regionProductiva,
+      tipoZona: tipoZona,
+      descripcionEntorno: descripcionEntorno,
+      accesoCaminos: accesoCaminos,
+      disponibilidadServicios: disponibilidadServicios,
+      jurisdiccionLegal: jurisdiccionLegal,
+      zonaHoraria: zonaHoraria,
+      monedaLocal: monedaLocal,
+    );
+  }
 }

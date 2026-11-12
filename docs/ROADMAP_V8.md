@@ -3568,3 +3568,17 @@ Pendiente: revisar la marca en INPI/DINAPI y el dominio antes de enero.
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Ubicación del campo en el mapa — Estado
+
+🟢 **GAP-TERR-01 (AF-090) VALIDADO** (12/11/2026, rama `gap-terr-01`)
+
+Desde la ficha del campo se marca el punto en un mapa de OpenStreetMap; queda en el historial. La ubicación exacta es privada. Es la base de Territorio, Emergencias y Transporte.
+
+Próximo 🔴: AF-092 emergencia + "disponible para recibir", AF-093 invitar al profesional, AF-089 traslado simple.
+
+Referencia documental:
+
+`docs/BITACORA.md`

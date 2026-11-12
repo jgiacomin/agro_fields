@@ -7276,3 +7276,36 @@ El Concepto pide guardar certificaciones (bienestar animal, orgánico, etc.) con
 ### Evidencia
 
 * Rama `diseno-ingreso-v8`; prueba manual de Javier en Chrome.
+
+---
+
+# 12/11/2026 - GAP-TERR-01 (AF-090): ubicación del campo en el mapa
+
+**Estado: VALIDADO EN LA APP.**
+
+### Problema
+
+El campo guardaba latitud y longitud en 0 al crearse (punto en el océano, frente a África). Territorio, Emergencias y Transporte necesitan saber dónde está cada campo.
+
+### Solución (cambio mínimo)
+
+* `pubspec.yaml`: paquetes `flutter_map` (^8.2.2) y `latlong2` (^0.9.1). Mapa de OpenStreetMap: gratis, sin clave; se puede cambiar de proveedor sin rehacer la pantalla.
+* `lib/models/activos/ubicacion_activo_model.dart`: `tieneCoordenadas` (0 y 0 = sin ubicación; lo desconocido no es dato), `coordenadasValidas` y `conCoordenadas` (cambia solo el punto).
+* `lib/services/activo_agro_service_v2.dart`: `actualizarUbicacion`, mismo camino que `actualizarSuelo` (historial `actualizacion_ubicacion` + auditoría).
+* `lib/screens/campos/ubicacion_activo_screen.dart` (nuevo): "¿Dónde está tu campo?", tocar el mapa, pin terracota, "Guardar ubicación". Atribución a OpenStreetMap.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: botón "Marcar ubicación en el mapa" / "Ubicación en el mapa: marcada"; al volver relee el campo.
+* Sin cambios en reglas: la ubicación vive en `activos_agro` (solo dueño o publicador la cambian). La ubicación exacta no va a `activos_publicos`.
+
+### Validación
+
+* `test/ubicacion_activo_model_test.dart`: 5 pruebas nuevas. `flutter analyze` y `flutter test` sin errores nuevos (2 fallas conocidas de conexión), según Javier.
+
+### Pendiente
+
+* 🟡 Capas, alertas por ubicación y campo "fuente del dato".
+* Con muchos usuarios: proveedor de mapas propio (la política de OpenStreetMap limita el uso intensivo).
+* Mismo pendiente de auditoría que otros métodos: historial y auditoría anotan al creador del campo, no al usuario que hizo el cambio.
+
+### Evidencia
+
+* Rama `gap-terr-01`.

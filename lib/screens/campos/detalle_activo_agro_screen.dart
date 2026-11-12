@@ -5,6 +5,7 @@ import '../../services/activo_agro_service_v2.dart';
 import '../documentos/documentos_activo_screen.dart';
 import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
+import 'ubicacion_activo_screen.dart';
 
 class DetalleActivoAgroScreen extends StatefulWidget {
   final ActivoAgroV2 activo;
@@ -72,6 +73,20 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     }
   }
 
+  /// AF-090: abre el mapa; si se guardó, relee el campo.
+  Future<void> _abrirMapa() async {
+    final guardo = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => UbicacionActivoScreen(activo: activo),
+      ),
+    );
+    if (guardo != true) return;
+    final actualizado =
+        await _activoService.obtenerActivoPorId(activo.activoId);
+    if (!mounted || actualizado == null) return;
+    setState(() => activo = actualizado);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -110,6 +125,25 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
             Text("Localidad: ${activo.ubicacion.localidad}"),
 
             Text("Superficie: ${activo.ubicacion.superficie} ha"),
+
+            // AF-090: ubicación en el mapa (privada).
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _abrirMapa,
+                icon: Icon(
+                  activo.ubicacion.tieneCoordenadas
+                      ? Icons.location_on
+                      : Icons.add_location_alt,
+                ),
+                label: Text(
+                  activo.ubicacion.tieneCoordenadas
+                      ? 'Ubicación en el mapa: marcada'
+                      : 'Marcar ubicación en el mapa',
+                ),
+              ),
+            ),
 
             const Divider(height: 30),
 

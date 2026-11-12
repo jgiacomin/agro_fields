@@ -1094,6 +1094,81 @@ Future<void> actualizarSuelo(
 }
 
 // =====================================================
+// ACTUALIZAR UBICACIÓN EN EL MAPA (AF-090, 12/11/2026)
+// Mismo camino que actualizarSuelo: historial + auditoría.
+// La ubicación exacta es privada: no va a activos_publicos.
+// =====================================================
+
+Future<void> actualizarUbicacion(
+  String activoId,
+  double latitud,
+  double longitud,
+) async {
+
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  // Lanza error si las coordenadas no son posibles.
+  final ubicacionNueva =
+      activo.ubicacion.conCoordenadas(
+    latitud,
+    longitud,
+  );
+
+  final evento =
+      _crearEventoHistorial(
+    tipoEvento:
+        'actualizacion_ubicacion',
+    descripcion:
+        'Ubicación marcada en el mapa',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'ubicacion',
+  );
+
+  final activoActualizado =
+      activo.copyWith(
+    ubicacion:
+        ubicacionNueva,
+    historial: [
+      ...activo.historial,
+      evento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  await _auditService.registrar(
+    activoId:
+        activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'ubicacion',
+    accion:
+        'actualizar_ubicacion',
+    elementoAfectado:
+        activoId,
+    referencia:
+        activoId,
+  );
+}
+
+// =====================================================
 // ACTUALIZAR DOCUMENTACIÓN
 // =====================================================
 
