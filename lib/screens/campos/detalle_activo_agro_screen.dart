@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../documentos/documentos_activo_screen.dart';
@@ -97,487 +98,601 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     activo = widget.activo;
   }
 
+  // =====================================================
+  // DISEÑO DE LA FICHA (12/11/2026): mismo estilo que el Inicio.
+  // Arriba el resumen, después los módulos en columnas y abajo el
+  // detalle en secciones que se abren. No se quitó ningún dato.
+  // =====================================================
+
+  /// "sin_evaluar" -> "Sin evaluar" (nombres internos a texto claro).
+  String _claro(String? valor, {String vacio = 'Sin información'}) {
+    final v = (valor ?? '').trim();
+    if (v.isEmpty) return vacio;
+    final t = v.replaceAll('_', ' ');
+    return t[0].toUpperCase() + t.substring(1);
+  }
+
+  String _numero(num v) =>
+      v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+
+  void _abrir(Widget pantalla) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => pantalla));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AgroTema.crema,
       appBar: AppBar(title: Text(activo.nombre)),
-
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
-          children: [
-            Text(
-              activo.nombre,
-
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(activo.descripcion, style: const TextStyle(fontSize: 16)),
-
-            const Divider(height: 30),
-
-            _titulo("Ubicación"),
-
-            Text("País: ${activo.ubicacion.pais}"),
-
-            Text("Provincia: ${activo.ubicacion.provincia}"),
-
-            Text("Localidad: ${activo.ubicacion.localidad}"),
-
-            Text("Superficie: ${activo.ubicacion.superficie} ha"),
-
-            // AF-090: ubicación en el mapa (privada).
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _abrirMapa,
-                icon: Icon(
-                  activo.ubicacion.tieneCoordenadas
-                      ? Icons.location_on
-                      : Icons.add_location_alt,
-                ),
-                label: Text(
-                  activo.ubicacion.tieneCoordenadas
-                      ? 'Ubicación en el mapa: marcada'
-                      : 'Marcar ubicación en el mapa',
-                ),
-              ),
-            ),
-
-            const Divider(height: 30),
-
-            _titulo("Clasificación"),
-
-            _titulo("Suelo"),
-
-            Text("Estado: ${activo.suelo.estado}"),
-
-            Text("Textura: ${activo.suelo.textura ?? 'Sin registrar'}"),
-
-            Text("Drenaje: ${activo.suelo.drenaje ?? 'Sin registrar'}"),
-
-            Text("pH: ${activo.suelo.ph?.toString() ?? 'Sin registrar'}"),
-
-            Text(
-              "Materia orgánica: ${activo.suelo.materiaOrganica?.toString() ?? 'Sin registrar'}",
-            ),
-
-            Text("Evidencias: ${activo.suelo.evidencias.length}"),
-
-            if (activo.suelo.observaciones != null &&
-                activo.suelo.observaciones!.isNotEmpty)
-              Text("Observaciones: ${activo.suelo.observaciones}"),
-
-            if (activo.suelo.fechaEvaluacion != null)
-              Text("Fecha de evaluación: ${activo.suelo.fechaEvaluacion}"),
-
-            const Divider(height: 30),
-
-            Text("Tipo: ${activo.tipoActivo.name}"),
-
-            Text(
-              "Categorías: "
-              "${activo.categorias.join(', ')}",
-            ),
-            const Divider(height: 30),
-
-            _titulo("Producción"),
-            if (activo.produccionPrincipal != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  Text(
-                    "Actividad: "
-                    "${activo.produccionPrincipal!.actividad}",
-                  ),
-                  Text(activo.produccionPrincipal!.descripcion),
-                ],
-              )
-            else
-              const Text("Sin producción registrada"),
-
-            // Paso 6a (GAP-PROD-01): rodeos, potreros y eventos.
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        children: [
+          _resumen(),
+          if (activo.madurez.faltantes.isNotEmpty) ...[
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ProduccionActivoScreen(
-                      activoAgroId: activo.activoId,
-                      nombreActivo: activo.nombre,
-                    ),
-                  ),
-                ),
-                icon: const Icon(Icons.pets),
-                label: const Text('Producción'),
-              ),
+            _proximoPaso(),
+          ],
+          const SizedBox(height: 18),
+          const Text(
+            'Gestión del campo',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AgroTema.pizarra,
             ),
-            // Paso 7a (GAP-OPER-01): ventas protegidas antes de entregar.
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => OperacionesActivoScreen(
-                      activoAgroId: activo.activoId,
-                      nombreActivo: activo.nombre,
-                    ),
-                  ),
-                ),
-                icon: const Icon(Icons.verified_user),
-                label: const Text('Operaciones protegidas'),
-              ),
+          ),
+          const SizedBox(height: 10),
+          _modulos(),
+          const SizedBox(height: 22),
+          const Text(
+            'Información del expediente',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: AgroTema.pizarra,
             ),
-            // Paso 4b (pantalla pendiente): documentos del campo.
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => DocumentosActivoScreen(
-                      activoAgroId: activo.activoId,
-                      nombreActivo: activo.nombre,
-                    ),
-                  ),
-                ),
-                icon: const Icon(Icons.description),
-                label: const Text('Documentos'),
-              ),
-            ),
-            // AF-092: emergencias del campo y "disponible para recibir".
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => EmergenciasActivoScreen(
-                      activoAgroId: activo.activoId,
-                      nombreActivo: activo.nombre,
-                    ),
-                  ),
-                ),
-                icon: const Icon(Icons.warning_amber),
-                label: const Text('Emergencias'),
-              ),
-            ),
-            // AF-093: profesionales invitados y sus intervenciones.
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ProfesionalesActivoScreen(
-                      activoAgroId: activo.activoId,
-                      nombreActivo: activo.nombre,
-                    ),
-                  ),
-                ),
-                icon: const Icon(Icons.badge),
-                label: const Text('Profesionales'),
-              ),
-            ),
-            // AF-089: traslados (núcleo común de transporte).
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => TrasladosActivoScreen(
-                      activoAgroId: activo.activoId,
-                      nombreActivo: activo.nombre,
-                    ),
-                  ),
-                ),
-                icon: const Icon(Icons.local_shipping),
-                label: const Text('Traslados'),
-              ),
-            ),
+          ),
+          const SizedBox(height: 10),
+          _secciones(),
+        ],
+      ),
+    );
+  }
 
-                        const Divider(height: 30),
+  // ---------------- RESUMEN ----------------
 
-            _titulo("Economía"),
-
+  Widget _resumen() {
+    final u = activo.ubicacion;
+    final lugar = [u.localidad, u.provincia, u.pais]
+        .where((x) => x.trim().isNotEmpty)
+        .join(', ');
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AgroTema.pizarra,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            activo.nombre,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ),
+          ),
+          if (activo.descripcion.trim().isNotEmpty) ...[
+            const SizedBox(height: 4),
             Text(
-              "Valor solicitado: "
-              "${activo.economia.valorSolicitado} "
-              "${activo.economia.moneda}",
+              activo.descripcion,
+              style: const TextStyle(fontSize: 15, color: AgroTema.crema),
             ),
-
-            Text(
-              "Tipo de operación: "
-              "${activo.economia.tipoOperacion.isEmpty ? 'Sin registrar' : activo.economia.tipoOperacion}",
-            ),
-
-            Text(
-              "Capital requerido: "
-              "${activo.economia.capitalRequerido} "
-              "${activo.economia.moneda}",
-            ),
-
-            Text(
-              "Inversión esperada: "
-              "${activo.economia.inversionEsperada} "
-              "${activo.economia.moneda}",
-            ),
-
-            Text(
-              "Período de evaluación: "
-              "${activo.economia.periodoEvaluacion.isEmpty ? 'Sin registrar' : activo.economia.periodoEvaluacion}",
-            ),
-
-            if (activo.economia.objetivoProyecto.isNotEmpty)
-              Text(
-                "Objetivo: ${activo.economia.objetivoProyecto}",
-              ),
-
-            if (activo.economia.etapaProyecto.isNotEmpty)
-              Text(
-                "Etapa: ${activo.economia.etapaProyecto}",
-              ),
-
-            if (activo.economia.capacidadActual.isNotEmpty)
-              Text(
-                "Capacidad actual: ${activo.economia.capacidadActual}",
-              ),
-
-            if (activo.economia.capacidadProyectada.isNotEmpty)
-              Text(
-                "Capacidad proyectada: ${activo.economia.capacidadProyectada}",
-              ),
-
-            if (activo.economia.ingresosEstimados.isNotEmpty)
-              Text(
-                "Ingresos estimados: ${activo.economia.ingresosEstimados}",
-              ),
-
-            if (activo.economia.costosEstimados.isNotEmpty)
-              Text(
-                "Costos estimados: ${activo.economia.costosEstimados}",
-              ),
-
-            if (activo.economia.rentabilidadDeclarada.isNotEmpty)
-              Text(
-                "Rentabilidad declarada: ${activo.economia.rentabilidadDeclarada}",
-              ),
-
-            if (activo.economia.riesgosIdentificados.isNotEmpty)
-              Text(
-                "Riesgos identificados: ${activo.economia.riesgosIdentificados}",
-              ),
-
-            if (activo.economia.datosEconomicos.isNotEmpty) ...[
-              const SizedBox(height: 12),
-
-              const Text(
-                "Datos económicos trazables",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 8),
-
-              ...activo.economia.datosEconomicos.map(
-                (dato) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        dato.nombreDato,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "Valor: ${dato.valor}",
-                      ),
-                      Text(
-                        "Tipo: ${dato.tipoTemporal.name}",
-                      ),
-                      Text(
-                        "Período: ${dato.periodo}",
-                      ),
-                      if (dato.escenarioId != null &&
-                          dato.escenarioId!.isNotEmpty)
-                        Text(
-                          "Escenario: ${dato.escenarioId}",
-                        ),
-                    ],
-                  ),
+          ],
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(Icons.place, size: 18, color: Color(0xFFF2C08F)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  lugar.isEmpty ? 'Ubicación sin información' : lugar,
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
                 ),
               ),
             ],
-
-            const Divider(height: 30),
-
-            _titulo("Estado del activo"),
-            Text(
-              "Estado interno: "
-              "${activo.estado.name}",
-            ),
-            _titulo("Infraestructura"),
-
-if (activo.infraestructura.isEmpty)
-  const Text("Sin infraestructura registrada")
-else
-  Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: activo.infraestructura.map((infraestructura) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Tipo: ${infraestructura.tipo}"),
-            Text("Nombre: ${infraestructura.nombre}"),
-            Text("Descripción: ${infraestructura.descripcion}"),
-            Text("Cantidad: ${infraestructura.cantidad}"),
-            Text("Estado: ${infraestructura.estado}"),
-            if (infraestructura.moduloProduccionId != null &&
-                infraestructura.moduloProduccionId!.isNotEmpty)
-              Text(
-                "Producción relacionada: "
-                "${infraestructura.moduloProduccionId}",
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: _datoGrande(
+                  Icons.straighten,
+                  u.superficie > 0 ? _numero(u.superficie) : '—',
+                  'Hectáreas',
+                ),
               ),
-          ],
-        ),
-      );
-    }).toList(),
-  ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _datoGrande(
+                  Icons.grass,
+                  activo.produccionPrincipal == null
+                      ? '—'
+                      : _claro(activo.produccionPrincipal!.actividad),
+                  'Actividad',
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _datoGrande(
+                  Icons.photo_library,
+                  '${activo.confianza.cantidadEvidencias}',
+                  'Evidencias',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _chip(
+                u.tieneCoordenadas ? Icons.location_on : Icons.location_off,
+                u.tieneCoordenadas ? 'En el mapa' : 'Sin marcar en el mapa',
+                alerta: !u.tieneCoordenadas,
+              ),
+              _chip(Icons.trending_up,
+                  'Expediente ${_numero(activo.madurez.porcentaje)}%'),
+              _chip(Icons.verified, 'Confianza ${activo.confianza.nivelGeneral}%'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-const Divider(height: 30),
-            Text(
-              "Publicación: "
-              "${activo.estadoPublicacion}",
-            ),
-            Text(
-              activo.visible
-                  ? "Visible públicamente"
-                  : "No visible públicamente",
-            ),
-            const Divider(height: 30),
-            _titulo("Confianza"),
-
-            Text(
-              "Nivel general: "
-              "${activo.confianza.nivelGeneral}%",
-            ),
-            const SizedBox(height: 10),
-
-            const SizedBox(height: 10),
-
-            Text("Evaluación: ${activo.evaluacion.nivelGeneral}%"),
-
-            const SizedBox(height: 8),
-            Text(
-              "Documental: ${activo.evaluacion.documental.estado} "
-              "(${activo.evaluacion.documental.nivel}%)",
-            ),
-            Text(
-              "Productivo: ${activo.evaluacion.productivo.estado} "
-              "(${activo.evaluacion.productivo.nivel}%)",
-            ),
-
-            Text(
-              "Económico: ${activo.evaluacion.economico.estado} "
-              "(${activo.evaluacion.economico.nivel}%)",
-            ),
-
-            Text(
-              "Legal: ${activo.evaluacion.legal.estado} "
-              "(${activo.evaluacion.legal.nivel}%)",
-            ),
-
-            Text(
-              "Profesional: ${activo.evaluacion.profesional.estado} "
-              "(${activo.evaluacion.profesional.nivel}%)",
-            ),
-            const SizedBox(height: 16),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: evaluando ? null : evaluarActivo,
-                icon: evaluando
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.analytics),
-                label: Text(evaluando ? 'Evaluando...' : 'Evaluar confianza'),
+  Widget _datoGrande(IconData icono, String valor, String texto) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icono, size: 18, color: const Color(0xFFF2C08F)),
+          const SizedBox(height: 6),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              valor,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
               ),
             ),
+          ),
+          Text(texto,
+              style: const TextStyle(fontSize: 12, color: AgroTema.crema)),
+        ],
+      ),
+    );
+  }
 
-            const Divider(height: 30),
+  Widget _chip(IconData icono, String texto, {bool alerta = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: alerta
+            ? AgroTema.terracota.withValues(alpha: 0.25)
+            : Colors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icono, size: 16, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(texto,
+              style: const TextStyle(fontSize: 13, color: Colors.white)),
+        ],
+      ),
+    );
+  }
 
-            _titulo("Participantes"),
-
-            if (activo.participantes.isEmpty)
-              const Text("Sin participantes registrados")
-            else
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: activo.participantes.map((participante) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-
-                    child: Text(
-                      "• Usuario: ${participante.usuarioId} "
-                      "(${participante.rol})",
-                    ),
-                  );
-                }).toList(),
-              ),
-            Text(
-              "Evidencias: "
-              "${activo.confianza.cantidadEvidencias}",
-            ),
-            const Divider(height: 30),
-
-            _titulo("Madurez"),
-
-            Text(
-              "Porcentaje: "
-              "${activo.madurez.porcentaje}%",
-            ),
-
-            if (activo.madurez.faltantes.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  const SizedBox(height: 8),
-
-                  const Text(
-                    "Pendientes:",
-
-                    style: TextStyle(fontWeight: FontWeight.bold),
+  /// Un solo próximo paso (regla de diseño: una pantalla, una pregunta).
+  Widget _proximoPaso() {
+    final faltantes = activo.madurez.faltantes;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AgroTema.borde),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.flag, color: AgroTema.terracota),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Próximo paso',
+                  style: TextStyle(
+                      fontSize: 12, color: AgroTema.pizarraSuave),
+                ),
+                Text(
+                  _claro(faltantes.first),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AgroTema.pizarra,
                   ),
+                ),
+                if (faltantes.length > 1)
+                  Text(
+                    'Y ${faltantes.length - 1} '
+                    '${faltantes.length - 1 == 1 ? 'pendiente más' : 'pendientes más'} '
+                    '(ver "Avance del expediente")',
+                    style: const TextStyle(
+                        fontSize: 12, color: AgroTema.pizarraSuave),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                  ...activo.madurez.faltantes.map((e) => Text("• $e")),
+  // ---------------- MÓDULOS (dos columnas) ----------------
+
+  Widget _modulos() {
+    final id = activo.activoId;
+    final nombre = activo.nombre;
+    final modulos = <(IconData, String, String, Color, VoidCallback?)>[
+      (
+        activo.ubicacion.tieneCoordenadas
+            ? Icons.location_on
+            : Icons.add_location_alt,
+        activo.ubicacion.tieneCoordenadas ? 'Mapa' : 'Marcar en el mapa',
+        'Dónde está el campo (privado)',
+        AgroTema.azul,
+        _abrirMapa,
+      ),
+      (
+        Icons.pets,
+        'Producción',
+        'Rodeos, potreros y eventos',
+        AgroTema.verde,
+        () => _abrir(ProduccionActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.verified_user,
+        'Operaciones protegidas',
+        'Ventas, cheques y garantías',
+        AgroTema.pizarra,
+        () => _abrir(OperacionesActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.description,
+        'Documentos',
+        'Escrituras, permisos, certificaciones',
+        AgroTema.terracota,
+        () => _abrir(DocumentosActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.local_shipping,
+        'Traslados',
+        'Salidas de hacienda, granos y más',
+        const Color(0xFFE8893A),
+        () => _abrir(
+            TrasladosActivoScreen(activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.badge,
+        'Profesionales',
+        'Agrónomos, veterinarios, técnicos',
+        AgroTema.azul,
+        () => _abrir(ProfesionalesActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.warning_amber,
+        'Emergencias',
+        'Inundación, sequía, incendio...',
+        AgroTema.rojo,
+        () => _abrir(EmergenciasActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.construction,
+        'Recursos y trabajos',
+        'Próximamente',
+        AgroTema.pizarraSuave,
+        null,
+      ),
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: modulos.length,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 280,
+        mainAxisExtent: 82,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+      ),
+      itemBuilder: (_, i) {
+        final (icono, texto, ayuda, color, alTocar) = modulos[i];
+        final pronto = alTocar == null;
+        return Material(
+          color: pronto ? const Color(0xFFF3EEE5) : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: AgroTema.borde),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: alTocar,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Icon(icono, size: 30, color: color),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          texto,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: pronto
+                                ? AgroTema.pizarraSuave
+                                : AgroTema.pizarra,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          ayuda,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 12, color: AgroTema.pizarraSuave),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!pronto)
+                    const Icon(Icons.chevron_right,
+                        color: AgroTema.pizarraSuave),
                 ],
               ),
-          ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ---------------- SECCIONES QUE SE ABREN ----------------
+
+  Widget _fila(String etiqueta, String valor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 150,
+            child: Text(etiqueta,
+                style: const TextStyle(
+                    fontSize: 14, color: AgroTema.pizarraSuave)),
+          ),
+          Expanded(
+            child: Text(valor,
+                style: const TextStyle(fontSize: 14, color: AgroTema.pizarra)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _seccion(IconData icono, String titulo, List<Widget> contenido,
+      {String? resumen}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: const BorderSide(color: AgroTema.borde),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: ExpansionTile(
+          leading: Icon(icono, color: AgroTema.terracota),
+          title: Text(titulo,
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AgroTema.pizarra)),
+          subtitle: resumen == null
+              ? null
+              : Text(resumen,
+                  style: const TextStyle(
+                      fontSize: 13, color: AgroTema.pizarraSuave)),
+          shape: const Border(),
+          collapsedShape: const Border(),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          children: contenido,
         ),
       ),
     );
   }
 
-  Widget _titulo(String texto) {
-    return Text(
-      texto,
-      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  Widget _secciones() {
+    final s = activo.suelo;
+    final e = activo.economia;
+    final ev = activo.evaluacion;
+    final p = activo.produccionPrincipal;
+
+    return Column(
+      children: [
+        _seccion(Icons.landscape, 'Suelo', [
+          _fila('Estado', _claro(s.estado)),
+          _fila('Textura', _claro(s.textura)),
+          _fila('Drenaje', _claro(s.drenaje)),
+          _fila('pH', s.ph == null ? 'Sin información' : _numero(s.ph!)),
+          _fila('Materia orgánica',
+              s.materiaOrganica == null ? 'Sin información' : _numero(s.materiaOrganica!)),
+          _fila('Evidencias', '${s.evidencias.length}'),
+          if (s.observaciones != null && s.observaciones!.isNotEmpty)
+            _fila('Observaciones', s.observaciones!),
+          if (s.fechaEvaluacion != null)
+            _fila('Evaluado el', '${s.fechaEvaluacion}'),
+        ], resumen: _claro(s.estado)),
+        _seccion(Icons.category, 'Clasificación y producción', [
+          _fila('Tipo de campo', _claro(activo.tipoActivo.name)),
+          _fila('Categorías',
+              activo.categorias.isEmpty ? 'Sin información' : activo.categorias.map(_claro).join(', ')),
+          _fila('Actividad principal', p == null ? 'Sin producción registrada' : _claro(p.actividad)),
+          if (p != null && p.descripcion.trim().isNotEmpty)
+            _fila('Descripción', p.descripcion),
+        ], resumen: p == null ? 'Sin producción registrada' : _claro(p.actividad)),
+        _seccion(Icons.payments, 'Economía', [
+          _fila('Valor solicitado', '${e.valorSolicitado} ${e.moneda}'),
+          _fila('Tipo de operación', _claro(e.tipoOperacion)),
+          _fila('Capital requerido', '${e.capitalRequerido} ${e.moneda}'),
+          _fila('Inversión esperada', '${e.inversionEsperada} ${e.moneda}'),
+          _fila('Período de evaluación', _claro(e.periodoEvaluacion)),
+          if (e.objetivoProyecto.isNotEmpty) _fila('Objetivo', e.objetivoProyecto),
+          if (e.etapaProyecto.isNotEmpty) _fila('Etapa', e.etapaProyecto),
+          if (e.capacidadActual.isNotEmpty) _fila('Capacidad actual', e.capacidadActual),
+          if (e.capacidadProyectada.isNotEmpty) _fila('Capacidad proyectada', e.capacidadProyectada),
+          if (e.ingresosEstimados.isNotEmpty) _fila('Ingresos estimados', e.ingresosEstimados),
+          if (e.costosEstimados.isNotEmpty) _fila('Costos estimados', e.costosEstimados),
+          if (e.rentabilidadDeclarada.isNotEmpty) _fila('Rentabilidad declarada', e.rentabilidadDeclarada),
+          if (e.riesgosIdentificados.isNotEmpty) _fila('Riesgos identificados', e.riesgosIdentificados),
+          if (e.datosEconomicos.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            const Text('Datos económicos trazables',
+                style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 6),
+            for (final dato in e.datosEconomicos)
+              _fila(dato.nombreDato,
+                  '${dato.valor} · ${_claro(dato.tipoTemporal.name)} · ${dato.periodo}'
+                  '${dato.escenarioId != null && dato.escenarioId!.isNotEmpty ? ' · Escenario ${dato.escenarioId}' : ''}'),
+          ],
+        ]),
+        _seccion(Icons.warehouse, 'Infraestructura', [
+          if (activo.infraestructura.isEmpty)
+            const Text('Sin infraestructura registrada',
+                style: TextStyle(color: AgroTema.pizarraSuave))
+          else
+            for (final inf in activo.infraestructura) ...[
+              Text(inf.nombre.isEmpty ? _claro(inf.tipo) : inf.nombre,
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
+              _fila('Tipo', _claro(inf.tipo)),
+              if (inf.descripcion.isNotEmpty) _fila('Descripción', inf.descripcion),
+              _fila('Cantidad', '${inf.cantidad}'),
+              _fila('Estado', _claro(inf.estado)),
+              if (inf.moduloProduccionId != null && inf.moduloProduccionId!.isNotEmpty)
+                _fila('Producción relacionada', inf.moduloProduccionId!),
+              const SizedBox(height: 6),
+            ],
+        ], resumen: '${activo.infraestructura.length} registrada(s)'),
+        _seccion(Icons.verified, 'Confianza', [
+          _fila('Nivel general', '${activo.confianza.nivelGeneral}%'),
+          _fila('Evaluación', '${ev.nivelGeneral}%'),
+          _fila('Documental', '${_claro(ev.documental.estado)} (${ev.documental.nivel}%)'),
+          _fila('Productivo', '${_claro(ev.productivo.estado)} (${ev.productivo.nivel}%)'),
+          _fila('Económico', '${_claro(ev.economico.estado)} (${ev.economico.nivel}%)'),
+          _fila('Legal', '${_claro(ev.legal.estado)} (${ev.legal.nivel}%)'),
+          _fila('Profesional', '${_claro(ev.profesional.estado)} (${ev.profesional.nivel}%)'),
+          _fila('Evidencias', '${activo.confianza.cantidadEvidencias}'),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: evaluando ? null : evaluarActivo,
+              icon: evaluando
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.analytics),
+              label: Text(evaluando ? 'Evaluando...' : 'Evaluar confianza'),
+            ),
+          ),
+        ], resumen: '${activo.confianza.nivelGeneral}%'),
+        _seccion(Icons.trending_up, 'Avance del expediente', [
+          _fila('Completo', '${_numero(activo.madurez.porcentaje)}%'),
+          if (activo.madurez.faltantes.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            const Text('Pendientes:',
+                style: TextStyle(fontWeight: FontWeight.w700)),
+            for (final f in activo.madurez.faltantes)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text('• ${_claro(f)}'),
+              ),
+          ],
+        ], resumen: '${_numero(activo.madurez.porcentaje)}%'),
+        _seccion(Icons.history, 'Historial del campo', [
+          if (activo.historial.isEmpty)
+            const Text('Todavía no hay movimientos registrados.',
+                style: TextStyle(color: AgroTema.pizarraSuave))
+          else
+            for (final h in ([...activo.historial]
+                  ..sort((a, b) => b.fecha.compareTo(a.fecha)))
+                .take(15))
+              _fila(fechaCortaFicha(h.fecha), h.descripcion),
+          if (activo.historial.length > 15)
+            Text('Se muestran los últimos 15 de ${activo.historial.length}.',
+                style: const TextStyle(
+                    fontSize: 12, color: AgroTema.pizarraSuave)),
+        ], resumen: activo.historial.isEmpty
+            ? 'Sin movimientos'
+            : '${activo.historial.length} registro(s)'),
+        _seccion(Icons.group, 'Participantes y publicación', [
+          if (activo.participantes.isEmpty)
+            const Text('Sin participantes registrados',
+                style: TextStyle(color: AgroTema.pizarraSuave))
+          else
+            for (final pa in activo.participantes)
+              _fila(_claro(pa.rol), pa.usuarioId),
+          const SizedBox(height: 6),
+          _fila('Estado interno', _claro(activo.estado.name)),
+          _fila('Publicación', _claro(activo.estadoPublicacion)),
+          _fila('Visibilidad',
+              activo.visible ? 'Visible públicamente' : 'No visible públicamente'),
+        ]),
+      ],
     );
   }
 }
+
+/// Fecha corta para el historial (dd/mm/aaaa).
+String fechaCortaFicha(DateTime f) =>
+    '${f.day.toString().padLeft(2, '0')}/${f.month.toString().padLeft(2, '0')}/${f.year}';

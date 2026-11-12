@@ -7457,3 +7457,24 @@ El Concepto (secc. 8.1) define el transporte como servicio transversal: un núcl
 # 12/11/2026 - Cierre: los 5 🔴 nuevos del Concepto para enero están hechos
 
 AF-095 certificaciones, AF-090 ubicación en el mapa, AF-092 emergencias y "disponible para recibir", AF-093 profesionales invitados y AF-089 traslado simple. Además: pantalla de ingreso y nuevo Inicio con el logo de la demo.
+
+---
+
+# 12/11/2026 - Diseño: app centrada y ficha del campo nueva
+
+**Estado: VALIDADO EN LA APP (Chrome).**
+
+* `lib/main.dart`: en pantallas grandes toda la app queda centrada con ancho máximo 860 (fondo crema a los costados). En el celular no cambia. Vale para todas las pantallas presentes y futuras.
+* `lib/screens/dashboard/dashboard_screen.dart`: el margen del Inicio se calcula sobre el ancho máximo (antes sobre toda la pantalla).
+* `lib/screens/campos/detalle_activo_agro_screen.dart` (rediseño, referencia: demo de Javier en `Desktop\App`): tarjeta oscura con nombre, ubicación, datos grandes (hectáreas, actividad, evidencias) y etiquetas (en el mapa, avance del expediente, confianza); "Próximo paso" (primer faltante); módulos en columnas con descripción corta (Mapa, Producción, Operaciones protegidas, Documentos, Traslados, Profesionales, Emergencias; "Recursos y trabajos" como Próximamente); secciones que se abren (Suelo, Clasificación y producción, Economía, Infraestructura, Confianza con "Evaluar confianza", Avance del expediente, **Historial del campo** con los últimos 15 registros, Participantes y publicación). Nombres internos se muestran claros ("sin_evaluar" → "Sin evaluar"). No se quitó ningún dato ni se cambió la lógica.
+* No se usó la foto de la demo (falta foto real de cada campo).
+
+### Pendiente
+
+* 🟡 Historial unificado que también lea traslados, intervenciones y emergencias (sin dar permisos de escritura sobre el expediente).
+* Foto o imagen satelital del campo en la tarjeta.
+* Pantalla de Recursos y trabajos.
+
+### Evidencia
+
+* Rama `diseno-ancho-app`; capturas de Javier (ficha nueva e historial); `flutter analyze` sin errores.

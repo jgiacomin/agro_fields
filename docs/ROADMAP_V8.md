@@ -3640,3 +3640,17 @@ Próximo: centrar formularios en pantallas grandes; revisar el cuadro de lanzami
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## App centrada y ficha del campo — Estado
+
+🟢 **DISEÑO VALIDADO** (12/11/2026, rama `diseno-ancho-app`)
+
+Toda la app centrada con ancho máximo en la compu. Ficha del campo nueva: resumen, próximo paso, módulos en columnas con descripción e historial del campo visible.
+
+Próximo: revisar el cuadro de lanzamiento (funcionamiento sin señal, inglés, ingresos/monetización, suelo).
+
+Referencia documental:
+
+`docs/BITACORA.md`
