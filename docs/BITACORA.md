@@ -7491,3 +7491,30 @@ Se compararon los documentos de lanzamiento (01/10 y "camino a enero") con el c�
 
 * `docs/MIGRACION_SQL.md` (nuevo, AF-051): por qué el sistema está preparado, cada colección con su tabla SQL, listas que pasan a tablas hijas, la seguridad como trabajo principal (las 224 pruebas como lista de control), pasos para migrar y reglas para no perder la preparación. No se migra ahora (decisión del 06/11/2026).
 * Evidencia del día: GAP-AGRO-01 parte a con `flutter test` 213 y reglas 224/224 (rama `gap-agro-01`).
+
+---
+
+# 12/11/2026 - GAP-AGRO-01: Agricultura (núcleo) — cultivos, siembra y cosecha
+
+**Estado: VALIDADO EN LA APP (prueba manual de Javier).**
+
+### Solución (reutiliza el núcleo productivo, sin sistema nuevo)
+
+* Lote = `UnidadProductiva` tipo `lote` (ya existía). Cultivo de la campaña = `GrupoProductivo` con `actividad: 'agricultura'` y campos nuevos opcionales `cultivo`, `campania`, `material`. Siembra y cosecha = `EventoProductivo` (tipos ya permitidos) con campos nuevos `superficieHa`, `cantidadObtenida`, `unidadMedida` (tn/kg/qq), `material`, `densidad`, `humedad`.
+* `lib/services/calculo_agricola.dart` (nuevo): hectáreas sembradas y cosechadas, toneladas (kg y qq convertidos), **rendimiento calculado** (tn/ha) y **control de coherencia**: aviso si se cosechó más superficie de la que figura sembrada (no bloquea).
+* `firestore.rules`: hectáreas > 0, cosecha ≥ 0, unidad conocida, humedad 0–100. Siembras y cosechas no se editan ni se borran (como todo evento productivo).
+* Pantallas: `produccion_activo_screen.dart` separa Rodeos, **Cultivos** y Lotes/potreros (los cultivos ya no se cuentan como rodeos); `nuevo_cultivo_screen.dart`; `detalle_cultivo_screen.dart` (resumen + "+ Siembra" / "+ Cosecha"); `cultivos_textos.dart`.
+
+### Validación
+
+* `test/agricultura_test.dart`: 8 pruebas (incluye coherencia). Reglas: AGRO-01 a AGRO-08; `npm test` 224/224 (parte a).
+* Prueba manual: Soja 2026/27 - Lote 3, cosecha 100 ha / 350 tn → rendimiento 3,5 tn/ha. La prueba mostró que se podía cosechar sin siembra → se agregó el aviso de coherencia.
+
+### Pendiente
+
+* Publicar reglas (si no se hizo) y probar el aviso.
+* 🟡 Semilla del stock en la siembra; monitoreo y aplicación terrestre (siguiente en el plan).
+
+### Evidencia
+
+* Rama `gap-agro-01`.

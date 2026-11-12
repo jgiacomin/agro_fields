@@ -105,6 +105,18 @@ void main() {
       expect(r.ultimaCosecha, DateTime(2027, 4, 12));
     });
 
+    test('coherencia: avisa si se cosechó más de lo sembrado', () {
+      final sinSiembra = calcularResumenCultivo([
+        evento(TipoEventoProductivo.cosecha, ha: 100, cantidad: 350, unidad: 'tn'),
+      ]);
+      expect(sinSiembra.cosechaSinSiembraSuficiente, isTrue);
+      final bien = calcularResumenCultivo([
+        evento(TipoEventoProductivo.siembra, ha: 100),
+        evento(TipoEventoProductivo.cosecha, ha: 100, cantidad: 350, unidad: 'tn'),
+      ]);
+      expect(bien.cosechaSinSiembraSuficiente, isFalse);
+    });
+
     test('sembrado sin cosechar: en curso y sin rendimiento', () {
       final r = calcularResumenCultivo(
           [evento(TipoEventoProductivo.siembra, ha: 80)]);

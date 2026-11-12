@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../models/activos/grupo_productivo_model.dart';
 import '../../models/activos/unidad_productiva_model.dart';
+import '../../models/activos/evento_productivo_model.dart';
+import '../../services/calculo_agricola.dart';
 import '../../services/calculo_existencias.dart';
 import '../../services/produccion_service.dart';
+import 'cultivos_textos.dart';
+import 'detalle_cultivo_screen.dart';
 import 'detalle_rodeo_screen.dart';
+import 'nuevo_cultivo_screen.dart';
 import 'nuevo_potrero_screen.dart';
 import 'nuevo_rodeo_screen.dart';
 import 'produccion_estilo.dart';
@@ -32,6 +37,14 @@ class _RodeoConExistencias {
   const _RodeoConExistencias(this.grupo, this.existencias);
 }
 
+/// GAP-AGRO-01: un cultivo de la campaña con su resumen calculado.
+class _CultivoConResumen {
+  final GrupoProductivo grupo;
+  final ResumenCultivo resumen;
+
+  const _CultivoConResumen(this.grupo, this.resumen);
+}
+
 class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
   final ProduccionService _servicio = ProduccionService();
 
@@ -39,6 +52,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
   String? error;
   List<UnidadProductiva> unidades = [];
   List<_RodeoConExistencias> rodeos = [];
+  List<_CultivoConResumen> cultivos = [];
 
   Map<String, UnidadProductiva> get unidadesPorId =>
       {for (final u in unidades) u.unidadId: u};
@@ -67,7 +81,22 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
           .toList()
         ..sort((a, b) => a.nombre.compareTo(b.nombre));
 
-      final conExistencias = await Future.wait(grupos.map((g) async {
+      // GAP-AGRO-01: los cultivos no son rodeos (no tienen cabezas).
+      final agricolas = grupos.where((g) => g.esAgricola).toList();
+      final conResumen = await Future.wait(agricolas.map((g) async {
+        final eventos = await _servicio.eventosDeGrupo(
+          activoAgroId: g.activoAgroId,
+          grupoId: g.grupoId,
+        );
+        return _CultivoConResumen(
+          g,
+          calcularResumenCultivo(
+              eventos.where((e) => tiposEventoAgricola.contains(e.tipo))),
+        );
+      }));
+
+      final conExistencias =
+          await Future.wait(grupos.where((g) => !g.esAgricola).map((g) async {
         final existencias = await _servicio.existenciasDeGrupo(g);
         return _RodeoConExistencias(g, existencias);
       }));
@@ -80,6 +109,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
             .toList()
           ..sort((a, b) => a.nombre.compareTo(b.nombre));
         rodeos = conExistencias;
+        cultivos = conResumen;
         cargando = false;
       });
     } catch (e) {
@@ -120,8 +150,13 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                     padding: const EdgeInsets.all(20),
                     children: [
                       Text(
-                        '${widget.nombreActivo} · Ganadería · '
-                        '$totalCabezas cabezas en total',
+                        [
+                          widget.nombreActivo,
+                          if (rodeos.isNotEmpty) '$totalCabezas cabezas',
+                          if (cultivos.isNotEmpty)
+                            '${cultivos.length} '
+                                '${cultivos.length == 1 ? 'cultivo' : 'cultivos'}',
+                        ].join(' · '),
                         style: const TextStyle(
                           fontSize: 14,
                           color: EstiloProduccion.textoSuave,
@@ -137,7 +172,27 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                         ),
                       ...rodeos.map(_tarjetaRodeo),
                       const SizedBox(height: 24),
-                      const TituloSeccion('Potreros y corrales'),
+                      Row(
+                        children: [
+                          const Expanded(child: TituloSeccion('Cultivos')),
+                          TextButton(
+                            onPressed: () => abrir(NuevoCultivoScreen(
+                              activoAgroId: widget.activoAgroId,
+                              unidades: unidades,
+                            )),
+                            child: const Text('+ Nuevo cultivo'),
+                          ),
+                        ],
+                      ),
+                      if (cultivos.isEmpty)
+                        const Text(
+                          'Todavía no hay cultivos. Cargá un lote y después '
+                          'tocá "Nuevo cultivo".',
+                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        ),
+                      ...cultivos.map(_tarjetaCultivo),
+                      const SizedBox(height: 24),
+                      const TituloSeccion('Lotes, potreros y corrales'),
                       if (unidades.isEmpty)
                         const Text(
                           'Todavía no hay potreros. Cargá al menos uno para '
@@ -175,7 +230,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: BotonGrande(
-                  texto: '+ Nuevo potrero',
+                  texto: '+ Lote o potrero',
                   contorno: true,
                   onPressed: () => abrir(NuevoPotreroScreen(
                     activoAgroId: widget.activoAgroId,
@@ -234,6 +289,66 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                             ? '1 cuenta para revisar'
                             : '$discrepancias cuentas para revisar',
                         style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: EstiloProduccion.rojo,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right,
+                  color: EstiloProduccion.textoSuave),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _tarjetaCultivo(_CultivoConResumen c) {
+    final r = c.resumen;
+    final detalle = r.haSembradas == 0 && r.haCosechadas == 0
+        ? 'Sin sembrar todavía'
+        : r.rendimiento != null
+            ? '${numeroAgro(r.haCosechadas)} ha cosechadas · '
+                '${numeroAgro(r.toneladas)} tn · '
+                '${numeroAgro(r.rendimiento!)} tn/ha'
+            : '${numeroAgro(r.haSembradas)} ha sembradas · en curso';
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: TarjetaBlanca(
+        onTap: () => abrir(DetalleCultivoScreen(
+          grupo: c.grupo,
+          unidades: unidades,
+        )),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.grass, color: EstiloProduccion.verde),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      c.grupo.nombre,
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      detalle,
+                      style: const TextStyle(
+                          fontSize: 14, color: EstiloProduccion.textoSuave),
+                    ),
+                    if (r.cosechaSinSiembraSuficiente) ...[
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Revisar: cosecha mayor que lo sembrado',
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: EstiloProduccion.rojo,

@@ -27,6 +27,11 @@ class ResumenCultivo {
 
   /// Sembrado y sin cosechar todavía.
   bool get enCurso => haSembradas > 0 && haCosechadas == 0;
+
+  /// Control de coherencia: se cosechó más superficie de la que figura
+  /// sembrada (por ejemplo, falta cargar la siembra). No se bloquea:
+  /// se avisa, igual que en los traslados.
+  bool get cosechaSinSiembraSuficiente => haCosechadas > haSembradas;
 }
 
 ResumenCultivo calcularResumenCultivo(Iterable<EventoProductivo> eventos) {

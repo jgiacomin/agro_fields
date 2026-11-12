@@ -3654,3 +3654,56 @@ Próximo: revisar el cuadro de lanzamiento (funcionamiento sin señal, inglés, 
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## PLAN DE LANZAMIENTO — revisado el 12/11/2026
+
+Comparación de los documentos "cuadro de lanzamiento" (01/10) y "camino a enero 2027" con el código real. Aprobado por Javier el 12/11/2026.
+
+### ✅ Ya funcionando
+
+Activo Agro y expediente (historial y auditoría) · Documentos con vigencia, archivos y certificaciones · Permisos (encargado y profesional invitado) · Marketplace con resumen público separado y chat · Producción ganadera (rodeos, potreros, altas, bajas, movimientos, categoría, sanidad) · Operaciones protegidas · Emergencias · Mapa · Traslados · Seguridad 216/216 publicada · Diseño de ingreso, Inicio y ficha.
+
+### 🔴 Falta para enero (en este orden)
+
+1. Agricultura (núcleo): lote, campaña, siembra, cosecha — reutiliza unidades y eventos productivos ("siembra" y "cosecha" ya preparados).
+2. Monitoreo (motor común), con "fuente del dato".
+3. Aplicación terrestre.
+4. Stock e insumos ("Recursos y trabajos") — modelo y reglas existen; falta pantalla.
+5. Economía (núcleo): gastos por categoría, mes y actividad (sin contabilidad).
+6. Suelo y pesajes (pantallas sobre datos existentes).
+7. Seguridad restante: `solicitudes_contacto`, `inversiones`, `publicaciones_inversion`.
+8. Funcionamiento sin señal (configurar y probar).
+9. Términos de uso y privacidad.
+10. Plan gratuito para los primeros 100 usuarios y precio.
+11. Datos de demo, QA integral, Android y web publicados.
+12. Inglés: 🟡 después de enero (decisión de Javier, 12/11/2026).
+
+### 📅 Calendario
+
+* 13–20/11: Agricultura + Monitoreo.
+* 21–27/11: Aplicación terrestre + Stock e insumos.
+* 28/11–04/12: Economía + Suelo + Pesajes.
+* 05–11/12: Seguridad restante + Sin señal + Términos y privacidad.
+* 12–18/12: Plan gratuito y precio + Datos de demo (+ inglés básico si alcanza).
+* 19–31/12: QA integral, Android y web publicados, copias de seguridad, piloto con usuarios reales.
+* Enero 2027: lanzamiento (corregir, observar, mejorar; sin módulos nuevos).
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Agricultura — Estado
+
+🟢 **GAP-AGRO-01 VALIDADO** (12/11/2026, rama `gap-agro-01`)
+
+Cultivos de la campaña sobre el núcleo productivo: siembra, cosecha, rendimiento calculado y aviso si la cosecha supera lo sembrado.
+
+Próximo según el plan: **Monitoreo** (motor común).
+
+Referencia documental:
+
+`docs/BITACORA.md`
