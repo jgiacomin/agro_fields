@@ -7260,3 +7260,19 @@ El Concepto pide guardar certificaciones (bienestar animal, orgánico, etc.) con
 ### Evidencia
 
 * Rama `gap-cert-01`.
+
+---
+
+# 12/11/2026 - Diseño: pantalla de ingreso
+
+**Estado: VALIDADO EN LA APP (Chrome).**
+
+* `lib/widgets/logo_agro_fields.dart` (nuevo): logo dibujado por código (sol sobre surcos, terracota y pizarra), reutilizable en otras pantallas. Sin archivos de imagen ni cambios en `pubspec.yaml`.
+* `lib/screens/auth/login_screen.dart`: fondo de atardecer, logo, AGRO FIELDS, lema "Conectar con confianza. Crecer con datos.", botón "Ingresar con Google" con ruedita mientras ingresa (evita doble toque), aviso si no se completa y la frase "El campo también tiene futuro."
+* Decisión de Javier (12/11/2026): el nombre para los usuarios es **"Agro Fields"**, sin "V8". V8 queda como nombre interno del proyecto (documentos, Bitácora, Matriz).
+* `AuthService` sin cambios. Sin cambios en datos ni reglas.
+* Pendiente: revisar la marca "Agro Fields" en INPI (Argentina) y DINAPI (Paraguay), y el dominio, antes del lanzamiento.
+
+### Evidencia
+
+* Rama `diseno-ingreso-v8`; prueba manual de Javier en Chrome.

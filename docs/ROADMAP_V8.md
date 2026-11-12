@@ -3554,3 +3554,17 @@ Próximo 🔴: AF-090 ubicación del campo en el mapa, AF-092 emergencia + "disp
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Pantalla de ingreso — Estado
+
+🟢 **DISEÑO DE INGRESO VALIDADO** (12/11/2026, rama `diseno-ingreso-v8`)
+
+Atardecer, logo dibujado, AGRO FIELDS (sin "V8" para los usuarios), lema y botón "Ingresar con Google". Probada a mano en Chrome.
+
+Pendiente: revisar la marca en INPI/DINAPI y el dominio antes de enero.
+
+Referencia documental:
+
+`docs/BITACORA.md`
