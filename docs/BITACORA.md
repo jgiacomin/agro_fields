@@ -7478,3 +7478,16 @@ AF-095 certificaciones, AF-090 ubicación en el mapa, AF-092 emergencias y "disp
 ### Evidencia
 
 * Rama `diseno-ancho-app`; capturas de Javier (ficha nueva e historial); `flutter analyze` sin errores.
+
+---
+
+# 12/11/2026 - Plan de lanzamiento revisado
+
+Se compararon los documentos de lanzamiento (01/10 y "camino a enero") con el código real. Orden aprobado por Javier: Agricultura → Monitoreo → Aplicación terrestre → Stock e insumos → Economía → Suelo y pesajes → Seguridad restante → Sin señal → Términos y privacidad → Plan gratuito y precio → Demo, QA y publicación. Inglés pasa a 🟡 después de enero. Calendario en `docs/ROADMAP_V8.md` ("PLAN DE LANZAMIENTO — revisado el 12/11/2026").
+
+---
+
+# 12/11/2026 - Documento: camino de migración a SQL
+
+* `docs/MIGRACION_SQL.md` (nuevo, AF-051): por qué el sistema está preparado, cada colección con su tabla SQL, listas que pasan a tablas hijas, la seguridad como trabajo principal (las 224 pruebas como lista de control), pasos para migrar y reglas para no perder la preparación. No se migra ahora (decisión del 06/11/2026).
+* Evidencia del día: GAP-AGRO-01 parte a con `flutter test` 213 y reglas 224/224 (rama `gap-agro-01`).
