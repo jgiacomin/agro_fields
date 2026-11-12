@@ -16,6 +16,8 @@ import '../campos/campos_screen.dart';
 
 import '../solicitudes/solicitudes_recibidas_screen.dart';
 import '../chat/chat_page.dart';
+import '../profesionales/campos_profesional_screen.dart';
+import '../profesionales/mi_codigo_profesional_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({
@@ -313,6 +315,25 @@ debugPrint(
                 onTap: () {
                   Navigator.of(hoja).pop();
                   abrirCamposDisponibles();
+                },
+              ),
+              // AF-093: para agrónomos, veterinarios y técnicos.
+              ListTile(
+                leading: const Icon(Icons.badge_outlined),
+                title: const Text('Campos donde soy profesional'),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const CamposProfesionalScreen()));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.qr_code_2),
+                title: const Text('Mi código de profesional'),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const MiCodigoProfesionalScreen()));
                 },
               ),
               const Divider(),

@@ -7378,3 +7378,40 @@ El Concepto pide registrar cada emergencia en la historia del campo ("de la aler
 ### Evidencia
 
 * Rama `gap-emerg-01`.
+
+---
+
+# 12/11/2026 - GAP-PROF-01 (AF-093): invitar al profesional y registrar intervenciones
+
+**Estado: VALIDADO (reglas en emulador + reglas publicadas + prueba manual).**
+
+### Problema
+
+El Concepto pide que el productor pueda invitar a su agrónomo, veterinario o técnico, y que sus intervenciones queden en el campo con evidencia. Faltaba: cómo invitar (por privacidad nadie busca usuarios por email), que el profesional vea dónde lo invitaron, que el dueño vea a quién invitó, y dónde guardar las intervenciones.
+
+### Solución
+
+* **Invitación con código** (decisión de Javier: lo más seguro y simple). El profesional comparte su código (Menú → "Mi código de profesional"); el dueño lo pega en ficha del campo → "Profesionales". El código solo no da acceso a nada.
+* Se **reutilizan las autorizaciones del paso 3**: rol `profesional`, permiso `crear`, ámbito `expedienteProductivo`, motivo `invitacion_profesional`. El nombre del campo viaja en `ambito.descripcion` (el profesional NO lee el expediente). Revocar = estado `revocada` (no se borra).
+* `firestore.rules`: `autorizaciones_activos` permite listar al autorizado SUS autorizaciones y al dueño las de SU campo (antes solo el admin). Colección nueva `intervenciones_profesionales`: crea solo el profesional con autorización activa (o el dueño), a su nombre, tipo válido, con descripción y siempre `declarado`; la ven el dueño y quien la cargó; **no se edita ni se borra**.
+* `lib/models/activos/intervencion_profesional_model.dart` y `lib/services/profesional_service.dart` (nuevos).
+* `lib/screens/profesionales/` (nuevo): `profesionales_activo_screen.dart` (dueño: invitar, quitar acceso, ver intervenciones), `mi_codigo_profesional_screen.dart`, `campos_profesional_screen.dart`, `intervenciones_screen.dart` (registrar y listar) y `profesionales_textos.dart`.
+* `detalle_activo_agro_screen.dart`: botón "Profesionales". `dashboard_screen.dart`: dos opciones nuevas en el Menú.
+* El título profesional queda **declarado** hasta que se verifique. Agro Fields facilita, no reemplaza.
+
+### Validación
+
+* `test/profesional_test.dart`: 6 pruebas nuevas.
+* `test_rules/rules.test.mjs`: 16 pruebas nuevas (PROF-01 a PROF-16). **npm test: 200 de 200.**
+* Reglas publicadas en `agro-conecta-887df` ("Deploy complete!").
+* Prueba manual con dos cuentas: el profesional invitado ve el campo en "Campos donde soy profesional".
+
+### Pendiente
+
+* 🟡 Adjuntar archivos a la intervención (informe en PDF, fotos).
+* 🟢 Directorio de profesionales e instituciones, perfiles y verificación de títulos.
+* La consulta de intervenciones del dueño trae todas; con mucho volumen, paginar.
+
+### Evidencia
+
+* Rama `gap-prof-01`.

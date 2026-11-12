@@ -3610,3 +3610,17 @@ Próximo 🔴: AF-093 invitar al profesional y AF-089 traslado simple.
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Profesionales invitados — Estado
+
+🟢 **GAP-PROF-01 (AF-093) VALIDADO** (12/11/2026, rama `gap-prof-01`)
+
+El dueño invita a su agrónomo, veterinario o técnico con un código; el profesional registra visitas, recomendaciones, diagnósticos e informes (solo agregar, declarados) sin ver el resto del expediente. El dueño puede quitar el acceso. Reglas: 200/200 y publicadas.
+
+Próximo 🔴: AF-089 traslado simple (sobre el núcleo común de transporte).
+
+Referencia documental:
+
+`docs/BITACORA.md`

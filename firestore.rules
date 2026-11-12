@@ -602,7 +602,14 @@ service cloud.firestore {
                 == request.auth.uid
             ));
 
-      allow list: if esAdmin();
+      // AF-093 (12/11/2026): el autorizado lista SUS autorizaciones
+      // (consulta por usuarioAutorizado) y el dueño las de SU campo
+      // (consulta por activoId). Nadie ve las de otros.
+      allow list: if esAdmin()
+        || (logueado()
+            && (resource.data.usuarioAutorizado == request.auth.uid
+                || activoDe(resource.data.activoId).propietarioId
+                     == request.auth.uid));
 
       allow create: if esAdmin()
         || (
@@ -650,6 +657,39 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+    // -----------------------------------------------------------------
+    // INTERVENCIONES PROFESIONALES (AF-093, GAP-PROF-01, 12/11/2026)
+    // El profesional invitado (autorizacion ACTIVA "crear" en el ambito
+    // "expedienteProductivo") registra visitas, recomendaciones, etc.
+    // NO lee el expediente: solo carga lo suyo. Las ven el dueno (o quien
+    // cargo el expediente) y quien las cargo. Son de SOLO AGREGAR.
+    // El titulo profesional queda "declarado" hasta que se verifique.
+    // -----------------------------------------------------------------
+    function tiposIntervencion() {
+      return ['visita', 'recomendacion', 'diagnostico', 'informe', 'otro'];
+    }
+
+    match /intervenciones_profesionales/{intervencionId} {
+      allow get, list: if esAdmin()
+        || (logueado()
+            && (resource.data.profesionalId == request.auth.uid
+                || puedeActivo(resource.data.activoAgroId)));
+
+      allow create: if logueado()
+        && request.resource.data.intervencionId == intervencionId
+        && request.resource.data.profesionalId == request.auth.uid
+        && request.resource.data.activoAgroId is string
+        && request.resource.data.tipo in tiposIntervencion()
+        && request.resource.data.descripcion is string
+        && request.resource.data.descripcion.size() > 0
+        && request.resource.data.estado == 'declarado'
+        && (puedeActivo(request.resource.data.activoAgroId)
+            || tieneAutorizacion(request.resource.data.activoAgroId,
+                 'crear', 'expedienteProductivo'));
+
+      allow update, delete: if false;
+    }
+
     // -----------------------------------------------------------------
     // PRODUCCION (paso 6a, GAP-PROD-01, 10/11/2026)
     // Tres colecciones colgadas del Activo (activoAgroId):

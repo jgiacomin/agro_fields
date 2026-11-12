@@ -1191,3 +1191,119 @@ test('OPER-24. Con "ver operaciones" el encargado lista los eventos pero NO crea
   await assertSucceeds(getDocs(q));
   await assertFails(setDoc(doc(como(ENCARGADO), 'eventos_operacion/eo2'), eventoOperDe(ENCARGADO, { eventoId: 'eo2' })));
 });
+
+// =====================================================================
+// PROF. PROFESIONALES INVITADOS (AF-093, GAP-PROF-01, 12/11/2026)
+// Invitación = autorización "crear" en "expedienteProductivo" con rol
+// profesional. El profesional registra intervenciones (solo agregar) y
+// NO lee el expediente.
+// =====================================================================
+
+const PROFESIONAL = 'profesional';
+
+const invitarProfesional = (extra = {}) => cargar((db) =>
+  setDoc(doc(db, 'autorizaciones_activos', idAut('crear', 'expedienteProductivo', PROFESIONAL)),
+    autorizacionDe('crear', 'expedienteProductivo', {
+      usuarioAutorizado: PROFESIONAL, rol: 'profesional', motivo: 'invitacion_profesional', ...extra,
+    })));
+
+const intervencionDe = (uid, extra = {}) => ({
+  intervencionId: 'iv1', activoAgroId: 'a1', profesionalId: uid, profesionalNombre: 'Ing. Pérez',
+  tipo: 'visita', descripcion: 'Recorrida del lote 3', fecha: new Date(), estado: 'declarado',
+  fechaRegistro: new Date(), ...extra,
+});
+
+const cargarIntervencion = () => cargar((db) =>
+  setDoc(doc(db, 'intervenciones_profesionales/iv1'), intervencionDe(PROFESIONAL)));
+
+test('PROF-01. El profesional invitado registra una intervención [PERMITIDO]', async () => {
+  await invitarProfesional();
+  await assertSucceeds(setDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), intervencionDe(PROFESIONAL)));
+});
+
+test('PROF-02. Sin invitación NO registra intervenciones [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), intervencionDe(PROFESIONAL)));
+});
+
+test('PROF-03. Con la invitación revocada NO registra [PROHIBIDO]', async () => {
+  await invitarProfesional({ estado: 'revocada' });
+  await assertFails(setDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), intervencionDe(PROFESIONAL)));
+});
+
+test('PROF-04. NO registra a nombre de otro profesional [PROHIBIDO]', async () => {
+  await invitarProfesional();
+  await assertFails(setDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), intervencionDe(OTRO)));
+});
+
+test('PROF-05. NO registra un tipo inventado ni sin descripción [PROHIBIDO]', async () => {
+  await invitarProfesional();
+  await assertFails(setDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), intervencionDe(PROFESIONAL, { tipo: 'magia' })));
+  await assertFails(setDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), intervencionDe(PROFESIONAL, { descripcion: '' })));
+});
+
+test('PROF-06. NO se carga como verificada [PROHIBIDO]', async () => {
+  await invitarProfesional();
+  await assertFails(setDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), intervencionDe(PROFESIONAL, { estado: 'verificado' })));
+});
+
+test('PROF-07. Una intervención NO se edita ni se borra [PROHIBIDO]', async () => {
+  await invitarProfesional();
+  await cargarIntervencion();
+  await assertFails(updateDoc(doc(como(PROFESIONAL), 'intervenciones_profesionales/iv1'), { descripcion: 'otra cosa' }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'intervenciones_profesionales/iv1')));
+});
+
+test('PROF-08. El dueño ve las intervenciones de su campo [PERMITIDO]', async () => {
+  await cargarIntervencion();
+  const q = query(collection(como(DUENO), 'intervenciones_profesionales'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('PROF-09. Otro usuario NO ve las intervenciones [PROHIBIDO]', async () => {
+  await cargarIntervencion();
+  await assertFails(getDoc(doc(como(OTRO), 'intervenciones_profesionales/iv1')));
+  const q = query(collection(como(OTRO), 'intervenciones_profesionales'), where('activoAgroId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
+
+test('PROF-10. El profesional ve SUS intervenciones del campo [PERMITIDO]', async () => {
+  await invitarProfesional();
+  await cargarIntervencion();
+  const q = query(collection(como(PROFESIONAL), 'intervenciones_profesionales'),
+    where('activoAgroId', '==', 'a1'), where('profesionalId', '==', PROFESIONAL));
+  await assertSucceeds(getDocs(q));
+});
+
+test('PROF-11. El profesional NO lee el expediente del campo [PROHIBIDO]', async () => {
+  await invitarProfesional();
+  await assertFails(getDoc(doc(como(PROFESIONAL), 'activos_agro/a1')));
+});
+
+test('PROF-12. El profesional lista SUS invitaciones [PERMITIDO]', async () => {
+  await invitarProfesional();
+  const q = query(collection(como(PROFESIONAL), 'autorizaciones_activos'), where('usuarioAutorizado', '==', PROFESIONAL));
+  await assertSucceeds(getDocs(q));
+});
+
+test('PROF-13. El profesional NO lista las autorizaciones de un campo [PROHIBIDO]', async () => {
+  await invitarProfesional();
+  const q = query(collection(como(PROFESIONAL), 'autorizaciones_activos'), where('activoId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
+
+test('PROF-14. El dueño lista las autorizaciones de su campo [PERMITIDO]', async () => {
+  await invitarProfesional();
+  const q = query(collection(como(DUENO), 'autorizaciones_activos'), where('activoId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('PROF-15. Otro usuario NO lista las autorizaciones del campo [PROHIBIDO]', async () => {
+  await invitarProfesional();
+  const q = query(collection(como(OTRO), 'autorizaciones_activos'), where('activoId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
+
+test('PROF-16. El dueño invita a un profesional con el nombre armado [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('crear', 'expedienteProductivo', PROFESIONAL)),
+    autorizacionDe('crear', 'expedienteProductivo', { usuarioAutorizado: PROFESIONAL, rol: 'profesional' })));
+});
