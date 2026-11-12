@@ -57,6 +57,16 @@ const Set<TipoEventoProductivo> tiposEventoLanzamiento = {
   TipoEventoProductivo.sanidad,
 };
 
+/// GAP-AGRO-01 (12/11/2026): eventos de agricultura que ofrece la app.
+/// (No se suman a tiposEventoLanzamiento para no mostrarlos en los rodeos.)
+const Set<TipoEventoProductivo> tiposEventoAgricola = {
+  TipoEventoProductivo.siembra,
+  TipoEventoProductivo.cosecha,
+};
+
+/// Unidades para lo cosechado.
+const List<String> unidadesCosecha = ['tn', 'kg', 'qq'];
+
 class EventoProductivo {
   // Datos comunes a todo evento.
   final String eventoId;
@@ -90,6 +100,25 @@ class EventoProductivo {
   /// movimiento de stock que lo hizo.
   final String? movimientoStockId;
 
+  // GAP-AGRO-01: datos de siembra y cosecha (vacíos si no aplican).
+  /// Hectáreas sembradas o cosechadas.
+  final double? superficieHa;
+
+  /// Lo cosechado (con decimales; la cantidad entera es para animales).
+  final double? cantidadObtenida;
+
+  /// Unidad de lo cosechado: tn, kg o qq.
+  final String? unidadMedida;
+
+  /// Variedad o híbrido sembrado.
+  final String? material;
+
+  /// Densidad de siembra (texto libre: "70.000 pl/ha", "60 kg/ha").
+  final String? densidad;
+
+  /// Humedad del grano al cosechar (%).
+  final double? humedad;
+
   const EventoProductivo({
     required this.eventoId,
     required this.activoAgroId,
@@ -116,7 +145,28 @@ class EventoProductivo {
     this.dosis,
     this.responsable,
     this.movimientoStockId,
+    this.superficieHa,
+    this.cantidadObtenida,
+    this.unidadMedida,
+    this.material,
+    this.densidad,
+    this.humedad,
   });
+
+  /// Lo cosechado pasado a toneladas (null si no hay dato o unidad).
+  double? get toneladas {
+    final c = cantidadObtenida;
+    if (c == null) return null;
+    switch (unidadMedida) {
+      case 'tn':
+        return c;
+      case 'kg':
+        return c / 1000;
+      case 'qq':
+        return c / 10;
+    }
+    return null;
+  }
 
   bool get esDelLanzamiento => tiposEventoLanzamiento.contains(tipo);
 
@@ -171,6 +221,26 @@ class EventoProductivo {
           errores.add('La cantidad tiene que ser mayor a cero.');
         }
         break;
+      case TipoEventoProductivo.siembra:
+        if (superficieHa == null || superficieHa! <= 0) {
+          errores.add('Las hectáreas sembradas tienen que ser mayores a cero.');
+        }
+        if (vacio(unidadId)) errores.add('Falta el lote.');
+        break;
+      case TipoEventoProductivo.cosecha:
+        if (superficieHa == null || superficieHa! <= 0) {
+          errores.add('Las hectáreas cosechadas tienen que ser mayores a cero.');
+        }
+        if (cantidadObtenida == null || cantidadObtenida! < 0) {
+          errores.add('Falta cuánto se cosechó.');
+        }
+        if (!unidadesCosecha.contains(unidadMedida)) {
+          errores.add('Falta la unidad (tn, kg o qq).');
+        }
+        if (humedad != null && (humedad! < 0 || humedad! > 100)) {
+          errores.add('La humedad tiene que estar entre 0 y 100.');
+        }
+        break;
       default:
         // Tipos preparados: por ahora solo se piden los datos comunes.
         break;
@@ -212,6 +282,12 @@ class EventoProductivo {
       dosis: map['dosis'] as String?,
       responsable: map['responsable'] as String?,
       movimientoStockId: map['movimientoStockId'] as String?,
+      superficieHa: (map['superficieHa'] as num?)?.toDouble(),
+      cantidadObtenida: (map['cantidadObtenida'] as num?)?.toDouble(),
+      unidadMedida: map['unidadMedida'] as String?,
+      material: map['material'] as String?,
+      densidad: map['densidad'] as String?,
+      humedad: (map['humedad'] as num?)?.toDouble(),
     );
   }
 
@@ -242,6 +318,12 @@ class EventoProductivo {
       'dosis': dosis,
       'responsable': responsable,
       'movimientoStockId': movimientoStockId,
+      'superficieHa': superficieHa,
+      'cantidadObtenida': cantidadObtenida,
+      'unidadMedida': unidadMedida,
+      'material': material,
+      'densidad': densidad,
+      'humedad': humedad,
     };
   }
 

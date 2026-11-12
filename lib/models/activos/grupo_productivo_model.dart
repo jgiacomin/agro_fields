@@ -50,6 +50,20 @@ const List<String> categoriasGanaderasBase = [
   'novillo',
 ];
 
+/// GAP-AGRO-01 (12/11/2026): cultivos base de agricultura. Como las
+/// categorías ganaderas, el cultivo es texto: el productor puede usar otro.
+const List<String> cultivosBase = [
+  'soja',
+  'maiz',
+  'trigo',
+  'girasol',
+  'sorgo',
+  'algodon',
+  'arroz',
+  'pastura',
+  'otro',
+];
+
 class GrupoProductivo {
   final String grupoId;
   final String activoAgroId;
@@ -75,6 +89,14 @@ class GrupoProductivo {
 
   final String? observaciones;
 
+  // GAP-AGRO-01: en agricultura el grupo es "el cultivo de la campaña"
+  // (ej.: Soja 2026/27 en el Lote 3). En ganadería quedan vacíos.
+  final String? cultivo;
+  final String? campania;
+
+  /// Variedad o híbrido declarado.
+  final String? material;
+
   const GrupoProductivo({
     required this.grupoId,
     required this.activoAgroId,
@@ -90,7 +112,12 @@ class GrupoProductivo {
     this.cicloId,
     this.estado = EstadoGrupoProductivo.activo,
     this.observaciones,
+    this.cultivo,
+    this.campania,
+    this.material,
   });
+
+  bool get esAgricola => actividad == 'agricultura';
 
   factory GrupoProductivo.fromMap(Map<String, dynamic> map, String id) {
     return GrupoProductivo(
@@ -113,6 +140,9 @@ class GrupoProductivo {
       creadoPor: map['creadoPor'] as String? ?? '',
       fechaCreacion: _leerFecha(map['fechaCreacion']),
       observaciones: map['observaciones'] as String?,
+      cultivo: map['cultivo'] as String?,
+      campania: map['campania'] as String?,
+      material: map['material'] as String?,
     );
   }
 
@@ -132,6 +162,9 @@ class GrupoProductivo {
       'creadoPor': creadoPor,
       'fechaCreacion': Timestamp.fromDate(fechaCreacion),
       'observaciones': observaciones,
+      'cultivo': cultivo,
+      'campania': campania,
+      'material': material,
     };
   }
 

@@ -817,7 +817,21 @@ service cloud.firestore {
         // Si dice una cantidad, tiene que ser un entero mayor a cero.
         && (request.resource.data.get('cantidad', null) == null
             || (request.resource.data.cantidad is int
-                && request.resource.data.cantidad > 0));
+                && request.resource.data.cantidad > 0))
+        // GAP-AGRO-01: hectareas mayores a cero, lo cosechado no negativo,
+        // unidad conocida y humedad entre 0 y 100 (si vienen).
+        && (request.resource.data.get('superficieHa', null) == null
+            || (request.resource.data.superficieHa is number
+                && request.resource.data.superficieHa > 0))
+        && (request.resource.data.get('cantidadObtenida', null) == null
+            || (request.resource.data.cantidadObtenida is number
+                && request.resource.data.cantidadObtenida >= 0))
+        && (request.resource.data.get('unidadMedida', null) == null
+            || request.resource.data.unidadMedida in ['tn', 'kg', 'qq'])
+        && (request.resource.data.get('humedad', null) == null
+            || (request.resource.data.humedad is number
+                && request.resource.data.humedad >= 0
+                && request.resource.data.humedad <= 100));
 
       allow update, delete: if false;
     }

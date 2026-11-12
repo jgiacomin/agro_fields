@@ -1418,3 +1418,73 @@ test('MOV-16. El encargado con "modificar movimientos" marca entregado a su nomb
   await assertSucceeds(updateDoc(doc(como(ENCARGADO), 'movimientos/mv1'),
     { estado: 'entregado', cantidadRecibida: 50, fechaEntrega: new Date(), actualizadoPor: ENCARGADO, fechaActualizacion: new Date() }));
 });
+
+// =====================================================================
+// AGRO. AGRICULTURA (GAP-AGRO-01, 12/11/2026)
+// Reutiliza grupos y eventos productivos: siembra y cosecha.
+// =====================================================================
+
+const cargarCultivo = () => cargar((db) =>
+  setDoc(doc(db, 'grupos_productivos/cul1'), {
+    grupoId: 'cul1', activoAgroId: 'a1', actividad: 'agricultura', nombre: 'Soja 2026/27',
+    cultivo: 'soja', campania: '2026/27', estado: 'activo', creadoPor: DUENO, fechaCreacion: new Date(),
+  }));
+
+const eventoAgroDe = (extra = {}) => ({
+  eventoId: 'ev_agro', activoAgroId: 'a1', grupoId: 'cul1', unidadId: 'lote3',
+  tipo: 'siembra', fechaHecho: new Date(), fechaCarga: new Date(), cargadoPor: DUENO,
+  estadoDato: 'declarado', superficieHa: 100, ...extra,
+});
+
+test('AGRO-01. El dueño crea un cultivo de la campaña [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'grupos_productivos/cul1'), {
+    grupoId: 'cul1', activoAgroId: 'a1', actividad: 'agricultura', nombre: 'Soja 2026/27',
+    cultivo: 'soja', campania: '2026/27', estado: 'activo', creadoPor: DUENO, fechaCreacion: new Date(),
+  }));
+});
+
+test('AGRO-02. El dueño registra una siembra [PERMITIDO]', async () => {
+  await cargarCultivo();
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'), eventoAgroDe()));
+});
+
+test('AGRO-03. El dueño registra una cosecha en toneladas [PERMITIDO]', async () => {
+  await cargarCultivo();
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'),
+    eventoAgroDe({ tipo: 'cosecha', cantidadObtenida: 350.5, unidadMedida: 'tn', humedad: 13.5 })));
+});
+
+test('AGRO-04. NO se registran hectáreas en cero o negativas [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'), eventoAgroDe({ superficieHa: 0 })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'), eventoAgroDe({ superficieHa: -5 })));
+});
+
+test('AGRO-05. NO se registra una cosecha negativa, unidad inventada o humedad imposible [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'),
+    eventoAgroDe({ tipo: 'cosecha', cantidadObtenida: -1, unidadMedida: 'tn' })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'),
+    eventoAgroDe({ tipo: 'cosecha', cantidadObtenida: 10, unidadMedida: 'bolsones' })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'),
+    eventoAgroDe({ tipo: 'cosecha', cantidadObtenida: 10, unidadMedida: 'tn', humedad: 140 })));
+});
+
+test('AGRO-06. Otro usuario NO registra siembras en un campo ajeno [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(OTRO), 'eventos_productivos/ev_agro'), eventoAgroDe({ cargadoPor: OTRO })));
+});
+
+test('AGRO-07. Una siembra NO se edita ni se borra [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await cargar((db) => setDoc(doc(db, 'eventos_productivos/ev_agro'), eventoAgroDe()));
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_productivos/ev_agro'), { superficieHa: 200 }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'eventos_productivos/ev_agro')));
+});
+
+test('AGRO-08. El encargado con "crear producción" registra una cosecha [PERMITIDO]', async () => {
+  await cargarCultivo();
+  await darAutorizacion('crear', 'produccion');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev_agro'),
+    eventoAgroDe({ tipo: 'cosecha', cantidadObtenida: 300, unidadMedida: 'tn', cargadoPor: ENCARGADO })));
+});
