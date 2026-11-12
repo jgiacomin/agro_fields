@@ -64,12 +64,14 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
     }
   }
 
-  Future<void> _registrar(TipoEventoProductivo tipo) async {
+  Future<void> _registrar(TipoEventoProductivo tipo,
+      {EventoProductivo? corrige}) async {
     final guardo = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => RegistrarEventoCultivoScreen(
           grupo: widget.grupo,
           tipo: tipo,
+          corrige: corrige,
         ),
       ),
     );
@@ -80,6 +82,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
   Widget build(BuildContext context) {
     final g = widget.grupo;
     final r = calcularResumenCultivo(eventos);
+    final corregidos = idsCorregidos(eventos);
     final lote = widget.unidades
         .where((u) => u.unidadId == g.unidadInicialId)
         .map((u) => u.nombre)
@@ -175,7 +178,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                           'Todavía no hay registros. Empezá por la siembra.',
                           style: TextStyle(color: EstiloProduccion.textoSuave),
                         ),
-                      ...eventos.map(_tarjeta),
+                      ...eventos.map((e) => _tarjeta(e, corregidos)),
                     ],
                   ),
                 ),
@@ -237,8 +240,12 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
     );
   }
 
-  Widget _tarjeta(EventoProductivo e) {
+  Widget _tarjeta(EventoProductivo e, Set<String> corregidos) {
     final esSiembra = e.tipo == TipoEventoProductivo.siembra;
+    final fueCorregido = corregidos.contains(e.eventoId);
+    final original = e.corrigeEventoId == null
+        ? null
+        : eventos.where((x) => x.eventoId == e.corrigeEventoId).firstOrNull;
     final detalle = esSiembra
         ? [
             '${numeroAgro(e.superficieHa ?? 0)} ha',
@@ -253,6 +260,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: TarjetaBlanca(
+        colorFondo: fueCorregido ? const Color(0xFFF3EEE5) : Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -267,20 +275,42 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${esSiembra ? 'Siembra' : 'Cosecha'} · ${fechaCorta(e.fechaHecho)}',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
+                      '${esSiembra ? 'Siembra' : 'Cosecha'} · ${fechaCorta(e.fechaHecho)}'
+                      '${fueCorregido ? ' · corregido' : ''}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: fueCorregido
+                            ? EstiloProduccion.textoSuave
+                            : EstiloProduccion.texto,
+                      ),
                     ),
                     Text(detalle.join(' · '),
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 14,
-                            color: EstiloProduccion.textoSuave)),
+                            color: EstiloProduccion.textoSuave,
+                            decoration: fueCorregido
+                                ? TextDecoration.lineThrough
+                                : null)),
+                    if (original != null)
+                      Text(
+                        'Corrige el registro del ${fechaCorta(original.fechaHecho)}'
+                        ' (${numeroAgro(original.superficieHa ?? 0)} ha'
+                        '${original.cantidadObtenida != null ? ' · ${numeroAgro(original.cantidadObtenida!)} ${original.unidadMedida ?? ''}' : ''})',
+                        style: const TextStyle(
+                            fontSize: 12, color: EstiloProduccion.terracota),
+                      ),
                     if (e.observaciones != null)
                       Text(e.observaciones!,
                           style: const TextStyle(fontSize: 13)),
                   ],
                 ),
               ),
+              if (!fueCorregido)
+                TextButton(
+                  onPressed: () => _registrar(e.tipo, corrige: e),
+                  child: const Text('Corregir'),
+                ),
             ],
           ),
         ),
@@ -294,10 +324,15 @@ class RegistrarEventoCultivoScreen extends StatefulWidget {
   final GrupoProductivo grupo;
   final TipoEventoProductivo tipo;
 
+  /// Si viene, es una corrección: el formulario arranca con esos datos y
+  /// el registro nuevo dice a cuál corrige. El original no se borra.
+  final EventoProductivo? corrige;
+
   const RegistrarEventoCultivoScreen({
     super.key,
     required this.grupo,
     required this.tipo,
+    this.corrige,
   });
 
   @override
@@ -322,10 +357,27 @@ class _RegistrarEventoCultivoScreenState
 
   bool get esSiembra => widget.tipo == TipoEventoProductivo.siembra;
 
+  // Valor exacto (sin redondear) para no cambiar el dato al corregir.
+  String _n(double? v) => v == null
+      ? ''
+      : (v == v.roundToDouble() ? v.toInt().toString() : v.toString())
+          .replaceAll('.', ',');
+
   @override
   void initState() {
     super.initState();
     _material.text = widget.grupo.material ?? '';
+    final c = widget.corrige;
+    if (c != null) {
+      fecha = c.fechaHecho;
+      _ha.text = _n(c.superficieHa);
+      _cantidad.text = _n(c.cantidadObtenida);
+      _material.text = c.material ?? _material.text;
+      _densidad.text = c.densidad ?? '';
+      _humedad.text = _n(c.humedad);
+      _notas.text = c.observaciones ?? '';
+      if (c.unidadMedida != null) unidad = c.unidadMedida!;
+    }
   }
 
   @override
@@ -356,6 +408,7 @@ class _RegistrarEventoCultivoScreenState
       fechaHecho: fecha,
       fechaCarga: DateTime.now(),
       cargadoPor: uid,
+      corrigeEventoId: widget.corrige?.eventoId,
       observaciones: _txt(_notas),
       superficieHa: _num(_ha),
       cantidadObtenida: esSiembra ? null : _num(_cantidad),
@@ -392,11 +445,27 @@ class _RegistrarEventoCultivoScreenState
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: EstiloProduccion.texto,
-        title: Text(esSiembra ? 'Registrar siembra' : 'Registrar cosecha'),
+        title: Text(widget.corrige != null
+            ? (esSiembra ? 'Corregir siembra' : 'Corregir cosecha')
+            : (esSiembra ? 'Registrar siembra' : 'Registrar cosecha')),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
         children: [
+          if (widget.corrige != null)
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF7E6),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'Cambiá lo que esté mal y guardá. El registro anterior no se '
+                'borra: queda como "corregido" en la historia.',
+                style: TextStyle(fontSize: 14, height: 1.4),
+              ),
+            ),
           const EtiquetaCampo('Fecha'),
           OutlinedButton.icon(
             onPressed: () async {
@@ -478,7 +547,9 @@ class _RegistrarEventoCultivoScreenState
           color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
-            texto: esSiembra ? 'Guardar siembra' : 'Guardar cosecha',
+            texto: widget.corrige != null
+                ? 'Guardar corrección'
+                : (esSiembra ? 'Guardar siembra' : 'Guardar cosecha'),
             ocupado: guardando,
             onPressed: _guardar,
           ),

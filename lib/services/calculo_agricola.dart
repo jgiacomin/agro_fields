@@ -34,7 +34,25 @@ class ResumenCultivo {
   bool get cosechaSinSiembraSuficiente => haCosechadas > haSembradas;
 }
 
-ResumenCultivo calcularResumenCultivo(Iterable<EventoProductivo> eventos) {
+/// Corregir no es borrar: un evento corregido queda en la historia, pero
+/// para los cálculos vale solo la última corrección (corrigeEventoId).
+/// Devuelve los ids de los eventos que fueron corregidos por otro.
+Set<String> idsCorregidos(Iterable<EventoProductivo> eventos) {
+  return {
+    for (final e in eventos)
+      if (e.corrigeEventoId != null && e.corrigeEventoId!.isNotEmpty)
+        e.corrigeEventoId!,
+  };
+}
+
+/// Los eventos que valen hoy (los que nadie corrigió).
+List<EventoProductivo> eventosVigentes(Iterable<EventoProductivo> eventos) {
+  final corregidos = idsCorregidos(eventos);
+  return eventos.where((e) => !corregidos.contains(e.eventoId)).toList();
+}
+
+ResumenCultivo calcularResumenCultivo(Iterable<EventoProductivo> todos) {
+  final eventos = eventosVigentes(todos);
   var sembradas = 0.0;
   var cosechadas = 0.0;
   var toneladas = 0.0;

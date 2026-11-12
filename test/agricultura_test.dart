@@ -117,6 +117,32 @@ void main() {
       expect(bien.cosechaSinSiembraSuficiente, isFalse);
     });
 
+    test('corregir no es borrar: vale solo la corrección', () {
+      final original = evento(TipoEventoProductivo.cosecha,
+          ha: 100, cantidad: 350, unidad: 'tn');
+      final correccion = EventoProductivo(
+        eventoId: 'corr1',
+        activoAgroId: 'a1',
+        grupoId: 'g1',
+        unidadId: 'lote3',
+        tipo: TipoEventoProductivo.cosecha,
+        fechaHecho: DateTime(2026, 11, 1),
+        fechaCarga: DateTime(2026, 11, 12),
+        cargadoPor: 'u1',
+        corrigeEventoId: original.eventoId,
+        superficieHa: 80,
+        cantidadObtenida: 280,
+        unidadMedida: 'tn',
+      );
+      final todos = [original, correccion];
+      expect(idsCorregidos(todos), {original.eventoId});
+      expect(eventosVigentes(todos).map((e) => e.eventoId), ['corr1']);
+      final r = calcularResumenCultivo(todos);
+      expect(r.haCosechadas, 80);
+      expect(r.toneladas, 280);
+      expect(r.rendimiento, 3.5);
+    });
+
     test('sembrado sin cosechar: en curso y sin rendimiento', () {
       final r = calcularResumenCultivo(
           [evento(TipoEventoProductivo.siembra, ha: 80)]);
