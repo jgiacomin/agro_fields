@@ -17,6 +17,7 @@ import 'derecho_activo_model.dart';
 import 'relacion_juridica_model.dart';
 import 'historial_activo_model.dart';
 import 'infraestructura_activo_model.dart';
+import 'disponibilidad_recepcion_model.dart';
 
 
 
@@ -179,6 +180,10 @@ class ActivoAgroV2 {
   /// Permite extender trazabilidad sin modificar estructura base.
    final Map<String,dynamic>? datos;
 
+  /// AF-092: marca voluntaria "puede recibir en una emergencia".
+  /// null = el dueño no la marcó nunca.
+  final DisponibilidadRecepcion? disponibleParaRecibir;
+
 
   final DateTime fechaCreacion;
 
@@ -245,6 +250,8 @@ class ActivoAgroV2 {
     required this.versionDatos,
     
     this.datos,
+
+    this.disponibleParaRecibir,
 
     required this.fechaCreacion,
 
@@ -570,6 +577,13 @@ class ActivoAgroV2 {
     ? Map<String,dynamic>.from(map['datos'])
     : null,
 
+      disponibleParaRecibir:
+          map['disponibleParaRecibir'] is Map
+              ? DisponibilidadRecepcion.fromMap(
+                  Map<String, dynamic>.from(map['disponibleParaRecibir']),
+                )
+              : null,
+
 
 
       fechaCreacion:
@@ -732,6 +746,9 @@ class ActivoAgroV2 {
       'datos':
        datos,
 
+      if (disponibleParaRecibir != null)
+        'disponibleParaRecibir': disponibleParaRecibir!.toMap(),
+
       'fechaCreacion':
       Timestamp.fromDate(fechaCreacion),
 
@@ -791,6 +808,8 @@ class ActivoAgroV2 {
     List<HistorialActivo>? historial,
 
     Map<String,dynamic>? datos,
+
+    DisponibilidadRecepcion? disponibleParaRecibir,
 
   }){
 
@@ -854,6 +873,9 @@ class ActivoAgroV2 {
       versionDatos: versionDatos,
 
       datos: datos ?? this.datos,
+
+      disponibleParaRecibir:
+          disponibleParaRecibir ?? this.disponibleParaRecibir,
 
       fechaCreacion: fechaCreacion,
 

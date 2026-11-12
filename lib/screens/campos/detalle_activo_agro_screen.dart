@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../documentos/documentos_activo_screen.dart';
+import '../emergencias/emergencias_activo_screen.dart';
 import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
@@ -247,6 +248,23 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
                 ),
                 icon: const Icon(Icons.description),
                 label: const Text('Documentos'),
+              ),
+            ),
+            // AF-092: emergencias del campo y "disponible para recibir".
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => EmergenciasActivoScreen(
+                      activoAgroId: activo.activoId,
+                      nombreActivo: activo.nombre,
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.warning_amber),
+                label: const Text('Emergencias'),
               ),
             ),
 

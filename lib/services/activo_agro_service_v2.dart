@@ -19,6 +19,7 @@ import '../models/activos/documentacion_activo_model.dart';
 import '../models/activos/economia_activo_model.dart';
 import '../models/activos/derecho_activo_model.dart';
 import '../models/activos/evento_afectacion_model.dart';
+import '../models/activos/disponibilidad_recepcion_model.dart';
 import 'evidencia_service.dart';
 import 'confianza_activo_service.dart';
 
@@ -1644,6 +1645,96 @@ if (evidencia != null) {
         'evidenciaId':
             evidenciaId,
     },
+  );
+}
+
+// =====================================================
+// LISTAR EVENTOS DE AFECTACIÓN / EMERGENCIAS (AF-092)
+// Los más recientes primero. La regla de eventos_afectacion
+// solo deja leer los eventos de los propios campos.
+// =====================================================
+
+Future<List<EventoAfectacion>> listarEventosAfectacion(
+  String activoId,
+) async {
+  final consulta = await _db
+      .collection('eventos_afectacion')
+      .where('activoAgroId', isEqualTo: activoId)
+      .get();
+
+  final eventos = consulta.docs
+      .map((d) => EventoAfectacion.fromMap(d.data()))
+      .toList()
+    ..sort((a, b) => b.fechaInicio.compareTo(a.fechaInicio));
+
+  return eventos;
+}
+
+// =====================================================
+// DISPONIBLE PARA RECIBIR EN UNA EMERGENCIA (AF-092)
+// Marca voluntaria del dueño; historial + auditoría.
+// =====================================================
+
+Future<void> actualizarDisponibilidadRecepcion(
+  String activoId,
+  DisponibilidadRecepcion disponibilidad,
+) async {
+
+  final activo =
+      await obtenerActivoPorId(activoId);
+
+  if (activo == null) {
+    throw Exception(
+      'Activo no encontrado',
+    );
+  }
+
+  final evento =
+      _crearEventoHistorial(
+    tipoEvento:
+        'actualizacion_disponibilidad_recepcion',
+    descripcion:
+        disponibilidad.activa
+            ? 'El campo se marcó como disponible para recibir'
+            : 'El campo dejó de estar disponible para recibir',
+    usuarioId:
+        activo.creadorId,
+    moduloOrigen:
+        'emergencias',
+  );
+
+  final activoActualizado =
+      activo.copyWith(
+    disponibleParaRecibir:
+        disponibilidad,
+    historial: [
+      ...activo.historial,
+      evento,
+    ],
+  );
+
+  await _db
+      .collection(coleccion)
+      .doc(activoId)
+      .update(
+    activoActualizado.toMap(),
+  );
+
+  await _auditService.registrar(
+    activoId:
+        activoId,
+    usuarioId:
+        activo.creadorId,
+    tipo:
+        AuditType.modificacion,
+    modulo:
+        'emergencias',
+    accion:
+        'actualizar_disponibilidad_recepcion',
+    elementoAfectado:
+        activoId,
+    referencia:
+        activoId,
   );
 }
 

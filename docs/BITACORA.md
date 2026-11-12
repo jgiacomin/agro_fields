@@ -7332,3 +7332,49 @@ El campo guardaba latitud y longitud en 0 al crearse (punto en el océano, frent
 ### Evidencia
 
 * Rama `diseno-inicio-v8`; capturas de Javier en Chrome (ingreso e Inicio).
+
+---
+
+# 12/11/2026 - Evidencia de commits del día
+
+* `bcd6083` Concepto General y Matriz (AF-088 a AF-097).
+* `a6630d1` GAP-CERT-01 (AF-095) certificaciones.
+* `23ba51d` Pantalla de ingreso (nombre "Agro Fields", sin V8).
+* `fb9740d` GAP-TERR-01 (AF-090) ubicación en el mapa.
+* `64ab664` Logo nuevo e Inicio según la demo. `main` = `64ab664`, subido a GitHub.
+
+---
+
+# 12/11/2026 - GAP-EMERG-01 (AF-092): emergencias y "disponible para recibir"
+
+**Estado: VALIDADO EN LA APP.**
+
+### Problema
+
+El Concepto pide registrar cada emergencia en la historia del campo ("de la alerta a la acción") y una marca voluntaria para los campos que pueden recibir animales o producción ante una catástrofe.
+
+### Solución (reutiliza lo existente)
+
+* Se **reutiliza** `EventoAfectacion` y `registrarEventoAfectacion` (colección `eventos_afectacion` con su regla, historial y auditoría, de septiembre). No se creó otra colección.
+* `lib/models/activos/evento_afectacion_model.dart`: lectura directa de `Timestamp` en las fechas (el control por nombre de tipo podía fallar en la web publicada y mostrar la fecha de hoy).
+* `lib/models/activos/disponibilidad_recepcion_model.dart` (nuevo): activa, recursos (hacienda, granos, maquinaria, otro), capacidad y fecha. Sin dato claro no se asume disponible.
+* `lib/models/activos/activo_agro_model_v2.dart`: campo opcional `disponibleParaRecibir` (solo se escribe si existe).
+* `lib/services/activo_agro_service_v2.dart`: `listarEventosAfectacion` (más recientes primero) y `actualizarDisponibilidadRecepcion` (historial + auditoría).
+* `lib/screens/emergencias/` (nuevo): `emergencias_activo_screen.dart` (marca "Mi campo puede recibir en una emergencia" + lista), `registrar_emergencia_screen.dart` (qué pasó, desde cuándo, gravedad, hectáreas, descripción) y `emergencias_textos.dart`.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: botón "Emergencias".
+* Cada emergencia queda **declarada** (origen `declaracion_usuario`, estado `declarado`). No reemplaza el aviso a organismos oficiales.
+* Sin cambios en reglas. La marca solo la ve el dueño (vive en `activos_agro`, no va a `activos_publicos`).
+
+### Validación
+
+* `test/disponibilidad_recepcion_model_test.dart`: 4 pruebas nuevas (incluye fechas guardadas como Timestamp).
+* Prueba manual de Javier en Chrome: la emergencia registrada aparece en la lista.
+
+### Pendiente
+
+* 🟡 Alertas por ubicación; mostrar "disponible para recibir" a otros productores con permiso; adjuntar fotos a la emergencia (evidencia).
+* 🟢 Coordinación zonal/regional y organismos.
+
+### Evidencia
+
+* Rama `gap-emerg-01`.

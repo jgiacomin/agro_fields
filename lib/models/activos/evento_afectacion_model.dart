@@ -1,4 +1,6 @@
-﻿class EventoAfectacion {
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+
+class EventoAfectacion {
   final String eventoId;
   final String activoAgroId;
   final String tipoEvento;
@@ -373,6 +375,12 @@ DateTime _leerFecha(dynamic valor) {
     return valor;
   }
 
+  // AF-092: lectura directa del Timestamp de Firestore (el control por
+  // nombre de tipo de abajo puede fallar en la web publicada).
+  if (valor is Timestamp) {
+    return valor.toDate();
+  }
+
   if (valor != null) {
     try {
       if (valor.runtimeType.toString() == 'Timestamp') {
@@ -400,6 +408,10 @@ DateTime? _leerFechaOpcional(dynamic valor) {
 
   if (valor is DateTime) {
     return valor;
+  }
+
+  if (valor is Timestamp) {
+    return valor.toDate();
   }
 
   try {

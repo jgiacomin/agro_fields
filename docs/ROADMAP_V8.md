@@ -3596,3 +3596,17 @@ Próximo 🔴: AF-092 emergencia + "disponible para recibir", AF-093 invitar al 
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Emergencias del campo — Estado
+
+🟢 **GAP-EMERG-01 (AF-092) VALIDADO** (12/11/2026, rama `gap-emerg-01`)
+
+Desde la ficha del campo se registran emergencias (inundación, sequía, incendio, granizo, helada, tormenta, enfermedad o plaga) que quedan en la historia del campo como declaradas, y el dueño puede marcar su campo como "disponible para recibir" (voluntario, por ahora solo lo ve él).
+
+Próximo 🔴: AF-093 invitar al profesional y AF-089 traslado simple.
+
+Referencia documental:
+
+`docs/BITACORA.md`
