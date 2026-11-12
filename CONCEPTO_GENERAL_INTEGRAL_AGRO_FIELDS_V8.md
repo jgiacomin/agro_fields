@@ -5,6 +5,10 @@
 
 **Estado:** Visión integral consolidada, con capacidades pendientes de diseño arquitectónico.
 
+Actualización: 12/11/2026. Se suman las capacidades acordadas el 08, 10 y 11/11/2026.
+
+Marcas de etapa: 🔴 entra en el lanzamiento de enero 2027 · 🟡 queda preparado (lugar en los datos, sin función completa) · 🟢 después del lanzamiento.
+
 ---
 
 ## 1. Identidad y propósito
@@ -28,6 +32,11 @@ No es solamente una aplicación de gestión rural ni un Marketplace. Es una plat
 - Adaptación a distintas actividades y escalas productivas.
 - Cooperación entre actores públicos y privados.
 - Innovación al servicio del productor.
+- Independencia de plataformas comerciales y de certificación, con capacidad de conectarse a ellas.
+
+### Independencia y conexión
+
+Agro Fields es independiente de plataformas comerciales o de certificación (por ejemplo, las vinculadas al reglamento europeo de deforestación), pero queda preparado para conectarse con ellas. Sirve al productor más allá de cualquier entidad gremial, facilita información a certificadores, exportadores y compradores, y le indica al productor qué documentación necesita.
 
 ### Alcance tecnológico
 
@@ -438,6 +447,25 @@ Se vincula con cooperativas, transportistas, industrias, productores y comercial
 
 Agro Fields será plataforma de información, coordinación y análisis, no una empresa transportista.
 
+### 8.1. Principio de arquitectura: el transporte es un servicio transversal
+
+El transporte, la logística y la trazabilidad de movimientos no son un módulo de una actividad. Ganadería, agricultura, apicultura, piscicultura y demás actividades comparten un mismo núcleo, cada una con sus propios datos, controles y requisitos. Así se evitan sistemas separados.
+
+- Núcleo común: movimiento, estados, evidencias, incidencias y control de coherencia (declarado / cargado / recibido).
+- Ficha por actividad: identificación según el tipo (caravanas, lotes, colmenas, etc.), unidades, condiciones y controles propios.
+- Reglas por jurisdicción guardadas aparte (el SNIG de Uruguay es un ejemplo, no un modelo para copiar).
+- Una sola colección de movimientos con un campo "actividad".
+- Expediente y evidencias de cada movimiento.
+- Funcionamiento sin señal (offline-first), resuelto de la forma más eficiente.
+
+Incluye transporte de hacienda y agrícola, inteligencia logística, costos de referencia (sin fijar tarifas), seguimiento, exportación y traslados en emergencias.
+
+### 8.2. Etapas
+
+- 🔴 Traslado simple, construido sobre el núcleo común: origen, destino, cantidad, categoría, transportista, guía y fecha.
+- 🟡 Fuente del dato y vínculo con lotes y animales del núcleo productivo.
+- 🟢 Seguimiento GPS, costos por corredor, exportación y conexión con organismos (SENASA, Aduana y otros) solo por vías oficiales.
+
 ---
 
 ## 9. Territorio Inteligente y Red de Información, Alertas y Prevención Territorial
@@ -492,6 +520,35 @@ La identidad del informante no debe exponerse a quienes reciben una alerta públ
 Deben existir controles administrativos, trazabilidad, permisos y mecanismos para evitar reportes maliciosos.
 
 La plataforma complementa, pero no sustituye, a los servicios oficiales de emergencia y seguridad.
+
+### 9.1. Identificación territorial y recursos
+
+- Identificación territorial: ubicación del campo en el mapa.
+- Recursos naturales: agua, suelo, monte, riego o secano.
+- Información satelital y climática.
+- Infraestructura, accesos y servicios.
+- Inteligencia territorial.
+
+Drones, agricultura de precisión y teledetección (también satélites, sensores, estaciones, maquinaria y servicios de terceros) se contemplan como fuentes de datos. Agro Fields no vende drones: registra de dónde viene cada dato.
+
+Mapa mundial de campos: nunca muestra datos privados sin permiso del titular.
+
+### 9.2. Integración de sistemas productivos y complementariedad territorial
+
+Capacidad transversal para combinar sistemas productivos de una zona (por ejemplo, campos con riego y campos de secano, o chacras reconvertidas a pasturas). Caso de referencia: El Monterizo, 25 de Mayo, La Pampa (más de 70 productores). No se refiere al desmonte de monte nativo.
+
+- Los datos del campo (riego/secano, agua, suelo, infraestructura, accesos, potencial forrajero) se guardan en Territorio.
+- La integración solo consulta esos datos con permiso, sin duplicarlos.
+- Lo que el dueño decide ofrecer se marca de forma voluntaria: superficie disponible, "disponible para producir forraje" o "disponible para recibir hacienda", igual que "disponible para recibir" en emergencias.
+- El forraje sembrado o en stock se registra en Gestión Productiva.
+
+Estado: referencia conceptual pendiente de análisis, sin código.
+
+### 9.3. Etapas
+
+- 🔴 Ubicación del campo en el mapa.
+- 🟡 Capas de información, alertas por ubicación y campo "fuente del dato" (en Monitoreo y Trabajos).
+- 🟢 Imágenes satelitales, índices, sensores, integración territorial completa y conexión con organismos.
 
 ---
 
@@ -557,6 +614,22 @@ Debe distinguir entre declaraciones, estimaciones y pericias verificadas.
 
 Debe permitir coordinar respuestas sin perder la individualización de cada establecimiento y productor.
 
+### 10.6. Expediente de emergencia y campos disponibles
+
+Principio: "de la alerta a la acción". Cada emergencia queda registrada en el expediente del activo afectado, con su historia.
+
+- Prevención, alertas, diagnóstico, coordinación y recursos.
+- Marca voluntaria "disponible para recibir": campos que pueden recibir animales o producción ante una catástrofe (por ejemplo, una inundación).
+- Trazabilidad del traslado usando el núcleo común de transporte (sección 8).
+
+### 10.7. Etapas
+
+- 🔴 Registrar la emergencia en el expediente y la marca "disponible para recibir".
+- 🟡 Alertas por ubicación.
+- 🟢 Coordinación zonal y regional, y conexión con organismos.
+
+Territorio, Emergencias y Transporte comparten los mismos datos, sin duplicarlos.
+
 ---
 
 ## 11. Articulación Institucional, Ciencia e Innovación Agropecuaria
@@ -597,9 +670,16 @@ Incluye expresamente:
 
 La plataforma debe diferenciar las competencias declaradas de las credenciales verificadas y respetar las atribuciones profesionales de cada especialidad.
 
+Agro Fields facilita, no reemplaza, a profesionales e instituciones. El título profesional se considera "declarado" hasta que se verifique. Caso de origen: comunicado de CREA Paraguay.
+
+### 11.1. Etapas
+
+- 🔴 Invitar al profesional al campo (se apoya en los permisos ya construidos) y registrar sus intervenciones con evidencia.
+- 🟢 Directorio y perfiles de profesionales e instituciones.
+
 ---
 
-## 12. Control de Coherencia y Validación de Movimientos Ganaderos
+## 12. Control de Coherencia, Identificación y Validación de Movimientos Ganaderos
 
 Capacidad transversal de control de integridad y trazabilidad de los movimientos ganaderos.
 
@@ -625,9 +705,83 @@ Debe ser adaptable a las normativas de cada jurisdicción y permitir interoperab
 
 No debe confundirse con una certificación oficial ni reemplazar las facultades de control del Estado.
 
+### 12.1. Caso de referencia: SNIG Uruguay
+
+Vigente desde el 10/11/2026 (fuente oficial: MGAP, hojas informativas H202 y H203). Puntos de referencia: la cantidad declarada en el preembarque debe coincidir con las caravanas leídas; si no coinciden, no se genera la guía (también en guías manuales); las correcciones tienen plazos y límites, y pasados esos límites corresponde una guía nueva; hay plazos para identificar a los animales antes del primer movimiento o cambio de dueño.
+
+Estas reglas son uruguayas: no se copian a Argentina ni a Paraguay. Deben contrastarse con la normativa oficial antes de usarlas.
+
+### 12.2. Cinco funciones
+
+- Control de identidad.
+- Control de cantidades: declarados, previstos y leídos.
+- Control documental: preembarque, guía y movimiento.
+- Motor de reglas por jurisdicción: país, organismo, normativa, vigencia, identificación exigida, plazos, límites, correcciones, excepciones y evidencias.
+- Historial de correcciones.
+
+Agro Fields valida y advierte; la autorización oficial es del organismo competente. Se apoya en el núcleo común de transporte (sección 8) y puede alimentarse con lecturas de caravanas importadas de equipos de campo (sección 17.1).
+
+Estado: concepto ampliado. Pendiente: diseño y adaptación a Argentina (SENASA) y Paraguay (SENACSA). Sin número de GAP ni código hasta cotejar con la Matriz.
+
 ---
 
-## 13. Gestión documental, evidencias y trazabilidad
+## 13. Certificaciones, Bienestar Animal y Trazabilidad Comercial
+
+Capacidad transversal para toda la producción (no solo feedlot). Agro Fields no certifica: guarda, ordena y avisa sobre las certificaciones del productor.
+
+Casos de referencia: comunicado de Trade Food (sin incluir su oferta comercial) y el feedlot Los Aromos de ACA (Cafferata, Santa Fe), primer feedlot argentino con certificación de bienestar animal Welfair.
+
+- La certificación es un documento con entidad, alcance, vigencia, a qué animales o producción aplica y aviso de vencimiento.
+- Los requisitos se configuran por norma; no se fijan los principios de una certificadora como campos del sistema.
+
+### 13.1. Etapas
+
+- 🔴 Nada nuevo: "certificación" como tipo dentro de Documentos del campo, con su alcance.
+- 🟡 Vincular el certificado a lotes o animales del núcleo productivo.
+- 🟢 Requisitos por norma, registro de auditorías y conexión con certificadoras (Welfair, VISEC y otras).
+
+---
+
+## 14. Inteligencia de Mercados Agropecuarios
+
+Fuente de datos externa (precios de referencia) que se cruza con el inventario, los costos, las ventas y el resultado del productor. Sirve al pequeño productor, a la cooperativa y a la agroindustria.
+
+- El precio de un mercado internacional (por ejemplo, Chicago) no es el precio que recibe el productor: influyen el tipo de cambio, las retenciones, los costos y la comercialización.
+- Todo precio de referencia lleva fuente, fecha y vigencia.
+- Agro Fields informa y explica; no fija precios, no tasa y no recomienda vender ni comprar (va en los términos de uso).
+- Atención a las licencias pagas de cotizaciones en tiempo real.
+
+### 14.1. Etapas
+
+- 🔴 Nada nuevo: Ventas ya guarda el precio obtenido.
+- 🟡 Campo "precio de referencia" cargado a mano, con fuente y fecha.
+- 🟢 Cotizaciones automáticas, escenarios y relación costo/precio.
+
+Estado: sin módulo, arquitectura ni código aprobados.
+
+---
+
+## 15. Inteligencia Regulatoria y Acceso a Mercados Agropecuarios
+
+Agro Fields no decide por el productor qué mercado o plataforma usar. Conoce e interpreta regulaciones nacionales e internacionales (no solo Europa: también Brasil, Chile, Estados Unidos, China, países árabes y otros), identifica oportunidades y evalúa brechas.
+
+- Semáforo de brechas por requisito: cumple, pendiente o falta evidencia.
+- Cada requisito con fuente oficial, fecha y vigencia.
+- Conecta actores: exportadores, frigoríficos, certificadoras, organismos, profesionales y compradores.
+- Interoperabilidad autorizada con plataformas como VISEC, sin depender de ninguna en exclusiva.
+- Aviso de cambios regulatorios.
+
+No es autoridad, certificadora ni intermediario obligatorio. Informar no es certificar y conectar no es intermediar (va en los términos de uso). Caso de referencia adicional: la cadena caprina exportadora del Chaco.
+
+### 15.1. Etapas
+
+- 🔴 Nada nuevo: Documentos del campo con "certificación" como tipo.
+- 🟡 Requisitos por mercado cargados a mano y semáforo de brechas.
+- 🟢 Avisos automáticos de cambios, directorio y conexión con VISEC y otras plataformas por vías oficiales.
+
+---
+
+## 16. Gestión documental, evidencias y trazabilidad
 
 Capacidad transversal presente en todo el ecosistema.
 
@@ -663,7 +817,7 @@ El historial funcional del activo debe diferenciarse de la auditoría técnica d
 
 ---
 
-## 14. Integraciones e interoperabilidad
+## 17. Integraciones e interoperabilidad
 
 Agro Fields deberá poder conectarse progresivamente con:
 
@@ -687,9 +841,15 @@ Las integraciones dependerán de la disponibilidad de interfaces, acuerdos insti
 
 VISEC se contempla como posible interoperabilidad, no como certificación propia de Agro Fields.
 
+### 17.1. Importación de datos de equipos de campo
+
+Importar datos de balanzas y lectores de caravanas (por ejemplo, Tru-Test). Sirve para la gestión ganadera y para trabajar sin señal: los datos se toman en el campo y se suben después. Se relaciona con la lectura de caravanas del control de movimientos (sección 12).
+
+Otros sistemas administrativos (por ejemplo, Finnegans o Procreare): sin conexión por ahora, solo "preparado para conectarse".
+
 ---
 
-## 15. Inteligencia de datos y asistencia a decisiones
+## 18. Inteligencia de datos y asistencia a decisiones
 
 El sistema debe transformar registros y evidencias en información útil.
 
@@ -710,7 +870,7 @@ La inteligencia artificial podrá incorporarse progresivamente como herramienta 
 
 ---
 
-## 16. Modelo de confianza y protección de la información
+## 19. Modelo de confianza y protección de la información
 
 La confianza no debe depender únicamente de que una persona o empresa tenga un perfil registrado.
 
@@ -735,7 +895,7 @@ Cada usuario conserva control sobre sus datos y sus autorizaciones.
 
 ---
 
-## 17. Modelo de usuarios y participación
+## 20. Modelo de usuarios y participación
 
 Agro Fields deberá adaptarse a diferentes actores:
 
@@ -759,7 +919,7 @@ Cada participante accederá exclusivamente a los módulos, activos e informació
 
 ---
 
-## 18. Experiencia de usuario
+## 21. Experiencia de usuario
 
 El sistema debe ser simple, claro y práctico.
 
@@ -782,7 +942,7 @@ La experiencia debe ser consistente entre aplicaciones, módulos y usuarios.
 
 ---
 
-## 19. Modelo de evolución y desarrollo
+## 22. Modelo de evolución y desarrollo
 
 Agro Fields V8 debe evolucionar por etapas, sin comprometer la integridad del núcleo.
 
@@ -801,7 +961,7 @@ Las capacidades transversales deben diseñarse en relación con las necesidades 
 
 ---
 
-## 20. Visión final
+## 23. Visión final
 
 Agro Fields V8 busca construir un ecosistema agropecuario donde cada activo tenga identidad, cada operación tenga trazabilidad, cada productor pueda controlar su información y cada actor encuentre oportunidades para colaborar.
 
@@ -832,3 +992,22 @@ Este documento constituye la visión conceptual y funcional integral. No represe
 Toda capacidad deberá pasar por análisis funcional, diseño arquitectónico, evaluación de brechas, desarrollo, pruebas y evidencias antes de considerarse implementada y validada.
 
 **Principio rector:** primero comprender y diseñar correctamente; después desarrollar con cambios mínimos, verificables y trazables.
+
+---
+
+## 24. Estado de las incorporaciones
+
+### Incorporaciones del 12/11/2026 (concepto, sin código nuevo)
+
+- Independencia de plataformas comerciales y de certificación (sección 1).
+- Transporte como servicio transversal con núcleo común (sección 8).
+- Identificación territorial, teledetección e integración de sistemas productivos (sección 9).
+- Expediente de emergencia y marca "disponible para recibir" (sección 10).
+- Etapas de la articulación institucional (sección 11).
+- Ampliación del control de movimientos ganaderos con el caso SNIG (sección 12).
+- Certificaciones y bienestar animal (sección 13).
+- Inteligencia de mercados (sección 14).
+- Inteligencia regulatoria y acceso a mercados (sección 15).
+- Importación de datos de equipos de campo (sección 17.1).
+
+Todo lo marcado 🔴 debe pasar al cuadro de lanzamiento, a la Matriz y al Roadmap antes de programarse.
