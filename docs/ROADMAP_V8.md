@@ -3624,3 +3624,19 @@ Próximo 🔴: AF-089 traslado simple (sobre el núcleo común de transporte).
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Traslados — Estado
+
+🟢 **GAP-MOV-01 (AF-089) VALIDADO** (12/11/2026, rama `gap-mov-01`)
+
+Traslado simple sobre el núcleo común de transporte (una colección para todas las actividades), con estados y control de coherencia declarado/recibido. Reglas 216/216 y publicadas. Probado: 50 novillos enviados, 48 recibidos → aviso rojo.
+
+✅ **Los 5 🔴 nuevos del Concepto para enero 2027 están hechos** (AF-095, AF-090, AF-092, AF-093, AF-089).
+
+Próximo: centrar formularios en pantallas grandes; revisar el cuadro de lanzamiento contra lo que falta (funcionamiento sin señal, inglés, ingresos/monetización, suelo).
+
+Referencia documental:
+
+`docs/BITACORA.md`

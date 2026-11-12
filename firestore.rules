@@ -691,6 +691,60 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
+    // MOVIMIENTOS = TRASLADOS (AF-089, GAP-MOV-01, 12/11/2026)
+    // Nucleo comun de transporte: UNA coleccion para todas las actividades
+    // (campo "actividad"). Lo ven y cargan el dueno o quien tenga una
+    // autorizacion en "movimientos" (el broker no). No se borra. Solo
+    // cambia el estado y lo recibido, y solo mientras no termino.
+    // -----------------------------------------------------------------
+    function puedeMovimientos(activoId, permiso) {
+      return esAdmin()
+        || (logueado()
+            && activoId is string
+            && (esDuenoActivo(activoId)
+                || tieneAutorizacion(activoId, permiso, 'movimientos')));
+    }
+
+    function actividadesMovimiento() {
+      return ['ganaderia', 'agricultura', 'apicultura', 'piscicultura', 'otra'];
+    }
+
+    function estadosMovimiento() {
+      return ['programado', 'enCamino', 'entregado', 'cancelado'];
+    }
+
+    match /movimientos/{movimientoId} {
+      allow get, list: if puedeMovimientos(resource.data.activoAgroId, 'ver');
+
+      allow create: if puedeMovimientos(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.movimientoId == movimientoId
+        && request.resource.data.cargadoPor == request.auth.uid
+        && request.resource.data.actividad in actividadesMovimiento()
+        && request.resource.data.estado in ['programado', 'enCamino']
+        && request.resource.data.cantidadDeclarada is number
+        && request.resource.data.cantidadDeclarada > 0
+        && request.resource.data.unidad is string
+        && request.resource.data.carga is string
+        && request.resource.data.carga.size() > 0
+        && request.resource.data.destinoDescripcion is string
+        && request.resource.data.destinoDescripcion.size() > 0
+        && request.resource.data.estadoDato == 'declarado';
+
+      allow update: if puedeMovimientos(resource.data.activoAgroId, 'modificar')
+        && resource.data.estado in ['programado', 'enCamino']
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['estado', 'cantidadRecibida', 'fechaEntrega',
+                      'actualizadoPor', 'fechaActualizacion'])
+        && request.resource.data.estado in estadosMovimiento()
+        && request.resource.data.actualizadoPor == request.auth.uid
+        && (request.resource.data.get('cantidadRecibida', null) == null
+            || (request.resource.data.cantidadRecibida is number
+                && request.resource.data.cantidadRecibida >= 0));
+
+      allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------
     // PRODUCCION (paso 6a, GAP-PROD-01, 10/11/2026)
     // Tres colecciones colgadas del Activo (activoAgroId):
     //   unidades_productivas = donde (potrero, corral, galpon...)

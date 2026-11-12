@@ -1307,3 +1307,114 @@ test('PROF-16. El dueño invita a un profesional con el nombre armado [PERMITIDO
   await assertSucceeds(setDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('crear', 'expedienteProductivo', PROFESIONAL)),
     autorizacionDe('crear', 'expedienteProductivo', { usuarioAutorizado: PROFESIONAL, rol: 'profesional' })));
 });
+
+// =====================================================================
+// MOV. TRASLADOS (AF-089, GAP-MOV-01, 12/11/2026)
+// Una colección para todas las actividades. Dueño o autorizado en
+// "movimientos". Solo cambia estado y lo recibido; no se borra.
+// =====================================================================
+
+const trasladoDe = (uid, extra = {}) => ({
+  movimientoId: 'mv1', activoAgroId: 'a1', actividad: 'ganaderia',
+  destinoActivoId: null, destinoDescripcion: 'Feedlot Los Aromos',
+  carga: 'Novillos', cantidadDeclarada: 50, unidad: 'cabezas', cantidadRecibida: null,
+  transportista: 'Transporte Pérez', patente: 'AB123CD', guia: 'DTe 12345',
+  fechaSalida: new Date(), fechaEntrega: null, estado: 'programado',
+  grupoId: null, observaciones: null, cargadoPor: uid, fechaCarga: new Date(),
+  estadoDato: 'declarado', ...extra,
+});
+
+const cargarTraslado = (extra = {}) => cargar((db) =>
+  setDoc(doc(db, 'movimientos/mv1'), trasladoDe(DUENO, extra)));
+
+test('MOV-01. El dueño registra un traslado [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO)));
+});
+
+test('MOV-02. Otro usuario NO registra traslados en un campo ajeno [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), 'movimientos/mv1'), trasladoDe(OTRO)));
+});
+
+test('MOV-03. El broker (quien cargó el expediente) NO ve ni carga traslados [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(BROKER), 'movimientos/mv1'), trasladoDe(BROKER)));
+  await cargarTraslado();
+  await assertFails(getDoc(doc(como(BROKER), 'movimientos/mv1')));
+});
+
+test('MOV-04. NO se registra a nombre de otro usuario [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(ENCARGADO)));
+});
+
+test('MOV-05. NO se registra con actividad inventada, cantidad cero o sin destino [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { actividad: 'astronautica' })));
+  await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { cantidadDeclarada: 0 })));
+  await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { destinoDescripcion: '' })));
+});
+
+test('MOV-06. NO se registra ya entregado ni como verificado [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { estado: 'entregado' })));
+  await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { estadoDato: 'verificado' })));
+});
+
+test('MOV-07. El dueño marca "en camino" y después "entregado" con lo recibido [PERMITIDO]', async () => {
+  await cargarTraslado();
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'movimientos/mv1'),
+    { estado: 'enCamino', actualizadoPor: DUENO, fechaActualizacion: new Date() }));
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'movimientos/mv1'),
+    { estado: 'entregado', cantidadRecibida: 48, fechaEntrega: new Date(), actualizadoPor: DUENO, fechaActualizacion: new Date() }));
+});
+
+test('MOV-08. NO se cambia la cantidad declarada ni el destino [PROHIBIDO]', async () => {
+  await cargarTraslado();
+  await assertFails(updateDoc(doc(como(DUENO), 'movimientos/mv1'),
+    { cantidadDeclarada: 10, actualizadoPor: DUENO }));
+  await assertFails(updateDoc(doc(como(DUENO), 'movimientos/mv1'),
+    { destinoDescripcion: 'Otro lugar', actualizadoPor: DUENO }));
+});
+
+test('MOV-09. Un traslado entregado o cancelado ya NO cambia [PROHIBIDO]', async () => {
+  await cargarTraslado({ estado: 'entregado' });
+  await assertFails(updateDoc(doc(como(DUENO), 'movimientos/mv1'),
+    { estado: 'cancelado', actualizadoPor: DUENO, fechaActualizacion: new Date() }));
+});
+
+test('MOV-10. NO se anota una cantidad recibida negativa [PROHIBIDO]', async () => {
+  await cargarTraslado();
+  await assertFails(updateDoc(doc(como(DUENO), 'movimientos/mv1'),
+    { estado: 'entregado', cantidadRecibida: -3, fechaEntrega: new Date(), actualizadoPor: DUENO, fechaActualizacion: new Date() }));
+});
+
+test('MOV-11. Un traslado NO se borra [PROHIBIDO]', async () => {
+  await cargarTraslado();
+  await assertFails(deleteDoc(doc(como(DUENO), 'movimientos/mv1')));
+});
+
+test('MOV-12. El dueño lista los traslados de su campo [PERMITIDO]', async () => {
+  await cargarTraslado();
+  const q = query(collection(como(DUENO), 'movimientos'), where('activoAgroId', '==', 'a1'));
+  await assertSucceeds(getDocs(q));
+});
+
+test('MOV-13. Otro usuario NO lista los traslados del campo [PROHIBIDO]', async () => {
+  await cargarTraslado();
+  const q = query(collection(como(OTRO), 'movimientos'), where('activoAgroId', '==', 'a1'));
+  await assertFails(getDocs(q));
+});
+
+test('MOV-14. El encargado con "crear movimientos" registra un traslado [PERMITIDO]', async () => {
+  await darAutorizacion('crear', 'movimientos');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'movimientos/mv1'), trasladoDe(ENCARGADO)));
+});
+
+test('MOV-15. Con permiso solo en producción, el encargado NO ve los traslados [PROHIBIDO]', async () => {
+  await cargarTraslado();
+  await darAutorizacion('ver', 'produccion');
+  await assertFails(getDoc(doc(como(ENCARGADO), 'movimientos/mv1')));
+});
+
+test('MOV-16. El encargado con "modificar movimientos" marca entregado a su nombre [PERMITIDO]', async () => {
+  await cargarTraslado();
+  await darAutorizacion('modificar', 'movimientos');
+  await assertSucceeds(updateDoc(doc(como(ENCARGADO), 'movimientos/mv1'),
+    { estado: 'entregado', cantidadRecibida: 50, fechaEntrega: new Date(), actualizadoPor: ENCARGADO, fechaActualizacion: new Date() }));
+});

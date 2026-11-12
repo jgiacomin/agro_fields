@@ -5,6 +5,7 @@ import '../../services/activo_agro_service_v2.dart';
 import '../documentos/documentos_activo_screen.dart';
 import '../emergencias/emergencias_activo_screen.dart';
 import '../profesionales/profesionales_activo_screen.dart';
+import '../traslados/traslados_activo_screen.dart';
 import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
@@ -283,6 +284,23 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
                 ),
                 icon: const Icon(Icons.badge),
                 label: const Text('Profesionales'),
+              ),
+            ),
+            // AF-089: traslados (núcleo común de transporte).
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => TrasladosActivoScreen(
+                      activoAgroId: activo.activoId,
+                      nombreActivo: activo.nombre,
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.local_shipping),
+                label: const Text('Traslados'),
               ),
             ),
 

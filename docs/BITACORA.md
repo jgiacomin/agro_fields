@@ -7415,3 +7415,45 @@ El Concepto pide que el productor pueda invitar a su agrónomo, veterinario o t�
 ### Evidencia
 
 * Rama `gap-prof-01`.
+
+---
+
+# 12/11/2026 - GAP-MOV-01 (AF-089): traslado simple sobre el núcleo común de transporte
+
+**Estado: VALIDADO (reglas en emulador + reglas publicadas + prueba manual).**
+
+### Problema
+
+El Concepto (secc. 8.1) define el transporte como servicio transversal: un núcleo común para todas las actividades, ficha por actividad y reglas por jurisdicción aparte. Para enero: traslado simple (origen, destino, cantidad, categoría, transportista, guía, fecha).
+
+### Solución
+
+* **Una sola colección `movimientos`** con campo `actividad` (ganaderia, agricultura, apicultura, piscicultura, otra). No se crearon sistemas por actividad. No se confunde con el "movimiento" entre potreros (eventos productivos) ni con los movimientos de stock.
+* `lib/models/activos/movimiento_model.dart` (nuevo): origen (campo), destino (texto y, opcional, otro campo propio), carga, cantidad declarada, unidad según actividad, cantidad recibida, transportista, patente, guía, fechas, estado (programado → enCamino → entregado / cancelado), siempre `declarado`. **Control de coherencia** declarado/recibido (`hayDiferencia`, `diferencia`). Lo desconocido no se asume (estado raro = programado).
+* `lib/services/movimiento_service.dart` (nuevo): registrar, listar por campo, cambiar estado (solo los campos permitidos).
+* `autorizacion_activo_model.dart`: ámbito nuevo `movimientos`.
+* `firestore.rules`: `movimientos` lo ven y cargan el dueño o un autorizado en "movimientos" (el broker NO); solo cambian estado, recibido, fecha de entrega y quién actualizó, y solo mientras no terminó; no se borra.
+* `lib/screens/traslados/` (nuevo): lista con estado y "Necesita atención" si llegó distinto, nuevo traslado, marcar en camino / entregado (pregunta cuánto llegó) / cancelar. `detalle_activo_agro_screen.dart`: botón "Traslados".
+* Decisión de Javier: **el traslado no descuenta solo el rodeo en enero** (se registra la baja/alta en Producción); vincular queda 🟡.
+
+### Validación
+
+* `test/movimiento_model_test.dart`: 5 pruebas nuevas.
+* `test_rules/rules.test.mjs`: 16 pruebas nuevas (MOV-01 a MOV-16). **npm test: 216 de 216** (Firestore + Storage). Se corrigió un nombre repetido en las ayudas de prueba (`cargarMovimiento` ya existía para stock → `cargarTraslado`).
+* Reglas publicadas en `agro-conecta-887df`.
+* Prueba manual de Javier: Campo La Esperanza, 50 novillos a Feedlot Los Aromos; entregado con 48 → aviso rojo "llegaron 48 de 50 cabezas".
+
+### Pendiente
+
+* 🟡 Vincular con existencias del rodeo; destino = otro campo propio desde una lista; incidencias del viaje; fotos/evidencias; reglas por jurisdicción (SENASA, SENACSA) y control de coherencia por caravana (caso SNIG); funcionamiento sin señal.
+* 🟢 GPS, costos por corredor, exportación y organismos por vías oficiales.
+
+### Evidencia
+
+* Rama `gap-mov-01`.
+
+---
+
+# 12/11/2026 - Cierre: los 5 🔴 nuevos del Concepto para enero están hechos
+
+AF-095 certificaciones, AF-090 ubicación en el mapa, AF-092 emergencias y "disponible para recibir", AF-093 profesionales invitados y AF-089 traslado simple. Además: pantalla de ingreso y nuevo Inicio con el logo de la demo.
