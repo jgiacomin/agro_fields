@@ -7215,3 +7215,48 @@ Los documentos tenían datos (paso 4a) pero no se podía subir el archivo: la ap
 ### Evidencia
 
 * Rama `paso-4b-pantalla-documentos`, commit `68a6a25`; unido a `main` y subido a GitHub (`main` = `68a6a25`)
+
+---
+
+# 12/11/2026 - Concepto General y Matriz: incorporaciones (AF-088 a AF-097)
+
+**Estado: DOCUMENTADO (concepto, sin código).**
+
+* `CONCEPTO_GENERAL_INTEGRAL_AGRO_FIELDS_V8.md` y la copia Word en `Desktop\App` ("concepto general de la app 12-11-2026.docx"): se suman independencia de plataformas (secc. 1), transporte como servicio transversal (8), identificación territorial, teledetección e integración de sistemas productivos / El Monterizo (9), expediente de emergencia y marca "disponible para recibir" (10), etapas de articulación institucional (11), ampliación SNIG con 5 funciones (12) y tres secciones nuevas: certificaciones y bienestar animal (13), inteligencia de mercados (14) e inteligencia regulatoria (15); importación Tru-Test (17.1). Las secciones viejas 13 a 20 pasan a 16 a 23. Cada capacidad con marcas 🔴🟡🟢.
+* `docs/MATRIZ_GENERAL_JORNADA_MAESTRA_AGRO_FIELDS_V8.xlsx`: filas nuevas AF-088 a AF-097, todas "Planificado". La Matriz llegaba a AF-087 (no a AF-099).
+* 🔴 nuevos para enero: AF-095 certificación, AF-090 ubicación en el mapa, AF-092 emergencia + "disponible para recibir", AF-093 invitar al profesional, AF-089 traslado simple.
+
+---
+
+# 12/11/2026 - GAP-CERT-01 (AF-095): certificación en Documentos del campo
+
+**Estado: VALIDADO EN LA APP.**
+
+### Problema
+
+El Concepto pide guardar certificaciones (bienestar animal, orgánico, etc.) con su alcance, a qué animales o producción aplican y aviso de vencimiento. Agro Fields no certifica: guarda, ordena y avisa.
+
+### Solución (cambio mínimo)
+
+* Se **reutiliza** el tipo existente `certificado` (no se crea otro tipo). Ahora se muestra como "Certificación o certificado".
+* `lib/models/activos/documento_activo_model.dart`: dos datos opcionales nuevos, `alcance` (qué certifica) y `aplicaA` (a qué animales o producción aplica). Un documento viejo se lee igual (quedan vacíos).
+* `lib/screens/documentos/nuevo_documento_screen.dart`: las dos preguntas aparecen solo si el tipo es certificación; con otro tipo no se guardan.
+* `lib/screens/documentos/documentos_activo_screen.dart`: nombre del tipo y, en la tarjeta, el alcance y "Aplica a".
+* El aviso de vencimiento de 30 días (paso 4a) ya sirve para las certificaciones.
+* Sin cambios en reglas: los documentos viven dentro de `activos_agro`, que ya tiene su regla. Sin cambios en servicios.
+* La lista vieja `certificaciones` (texto) de `DocumentacionActivo` no se toca.
+
+### Validación
+
+* Línea base antes del cambio: `flutter test` 184 aprobados y las 2 fallas conocidas de conexión (`oportunidad_agro_service_test.dart` y `trabajo_service_test.dart`).
+* `test/documento_activo_model_test.dart`: 2 pruebas nuevas (conserva alcance y aplicaA; un documento viejo los deja vacíos). Esperado: 186 aprobados y las 2 fallas conocidas.
+* Aprobado por Javier el 12/11/2026 tras las pruebas.
+
+### Pendiente
+
+* 🟡 Vincular el certificado a lotes o animales del núcleo productivo.
+* 🟢 Requisitos por norma, auditorías y conexión con certificadoras.
+
+### Evidencia
+
+* Rama `gap-cert-01`.

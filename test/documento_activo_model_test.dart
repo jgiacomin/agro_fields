@@ -134,4 +134,40 @@ void main() {
           'activos/a1/privado/documentos/doc2/permiso.pdf');
     });
   });
+
+  group('DocumentoActivo - certificaciones (AF-095)', () {
+    test('conserva qué certifica y a qué aplica', () {
+      final original = DocumentoActivo(
+        documentoId: 'doc3',
+        tipo: 'certificado',
+        descripcion: 'Certificación de bienestar animal',
+        estado: 'declarado',
+        evidenciaIds: const [],
+        emisor: 'Welfair',
+        fechaVencimiento: DateTime(2027, 6, 30),
+        alcance: 'Bienestar animal',
+        aplicaA: 'Rodeo de engorde',
+      );
+
+      final recuperado =
+          DocumentoActivo.fromMap(original.toMap(), original.documentoId);
+
+      expect(recuperado.tipo, 'certificado');
+      expect(recuperado.alcance, 'Bienestar animal');
+      expect(recuperado.aplicaA, 'Rodeo de engorde');
+      expect(recuperado.estadoVigencia(hoy: hoy),
+          EstadoVigenciaDocumento.vigente);
+    });
+
+    test('un documento viejo sin estos datos los deja vacíos', () {
+      final viejo = DocumentoActivo.fromMap({
+        'tipo': 'certificado',
+        'descripcion': 'Certificado',
+        'estado': 'declarado',
+      }, 'doc_viejo_cert');
+
+      expect(viejo.alcance, isNull);
+      expect(viejo.aplicaA, isNull);
+    });
+  });
 }

@@ -39,6 +39,8 @@ class _NuevoDocumentoScreenState extends State<NuevoDocumentoScreen> {
   final TextEditingController _numero = TextEditingController();
   final TextEditingController _provincia = TextEditingController();
   final TextEditingController _observaciones = TextEditingController();
+  final TextEditingController _alcance = TextEditingController();
+  final TextEditingController _aplicaA = TextEditingController();
 
   /// ID armado al abrir la pantalla: el archivo se sube a la carpeta de
   /// este documento y tocar "Guardar" dos veces no lo duplica.
@@ -61,8 +63,13 @@ class _NuevoDocumentoScreenState extends State<NuevoDocumentoScreen> {
     _numero.dispose();
     _provincia.dispose();
     _observaciones.dispose();
+    _alcance.dispose();
+    _aplicaA.dispose();
     super.dispose();
   }
+
+  /// AF-095: las preguntas de certificación solo aparecen con este tipo.
+  bool get esCertificacion => tipo == 'certificado';
 
   String? texto(TextEditingController c) =>
       c.text.trim().isEmpty ? null : c.text.trim();
@@ -108,6 +115,9 @@ class _NuevoDocumentoScreenState extends State<NuevoDocumentoScreen> {
       transferibilidad: transferibilidad,
       contieneDatosPersonales: contieneDatosPersonales,
       archivoRuta: archivoRuta,
+      // AF-095: solo se guardan si es una certificación.
+      alcance: esCertificacion ? texto(_alcance) : null,
+      aplicaA: esCertificacion ? texto(_aplicaA) : null,
     );
 
     setState(() => guardando = true);
@@ -182,6 +192,22 @@ class _NuevoDocumentoScreenState extends State<NuevoDocumentoScreen> {
             etiqueta: nombreTipoDocumento,
             alElegir: (t) => setState(() => tipo = t),
           ),
+          if (esCertificacion) ...[
+            const EtiquetaCampo('¿Qué certifica? (opcional)'),
+            TextField(
+              controller: _alcance,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: decoracionCampo(
+                  ayuda: 'Ej.: Bienestar animal Welfair, Orgánico'),
+            ),
+            const EtiquetaCampo('¿A qué animales o producción aplica? (opcional)'),
+            TextField(
+              controller: _aplicaA,
+              textCapitalization: TextCapitalization.sentences,
+              decoration:
+                  decoracionCampo(ayuda: 'Ej.: Rodeo de engorde, corrales 1 a 4'),
+            ),
+          ],
           const EtiquetaCampo('Descripción (opcional)'),
           TextField(
             controller: _descripcion,

@@ -3538,3 +3538,19 @@ Pendiente: agregar archivo a un documento existente, carga por el encargado (cam
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Certificaciones en Documentos del campo — Estado
+
+🟢 **GAP-CERT-01 (AF-095) VALIDADO** (12/11/2026, rama `gap-cert-01`)
+
+Al cargar un documento de tipo "Certificación o certificado" se pregunta qué certifica y a qué animales o producción aplica. Avisa el vencimiento 30 días antes, como los demás documentos. Agro Fields no certifica.
+
+Evidencia: `flutter test` 186 aprobados esperados (2 fallas conocidas de conexión); sin cambios en reglas.
+
+Próximo 🔴: AF-090 ubicación del campo en el mapa, AF-092 emergencia + "disponible para recibir", AF-093 invitar al profesional, AF-089 traslado simple. También: rediseño de la pantalla de ingreso.
+
+Referencia documental:
+
+`docs/BITACORA.md`

@@ -65,6 +65,18 @@ class DocumentoActivo {
   /// Ruta del archivo en Storage (se completa en el paso 4b).
   final String? archivoRuta;
 
+  // =====================================================
+  // AF-095 — CERTIFICACIONES (opcionales, solo para el
+  // tipo "certificado"). Agro Fields no certifica: guarda,
+  // ordena y avisa el vencimiento.
+  // =====================================================
+
+  /// Qué certifica (ej.: "Bienestar animal Welfair", "Orgánico").
+  final String? alcance;
+
+  /// A qué animales o producción aplica (ej.: "Rodeo de engorde").
+  final String? aplicaA;
+
   DocumentoActivo({
     required this.documentoId,
     required this.tipo,
@@ -82,6 +94,8 @@ class DocumentoActivo {
     this.transferibilidad = TransferibilidadDocumento.desconocida,
     this.contieneDatosPersonales = true,
     this.archivoRuta,
+    this.alcance,
+    this.aplicaA,
   });
 
   /// Dice si el documento está vigente, por vencer o vencido.
@@ -134,6 +148,8 @@ class DocumentoActivo {
       transferibilidad: _leerTransferibilidad(map['transferibilidad']),
       contieneDatosPersonales: map['contieneDatosPersonales'] ?? true,
       archivoRuta: map['archivoRuta'],
+      alcance: map['alcance'],
+      aplicaA: map['aplicaA'],
     );
   }
 
@@ -159,6 +175,8 @@ class DocumentoActivo {
       'transferibilidad': transferibilidad.name,
       'contieneDatosPersonales': contieneDatosPersonales,
       'archivoRuta': archivoRuta,
+      'alcance': alcance,
+      'aplicaA': aplicaA,
     };
   }
 
@@ -179,6 +197,8 @@ class DocumentoActivo {
     TransferibilidadDocumento? transferibilidad,
     bool? contieneDatosPersonales,
     String? archivoRuta,
+    String? alcance,
+    String? aplicaA,
   }) {
     return DocumentoActivo(
       documentoId: documentoId ?? this.documentoId,
@@ -198,6 +218,8 @@ class DocumentoActivo {
       contieneDatosPersonales:
           contieneDatosPersonales ?? this.contieneDatosPersonales,
       archivoRuta: archivoRuta ?? this.archivoRuta,
+      alcance: alcance ?? this.alcance,
+      aplicaA: aplicaA ?? this.aplicaA,
     );
   }
 

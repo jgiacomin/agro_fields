@@ -31,7 +31,8 @@ String nombreTipoDocumento(String tipo) {
     case 'arrendamiento':
       return 'Contrato de arrendamiento';
     case 'certificado':
-      return 'Certificado';
+      // AF-095: se reutiliza el tipo existente (sin crear otro).
+      return 'Certificación o certificado';
     case 'otro':
       return 'Otro';
   }
@@ -245,6 +246,8 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
     final detalle = [
       // Si no hay descripcion, el titulo ya es el tipo: no se repite.
       if (_nombre(d) != nombreTipoDocumento(d.tipo)) nombreTipoDocumento(d.tipo),
+      if (d.alcance != null) d.alcance!,
+      if (d.aplicaA != null) 'Aplica a: ${d.aplicaA}',
       if (d.emisor != null) d.emisor!,
       if (d.numero != null) 'Nº ${d.numero}',
       if (d.provinciaEstado != null) d.provinciaEstado!,
