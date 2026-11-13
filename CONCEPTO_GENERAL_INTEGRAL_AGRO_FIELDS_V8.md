@@ -1011,3 +1011,39 @@ Toda capacidad deberá pasar por análisis funcional, diseño arquitectónico, e
 - Importación de datos de equipos de campo (sección 17.1).
 
 Todo lo marcado 🔴 debe pasar al cuadro de lanzamiento, a la Matriz y al Roadmap antes de programarse.
+
+### Incorporaciones del 13/11/2026
+
+- Caso de referencia Pretto Agronegocios con cuadro de lo que existe y lo que falta (sección 25.1). Matriz AF-102 a AF-108.
+
+---
+
+## 25. Casos de referencia estratégicos
+
+### 25.1. Pretto Agronegocios (5.º Congreso Federal Ganadero de ROSGAN, noviembre de 2026)
+
+**Fuente:** panel "De productor a empresario" (nota de Mac Lean Consultores / Patricia Martino). **Estado:** referencia conceptual analizada el 13/11/2026; no es especificación técnica.
+
+**Síntesis:** empresa familiar de Sacanta (Córdoba) que, tras la muerte del fundador en 2012, atravesó inundaciones y deudas, se apoyó en CREA (desde 2019) y pasó de 2 a más de 25 colaboradores. Integra agricultura, cría, recría, feedlot, desposte y venta de cortes con marca propia; red de más de 30 empresas aliadas; unas 3.000 t de carne comercializadas y meta de 100.000 cabezas; más de 21.000 caravanas trazadas y casi 700 búfalos identificados; plataforma digital para vender medias reses a más de 100 carniceros; 300 visitas y 15 ganaderos formados en un año. Frase: «La ganadería sola puede ir rápido, pero aliada puede llegar lejos».
+
+**Principios que confirma** (ya están en este Concepto): conectar sin quitar autonomía; compartir información solo con autorización (activo, ámbito, dato y vigencia); profesionalizar sin complicar; acompañar al pequeño productor; no imponer un modelo único de empresa; el sistema no fija precios.
+
+**Qué tiene hoy Agro Fields y qué falta (cotejado con el código el 13/11/2026):**
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Mortandad | Bajas con motivo "muerte" por rodeo | Calcular el % de mortandad del rodeo | 🔴 con pesajes |
+| Ganancia de peso | Tipo de evento "pesaje" preparado | Pantalla de pesajes y ganancia diaria de peso | 🔴 con pesajes |
+| Conversión alimenticia | Tipo de evento "alimentación" preparado; stock de alimento | Registrar alimentación y cruzarla con pesajes | 🟡 |
+| Identificación individual (caravanas) | Modo de identificación "por animal" preparado en el rodeo | Ficha por animal, caravana, historia individual (enlaza con el caso SNIG, sección 12) | 🟡 |
+| Del maíz a la carne | Cosecha, traslados, stock y economía | Unir cosecha propia como alimento del feedlot (sin duplicar datos) | 🟡 |
+| Hotelería y capitalización entre aliados | Tenencia "capitalización" y "hotelería"; origen de alta | Vínculo con el dueño de los animales y lo que se le informa | 🟢 |
+| Costos y resultado | Gastos por categoría y actividad (GAP-ECO-01) | Ingresos por ventas, resultado y planificado contra real | 🟡 / 🟢 |
+| Historia y legado del establecimiento | Historial del campo | Registrar hitos y decisiones relevantes a mano | 🟡 |
+| Equipo, delegación y capacitación | Encargado y profesional invitados con permisos | Roles del equipo, responsabilidades y capacitación (AF-080) | 🟢 |
+| Compartir números con el equipo | Autorización "ver" por ámbito (economía, producción) | — (se cubre con permisos) | ✅ |
+| Red de aliados | Autorizaciones por campo | Red Agropecuaria: aliados, indicadores compartidos con permiso | 🟢 |
+| Venta a carniceros (medias reses, cortes) | Marketplace de campos y operaciones protegidas | Comercialización B2B de productos | 🟢 |
+| Trazabilidad de la carne hasta el consumidor | Eventos, movimientos y documentos | Faena, desposte, rendimiento de carne (conexión con frigoríficos) | 🟢 |
+
+**Criterio:** no se crea un módulo por caso. Cada punto se apoya en lo que ya existe (núcleo productivo, movimientos, stock, economía, autorizaciones). Lo 🔴 entra con el punto 6 del plan (Suelo y pesajes), sin módulo nuevo.

@@ -1619,3 +1619,56 @@ test('STOCK-04. El encargado con "crear recursos e inventario" crea un producto 
 test('STOCK-05. Otro usuario NO crea productos en un campo ajeno [PROHIBIDO]', async () => {
   await assertFails(setDoc(doc(como(OTRO), 'recursos/rec_gli'), productoDe()));
 });
+
+// =====================================================================
+// ECO. GASTOS (GAP-ECO-01, 13/11/2026)
+// Datos de plata: dueño o ámbito "economia". Solo agregar.
+// =====================================================================
+
+const gastoDe = (extra = {}) => ({
+  gastoId: 'g1', activoAgroId: 'a1', fecha: new Date(), fechaCarga: new Date(),
+  cargadoPor: DUENO, monto: 150000, moneda: 'ARS', categoria: 'combustible',
+  actividad: 'agricultura', estadoDato: 'declarado', ...extra,
+});
+
+test('ECO-01. El dueño registra un gasto [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'gastos/g1'), gastoDe()));
+});
+
+test('ECO-02. NO se registra un gasto con monto cero o negativo [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'gastos/g1'), gastoDe({ monto: 0 })));
+  await assertFails(setDoc(doc(como(DUENO), 'gastos/g1'), gastoDe({ monto: -10 })));
+});
+
+test('ECO-03. Una corrección con monto 0 anula un gasto [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'gastos/g2'),
+    gastoDe({ gastoId: 'g2', monto: 0, corrigeGastoId: 'g1' })));
+});
+
+test('ECO-04. NO se aceptan moneda, categoría o actividad inventadas [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'gastos/g1'), gastoDe({ moneda: 'EUR' })));
+  await assertFails(setDoc(doc(como(DUENO), 'gastos/g1'), gastoDe({ categoria: 'vacaciones' })));
+  await assertFails(setDoc(doc(como(DUENO), 'gastos/g1'), gastoDe({ actividad: 'mineria' })));
+});
+
+test('ECO-05. El broker que cargó el expediente NO ve ni carga gastos [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'gastos/g1'), gastoDe()));
+  await assertFails(getDoc(doc(como(BROKER), 'gastos/g1')));
+  await assertFails(setDoc(doc(como(BROKER), 'gastos/g3'), gastoDe({ gastoId: 'g3', cargadoPor: BROKER })));
+});
+
+test('ECO-06. Un gasto NO se edita ni se borra [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'gastos/g1'), gastoDe()));
+  await assertFails(updateDoc(doc(como(DUENO), 'gastos/g1'), { monto: 1 }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'gastos/g1')));
+});
+
+test('ECO-07. El encargado con "crear economía" registra un gasto [PERMITIDO]', async () => {
+  await darAutorizacion('crear', 'economia');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'gastos/g1'), gastoDe({ cargadoPor: ENCARGADO })));
+});
+
+test('ECO-08. Otro usuario NO ve gastos de un campo ajeno [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'gastos/g1'), gastoDe()));
+  await assertFails(getDoc(doc(como(OTRO), 'gastos/g1')));
+});

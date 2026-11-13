@@ -146,6 +146,24 @@ service firebase.storage {
       allow update, delete: if esAdmin();
     }
 
+    // ---------------- COMPROBANTES DE GASTOS (GAP-ECO-01) ----------------
+    // Foto o PDF del comprobante de un gasto. Datos de plata: solo el dueño
+    // o quien tenga autorización en el ámbito "economia" (el broker no).
+    // Nadie reemplaza ni borra desde la app.
+    match /activos/{activoId}/gastos/{gastoId}/{archivo} {
+      allow read: if esAdmin()
+        || esDuenoActivo(activoId)
+        || tieneAutorizacion(activoId, 'ver', 'economia');
+
+      allow create: if (esAdmin()
+          || esDuenoActivo(activoId)
+          || tieneAutorizacion(activoId, 'crear', 'economia'))
+        && resource == null
+        && esDocumento() && pesaMenosDe(20);
+
+      allow update, delete: if esAdmin();
+    }
+
     // ---------------- TODO LO DEMAS: PROHIBIDO ----------------
     match /{allPaths=**} {
       allow read, write: if false;

@@ -245,3 +245,22 @@ test('ST-23. El dueño NO borra la foto de un cheque [PROHIBIDO]', async () => {
   await cargarArchivo(RUTA_CHEQUE, JPG);
   await assertFails(deleteObject(ref(como(DUENO), RUTA_CHEQUE)));
 });
+
+// =====================================================================
+// GASTOS (GAP-ECO-01, 13/11/2026): comprobantes. Dueño o ámbito
+// "economia"; el broker que cargó el expediente no entra.
+// =====================================================================
+
+const rutaComprobante = (n) => `activos/a1/gastos/g_${CORRIDA}_${n}/ticket.pdf`;
+
+test('ST-ECO-01. El dueño sube el comprobante de un gasto [PERMITIDO]', async () => {
+  await assertSucceeds(uploadBytes(ref(como(DUENO), rutaComprobante(1)), bytes(), PDF));
+});
+
+test('ST-ECO-02. El broker NO sube comprobantes de gastos [PROHIBIDO]', async () => {
+  await assertFails(uploadBytes(ref(como(BROKER), rutaComprobante(2)), bytes(), PDF));
+});
+
+test('ST-ECO-03. Otro usuario NO sube comprobantes de gastos [PROHIBIDO]', async () => {
+  await assertFails(uploadBytes(ref(como(OTRO), rutaComprobante(3)), bytes(), PDF));
+});

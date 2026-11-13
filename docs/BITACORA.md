@@ -7609,3 +7609,56 @@ Se compararon los documentos de lanzamiento (01/10 y "camino a enero") con el c�
 ### Evidencia
 
 * Rama `gap-stock-01`.
+
+---
+
+# 13/11/2026 - Diseño V8 campo (rama diseno-v8-campo, unida a main ed40b7c)
+
+**Estado: VALIDADO EN LA APP (Javier: "ahora sí quedó lindo").**
+
+Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no cambia cómo funciona nada.
+
+* Barra de arriba (`lib/widgets/barra_campo.dart`, `BarraCampo` reemplaza a AppBar en 37 pantallas): foto del campo al atardecer (Pixabay, uso libre; `assets/encabezado_campo.jpg`, 82 KB), logo en círculo dorado, velo oscuro para leer el título y curva dorada abajo.
+* Fondo común (`lib/main.dart`): campo de trigo desvanecido abajo de todas las pantallas (`assets/fondo_campo.jpg`); las pantallas son transparentes y los botones de abajo flotan sobre el paisaje.
+* `produccion_estilo.dart`: botones con degradé naranja, ícono y flecha opcionales; títulos de sección como banda oscura con ícono dorado y paisaje a la derecha; tarjetas crema cálido con sombra; piezas nuevas `IconoCirculo`, `FilaConIcono`, `ResumenNumeros` y `EstadoVacio`.
+* Íconos en círculo en las listas (producción, cultivo, stock, documentos, operaciones, traslados, emergencias, profesionales); resumen con números en Producción; pantallas vacías con ícono.
+* La foto de iStock que se bajó primero NO se usó (paga, con marca de agua).
+* Pendiente: Inicio y ficha del campo con el mismo estilo; la tarjeta no corregida de la cosecha todavía fuerza blanco.
+
+---
+
+# 13/11/2026 - GAP-ECO-01: Economía (núcleo, sin contabilidad)
+
+**Estado: CÓDIGO ENTREGADO (rama gap-eco-01), pendiente de prueba de Javier.**
+
+### Decisión
+
+* `EconomiaActivo` (ya existía) es el resumen económico del EXPEDIENTE (inversión, capital, rentabilidad declarada): no sirve para el gasto diario. Los gastos van en una colección propia `gastos` (Concepto: gastos diarios en gestión, al expediente solo totales). No es duplicar.
+
+### Solución
+
+* `lib/models/activos/gasto_model.dart` (nuevo): fecha, monto, moneda (ARS/USD/PYG), categoría (insumos, combustible, mano de obra, contratistas, sanidad, alquiler, fletes, mantenimiento, impuestos y servicios, otros), actividad (agricultura, ganadería, general), cultivo o rodeo opcional, proveedor, detalle y comprobante opcionales. Solo agregar: se corrige con otro gasto (`corrigeGastoId`); corrección con monto 0 = anulado.
+* `lib/services/calculo_economia.dart` (nuevo): resumen del mes con totales SEPARADOS por moneda (no se convierte), por categoría y por actividad; los corregidos y anulados no cuentan.
+* `lib/services/gasto_service.dart` (nuevo): guardar, leer y subir el comprobante a `activos/{id}/gastos/{gastoId}/`.
+* `firestore.rules`: `gastos` solo el dueño o el ámbito "economia" (que ya existía); el broker que cargó el expediente NO entra; monto > 0 (o 0 si corrige), moneda, categoría y actividad de la lista; no se edita ni se borra. `storage.rules`: comprobantes con la misma protección.
+* Pantallas `lib/screens/economia/` (nuevas): resumen del mes con selector de mes, barras por categoría, totales por actividad, lista con "Corregir"; "+ Gasto" que se completa tocando; botón "Economía" en la ficha del campo.
+
+### Validación prevista
+
+* `test/economia_test.dart`: 6 pruebas. Reglas ECO-01 a ECO-08. Storage ST-ECO-01 a ST-ECO-03.
+
+### Pendiente
+
+* 🟡 Precio de compra del stock como gasto automático; ingresos por ventas y resultado.
+* 🟢 Tipo de cambio y totales convertidos; totales del año al expediente.
+
+---
+
+# 13/11/2026 - Caso de referencia: Pretto Agronegocios (ROSGAN)
+
+**Estado: DOCUMENTADO (sin código).**
+
+* Javier pasó su análisis del caso y la nota original del 5.º Congreso Federal Ganadero de ROSGAN, para saber qué le falta al sistema.
+* Se cotejó con el código: se agregó la sección 25.1 al Concepto General con un cuadro "ya existe / falta / etapa" y se completaron datos de la nota (3.000 t, meta de 100.000 cabezas, plataforma para 100 carniceros, de 2 a 25 colaboradores, 300 visitas y 15 ganaderos formados).
+* Matriz: AF-102 (mortandad y ganancia diaria de peso, 🔴 con pesajes), AF-103 (alimentación y conversión, 🟡), AF-104 (identificación individual, 🟡), AF-105 (hitos del establecimiento, 🟡), AF-106 (ingresos, resultado y presupuesto, 🟡/🟢), AF-107 (red de aliados, 🟢), AF-108 (comercialización B2B, 🟢); nota en AF-080.
+* Criterio: ningún módulo nuevo por el caso; todo se apoya en lo existente.

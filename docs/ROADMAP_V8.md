@@ -3773,3 +3773,34 @@ Próximo según el plan: **Economía (núcleo)**: gastos por categoría, mes y a
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Diseño V8 campo — Estado
+
+🟢 **VALIDADO** (13/11/2026, unido a main `ed40b7c`). Barra con foto y logo, fondo con paisaje, tarjetas cálidas, íconos en círculo, resumen y pantallas vacías. Pendiente: Inicio y ficha del campo con el mismo estilo (en la etapa de pulido de diciembre).
+
+---
+
+## Economía — Estado
+
+🟡 **GAP-ECO-01 ENTREGADO** (13/11/2026, rama `gap-eco-01`), pendiente de prueba.
+
+Gastos por mes, categoría y actividad, en su moneda, con comprobante opcional; solo el dueño o el ámbito "economia". Sin contabilidad.
+
+Con esto quedan hechos (o en prueba) los puntos 1 a 5 del plan, adelantados al calendario (el 5 estaba previsto para 28/11–04/12).
+
+Próximo según el plan: **Suelo y pesajes** (pantallas sobre datos existentes).
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Caso Pretto — impacto en el plan (13/11/2026)
+
+* El punto 6 del plan (**Suelo y pesajes**) suma **AF-102**: % de mortandad del rodeo y ganancia diaria de peso, calculados con datos que ya se cargan (sin módulo nuevo).
+* Para después de enero: alimentación y conversión (AF-103), identificación individual (AF-104), hitos del establecimiento (AF-105), ingresos y resultado (AF-106) 🟡; red de aliados (AF-107) y comercialización B2B (AF-108) 🟢.
+
+Referencia: Concepto General sección 25.1; `docs/BITACORA.md`.

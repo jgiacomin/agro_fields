@@ -925,6 +925,45 @@ service cloud.firestore {
         && d.importe > 0;
     }
 
+    // -----------------------------------------------------------------
+    // GASTOS (GAP-ECO-01, 13/11/2026)
+    // Gestion diaria: cuanto se gasto, en que y en que actividad. No es
+    // contabilidad. Son datos de plata: los ve y carga SOLO el dueno o
+    // quien tenga autorizacion en el ambito "economia" (el broker que
+    // cargo el expediente no entra). Solo agregar: no se editan ni se
+    // borran; un error se corrige con otro gasto (corrigeGastoId), y una
+    // correccion con monto 0 anula el original.
+    // -----------------------------------------------------------------
+    function puedeEconomia(activoId, permiso) {
+      return esAdmin()
+        || (logueado()
+            && activoId is string
+            && (esDuenoActivo(activoId)
+                || tieneAutorizacion(activoId, permiso, 'economia')));
+    }
+
+    function gastoValido(d) {
+      return d.monto is number
+        && (d.monto > 0
+            || (d.monto == 0 && d.get('corrigeGastoId', null) is string))
+        && d.moneda in ['ARS', 'USD', 'PYG']
+        && d.categoria in ['insumos', 'combustible', 'manoDeObra',
+                           'contratistas', 'sanidad', 'alquiler', 'fletes',
+                           'mantenimiento', 'impuestosServicios', 'otros']
+        && d.actividad in ['agricultura', 'ganaderia', 'general'];
+    }
+
+    match /gastos/{gastoId} {
+      allow get, list: if puedeEconomia(resource.data.activoAgroId, 'ver');
+
+      allow create: if puedeEconomia(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.gastoId == gastoId
+        && request.resource.data.cargadoPor == request.auth.uid
+        && gastoValido(request.resource.data);
+
+      allow update, delete: if false;
+    }
+
     match /operaciones_protegidas/{operacionId} {
       allow get, list: if puedeOperaciones(resource.data.activoAgroId, 'ver');
 

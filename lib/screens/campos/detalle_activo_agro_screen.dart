@@ -9,6 +9,7 @@ import '../profesionales/profesionales_activo_screen.dart';
 import '../traslados/traslados_activo_screen.dart';
 import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
+import '../economia/economia_activo_screen.dart';
 import '../stock/stock_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 import '../../widgets/barra_campo.dart';
@@ -425,6 +426,14 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         AgroTema.verde,
         () => _abrir(
             StockActivoScreen(activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.payments_outlined,
+        'Economía',
+        'Gastos del mes por categoría',
+        AgroTema.terracota,
+        () => _abrir(
+            EconomiaActivoScreen(activoAgroId: id, nombreActivo: nombre)),
       ),
     ];
 
