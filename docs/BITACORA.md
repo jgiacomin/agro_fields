@@ -7662,3 +7662,35 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 * Se cotejó con el código: se agregó la sección 25.1 al Concepto General con un cuadro "ya existe / falta / etapa" y se completaron datos de la nota (3.000 t, meta de 100.000 cabezas, plataforma para 100 carniceros, de 2 a 25 colaboradores, 300 visitas y 15 ganaderos formados).
 * Matriz: AF-102 (mortandad y ganancia diaria de peso, 🔴 con pesajes), AF-103 (alimentación y conversión, 🟡), AF-104 (identificación individual, 🟡), AF-105 (hitos del establecimiento, 🟡), AF-106 (ingresos, resultado y presupuesto, 🟡/🟢), AF-107 (red de aliados, 🟢), AF-108 (comercialización B2B, 🟢); nota en AF-080.
 * Criterio: ningún módulo nuevo por el caso; todo se apoya en lo existente.
+
+---
+
+# 13/11/2026 - GAP-ECO-01 cerrado
+
+* Probado por Javier en Chrome: gasto en pesos (Agricultura) y en dólares (General del campo) separados, sin sumar monedas. flutter test 240 (+2 fallas conocidas de conexión), reglas 252/252, reglas ya publicadas en producción.
+* Causa del "botón que no respondía": la app estaba abierta desde antes de copiar los archivos; al reiniciarla anduvo. Unido a main y subido: **main = a310f1e** (incluye el caso Pretto).
+
+---
+
+# 13/11/2026 - GAP-SUELO-01: pantalla para cargar el suelo
+
+**Estado: CÓDIGO ENTREGADO (rama gap-suelo-01), pendiente de prueba de Javier.**
+
+### Decisión
+
+* Punto 6 del plan ("pantallas sobre datos existentes"). El modelo `SueloActivo` y `actualizarSuelo` (con historial y auditoría) ya existían: solo faltaba la pantalla. Sin cambios en reglas ni en el modelo de datos.
+
+### Solución
+
+* `lib/screens/campos/suelo_textos.dart` (nuevo): opciones (textura, drenaje, profundidad, salinidad, erosión, clase de capacidad de uso I a VIII), lectura de números con coma o punto, validación (pH 0–14, materia orgánica 0–100 %) y armado del suelo conservando lo que la pantalla no muestra (subclase, fertilidad, evidencias, etc.).
+* `lib/screens/campos/suelo_activo_screen.dart` (nuevo): todo opcional, se completa tocando; tocar de nuevo una opción la saca ("Sin información"). Queda **declarado** (lo informa el usuario; verificar es de otro). El análisis de laboratorio va en Documentos del campo.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: botón "Cargar suelo / Editar suelo" en la sección Suelo y filas nuevas (profundidad, salinidad, erosión, capacidad de uso, limitaciones) que se ven solo si están cargadas.
+
+### Validación prevista
+
+* `test/suelo_textos_test.dart`: 11 pruebas.
+* Prueba a mano: ficha del campo → Suelo → Cargar suelo → guardar → la ficha muestra los datos y el historial suma "Actualización de información del suelo".
+
+### Pendiente
+
+* Paso B del punto 6: GAP-PESO-01 (peso en el pesaje) + AF-102 (mortandad % y ganancia diaria de peso).

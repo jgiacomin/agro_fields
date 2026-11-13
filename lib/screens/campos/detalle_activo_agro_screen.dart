@@ -11,6 +11,7 @@ import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
 import '../economia/economia_activo_screen.dart';
 import '../stock/stock_activo_screen.dart';
+import 'suelo_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 import '../../widgets/barra_campo.dart';
 
@@ -85,6 +86,20 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     final guardo = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => UbicacionActivoScreen(activo: activo),
+      ),
+    );
+    if (guardo != true) return;
+    final actualizado =
+        await _activoService.obtenerActivoPorId(activo.activoId);
+    if (!mounted || actualizado == null) return;
+    setState(() => activo = actualizado);
+  }
+
+  /// GAP-SUELO-01: abre la carga del suelo; si se guardó, relee el campo.
+  Future<void> _abrirSuelo() async {
+    final guardo = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => SueloActivoScreen(activo: activo),
       ),
     );
     if (guardo != true) return;
@@ -576,11 +591,29 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
           _fila('pH', s.ph == null ? 'Sin información' : _numero(s.ph!)),
           _fila('Materia orgánica',
               s.materiaOrganica == null ? 'Sin información' : _numero(s.materiaOrganica!)),
+          // GAP-SUELO-01: se muestran solo si están cargados.
+          if (s.profundidad != null) _fila('Profundidad', _claro(s.profundidad)),
+          if (s.salinidad != null) _fila('Salinidad', _claro(s.salinidad)),
+          if (s.erosion != null) _fila('Erosión', _claro(s.erosion)),
+          if (s.clase != null) _fila('Capacidad de uso', 'Clase ${s.clase}'),
+          if (s.limitaciones != null && s.limitaciones!.isNotEmpty)
+            _fila('Limitaciones', s.limitaciones!),
           _fila('Evidencias', '${s.evidencias.length}'),
           if (s.observaciones != null && s.observaciones!.isNotEmpty)
             _fila('Observaciones', s.observaciones!),
           if (s.fechaEvaluacion != null)
             _fila('Evaluado el', '${s.fechaEvaluacion}'),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: _abrirSuelo,
+              icon: const Icon(Icons.edit, size: 18),
+              label: Text(s.estado == 'sin_evaluar'
+                  ? 'Cargar suelo'
+                  : 'Editar suelo'),
+            ),
+          ),
         ], resumen: _claro(s.estado)),
         _seccion(Icons.category, 'Clasificación y producción', [
           _fila('Tipo de campo', _claro(activo.tipoActivo.name)),

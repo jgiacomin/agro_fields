@@ -3804,3 +3804,19 @@ Referencia documental:
 * Para después de enero: alimentación y conversión (AF-103), identificación individual (AF-104), hitos del establecimiento (AF-105), ingresos y resultado (AF-106) 🟡; red de aliados (AF-107) y comercialización B2B (AF-108) 🟢.
 
 Referencia: Concepto General sección 25.1; `docs/BITACORA.md`.
+
+---
+
+## Economía — Estado (actualizado)
+
+✅ **GAP-ECO-01 CERRADO** (13/11/2026): probado en Chrome, unido a main y subido (main = a310f1e).
+
+## Suelo y pesajes — Estado
+
+🟡 **GAP-SUELO-01 ENTREGADO** (13/11/2026, rama `gap-suelo-01`), pendiente de prueba: pantalla para cargar el suelo sobre el modelo que ya existía (sin cambios de reglas).
+
+Siguiente: **GAP-PESO-01 + AF-102** (peso en el pesaje, ganancia diaria de peso y % de mortandad).
+
+Referencia documental:
+
+`docs/BITACORA.md`
