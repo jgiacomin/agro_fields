@@ -765,7 +765,7 @@ service cloud.firestore {
     function tiposEventoProductivo() {
       return ['alta', 'baja', 'movimiento', 'cambioCategoria', 'sanidad',
               'reproduccion', 'pesaje', 'alimentacion', 'siembra', 'cosecha',
-              'monitoreo'];
+              'monitoreo', 'aplicacion'];
     }
 
     match /unidades_productivas/{unidadId} {
@@ -847,7 +847,27 @@ service cloud.firestore {
         && (request.resource.data.tipo != 'monitoreo'
             || (request.resource.data.get('objetivoMonitoreo', null) != null
                 && request.resource.data.get('nivel', null) != null
-                && request.resource.data.get('fuenteDato', null) != null));
+                && request.resource.data.get('fuenteDato', null) != null))
+        // GAP-APLI-01: la aplicacion dice hectareas, producto y dosis;
+        // viento no negativo, temperatura razonable y humedad del aire
+        // entre 0 y 100 (si vienen).
+        && (request.resource.data.get('vientoKmh', null) == null
+            || (request.resource.data.vientoKmh is number
+                && request.resource.data.vientoKmh >= 0))
+        && (request.resource.data.get('temperatura', null) == null
+            || (request.resource.data.temperatura is number
+                && request.resource.data.temperatura >= -30
+                && request.resource.data.temperatura <= 60))
+        && (request.resource.data.get('humedadAmbiente', null) == null
+            || (request.resource.data.humedadAmbiente is number
+                && request.resource.data.humedadAmbiente >= 0
+                && request.resource.data.humedadAmbiente <= 100))
+        && (request.resource.data.tipo != 'aplicacion'
+            || (request.resource.data.get('superficieHa', null) != null
+                && request.resource.data.get('tratamiento', null) is string
+                && request.resource.data.tratamiento.size() > 0
+                && request.resource.data.get('dosis', null) is string
+                && request.resource.data.dosis.size() > 0));
 
       allow update, delete: if false;
     }

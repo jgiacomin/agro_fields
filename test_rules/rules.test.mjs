@@ -1537,3 +1537,52 @@ test('MON-06. El encargado con "crear producción" registra un monitoreo [PERMIT
   await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev_mon'),
     monitoreoDe({ cargadoPor: ENCARGADO, fuenteDato: 'dron' })));
 });
+
+// =====================================================================
+// APLI. APLICACION TERRESTRE (GAP-APLI-01, 13/11/2026)
+// Una aplicacion es un evento productivo mas: solo agregar.
+// =====================================================================
+
+const aplicacionDe = (extra = {}) => eventoAgroDe({
+  eventoId: 'ev_apli', tipo: 'aplicacion', superficieHa: 80,
+  tratamiento: 'Glifosato 66%', dosis: '2 l/ha', responsable: 'Contratista Pérez',
+  recetaNumero: 'RA-1234', vientoKmh: 8, temperatura: 24, humedadAmbiente: 65, ...extra,
+});
+
+test('APLI-01. El dueño registra una aplicación [PERMITIDO]', async () => {
+  await cargarCultivo();
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), aplicacionDe()));
+});
+
+test('APLI-02. NO se registra una aplicación sin hectáreas, sin producto o sin dosis [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), aplicacionDe({ superficieHa: null })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), aplicacionDe({ tratamiento: '' })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), aplicacionDe({ dosis: null })));
+});
+
+test('APLI-03. NO se aceptan viento negativo, temperatura o humedad imposibles [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), aplicacionDe({ vientoKmh: -3 })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), aplicacionDe({ temperatura: 90 })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), aplicacionDe({ humedadAmbiente: 130 })));
+});
+
+test('APLI-04. Otro usuario NO registra aplicaciones en un campo ajeno [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(OTRO), 'eventos_productivos/ev_apli'), aplicacionDe({ cargadoPor: OTRO })));
+});
+
+test('APLI-05. Una aplicación NO se edita ni se borra [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await cargar((db) => setDoc(doc(db, 'eventos_productivos/ev_apli'), aplicacionDe()));
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_productivos/ev_apli'), { dosis: '1 l/ha' }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'eventos_productivos/ev_apli')));
+});
+
+test('APLI-06. El encargado con "crear producción" registra una aplicación con viento alto [PERMITIDO]', async () => {
+  await cargarCultivo();
+  await darAutorizacion('crear', 'produccion');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev_apli'),
+    aplicacionDe({ cargadoPor: ENCARGADO, vientoKmh: 22 })));
+});

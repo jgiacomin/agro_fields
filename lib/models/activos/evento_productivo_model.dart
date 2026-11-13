@@ -25,6 +25,8 @@ enum TipoEventoProductivo {
   // GAP-MON-01 (13/11/2026): monitoreo (motor común para todas las
   // actividades; en el lanzamiento la app lo ofrece en los cultivos).
   monitoreo,
+  // GAP-APLI-01 (13/11/2026): aplicación terrestre (pulverización).
+  aplicacion,
 }
 
 /// Origen de un alta (Concepto 5.2).
@@ -69,6 +71,10 @@ const Set<TipoEventoProductivo> tiposEventoAgricola = {
 
 /// Unidades para lo cosechado.
 const List<String> unidadesCosecha = ['tn', 'kg', 'qq'];
+
+/// GAP-APLI-01: con viento mayor a esto, la app avisa antes de guardar
+/// (no bloquea; el límite exacto depende de cada provincia).
+const double vientoMaximoAviso = 15;
 
 /// GAP-MON-01: qué se miró en el monitoreo.
 const List<String> objetivosMonitoreo = [
@@ -162,6 +168,22 @@ class EventoProductivo {
   /// Qué se recomienda hacer (opcional; la decisión es del productor).
   final String? recomendacion;
 
+  // GAP-APLI-01: datos de la aplicación (vacíos si no aplican).
+  // Se reutilizan: superficieHa (hectáreas aplicadas), tratamiento
+  // (producto), dosis y responsable (quién aplicó).
+  /// Número de la receta agronómica.
+  final String? recetaNumero;
+
+  /// Viento al aplicar (km/h).
+  final double? vientoKmh;
+
+  /// Temperatura al aplicar (°C).
+  final double? temperatura;
+
+  /// Humedad del aire al aplicar (%). No confundir con [humedad], que es
+  /// la del grano en la cosecha.
+  final double? humedadAmbiente;
+
   const EventoProductivo({
     required this.eventoId,
     required this.activoAgroId,
@@ -198,6 +220,10 @@ class EventoProductivo {
     this.nivel,
     this.fuenteDato,
     this.recomendacion,
+    this.recetaNumero,
+    this.vientoKmh,
+    this.temperatura,
+    this.humedadAmbiente,
   });
 
   /// Lo cosechado pasado a toneladas (null si no hay dato o unidad).
@@ -288,6 +314,24 @@ class EventoProductivo {
           errores.add('La humedad tiene que estar entre 0 y 100.');
         }
         break;
+      case TipoEventoProductivo.aplicacion:
+        if (superficieHa == null || superficieHa! <= 0) {
+          errores.add('Las hectáreas aplicadas tienen que ser mayores a cero.');
+        }
+        if (vacio(unidadId)) errores.add('Falta el lote.');
+        if (vacio(tratamiento)) errores.add('Falta el producto aplicado.');
+        if (vacio(dosis)) errores.add('Falta la dosis.');
+        if (vientoKmh != null && vientoKmh! < 0) {
+          errores.add('El viento no puede ser negativo.');
+        }
+        if (temperatura != null && (temperatura! < -30 || temperatura! > 60)) {
+          errores.add('La temperatura tiene que estar entre -30 y 60 °C.');
+        }
+        if (humedadAmbiente != null &&
+            (humedadAmbiente! < 0 || humedadAmbiente! > 100)) {
+          errores.add('La humedad del aire tiene que estar entre 0 y 100.');
+        }
+        break;
       case TipoEventoProductivo.monitoreo:
         if (!objetivosMonitoreo.contains(objetivoMonitoreo)) {
           errores.add('Falta qué se miró.');
@@ -351,6 +395,10 @@ class EventoProductivo {
       nivel: map['nivel'] as String?,
       fuenteDato: map['fuenteDato'] as String?,
       recomendacion: map['recomendacion'] as String?,
+      recetaNumero: map['recetaNumero'] as String?,
+      vientoKmh: (map['vientoKmh'] as num?)?.toDouble(),
+      temperatura: (map['temperatura'] as num?)?.toDouble(),
+      humedadAmbiente: (map['humedadAmbiente'] as num?)?.toDouble(),
     );
   }
 
@@ -391,6 +439,10 @@ class EventoProductivo {
       'nivel': nivel,
       'fuenteDato': fuenteDato,
       'recomendacion': recomendacion,
+      'recetaNumero': recetaNumero,
+      'vientoKmh': vientoKmh,
+      'temperatura': temperatura,
+      'humedadAmbiente': humedadAmbiente,
     };
   }
 

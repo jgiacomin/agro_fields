@@ -3739,3 +3739,21 @@ Próximo según el plan: **Aplicación terrestre**.
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Aplicación terrestre — Estado
+
+🟢 **GAP-APLI-01 VALIDADO** (13/11/2026, rama `gap-apli-01`)
+
+Aplicación como evento productivo del cultivo: hectáreas, producto, dosis, quién aplicó, receta y condiciones (viento, temperatura, humedad del aire). Aviso antes de guardar con viento mayor a 15 km/h y aviso si se aplicaron más hectáreas que las sembradas.
+
+Con esto quedan hechos los puntos 1, 2 y 3 del plan, adelantados al calendario (el 3 estaba previsto para 21–27/11).
+
+Pendiente de diseño: mejorar los colores de todas las pantallas (Javier, 13/11/2026; se mostraron 3 opciones).
+
+Próximo según el plan: **Stock e insumos** ("Recursos y trabajos"), que también conecta el descuento de producto en la aplicación.
+
+Referencia documental:
+
+`docs/BITACORA.md`

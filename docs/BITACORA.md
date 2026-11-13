@@ -7547,3 +7547,34 @@ Se compararon los documentos de lanzamiento (01/10 y "camino a enero") con el c�
 ### Evidencia
 
 * Rama `gap-mon-01`.
+
+---
+
+# 13/11/2026 - GAP-APLI-01: Aplicación terrestre (pulverización)
+
+**Estado: VALIDADO EN LA APP (prueba manual de Javier en Chrome).**
+
+### Solución (reutiliza el núcleo productivo, sin colección nueva)
+
+* Una aplicación es un `EventoProductivo` más, tipo nuevo `aplicacion` (solo agregar, declarado, mismos permisos de producción).
+* Se reutilizan campos existentes: `superficieHa` (hectáreas aplicadas), `tratamiento` (producto), `dosis` y `responsable` (quién aplicó). Nuevos opcionales: `recetaNumero`, `vientoKmh`, `temperatura` y `humedadAmbiente` (no confundir con `humedad`, que es la del grano).
+* `lib/services/calculo_agricola.dart`: `vientoAlto()` (más de 15 km/h, constante `vientoMaximoAviso`) y `aplicacionesQueSuperanSembrado()`. Avisan, no bloquean.
+* `firestore.rules`: `aplicacion` en los tipos; exige hectáreas, producto y dosis; viento no negativo, temperatura entre -30 y 60 °C, humedad del aire entre 0 y 100.
+* Pantallas: `detalle_cultivo_screen.dart` con sección Aplicaciones, "+ Aplicación" y avisos rojos en la tarjeta (más hectáreas que las sembradas, viento alto); `registrar_aplicacion_screen.dart` (nuevo): con viento mayor a 15 km/h pide confirmar ("Revisar" / "Guardar igual").
+* Corrección en la prueba: el viento no se guardaba si se escribía con la unidad ("22 km/h"). Ahora toma el número aunque venga con la unidad, avisa si no hay número y cada casillero tiene su título fijo.
+
+### Validación
+
+* `test/aplicacion_test.dart`: 6 pruebas (guardar/leer, controles, condiciones imposibles, viento alto, más hectáreas que las sembradas, no cambia el resumen).
+* Reglas APLI-01 a APLI-06 (236 en total).
+* Prueba manual: Glifosato 66%, 80 ha, 2 l/ha; con viento 22 sale el aviso "Viento alto".
+
+### Pendiente
+
+* 🟡 Descontar el producto del stock (con el punto 4, Stock e insumos); aplicación aérea y con dron; vincular con el monitoreo que la motivó.
+* 🟢 Reglas por provincia (distancias a escuelas y pueblos, receta obligatoria).
+* Diseño: Javier quiere mejorar los colores de todas las pantallas más adelante (se mostraron 3 opciones el 13/11/2026; decisión pendiente).
+
+### Evidencia
+
+* Rama `gap-apli-01`.

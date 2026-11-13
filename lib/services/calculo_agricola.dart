@@ -104,3 +104,21 @@ List<EventoProductivo> alertasMonitoreo(Iterable<EventoProductivo> todos) {
   return ultimos.values.where((e) => e.nivel == 'alto').toList()
     ..sort((a, b) => b.fechaHecho.compareTo(a.fechaHecho));
 }
+
+/// GAP-APLI-01 (13/11/2026): controles de la aplicación terrestre.
+/// Avisan, no bloquean (igual que la cosecha y los traslados).
+
+/// Viento mayor al límite de aviso (15 km/h).
+bool vientoAlto(double? vientoKmh) =>
+    vientoKmh != null && vientoKmh > vientoMaximoAviso;
+
+/// Aplicaciones (vigentes) con más hectáreas que las sembradas.
+List<EventoProductivo> aplicacionesQueSuperanSembrado(
+    Iterable<EventoProductivo> todos) {
+  final sembradas = calcularResumenCultivo(todos).haSembradas;
+  return eventosVigentes(todos)
+      .where((e) =>
+          e.tipo == TipoEventoProductivo.aplicacion &&
+          (e.superficieHa ?? 0) > sembradas)
+      .toList();
+}

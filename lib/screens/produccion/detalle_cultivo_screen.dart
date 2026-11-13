@@ -8,11 +8,13 @@ import '../../services/calculo_agricola.dart';
 import '../../services/produccion_service.dart';
 import 'cultivos_textos.dart';
 import 'produccion_estilo.dart';
+import 'registrar_aplicacion_screen.dart';
 import 'registrar_monitoreo_screen.dart';
 
 /// GAP-AGRO-01: un cultivo de la campaña. Resumen calculado (hectáreas,
 /// toneladas, rendimiento) y sus siembras y cosechas (solo agregar).
 /// GAP-MON-01: también sus monitoreos, con alerta si el último es "alto".
+/// GAP-APLI-01: y sus aplicaciones (producto, dosis, receta, condiciones).
 class DetalleCultivoScreen extends StatefulWidget {
   final GrupoProductivo grupo;
   final List<UnidadProductiva> unidades;
@@ -33,6 +35,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
   String? error;
   List<EventoProductivo> eventos = [];
   List<EventoProductivo> monitoreos = [];
+  List<EventoProductivo> aplicaciones = [];
 
   @override
   void initState() {
@@ -60,6 +63,10 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
             .where((e) => e.tipo == TipoEventoProductivo.monitoreo)
             .toList()
           ..sort((a, b) => b.fechaHecho.compareTo(a.fechaHecho));
+        aplicaciones = todos
+            .where((e) => e.tipo == TipoEventoProductivo.aplicacion)
+            .toList()
+          ..sort((a, b) => b.fechaHecho.compareTo(a.fechaHecho));
         cargando = false;
       });
     } catch (e) {
@@ -85,6 +92,15 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
     if (guardo == true) await cargar();
   }
 
+  Future<void> _registrarAplicacion() async {
+    final guardo = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => RegistrarAplicacionScreen(grupo: widget.grupo),
+      ),
+    );
+    if (guardo == true) await cargar();
+  }
+
   Future<void> _registrarMonitoreo() async {
     final guardo = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -100,6 +116,10 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
     final r = calcularResumenCultivo(eventos);
     final corregidos = idsCorregidos(eventos);
     final alertas = alertasMonitoreo(monitoreos);
+    final superanSembrado = aplicacionesQueSuperanSembrado(
+            [...eventos, ...aplicaciones])
+        .map((e) => e.eventoId)
+        .toSet();
     final lote = widget.unidades
         .where((u) => u.unidadId == g.unidadInicialId)
         .map((u) => u.nombre)
@@ -215,6 +235,22 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                           style: TextStyle(color: EstiloProduccion.textoSuave),
                         ),
                       ...monitoreos.map(_tarjetaMonitoreo),
+                      const SizedBox(height: 22),
+                      const TituloSeccion('Aplicaciones'),
+                      BotonGrande(
+                        texto: '+ Aplicación',
+                        contorno: true,
+                        onPressed: _registrarAplicacion,
+                      ),
+                      const SizedBox(height: 12),
+                      if (aplicaciones.isEmpty)
+                        const Text(
+                          'Todavía no hay aplicaciones. Anotá cada pasada: '
+                          'producto, dosis, quién aplicó y las condiciones.',
+                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        ),
+                      ...aplicaciones.map((e) => _tarjetaAplicacion(
+                          e, superanSembrado.contains(e.eventoId))),
                     ],
                   ),
                 ),
@@ -276,6 +312,77 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                 style: const TextStyle(color: EstiloProduccion.rojo),
               )),
         ],
+      ),
+    );
+  }
+
+  Widget _tarjetaAplicacion(EventoProductivo e, bool superaSembrado) {
+    final condiciones = [
+      if (e.vientoKmh != null) 'Viento ${numeroAgro(e.vientoKmh!)} km/h',
+      if (e.temperatura != null) '${numeroAgro(e.temperatura!)} °C',
+      if (e.humedadAmbiente != null)
+        'Humedad ${numeroAgro(e.humedadAmbiente!)}%',
+    ];
+    final avisos = [
+      if (superaSembrado)
+        'Se aplicaron más hectáreas de las sembradas '
+            '(${numeroAgro(calcularResumenCultivo(eventos).haSembradas)} ha).',
+      if (vientoAlto(e.vientoKmh))
+        'Se aplicó con viento mayor a '
+            '${numeroAgro(vientoMaximoAviso)} km/h.',
+    ];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: TarjetaBlanca(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.water_drop_outlined,
+                  color: EstiloProduccion.terracota),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${e.tratamiento ?? 'Aplicación'} · '
+                      '${fechaCorta(e.fechaHecho)}',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      [
+                        '${numeroAgro(e.superficieHa ?? 0)} ha',
+                        if (e.dosis != null) e.dosis!,
+                        if (e.responsable != null) e.responsable!,
+                      ].join(' · '),
+                      style: const TextStyle(
+                          fontSize: 14, color: EstiloProduccion.textoSuave),
+                    ),
+                    if (e.recetaNumero != null)
+                      Text('Receta ${e.recetaNumero!}',
+                          style: const TextStyle(fontSize: 13)),
+                    if (condiciones.isNotEmpty)
+                      Text(condiciones.join(' · '),
+                          style: const TextStyle(
+                              fontSize: 13,
+                              color: EstiloProduccion.textoSuave)),
+                    if (e.observaciones != null)
+                      Text(e.observaciones!,
+                          style: const TextStyle(fontSize: 13)),
+                    ...avisos.map((a) => Text(a,
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: EstiloProduccion.rojo,
+                            fontWeight: FontWeight.w600))),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
