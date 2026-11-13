@@ -85,3 +85,22 @@ ResumenCultivo calcularResumenCultivo(Iterable<EventoProductivo> todos) {
     ultimaCosecha: ultimaCosecha,
   );
 }
+
+/// GAP-MON-01 (13/11/2026): alertas del monitoreo.
+/// Por cada cosa que se mira (plaga, maleza...), vale el último monitoreo
+/// (sin contar los corregidos). Si ese último dice "alto", hay alerta.
+/// Así, un monitoreo nuevo con nivel más bajo apaga la alerta, sin borrar
+/// la historia. Devuelve los monitoreos en alerta, el más nuevo primero.
+List<EventoProductivo> alertasMonitoreo(Iterable<EventoProductivo> todos) {
+  final ultimos = <String, EventoProductivo>{};
+  for (final e in eventosVigentes(todos)) {
+    if (e.tipo != TipoEventoProductivo.monitoreo) continue;
+    final clave = e.objetivoMonitoreo ?? 'otro';
+    final previo = ultimos[clave];
+    if (previo == null || e.fechaHecho.isAfter(previo.fechaHecho)) {
+      ultimos[clave] = e;
+    }
+  }
+  return ultimos.values.where((e) => e.nivel == 'alto').toList()
+    ..sort((a, b) => b.fechaHecho.compareTo(a.fechaHecho));
+}

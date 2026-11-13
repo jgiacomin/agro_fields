@@ -1488,3 +1488,52 @@ test('AGRO-08. El encargado con "crear producción" registra una cosecha [PERMIT
   await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev_agro'),
     eventoAgroDe({ tipo: 'cosecha', cantidadObtenida: 300, unidadMedida: 'tn', cargadoPor: ENCARGADO })));
 });
+
+// =====================================================================
+// MON. MONITOREO (GAP-MON-01, 13/11/2026)
+// Un monitoreo es un evento productivo más: solo agregar.
+// =====================================================================
+
+const monitoreoDe = (extra = {}) => eventoAgroDe({
+  eventoId: 'ev_mon', tipo: 'monitoreo', superficieHa: null,
+  objetivoMonitoreo: 'plaga', nivel: 'alto', fuenteDato: 'recorrida',
+  observaciones: 'Chinche verde en el borde del lote', ...extra,
+});
+
+test('MON-01. El dueño registra un monitoreo [PERMITIDO]', async () => {
+  await cargarCultivo();
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), monitoreoDe()));
+});
+
+test('MON-02. NO se registra un monitoreo sin nivel, sin fuente o sin qué se miró [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), monitoreoDe({ nivel: null })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), monitoreoDe({ fuenteDato: null })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), monitoreoDe({ objetivoMonitoreo: null })));
+});
+
+test('MON-03. NO se aceptan nivel, fuente u objetivo inventados [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), monitoreoDe({ nivel: 'gravisimo' })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), monitoreoDe({ fuenteDato: 'me dijeron' })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), monitoreoDe({ objetivoMonitoreo: 'ovni' })));
+});
+
+test('MON-04. Otro usuario NO registra monitoreos en un campo ajeno [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await assertFails(setDoc(doc(como(OTRO), 'eventos_productivos/ev_mon'), monitoreoDe({ cargadoPor: OTRO })));
+});
+
+test('MON-05. Un monitoreo NO se edita ni se borra [PROHIBIDO]', async () => {
+  await cargarCultivo();
+  await cargar((db) => setDoc(doc(db, 'eventos_productivos/ev_mon'), monitoreoDe()));
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_productivos/ev_mon'), { nivel: 'bajo' }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'eventos_productivos/ev_mon')));
+});
+
+test('MON-06. El encargado con "crear producción" registra un monitoreo [PERMITIDO]', async () => {
+  await cargarCultivo();
+  await darAutorizacion('crear', 'produccion');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev_mon'),
+    monitoreoDe({ cargadoPor: ENCARGADO, fuenteDato: 'dron' })));
+});

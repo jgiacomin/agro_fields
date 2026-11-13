@@ -38,3 +38,33 @@ String numeroAgro(double v) {
   final t = v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(1);
   return t.replaceAll('.', ',');
 }
+
+// GAP-MON-01: textos del monitoreo.
+
+String nombreObjetivoMonitoreo(String? o) => switch (o) {
+      'plaga' => 'Plaga',
+      'maleza' => 'Maleza',
+      'enfermedad' => 'Enfermedad',
+      'estadoCultivo' => 'Estado del cultivo',
+      'agua' => 'Agua',
+      'otro' => 'Otro',
+      _ => 'Sin información',
+    };
+
+String nombreNivel(String? n) => switch (n) {
+      'bajo' => 'Bajo',
+      'medio' => 'Medio',
+      'alto' => 'Alto',
+      _ => 'Sin información',
+    };
+
+String nombreFuenteDato(String? f) => switch (f) {
+      'recorrida' => 'Recorrida a campo',
+      'dron' => 'Dron',
+      'satelite' => 'Satélite',
+      'sensor' => 'Sensor',
+      'estacion' => 'Estación meteorológica',
+      'laboratorio' => 'Laboratorio',
+      'otro' => 'Otro',
+      _ => 'Sin información',
+    };

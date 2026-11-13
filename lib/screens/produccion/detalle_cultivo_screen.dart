@@ -8,9 +8,11 @@ import '../../services/calculo_agricola.dart';
 import '../../services/produccion_service.dart';
 import 'cultivos_textos.dart';
 import 'produccion_estilo.dart';
+import 'registrar_monitoreo_screen.dart';
 
 /// GAP-AGRO-01: un cultivo de la campaña. Resumen calculado (hectáreas,
 /// toneladas, rendimiento) y sus siembras y cosechas (solo agregar).
+/// GAP-MON-01: también sus monitoreos, con alerta si el último es "alto".
 class DetalleCultivoScreen extends StatefulWidget {
   final GrupoProductivo grupo;
   final List<UnidadProductiva> unidades;
@@ -30,6 +32,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
   bool cargando = true;
   String? error;
   List<EventoProductivo> eventos = [];
+  List<EventoProductivo> monitoreos = [];
 
   @override
   void initState() {
@@ -51,6 +54,10 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
       setState(() {
         eventos = todos
             .where((e) => tiposEventoAgricola.contains(e.tipo))
+            .toList()
+          ..sort((a, b) => b.fechaHecho.compareTo(a.fechaHecho));
+        monitoreos = todos
+            .where((e) => e.tipo == TipoEventoProductivo.monitoreo)
             .toList()
           ..sort((a, b) => b.fechaHecho.compareTo(a.fechaHecho));
         cargando = false;
@@ -78,11 +85,21 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
     if (guardo == true) await cargar();
   }
 
+  Future<void> _registrarMonitoreo() async {
+    final guardo = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => RegistrarMonitoreoScreen(grupo: widget.grupo),
+      ),
+    );
+    if (guardo == true) await cargar();
+  }
+
   @override
   Widget build(BuildContext context) {
     final g = widget.grupo;
     final r = calcularResumenCultivo(eventos);
     final corregidos = idsCorregidos(eventos);
+    final alertas = alertasMonitoreo(monitoreos);
     final lote = widget.unidades
         .where((u) => u.unidadId == g.unidadInicialId)
         .map((u) => u.nombre)
@@ -114,6 +131,10 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                         style: const TextStyle(
                             fontSize: 14, color: EstiloProduccion.textoSuave),
                       ),
+                      if (alertas.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        _alertaMonitoreo(alertas),
+                      ],
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -179,6 +200,21 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                           style: TextStyle(color: EstiloProduccion.textoSuave),
                         ),
                       ...eventos.map((e) => _tarjeta(e, corregidos)),
+                      const SizedBox(height: 22),
+                      const TituloSeccion('Monitoreos'),
+                      BotonGrande(
+                        texto: '+ Monitoreo',
+                        contorno: true,
+                        onPressed: _registrarMonitoreo,
+                      ),
+                      const SizedBox(height: 12),
+                      if (monitoreos.isEmpty)
+                        const Text(
+                          'Todavía no hay monitoreos. Anotá lo que ves en '
+                          'cada recorrida: queda con su fecha y su fuente.',
+                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        ),
+                      ...monitoreos.map(_tarjetaMonitoreo),
                     ],
                   ),
                 ),
@@ -204,6 +240,89 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                   onPressed: cargando
                       ? null
                       : () => _registrar(TipoEventoProductivo.cosecha),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Aviso arriba de todo: lo último que se vio en nivel alto.
+  Widget _alertaMonitoreo(List<EventoProductivo> alertas) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: EstiloProduccion.rojoFondo,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: EstiloProduccion.rojoBorde),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Atención: monitoreo en nivel alto',
+            style: TextStyle(
+                color: EstiloProduccion.rojo,
+                fontWeight: FontWeight.w700,
+                fontSize: 15),
+          ),
+          const SizedBox(height: 4),
+          ...alertas.map((e) => Text(
+                '${nombreObjetivoMonitoreo(e.objetivoMonitoreo)} · '
+                '${fechaCorta(e.fechaHecho)}: ${e.observaciones ?? ''}',
+                style: const TextStyle(color: EstiloProduccion.rojo),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _tarjetaMonitoreo(EventoProductivo e) {
+    final color = switch (e.nivel) {
+      'alto' => EstiloProduccion.rojo,
+      'medio' => EstiloProduccion.terracota,
+      _ => EstiloProduccion.verde,
+    };
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: TarjetaBlanca(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.search, color: color),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${nombreObjetivoMonitoreo(e.objetivoMonitoreo)} · '
+                      '${fechaCorta(e.fechaHecho)}',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      'Nivel ${nombreNivel(e.nivel).toLowerCase()} · '
+                      '${nombreFuenteDato(e.fuenteDato)}',
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: color,
+                          fontWeight: FontWeight.w600),
+                    ),
+                    if (e.observaciones != null)
+                      Text(e.observaciones!,
+                          style: const TextStyle(fontSize: 14)),
+                    if (e.recomendacion != null)
+                      Text('Recomendación: ${e.recomendacion!}',
+                          style: const TextStyle(
+                              fontSize: 13,
+                              color: EstiloProduccion.textoSuave)),
+                  ],
                 ),
               ),
             ],

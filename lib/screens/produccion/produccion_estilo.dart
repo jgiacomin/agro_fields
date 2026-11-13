@@ -344,6 +344,8 @@ String nombreTipoEvento(TipoEventoProductivo tipo) {
       return 'Siembra';
     case TipoEventoProductivo.cosecha:
       return 'Cosecha';
+    case TipoEventoProductivo.monitoreo:
+      return 'Monitoreo';
   }
 }
 

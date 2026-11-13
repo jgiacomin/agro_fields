@@ -764,7 +764,8 @@ service cloud.firestore {
 
     function tiposEventoProductivo() {
       return ['alta', 'baja', 'movimiento', 'cambioCategoria', 'sanidad',
-              'reproduccion', 'pesaje', 'alimentacion', 'siembra', 'cosecha'];
+              'reproduccion', 'pesaje', 'alimentacion', 'siembra', 'cosecha',
+              'monitoreo'];
     }
 
     match /unidades_productivas/{unidadId} {
@@ -831,7 +832,22 @@ service cloud.firestore {
         && (request.resource.data.get('humedad', null) == null
             || (request.resource.data.humedad is number
                 && request.resource.data.humedad >= 0
-                && request.resource.data.humedad <= 100));
+                && request.resource.data.humedad <= 100))
+        // GAP-MON-01: el monitoreo dice que se miro, el nivel y de donde
+        // sale el dato, siempre de la lista (nada inventado).
+        && (request.resource.data.get('objetivoMonitoreo', null) == null
+            || request.resource.data.objetivoMonitoreo in
+                ['plaga', 'maleza', 'enfermedad', 'estadoCultivo', 'agua', 'otro'])
+        && (request.resource.data.get('nivel', null) == null
+            || request.resource.data.nivel in ['bajo', 'medio', 'alto'])
+        && (request.resource.data.get('fuenteDato', null) == null
+            || request.resource.data.fuenteDato in
+                ['recorrida', 'dron', 'satelite', 'sensor', 'estacion',
+                 'laboratorio', 'otro'])
+        && (request.resource.data.tipo != 'monitoreo'
+            || (request.resource.data.get('objetivoMonitoreo', null) != null
+                && request.resource.data.get('nivel', null) != null
+                && request.resource.data.get('fuenteDato', null) != null));
 
       allow update, delete: if false;
     }

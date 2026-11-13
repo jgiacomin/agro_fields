@@ -22,6 +22,9 @@ enum TipoEventoProductivo {
   alimentacion,
   siembra,
   cosecha,
+  // GAP-MON-01 (13/11/2026): monitoreo (motor común para todas las
+  // actividades; en el lanzamiento la app lo ofrece en los cultivos).
+  monitoreo,
 }
 
 /// Origen de un alta (Concepto 5.2).
@@ -66,6 +69,31 @@ const Set<TipoEventoProductivo> tiposEventoAgricola = {
 
 /// Unidades para lo cosechado.
 const List<String> unidadesCosecha = ['tn', 'kg', 'qq'];
+
+/// GAP-MON-01: qué se miró en el monitoreo.
+const List<String> objetivosMonitoreo = [
+  'plaga',
+  'maleza',
+  'enfermedad',
+  'estadoCultivo',
+  'agua',
+  'otro',
+];
+
+/// GAP-MON-01: qué tan grave es lo que se vio.
+const List<String> nivelesMonitoreo = ['bajo', 'medio', 'alto'];
+
+/// GAP-MON-01 (Concepto 9, "fuente del dato"): de dónde sale el dato.
+/// Agro Fields no vende drones ni sensores: solo anota de dónde vino.
+const List<String> fuentesDato = [
+  'recorrida',
+  'dron',
+  'satelite',
+  'sensor',
+  'estacion',
+  'laboratorio',
+  'otro',
+];
 
 class EventoProductivo {
   // Datos comunes a todo evento.
@@ -119,6 +147,21 @@ class EventoProductivo {
   /// Humedad del grano al cosechar (%).
   final double? humedad;
 
+  // GAP-MON-01: datos del monitoreo (vacíos si no aplican).
+  // "Qué se vio" va en observaciones (obligatorio en el monitoreo).
+  /// Qué se miró: plaga, maleza, enfermedad, estadoCultivo, agua u otro.
+  final String? objetivoMonitoreo;
+
+  /// bajo, medio o alto.
+  final String? nivel;
+
+  /// De dónde sale el dato: recorrida, dron, satelite, sensor, estacion,
+  /// laboratorio u otro.
+  final String? fuenteDato;
+
+  /// Qué se recomienda hacer (opcional; la decisión es del productor).
+  final String? recomendacion;
+
   const EventoProductivo({
     required this.eventoId,
     required this.activoAgroId,
@@ -151,6 +194,10 @@ class EventoProductivo {
     this.material,
     this.densidad,
     this.humedad,
+    this.objetivoMonitoreo,
+    this.nivel,
+    this.fuenteDato,
+    this.recomendacion,
   });
 
   /// Lo cosechado pasado a toneladas (null si no hay dato o unidad).
@@ -241,6 +288,18 @@ class EventoProductivo {
           errores.add('La humedad tiene que estar entre 0 y 100.');
         }
         break;
+      case TipoEventoProductivo.monitoreo:
+        if (!objetivosMonitoreo.contains(objetivoMonitoreo)) {
+          errores.add('Falta qué se miró.');
+        }
+        if (vacio(observaciones)) errores.add('Falta qué se vio.');
+        if (!nivelesMonitoreo.contains(nivel)) {
+          errores.add('Falta el nivel (bajo, medio o alto).');
+        }
+        if (!fuentesDato.contains(fuenteDato)) {
+          errores.add('Falta de dónde sale el dato.');
+        }
+        break;
       default:
         // Tipos preparados: por ahora solo se piden los datos comunes.
         break;
@@ -288,6 +347,10 @@ class EventoProductivo {
       material: map['material'] as String?,
       densidad: map['densidad'] as String?,
       humedad: (map['humedad'] as num?)?.toDouble(),
+      objetivoMonitoreo: map['objetivoMonitoreo'] as String?,
+      nivel: map['nivel'] as String?,
+      fuenteDato: map['fuenteDato'] as String?,
+      recomendacion: map['recomendacion'] as String?,
     );
   }
 
@@ -324,6 +387,10 @@ class EventoProductivo {
       'material': material,
       'densidad': densidad,
       'humedad': humedad,
+      'objetivoMonitoreo': objetivoMonitoreo,
+      'nivel': nivel,
+      'fuenteDato': fuenteDato,
+      'recomendacion': recomendacion,
     };
   }
 

@@ -7518,3 +7518,32 @@ Se compararon los documentos de lanzamiento (01/10 y "camino a enero") con el c�
 ### Evidencia
 
 * Rama `gap-agro-01`.
+
+---
+
+# 13/11/2026 - GAP-MON-01: Monitoreo (motor común) con "fuente del dato"
+
+**Estado: VALIDADO EN LA APP (prueba manual de Javier en Chrome).**
+
+### Solución (reutiliza el núcleo productivo, sin colección nueva)
+
+* Un monitoreo es un `EventoProductivo` más, tipo nuevo `monitoreo` (solo agregar, declarado, mismos permisos de producción). "Qué se vio" va en `observaciones` (obligatorio).
+* Campos nuevos opcionales: `objetivoMonitoreo` (plaga, maleza, enfermedad, estadoCultivo, agua, otro), `nivel` (bajo, medio, alto), `fuenteDato` (recorrida, dron, satelite, sensor, estacion, laboratorio, otro; Concepto 9) y `recomendacion`.
+* `lib/services/calculo_agricola.dart`: `alertasMonitoreo()`: por cada objetivo vale el último monitoreo vigente (los corregidos no cuentan); si dice "alto", hay alerta. Un monitoreo nuevo más bajo apaga la alerta sin borrar la historia.
+* `firestore.rules`: `monitoreo` en los tipos; objetivo, nivel y fuente solo de la lista; el monitoreo exige los tres. No se edita ni se borra.
+* Pantallas: `detalle_cultivo_screen.dart` con aviso rojo arriba ("Atención: monitoreo en nivel alto") y sección Monitoreos con "+ Monitoreo"; `registrar_monitoreo_screen.dart` (nuevo, se elige tocando); textos en `cultivos_textos.dart`; `nombreTipoEvento` en `produccion_estilo.dart`.
+
+### Validación
+
+* `test/monitoreo_test.dart`: 7 pruebas (guardar/leer, eventos viejos, controles, alerta, alerta que se apaga, corregido, no cambia el resumen del cultivo). `flutter test` 222 + 2 fallas conocidas de conexión.
+* Reglas MON-01 a MON-06: `npm test` 230/230.
+* Prueba manual: Soja 2026/27 - Lote 3, monitoreo de plaga (langosta) nivel bajo, recorrida a campo; aviso rojo con nivel alto.
+
+### Pendiente
+
+* 🟡 Monitoreo en rodeos (condición corporal, pasturas) y en lotes sin cultivo; "fuente del dato" en Trabajos.
+* 🟢 Datos automáticos de drones, satélites y sensores.
+
+### Evidencia
+
+* Rama `gap-mon-01`.

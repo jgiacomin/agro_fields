@@ -3676,7 +3676,8 @@ Activo Agro y expediente (historial y auditoría) · Documentos con vigencia, ar
 7. Seguridad restante: `solicitudes_contacto`, `inversiones`, `publicaciones_inversion`.
 8. Funcionamiento sin señal (configurar y probar).
 9. Términos de uso y privacidad.
-10. Plan gratuito para los primeros 100 usuarios y precio.
+10. Plan Fundadores en dos grupos (100 de gestión + 100 inmobiliarias y brokers) y precio.
+10b. Pantalla simple de aprobación de publicaciones para el admin (hoy se aprueban a mano desde la consola; con 100 inmobiliarias no da abasto).
 11. Datos de demo, QA integral, Android y web publicados.
 12. Inglés: 🟡 después de enero (decisión de Javier, 12/11/2026).
 
@@ -3686,13 +3687,28 @@ Activo Agro y expediente (historial y auditoría) · Documentos con vigencia, ar
 * 21–27/11: Aplicación terrestre + Stock e insumos.
 * 28/11–04/12: Economía + Suelo + Pesajes.
 * 05–11/12: Seguridad restante + Sin señal + Términos y privacidad.
-* 12–18/12: Plan gratuito y precio + Datos de demo (+ inglés básico si alcanza).
+* 12–18/12: Plan Fundadores y precio + Pantalla de aprobación de publicaciones + Datos de demo (+ inglés básico si alcanza).
 * 19–31/12: QA integral, Android y web publicados, copias de seguridad, piloto con usuarios reales.
 * Enero 2027: lanzamiento (corregir, observar, mejorar; sin módulos nuevos).
 
 Referencia documental:
 
 `docs/BITACORA.md`
+
+### 👥 Usuarios Fundadores — decidido el 12/11/2026
+
+* **Dos grupos de 100:** 100 usuarios de gestión (productores) y 100 inmobiliarias y brokers. Cada uno con 12 meses de Pro gratis.
+* **Por qué los dos:** se ayudan entre sí. Cada inmobiliaria que carga un campo le abre la puerta al dueño, que después puede pasar a gestión. Inmobiliarias y brokers son el primer ingreso realista.
+* **Dos zonas, no dos países enteros:** una en Paraguay y una en Argentina, para que los usuarios se crucen entre ellos (zonas a elegir).
+* **Empezar por las inmobiliarias:** conseguir primero 10 a 15 inmobiliarias y brokers; cada uno trae campos y dueños.
+* **Por tandas:** primero 20 (10 + 10), corregir lo que falle, después 50, después el resto.
+* **Frase para cada grupo:**
+  * Gestión: "Tu campo ordenado, con su historia y documentos al día".
+  * Inmobiliarias y brokers: "Publicá campos con información verificada y ganá la confianza del comprador".
+* **Qué medir:** productores que vuelven cada semana; inmobiliarias que cargan más de un campo.
+* **Pendiente:** elegir las dos zonas; sumar 2 o 3 verificadores reales (escribanos, agrónomos, cooperativas).
+
+Referencia: `Desktop\App\Matriz remunerativa V0.2 (12-11-2026).docx`
 
 ---
 
@@ -3703,6 +3719,22 @@ Referencia documental:
 Cultivos de la campaña sobre el núcleo productivo: siembra, cosecha, rendimiento calculado y aviso si la cosecha supera lo sembrado.
 
 Próximo según el plan: **Monitoreo** (motor común).
+
+Referencia documental:
+
+`docs/BITACORA.md`
+
+---
+
+## Monitoreo — Estado
+
+🟢 **GAP-MON-01 VALIDADO** (13/11/2026, rama `gap-mon-01`)
+
+Monitoreo como evento productivo (plaga, maleza, enfermedad, estado del cultivo, agua), con nivel, "fuente del dato" y recomendación; aviso rojo si el último monitoreo de algo está en nivel alto. `flutter test` 222 + 2 conocidas; reglas 230/230.
+
+Con esto quedan hechos los puntos 1 y 2 del plan (Agricultura + Monitoreo), dentro del calendario 13–20/11.
+
+Próximo según el plan: **Aplicación terrestre**.
 
 Referencia documental:
 
