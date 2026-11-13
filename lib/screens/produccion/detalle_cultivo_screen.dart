@@ -364,6 +364,10 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                     if (e.recetaNumero != null)
                       Text('Receta ${e.recetaNumero!}',
                           style: const TextStyle(fontSize: 13)),
+                    if (e.movimientoStockId != null)
+                      const Text('Descontado del stock',
+                          style: TextStyle(
+                              fontSize: 13, color: EstiloProduccion.verde)),
                     if (condiciones.isNotEmpty)
                       Text(condiciones.join(' · '),
                           style: const TextStyle(

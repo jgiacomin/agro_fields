@@ -7578,3 +7578,34 @@ Se compararon los documentos de lanzamiento (01/10 y "camino a enero") con el c�
 ### Evidencia
 
 * Rama `gap-apli-01`.
+
+---
+
+# 13/11/2026 - GAP-STOCK-01: Stock e insumos (parte a pantallas + parte b descuento desde la aplicación)
+
+**Estado: VALIDADO EN LA APP (prueba manual de Javier en Chrome).**
+
+### Solución (reutiliza modelo, servicio de movimientos y reglas existentes)
+
+* Ficha del campo: "Recursos y trabajos" (Próximamente) pasa a **"Stock e insumos"** activo.
+* `lib/screens/stock/` (nuevo): `stock_activo_screen.dart` (productos con saldo; stock bajo primero y en rojo), `nuevo_recurso_screen.dart` (tipo, nombre, unidad, cantidad inicial, mínimo), `detalle_recurso_screen.dart` (saldo, Entrada / Consumo / Ajuste con motivo obligatorio, historia con "quedó X"), `stock_textos.dart`.
+* `recurso_agro_model.dart`: tipos (semilla, fertilizante, agroquimico, veterinario, combustible, alimento, otro), unidades (l, kg, unidades, dosis, bolsas) y `stockBajo` (saldo en el mínimo o debajo; sin mínimo no avisa).
+* `recurso_service.dart`: `crearRecursoConStockInicial()` (el producto nace con saldo 0 y la cantidad inicial entra como movimiento "entrada" — "Stock inicial" — con su auditoría) y `movimientosDeRecurso()`.
+* Regla mejor (propuesta por Claude, aprobada): al crear un producto el saldo arranca en 0 y el nombre es obligatorio; ningún stock aparece sin movimiento. Compatible con RECURSOS-03.
+* Parte b: `produccion_service.registrarSanidadConStock` acepta también la aplicación; en "Registrar aplicación" se elige el producto y la cantidad total; si no alcanza, no se guarda nada. La tarjeta muestra "Descontado del stock".
+* Se recuperó en esta rama el arreglo del viento de GAP-APLI-01 (en main había quedado la versión anterior de `registrar_aplicacion_screen.dart`).
+
+### Validación
+
+* `test/stock_test.dart`: 6 pruebas (stock bajo, sin mínimo, recurso viejo, nombres, números con unidad y miles, errores claros).
+* Reglas STOCK-01 a STOCK-05.
+* Prueba manual: aplicación de Glifosato 66% descontada del stock.
+
+### Pendiente
+
+* 🟡 Descontar semilla en la siembra y combustible en los trabajos; completar el nombre del producto al elegirlo del stock.
+* 🟢 Costos por producto (con Economía, punto 5).
+
+### Evidencia
+
+* Rama `gap-stock-01`.

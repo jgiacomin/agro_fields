@@ -3757,3 +3757,19 @@ Próximo según el plan: **Stock e insumos** ("Recursos y trabajos"), que tambi�
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Stock e insumos — Estado
+
+🟢 **GAP-STOCK-01 VALIDADO** (13/11/2026, rama `gap-stock-01`)
+
+Pantallas de stock (productos, saldo, stock bajo, entradas, consumos y ajustes con historia) y descuento del producto desde la aplicación terrestre. El stock inicial entra como movimiento: nada aparece sin rastro.
+
+Con esto quedan hechos los puntos 1 a 4 del plan (Agricultura, Monitoreo, Aplicación terrestre, Stock e insumos), adelantados al calendario (el 4 estaba previsto para 21–27/11).
+
+Próximo según el plan: **Economía (núcleo)**: gastos por categoría, mes y actividad, sin contabilidad.
+
+Referencia documental:
+
+`docs/BITACORA.md`

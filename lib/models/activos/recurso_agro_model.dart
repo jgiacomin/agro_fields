@@ -1,4 +1,20 @@
-﻿class RecursoAgro {
+﻿/// GAP-STOCK-01 (13/11/2026): tipos de producto que ofrece la pantalla
+/// de stock. Los recursos viejos con otro tipo se siguen leyendo igual.
+const List<String> tiposRecursoStock = [
+  'semilla',
+  'fertilizante',
+  'agroquimico',
+  'veterinario',
+  'combustible',
+  'alimento',
+  'otro',
+];
+
+/// GAP-STOCK-01: unidades del stock (litros, kilos, unidades, dosis,
+/// bolsas). Un movimiento siempre usa la misma unidad que su producto.
+const List<String> unidadesStock = ['l', 'kg', 'unidades', 'dosis', 'bolsas'];
+
+class RecursoAgro {
   final String recursoId;
   final String activoAgroId;
 
@@ -15,6 +31,9 @@
   final String? moduloProduccionId;
   final String? numeroSerie;
   final String? observaciones;
+
+  /// GAP-STOCK-01: hay mínimo cargado y el saldo llegó a él o está debajo.
+  bool get stockBajo => cantidadMinima > 0 && cantidadActual <= cantidadMinima;
 
   const RecursoAgro({
     required this.recursoId,

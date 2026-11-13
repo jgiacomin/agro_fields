@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 
 import '../../models/activos/evento_productivo_model.dart';
 import '../../models/activos/grupo_productivo_model.dart';
+import '../../models/activos/recurso_agro_model.dart';
 import '../../services/calculo_agricola.dart';
 import '../../services/produccion_service.dart';
+import '../../services/recurso_service.dart';
+import '../stock/stock_textos.dart';
 import 'cultivos_textos.dart';
 import 'produccion_estilo.dart';
 
@@ -12,6 +15,8 @@ import 'produccion_estilo.dart';
 /// Hectáreas, producto, dosis, quién aplicó, receta y condiciones.
 /// Es un evento productivo más: solo agregar, queda como declarado.
 /// Con viento alto avisa antes de guardar, pero no bloquea.
+/// GAP-STOCK-01: puede descontar el producto del stock (opcional); si no
+/// alcanza, no se guarda nada.
 class RegistrarAplicacionScreen extends StatefulWidget {
   final GrupoProductivo grupo;
 
@@ -33,7 +38,31 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
   final _temperatura = TextEditingController();
   final _humedad = TextEditingController();
   final _notas = TextEditingController();
+  final _cantidadStock = TextEditingController();
   late final String eventoId = _servicio.nuevoIdEvento();
+
+  /// GAP-STOCK-01: productos del campo y el elegido para descontar.
+  List<RecursoAgro> productos = [];
+  RecursoAgro? productoStock;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarProductos();
+  }
+
+  Future<void> _cargarProductos() async {
+    try {
+      final lista = await RecursoService()
+          .obtenerRecursosPorActivo(widget.grupo.activoAgroId);
+      lista.sort(
+          (a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()));
+      if (!mounted) return;
+      setState(() => productos = lista);
+    } catch (_) {
+      // Sin permiso de stock o sin señal: se puede cargar igual, sin descontar.
+    }
+  }
 
   DateTime fecha = DateTime.now();
   bool guardando = false;
@@ -48,6 +77,7 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
         _temperatura,
         _humedad,
         _notas,
+        _cantidadStock,
       ];
 
   @override
@@ -58,10 +88,16 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
     super.dispose();
   }
 
+  /// Toma el número aunque venga con la unidad ("22 km/h", "65%", "2,5").
   double? _num(TextEditingController c) {
-    final t = c.text.trim().replaceAll(',', '.');
-    return t.isEmpty ? null : double.tryParse(t);
+    final m = RegExp(r'-?\d+([.,]\d+)?').firstMatch(c.text);
+    if (m == null) return null;
+    return double.tryParse(m.group(0)!.replaceAll(',', '.'));
   }
+
+  /// Escribió algo, pero no hay ningún número.
+  bool _noEsNumero(TextEditingController c) =>
+      c.text.trim().isNotEmpty && _num(c) == null;
 
   String? _txt(TextEditingController c) =>
       c.text.trim().isEmpty ? null : c.text.trim();
@@ -95,6 +131,17 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
   Future<void> _guardar() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
+    for (final (c, nombre) in [
+      (_ha, 'Las hectáreas'),
+      (_viento, 'El viento'),
+      (_temperatura, 'La temperatura'),
+      (_humedad, 'La humedad del aire'),
+    ]) {
+      if (_noEsNumero(c)) {
+        _avisar('$nombre tiene que ser un número.');
+        return;
+      }
+    }
     final evento = EventoProductivo(
       eventoId: eventoId,
       activoAgroId: widget.grupo.activoAgroId,
@@ -119,6 +166,20 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
       _avisar(errores.first);
       return;
     }
+    final producto = productoStock;
+    final cantidadStock = _num(_cantidadStock);
+    if (producto != null) {
+      if (cantidadStock == null || cantidadStock <= 0) {
+        _avisar('Falta cuánto producto se usó en total.');
+        return;
+      }
+      if (cantidadStock > producto.cantidadActual) {
+        _avisar('No alcanza el stock de ${producto.nombre}: hay '
+            '${numeroStock(producto.cantidadActual)} '
+            '${unidadCorta(producto.unidad)}.');
+        return;
+      }
+    }
     if (vientoAlto(evento.vientoKmh) &&
         !await _confirmarViento(evento.vientoKmh!)) {
       return;
@@ -126,7 +187,17 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
     if (!mounted) return;
     setState(() => guardando = true);
     try {
-      await _servicio.registrarEvento(evento);
+      if (producto != null) {
+        await _servicio.registrarSanidadConStock(
+          evento: evento,
+          recursoId: producto.recursoId,
+          cantidadInsumo: cantidadStock!,
+          unidadInsumo: producto.unidad,
+          usuarioId: uid,
+        );
+      } else {
+        await _servicio.registrarEvento(evento);
+      }
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (e) {
@@ -197,34 +268,57 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
           ),
           const EtiquetaCampo('Número de receta agronómica (opcional)'),
           TextField(controller: _receta, decoration: decoracionCampo()),
-          const EtiquetaCampo('Condiciones al aplicar (opcional)'),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _viento,
-                  keyboardType: teclado,
-                  decoration: decoracionCampo(ayuda: 'Viento km/h'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: _temperatura,
-                  keyboardType: tecladoSigno,
-                  decoration: decoracionCampo(ayuda: 'Temp. °C'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: _humedad,
-                  keyboardType: teclado,
-                  decoration: decoracionCampo(ayuda: 'Humedad %'),
-                ),
+          const EtiquetaCampo('Viento en km/h (opcional)'),
+          TextField(
+            controller: _viento,
+            keyboardType: teclado,
+            decoration: decoracionCampo(ayuda: 'Ej.: 12'),
+          ),
+          const EtiquetaCampo('Temperatura en °C (opcional)'),
+          TextField(
+            controller: _temperatura,
+            keyboardType: tecladoSigno,
+            decoration: decoracionCampo(ayuda: 'Ej.: 24'),
+          ),
+          const EtiquetaCampo('Humedad del aire en % (opcional)'),
+          TextField(
+            controller: _humedad,
+            keyboardType: teclado,
+            decoration: decoracionCampo(ayuda: 'Ej.: 65'),
+          ),
+          if (productos.isNotEmpty) ...[
+            const EtiquetaCampo('¿Descontar del stock? (opcional)'),
+            DropdownButtonFormField<String>(
+              value: productoStock?.recursoId ?? '',
+              isExpanded: true,
+              decoration: decoracionCampo(),
+              items: [
+                const DropdownMenuItem(value: '', child: Text('No descontar')),
+                ...productos.map((p) => DropdownMenuItem(
+                      value: p.recursoId,
+                      child: Text(
+                        '${p.nombre} · hay ${numeroStock(p.cantidadActual)} '
+                        '${unidadCorta(p.unidad)}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )),
+              ],
+              onChanged: (id) => setState(() {
+                productoStock = productos
+                    .where((p) => p.recursoId == id)
+                    .firstOrNull;
+              }),
+            ),
+            if (productoStock != null) ...[
+              EtiquetaCampo('Cantidad total usada '
+                  '(${nombreUnidadStock(productoStock!.unidad).toLowerCase()})'),
+              TextField(
+                controller: _cantidadStock,
+                keyboardType: teclado,
+                decoration: decoracionCampo(ayuda: 'Ej.: 160'),
               ),
             ],
-          ),
+          ],
           const EtiquetaCampo('Notas (opcional)'),
           TextField(
             controller: _notas,

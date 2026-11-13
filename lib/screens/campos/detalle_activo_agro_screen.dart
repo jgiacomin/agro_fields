@@ -9,6 +9,7 @@ import '../profesionales/profesionales_activo_screen.dart';
 import '../traslados/traslados_activo_screen.dart';
 import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
+import '../stock/stock_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 
 class DetalleActivoAgroScreen extends StatefulWidget {
@@ -418,11 +419,12 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
             activoAgroId: id, nombreActivo: nombre)),
       ),
       (
-        Icons.construction,
-        'Recursos y trabajos',
-        'Próximamente',
-        AgroTema.pizarraSuave,
-        null,
+        Icons.inventory_2,
+        'Stock e insumos',
+        'Semillas, productos, combustible',
+        AgroTema.verde,
+        () => _abrir(
+            StockActivoScreen(activoAgroId: id, nombreActivo: nombre)),
       ),
     ];
 

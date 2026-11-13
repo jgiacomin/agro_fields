@@ -122,6 +122,8 @@ class ProduccionService {
   }
 
   /// Registra una vacuna o tratamiento que usa un insumo del stock.
+  /// GAP-STOCK-01 (13/11/2026): también una aplicación terrestre que
+  /// descuenta el producto aplicado.
   ///
   /// 1. Descuenta el insumo con MovimientoStockService (que controla que el
   ///    stock no quede por debajo de cero y deja su auditoria).
@@ -138,8 +140,10 @@ class ProduccionService {
     required String usuarioId,
     String? rol,
   }) async {
-    if (evento.tipo != TipoEventoProductivo.sanidad) {
-      throw ArgumentError('Solo un evento de sanidad descuenta stock.');
+    if (evento.tipo != TipoEventoProductivo.sanidad &&
+        evento.tipo != TipoEventoProductivo.aplicacion) {
+      throw ArgumentError(
+          'Solo una sanidad o una aplicación descuentan stock.');
     }
     _revisar(evento);
 
@@ -153,7 +157,7 @@ class ProduccionService {
       fechaMovimiento: evento.fechaHecho,
       trabajoId: evento.trabajoId,
       responsableId: usuarioId,
-      motivo: 'sanidad: ${evento.tratamiento}',
+      motivo: '${evento.tipo.name}: ${evento.tratamiento}',
       observaciones: 'eventoProductivoId: ${evento.eventoId}',
     );
 

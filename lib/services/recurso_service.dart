@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../models/activos/movimiento_stock_model.dart';
 import '../models/activos/recurso_agro_model.dart';
+import 'movimiento_stock_service.dart';
 import '../core/audit/audit_service.dart';
 import '../core/audit/audit_type.dart';
 
@@ -125,5 +127,94 @@ class RecursoService {
           ),
         )
         .toList();
+  }
+}
+
+/// GAP-STOCK-01 (13/11/2026): un movimiento con el saldo que dejó.
+class MovimientoConSaldo {
+  final MovimientoStock movimiento;
+  final double? saldoNuevo;
+
+  const MovimientoConSaldo(this.movimiento, this.saldoNuevo);
+}
+
+/// GAP-STOCK-01: el stock inicial también entra como movimiento.
+/// El producto nace con saldo 0 y, si hay cantidad inicial, se registra
+/// una "entrada" (con su auditoría), así cada litro o kilo queda trazado
+/// desde el primer día.
+extension RecursoStockInicial on RecursoService {
+  Future<String> crearRecursoConStockInicial({
+    required RecursoAgro recurso,
+    required double cantidadInicial,
+    required String usuarioId,
+    String? rol,
+  }) async {
+    if (recurso.nombre.trim().isEmpty) {
+      throw ArgumentError('El producto necesita un nombre.');
+    }
+    if (!cantidadInicial.isFinite || cantidadInicial < 0) {
+      throw ArgumentError('La cantidad inicial no puede ser negativa.');
+    }
+
+    final recursoId = await crearRecurso(
+      recurso: RecursoAgro(
+        recursoId: '',
+        activoAgroId: recurso.activoAgroId,
+        tipo: recurso.tipo,
+        nombre: recurso.nombre.trim(),
+        descripcion: recurso.descripcion,
+        unidad: recurso.unidad,
+        cantidadActual: 0,
+        cantidadMinima: recurso.cantidadMinima,
+        estado: recurso.estado,
+        moduloProduccionId: recurso.moduloProduccionId,
+        numeroSerie: recurso.numeroSerie,
+        observaciones: recurso.observaciones,
+      ),
+      usuarioId: usuarioId,
+      rol: rol,
+    );
+
+    if (cantidadInicial > 0) {
+      await MovimientoStockService().registrarMovimiento(
+        movimiento: MovimientoStock(
+          movimientoId: '',
+          activoAgroId: recurso.activoAgroId,
+          recursoId: recursoId,
+          tipoMovimiento: 'entrada',
+          cantidad: cantidadInicial,
+          unidad: recurso.unidad,
+          fechaMovimiento: DateTime.now(),
+          responsableId: usuarioId,
+          motivo: 'Stock inicial',
+        ),
+        usuarioId: usuarioId,
+        rol: rol,
+      );
+    }
+
+    return recursoId;
+  }
+
+  /// La historia de movimientos de un producto, el más nuevo primero.
+  Future<List<MovimientoConSaldo>> movimientosDeRecurso({
+    required String activoAgroId,
+    required String recursoId,
+  }) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('movimientos_stock')
+        .where('activoAgroId', isEqualTo: activoAgroId)
+        .where('recursoId', isEqualTo: recursoId)
+        .get();
+
+    final lista = snapshot.docs
+        .map((doc) => MovimientoConSaldo(
+              MovimientoStock.fromMap(doc.data(), doc.id),
+              (doc.data()['saldoNuevo'] as num?)?.toDouble(),
+            ))
+        .toList()
+      ..sort((a, b) => b.movimiento.fechaMovimiento
+          .compareTo(a.movimiento.fechaMovimiento));
+    return lista;
   }
 }

@@ -1586,3 +1586,36 @@ test('APLI-06. El encargado con "crear producción" registra una aplicación con
   await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev_apli'),
     aplicacionDe({ cargadoPor: ENCARGADO, vientoKmh: 22 })));
 });
+
+// =====================================================================
+// STOCK. STOCK E INSUMOS (GAP-STOCK-01, 13/11/2026)
+// El producto nace con saldo 0; el stock inicial entra como movimiento.
+// =====================================================================
+
+const productoDe = (extra = {}) => ({
+  recursoId: 'rec_gli', activoAgroId: 'a1', tipo: 'agroquimico', nombre: 'Glifosato 66%',
+  descripcion: '', unidad: 'l', cantidadActual: 0, cantidadMinima: 20, estado: 'disponible', ...extra,
+});
+
+test('STOCK-01. El dueño crea un producto con saldo 0 [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'recursos/rec_gli'), productoDe()));
+});
+
+test('STOCK-02. NO se crea un producto con saldo inicial sin movimiento [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'recursos/rec_gli'), productoDe({ cantidadActual: 500 })));
+});
+
+test('STOCK-03. NO se crea un producto sin nombre [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'recursos/rec_gli'), productoDe({ nombre: '' })));
+  const { nombre, ...sinNombre } = productoDe();
+  await assertFails(setDoc(doc(como(DUENO), 'recursos/rec_gli'), sinNombre));
+});
+
+test('STOCK-04. El encargado con "crear recursos e inventario" crea un producto [PERMITIDO]', async () => {
+  await darAutorizacion('crear', 'recursosInventario');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'recursos/rec_gli'), productoDe()));
+});
+
+test('STOCK-05. Otro usuario NO crea productos en un campo ajeno [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), 'recursos/rec_gli'), productoDe()));
+});

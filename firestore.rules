@@ -285,10 +285,15 @@ service cloud.firestore {
         && (puedeActivo(resource.data.activoAgroId)
             || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
-  allow create: if esAdmin()
+  // GAP-STOCK-01 (13/11/2026): el producto nace con saldo 0 y con nombre;
+  // el stock inicial entra como movimiento "entrada" (queda trazado).
+  allow create: if (esAdmin()
     || (logueado()
         && (puedeActivo(request.resource.data.activoAgroId)
-            || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'recursosInventario')));
+            || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'recursosInventario'))))
+    && request.resource.data.get('cantidadActual', 0) == 0
+    && request.resource.data.nombre is string
+    && request.resource.data.nombre.size() > 0;
 
   // El saldo solo cambia junto con un movimiento (registrar un movimiento
   // es "crear" en recursos e inventario).
