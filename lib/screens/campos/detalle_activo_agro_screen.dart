@@ -130,8 +130,10 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     return t[0].toUpperCase() + t.substring(1);
   }
 
-  String _numero(num v) =>
-      v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+  /// Decimales con coma, como se escribe en la región (6,5).
+  String _numero(num v) => v == v.roundToDouble()
+      ? v.toInt().toString()
+      : v.toString().replaceAll('.', ',');
 
   void _abrir(Widget pantalla) {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => pantalla));
@@ -602,7 +604,7 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
           if (s.observaciones != null && s.observaciones!.isNotEmpty)
             _fila('Observaciones', s.observaciones!),
           if (s.fechaEvaluacion != null)
-            _fila('Evaluado el', '${s.fechaEvaluacion}'),
+            _fila('Evaluado el', fechaCortaFicha(s.fechaEvaluacion!)),
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerLeft,

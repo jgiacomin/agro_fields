@@ -7674,7 +7674,7 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 # 13/11/2026 - GAP-SUELO-01: pantalla para cargar el suelo
 
-**Estado: CÓDIGO ENTREGADO (rama gap-suelo-01), pendiente de prueba de Javier.**
+**Estado: PROBADO por Javier en Chrome (Campo Los Robles: textura, drenaje, pH y clase cargados; historial OK). flutter test 251 (+2 fallas conocidas).**
 
 ### Decisión
 
@@ -7684,7 +7684,7 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 * `lib/screens/campos/suelo_textos.dart` (nuevo): opciones (textura, drenaje, profundidad, salinidad, erosión, clase de capacidad de uso I a VIII), lectura de números con coma o punto, validación (pH 0–14, materia orgánica 0–100 %) y armado del suelo conservando lo que la pantalla no muestra (subclase, fertilidad, evidencias, etc.).
 * `lib/screens/campos/suelo_activo_screen.dart` (nuevo): todo opcional, se completa tocando; tocar de nuevo una opción la saca ("Sin información"). Queda **declarado** (lo informa el usuario; verificar es de otro). El análisis de laboratorio va en Documentos del campo.
-* `lib/screens/campos/detalle_activo_agro_screen.dart`: botón "Cargar suelo / Editar suelo" en la sección Suelo y filas nuevas (profundidad, salinidad, erosión, capacidad de uso, limitaciones) que se ven solo si están cargadas.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: botón "Cargar suelo / Editar suelo" en la sección Suelo y filas nuevas (profundidad, salinidad, erosión, capacidad de uso, limitaciones) que se ven solo si están cargadas. Además, en la ficha los decimales se muestran con coma (6,5) y la fecha de evaluación como dd/mm/aaaa.
 
 ### Validación prevista
 
