@@ -358,7 +358,6 @@ debugPrint(
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AgroTema.crema,
       body: SafeArea(
         child: loading
             ? const Center(child: CircularProgressIndicator())

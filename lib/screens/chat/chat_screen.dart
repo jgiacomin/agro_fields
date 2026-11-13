@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../models/chat_model.dart';
 import '../../services/chat_service.dart';
+import '../../widgets/barra_campo.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
@@ -43,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: BarraCampo(
         title: const Text('Chat de negociación'),
       ),
       body: Column(

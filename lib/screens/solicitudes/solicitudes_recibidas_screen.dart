@@ -9,6 +9,7 @@ import '../../services/user_service.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../../services/chat_service.dart';
 import '../../enums/solicitud_estado.dart';
+import '../../widgets/barra_campo.dart';
 
 
 
@@ -74,7 +75,7 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
     return Scaffold(
 
 
-      appBar: AppBar(
+      appBar: BarraCampo(
 
         title: const Text(
           'Solicitudes recibidas',

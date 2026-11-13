@@ -5,6 +5,7 @@ import '../../models/activos/grupo_productivo_model.dart';
 import '../../models/activos/unidad_productiva_model.dart';
 import '../../services/produccion_service.dart';
 import 'produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 2 (paso 6a, GAP-PROD-01): cargar un rodeo.
 /// Los animales se cargan despues, con un evento de Entrada.
@@ -105,10 +106,7 @@ class _NuevoRodeoScreenState extends State<NuevoRodeoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Nuevo rodeo'),
       ),
       body: ListView(
@@ -174,7 +172,6 @@ class _NuevoRodeoScreenState extends State<NuevoRodeoScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar rodeo',

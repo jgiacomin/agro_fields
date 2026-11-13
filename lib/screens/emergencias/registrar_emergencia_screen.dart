@@ -5,6 +5,7 @@ import '../../models/activos/evento_afectacion_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../produccion/produccion_estilo.dart';
 import 'emergencias_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-092: registrar una emergencia del campo.
 /// Reutiliza EventoAfectacion y ActivoAgroServiceV2.registrarEventoAfectacion
@@ -105,10 +106,7 @@ class _RegistrarEmergenciaScreenState extends State<RegistrarEmergenciaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Registrar emergencia'),
       ),
       body: ListView(
@@ -176,7 +174,6 @@ class _RegistrarEmergenciaScreenState extends State<RegistrarEmergenciaScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar emergencia',

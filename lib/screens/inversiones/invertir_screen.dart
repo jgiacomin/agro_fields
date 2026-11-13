@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/inversion_model.dart';
 import '../../services/inversion_service.dart';
 import '../chat/chat_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 class InvertirScreen extends StatefulWidget {
   final String publicacionId;
@@ -81,7 +82,7 @@ class _InvertirScreenState extends State<InvertirScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: BarraCampo(
         title: const Text('Invertir'),
       ),
       body: Padding(

@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-090 (12/11/2026): marcar la ubicación del campo en el mapa.
 /// Una pantalla, una pregunta: "¿Dónde está tu campo?".
@@ -63,12 +64,11 @@ class _UbicacionActivoScreenState extends State<UbicacionActivoScreen> {
   Widget build(BuildContext context) {
     final p = punto;
     return Scaffold(
-      appBar: AppBar(title: const Text('¿Dónde está tu campo?')),
+      appBar: BarraCampo(title: const Text('¿Dónde está tu campo?')),
       body: Column(
         children: [
           Container(
             width: double.infinity,
-            color: Colors.white,
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
             child: Text(
               p == null
@@ -124,7 +124,6 @@ class _UbicacionActivoScreenState extends State<UbicacionActivoScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: SizedBox(
             height: 54,

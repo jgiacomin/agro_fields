@@ -12,7 +12,9 @@ import 'detalle_rodeo_screen.dart';
 import 'nuevo_cultivo_screen.dart';
 import 'nuevo_potrero_screen.dart';
 import 'nuevo_rodeo_screen.dart';
+import '../../core/theme/agro_tema.dart';
 import 'produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 1 (paso 6a, GAP-PROD-01): la produccion de un campo.
 /// Muestra los rodeos con su total de cabezas y los potreros.
@@ -134,10 +136,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
         rodeos.fold<int>(0, (suma, r) => suma + r.existencias.totalCabezas);
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Producción'),
       ),
       body: cargando
@@ -162,19 +161,41 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                           color: EstiloProduccion.textoSuave,
                         ),
                       ),
+                      const SizedBox(height: 14),
+                      ResumenNumeros([
+                        (
+                          '$totalCabezas',
+                          totalCabezas == 1 ? 'cabeza' : 'cabezas',
+                          Icons.pets,
+                          EstiloProduccion.terracota,
+                        ),
+                        (
+                          '${cultivos.length}',
+                          cultivos.length == 1 ? 'cultivo' : 'cultivos',
+                          Icons.grass,
+                          EstiloProduccion.verde,
+                        ),
+                        (
+                          numeroAgro(unidades.fold<double>(
+                              0, (s, u) => s + (u.superficieHa ?? 0))),
+                          'ha en lotes',
+                          Icons.crop_square,
+                          AgroTema.azul,
+                        ),
+                      ]),
                       const SizedBox(height: 20),
-                      const TituloSeccion('Rodeos'),
+                      const TituloSeccion('Rodeos', icono: Icons.pets),
                       if (rodeos.isEmpty)
-                        const Text(
-                          'Todavía no hay rodeos. Tocá "Nuevo rodeo" para '
-                          'empezar.',
-                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        const EstadoVacio(
+                          icono: Icons.pets,
+                          texto: 'Todavía no hay rodeos. Tocá "Nuevo rodeo" '
+                              'para empezar.',
                         ),
                       ...rodeos.map(_tarjetaRodeo),
                       const SizedBox(height: 24),
                       Row(
                         children: [
-                          const Expanded(child: TituloSeccion('Cultivos')),
+                          const Expanded(child: TituloSeccion('Cultivos', icono: Icons.grass)),
                           TextButton(
                             onPressed: () => abrir(NuevoCultivoScreen(
                               activoAgroId: widget.activoAgroId,
@@ -185,19 +206,19 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                         ],
                       ),
                       if (cultivos.isEmpty)
-                        const Text(
-                          'Todavía no hay cultivos. Cargá un lote y después '
-                          'tocá "Nuevo cultivo".',
-                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        const EstadoVacio(
+                          icono: Icons.grass,
+                          texto: 'Todavía no hay cultivos. Cargá un lote y '
+                              'después tocá "Nuevo cultivo".',
                         ),
                       ...cultivos.map(_tarjetaCultivo),
                       const SizedBox(height: 24),
-                      const TituloSeccion('Lotes, potreros y corrales'),
+                      const TituloSeccion('Lotes, potreros y corrales', icono: Icons.crop_square),
                       if (unidades.isEmpty)
-                        const Text(
-                          'Todavía no hay potreros. Cargá al menos uno para '
-                          'saber dónde están los animales.',
-                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        const EstadoVacio(
+                          icono: Icons.crop_square,
+                          texto: 'Todavía no hay lotes ni potreros. Cargá al '
+                              'menos uno para saber dónde está cada cosa.',
                         )
                       else
                         TarjetaBlanca(
@@ -214,7 +235,6 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: Row(
             children: [
@@ -262,6 +282,9 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
+              const IconoCirculo(Icons.pets,
+                  color: EstiloProduccion.terracota, tamano: 48),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +350,8 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Icon(Icons.grass, color: EstiloProduccion.verde),
+              const IconoCirculo(Icons.grass,
+                  color: EstiloProduccion.verde, tamano: 48),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -383,6 +407,14 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
       ),
       child: Row(
         children: [
+          IconoCirculo(
+            unidad.tipo == TipoUnidadProductiva.lote
+                ? Icons.crop_square
+                : Icons.fence,
+            color: AgroTema.azul,
+            tamano: 36,
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(unidad.nombre, style: const TextStyle(fontSize: 16)),
           ),

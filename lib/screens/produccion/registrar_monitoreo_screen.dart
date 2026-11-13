@@ -6,6 +6,7 @@ import '../../models/activos/grupo_productivo_model.dart';
 import '../../services/produccion_service.dart';
 import 'cultivos_textos.dart';
 import 'produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// GAP-MON-01 (13/11/2026): registrar un monitoreo.
 /// Qué se miró, qué se vio, el nivel y de dónde sale el dato.
@@ -83,10 +84,7 @@ class _RegistrarMonitoreoScreenState extends State<RegistrarMonitoreoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Registrar monitoreo'),
       ),
       body: ListView(
@@ -157,7 +155,6 @@ class _RegistrarMonitoreoScreenState extends State<RegistrarMonitoreoScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar monitoreo',

@@ -7,6 +7,7 @@ import '../../services/profesional_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'intervenciones_screen.dart';
 import 'profesionales_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-093: el dueño invita profesionales a su campo, les quita el acceso
 /// y ve todo lo que registraron.
@@ -162,10 +163,7 @@ class _ProfesionalesActivoScreenState extends State<ProfesionalesActivoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Profesionales'),
       ),
       body: cargando
@@ -195,7 +193,7 @@ class _ProfesionalesActivoScreenState extends State<ProfesionalesActivoScreen> {
                             fontSize: 14, color: EstiloProduccion.textoSuave),
                       ),
                       const SizedBox(height: 16),
-                      const TituloSeccion('Profesionales invitados'),
+                      const TituloSeccion('Profesionales invitados', icono: Icons.badge_outlined),
                       if (profesionales.isEmpty)
                         const Text(
                           'Todavía no invitaste a nadie. Tu agrónomo, '
@@ -207,7 +205,7 @@ class _ProfesionalesActivoScreenState extends State<ProfesionalesActivoScreen> {
                         ),
                       for (final a in profesionales) _tarjetaProfesional(a),
                       const SizedBox(height: 24),
-                      const TituloSeccion('Intervenciones registradas'),
+                      const TituloSeccion('Intervenciones registradas', icono: Icons.assignment_outlined),
                       if (intervenciones.isEmpty)
                         const Text(
                           'Todavía no hay intervenciones.',
@@ -219,7 +217,6 @@ class _ProfesionalesActivoScreenState extends State<ProfesionalesActivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Invitar profesional',
@@ -239,11 +236,12 @@ class _ProfesionalesActivoScreenState extends State<ProfesionalesActivoScreen> {
           padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
           child: Row(
             children: [
-              Icon(
+              IconoCirculo(
                 Icons.badge,
                 color: activa
                     ? EstiloProduccion.verde
                     : EstiloProduccion.textoSuave,
+                tamano: 48,
               ),
               const SizedBox(width: 12),
               Expanded(

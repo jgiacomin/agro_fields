@@ -11,6 +11,7 @@ import '../../widgets/adjuntar_archivo_boton.dart';
 import '../produccion/produccion_estilo.dart';
 import 'operaciones_textos.dart';
 import 'registrar_evento_operacion_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 3 (paso 7a-3, GAP-OPER-01): el detalle de una operacion.
 /// Arriba, la lista de control antes de entregar ("X de 7").
@@ -184,10 +185,7 @@ class _DetalleOperacionScreenState extends State<DetalleOperacionScreen> {
     final puedeRegistrar = op.estado != EstadoOperacion.cancelada;
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: Text(op.comprador.nombre, overflow: TextOverflow.ellipsis),
         actions: [
           if (op.estaEnCurso)
@@ -240,7 +238,6 @@ class _DetalleOperacionScreenState extends State<DetalleOperacionScreen> {
       bottomNavigationBar: puedeRegistrar && !cargando && error == null
           ? SafeArea(
               child: Container(
-                color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
                 child: BotonGrande(
                   texto: '+ Registrar lo que pasó',
@@ -413,7 +410,7 @@ class _DetalleOperacionScreenState extends State<DetalleOperacionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TituloSeccion('Cheques y pagos'),
+        const TituloSeccion('Cheques y pagos', icono: Icons.payments_outlined),
         if (pagos.isEmpty)
           const Text(
             'Todavía no hay cheques ni pagos cargados.',
@@ -540,7 +537,7 @@ class _DetalleOperacionScreenState extends State<DetalleOperacionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TituloSeccion('Cuentas'),
+        const TituloSeccion('Cuentas', icono: Icons.calculate_outlined),
         TarjetaBlanca(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -582,7 +579,7 @@ class _DetalleOperacionScreenState extends State<DetalleOperacionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const TituloSeccion('Historia'),
+        const TituloSeccion('Historia', icono: Icons.history),
         if (ordenados.isEmpty)
           const Text(
             'Todavía no hay nada registrado.',

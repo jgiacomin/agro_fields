@@ -5,6 +5,7 @@ import '../../models/activos/movimiento_model.dart';
 import '../../services/movimiento_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'traslados_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-089: cargar un traslado simple. Una pantalla, preguntas simples.
 class NuevoTrasladoScreen extends StatefulWidget {
@@ -101,10 +102,7 @@ class _NuevoTrasladoScreenState extends State<NuevoTrasladoScreen> {
   Widget build(BuildContext context) {
     final unidades = Movimiento.unidadesPorActividad[actividad]!;
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Nuevo traslado'),
       ),
       body: ListView(
@@ -208,7 +206,6 @@ class _NuevoTrasladoScreenState extends State<NuevoTrasladoScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar traslado',

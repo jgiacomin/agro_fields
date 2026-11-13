@@ -5,6 +5,7 @@ import '../../models/activos/recurso_agro_model.dart';
 import '../../services/recurso_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'stock_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// GAP-STOCK-01 (13/11/2026): cargar un producto nuevo.
 /// Nace con saldo 0; la cantidad inicial entra como movimiento "entrada".
@@ -96,10 +97,7 @@ class _NuevoRecursoScreenState extends State<NuevoRecursoScreen> {
     const teclado = TextInputType.numberWithOptions(decimal: true);
     final u = unidad == null ? '' : ' (${nombreUnidadStock(unidad!).toLowerCase()})';
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Nuevo producto'),
       ),
       body: ListView(
@@ -154,7 +152,6 @@ class _NuevoRecursoScreenState extends State<NuevoRecursoScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar producto',

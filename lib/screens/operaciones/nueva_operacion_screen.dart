@@ -5,6 +5,7 @@ import '../../models/activos/operacion_protegida_model.dart';
 import '../../services/operacion_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'operaciones_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 2 (paso 7a-3, GAP-OPER-01): cargar una operacion protegida.
 /// Lo indispensable: que se vende, a quien, cuanto y como se paga.
@@ -143,10 +144,7 @@ class _NuevaOperacionScreenState extends State<NuevaOperacionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Nueva operación'),
       ),
       body: ListView(
@@ -250,7 +248,6 @@ class _NuevaOperacionScreenState extends State<NuevaOperacionScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar operación',

@@ -6,6 +6,7 @@ import '../../services/activo_agro_service_v2.dart';
 import '../produccion/produccion_estilo.dart';
 import 'emergencias_textos.dart';
 import 'registrar_emergencia_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-092: emergencias del campo ("de la alerta a la acción").
 /// Arriba, la marca voluntaria "Mi campo puede recibir en una emergencia";
@@ -119,10 +120,7 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Emergencias'),
       ),
       body: cargando
@@ -156,7 +154,7 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
                       const SizedBox(height: 16),
                       _tarjetaDisponible(),
                       const SizedBox(height: 24),
-                      const TituloSeccion('Emergencias registradas'),
+                      const TituloSeccion('Emergencias registradas', icono: Icons.warning_amber_rounded),
                       if (eventos.isEmpty)
                         const Text(
                           'No hay emergencias registradas. Si pasa algo '
@@ -173,7 +171,6 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Registrar emergencia',
@@ -253,7 +250,10 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
       padding: const EdgeInsets.only(bottom: 10),
       child: TarjetaBlanca(
         colorBorde: grave ? EstiloProduccion.rojo : EstiloProduccion.borde,
-        child: Padding(
+        child: FilaConIcono(
+          icono: Icons.warning_amber_rounded,
+          color: grave ? EstiloProduccion.rojo : EstiloProduccion.terracota,
+          child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,6 +275,7 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
               ],
             ],
           ),
+        ),
         ),
       ),
     );

@@ -9,6 +9,7 @@ import '../../services/calculo_existencias.dart';
 import '../../services/produccion_service.dart';
 import '../../services/recurso_service.dart';
 import 'produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantallas 4a y 4b (paso 6a, GAP-PROD-01): registrar un evento.
 /// Paso 1: ¿que paso? (cinco botones grandes).
@@ -234,10 +235,7 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
     final elegido = tipo;
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: elegido == null ? 'Volver' : 'Cambiar qué pasó',
@@ -273,7 +271,6 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
           ? null
           : SafeArea(
               child: Container(
-                color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
                 child: BotonGrande(
                   texto: 'Guardar ${nombreTipoEvento(elegido).toLowerCase()}',

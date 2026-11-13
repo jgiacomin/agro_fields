@@ -6,6 +6,7 @@ import '../../models/activos/unidad_productiva_model.dart';
 import '../../services/produccion_service.dart';
 import 'cultivos_textos.dart';
 import 'produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// GAP-AGRO-01: nuevo cultivo de la campaña (ej.: Soja 2026/27 - Lote 3).
 /// Reutiliza GrupoProductivo con actividad "agricultura".
@@ -98,10 +99,7 @@ class _NuevoCultivoScreenState extends State<NuevoCultivoScreen> {
       });
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Nuevo cultivo'),
       ),
       body: ListView(
@@ -151,7 +149,6 @@ class _NuevoCultivoScreenState extends State<NuevoCultivoScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar cultivo',

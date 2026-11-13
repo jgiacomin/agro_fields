@@ -6,6 +6,7 @@ import '../../services/activo_agro_service_v2.dart';
 import '../operaciones/operaciones_textos.dart';
 import '../produccion/produccion_estilo.dart';
 import 'nuevo_documento_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Tipos de documento que se ofrecen para elegir tocando.
 const List<String> tiposDocumento = [
@@ -126,10 +127,7 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Documentos'),
       ),
       body: cargando
@@ -163,7 +161,7 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
                       ),
                       if (avisos.isNotEmpty) ...[
                         const SizedBox(height: 20),
-                        const TituloSeccion('Necesita atención'),
+                        const TituloSeccion('Necesita atención', icono: Icons.warning_amber_rounded),
                         for (final d in avisos)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
@@ -177,7 +175,7 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
                           ),
                       ],
                       const SizedBox(height: 20),
-                      const TituloSeccion('Documentos del campo'),
+                      const TituloSeccion('Documentos del campo', icono: Icons.description_outlined),
                       if (documentos.isEmpty)
                         const Text(
                           'Todavía no hay documentos. Cargá la escritura, la '
@@ -194,7 +192,6 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Nuevo documento',
@@ -260,7 +257,10 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
                 vigencia == EstadoVigenciaDocumento.porVencer
             ? color
             : EstiloProduccion.borde,
-        child: Padding(
+        child: FilaConIcono(
+          icono: Icons.description_outlined,
+          color: color,
+          child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,6 +301,7 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

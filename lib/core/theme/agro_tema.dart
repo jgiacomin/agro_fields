@@ -11,6 +11,15 @@ class AgroTema {
   /// Boton principal, accion destacada, icono activo (el "V8" del logo).
   static const Color terracota = Color(0xFFD96A2B);
 
+  /// Diseño V8 campo (13/11/2026, demo de Javier): extremos del degradé
+  /// de los botones y fondo suave de los íconos en círculo.
+  static const Color terracotaVivo = Color(0xFFEC7C34);
+  static const Color terracotaOscuro = Color(0xFFC2541F);
+  static const Color terracotaClaro = Color(0xFFFBE4D3);
+
+  /// Dorado del atardecer: línea bajo la barra y detalles de los títulos.
+  static const Color dorado = Color(0xFFE3A53A);
+
   /// Titulos y texto (el "AGRO FIELDS" del logo).
   static const Color pizarra = Color(0xFF2F3B46);
 
@@ -58,12 +67,24 @@ class AgroTema {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colores,
-      scaffoldBackgroundColor: crema,
+      // Diseño V8 campo: las pantallas son transparentes y dejan ver el
+      // fondo común (crema + paisaje abajo) que pone main.dart.
+      scaffoldBackgroundColor: Colors.transparent,
+      // Diseño V8 campo (13/11/2026): barra oscura con línea dorada abajo.
       appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.white,
-        foregroundColor: pizarra,
+        backgroundColor: pizarra,
+        foregroundColor: Colors.white,
         elevation: 0,
-        scrolledUnderElevation: 0.5,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
+        actionsIconTheme: IconThemeData(color: Colors.white),
+        shape: Border(bottom: BorderSide(color: dorado, width: 3)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

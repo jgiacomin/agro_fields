@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../models/activos/unidad_productiva_model.dart';
 import '../../services/produccion_service.dart';
 import 'produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Formulario corto para cargar un potrero, corral u otra unidad
 /// (paso 6a, GAP-PROD-01). Si no se saben las hectareas, quedan vacias.
@@ -94,10 +95,7 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Nuevo potrero'),
       ),
       body: ListView(
@@ -126,7 +124,6 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar potrero',

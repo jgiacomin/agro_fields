@@ -6,6 +6,7 @@ import '../produccion/produccion_estilo.dart';
 import 'detalle_recurso_screen.dart';
 import 'nuevo_recurso_screen.dart';
 import 'stock_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// GAP-STOCK-01 (13/11/2026): el stock del campo.
 /// Lista de productos con su saldo; los que están en el mínimo o debajo
@@ -82,10 +83,7 @@ class _StockActivoScreenState extends State<StockActivoScreen> {
   Widget build(BuildContext context) {
     final bajos = productos.where((p) => p.stockBajo).length;
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Stock e insumos'),
       ),
       body: cargando
@@ -125,16 +123,12 @@ class _StockActivoScreenState extends State<StockActivoScreen> {
                         const SizedBox(height: 12),
                       ],
                       if (productos.isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.only(top: 24),
-                          child: Text(
-                            'Todavía no hay productos. Cargá lo que tenés en '
-                            'el galpón: semillas, agroquímicos, vacunas, '
-                            'gasoil. Cada entrada y cada uso queda registrado.',
-                            style: TextStyle(
-                                color: EstiloProduccion.textoSuave,
-                                height: 1.5),
-                          ),
+                        const EstadoVacio(
+                          icono: Icons.inventory_2_outlined,
+                          texto: 'Todavía no hay productos. Cargá lo que '
+                              'tenés en el galpón: semillas, agroquímicos, '
+                              'vacunas, gasoil. Cada entrada y cada uso queda '
+                              'registrado.',
                         ),
                       ...productos.map(_tarjeta),
                     ],
@@ -142,7 +136,6 @@ class _StockActivoScreenState extends State<StockActivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Producto',
@@ -165,6 +158,14 @@ class _StockActivoScreenState extends State<StockActivoScreen> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
+              IconoCirculo(
+                iconoTipoRecurso(r.tipo),
+                color: r.stockBajo
+                    ? EstiloProduccion.rojo
+                    : EstiloProduccion.verde,
+                tamano: 48,
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

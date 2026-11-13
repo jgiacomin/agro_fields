@@ -10,6 +10,7 @@ import '../../services/recurso_service.dart';
 import '../stock/stock_textos.dart';
 import 'cultivos_textos.dart';
 import 'produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// GAP-APLI-01 (13/11/2026): registrar una aplicación terrestre.
 /// Hectáreas, producto, dosis, quién aplicó, receta y condiciones.
@@ -216,10 +217,7 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
     const tecladoSigno =
         TextInputType.numberWithOptions(decimal: true, signed: true);
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Registrar aplicación'),
       ),
       body: ListView(
@@ -336,7 +334,6 @@ class _RegistrarAplicacionScreenState extends State<RegistrarAplicacionScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar aplicación',

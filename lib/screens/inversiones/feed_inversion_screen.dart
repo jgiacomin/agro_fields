@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/publicacion_inversion_model.dart';
 import '../../services/publicacion_inversion_service.dart';
 import 'invertir_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 class FeedInversionScreen extends StatelessWidget {
   FeedInversionScreen({super.key});
@@ -13,7 +14,7 @@ class FeedInversionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: BarraCampo(
         title: const Text('Oportunidades de Inversión'),
         centerTitle: true,
       ),

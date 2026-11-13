@@ -5,6 +5,7 @@ import '../../models/activos/activo_publico_model.dart';
 import '../../models/solicitud_contacto_model.dart';
 import '../../services/solicitud_contacto_service.dart';
 import '../../enums/solicitud_estado.dart';
+import '../../widgets/barra_campo.dart';
 
 
 
@@ -264,7 +265,7 @@ class _DetalleCampoScreenState
 
       appBar:
 
-      AppBar(
+      BarraCampo(
 
         title:
 

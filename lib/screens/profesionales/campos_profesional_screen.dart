@@ -5,6 +5,7 @@ import '../../models/activos/autorizacion_activo_model.dart';
 import '../../services/profesional_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'intervenciones_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-093: campos donde el usuario fue invitado como profesional.
 /// El nombre del campo viene en la invitación (el profesional no lee el
@@ -54,10 +55,7 @@ class _CamposProfesionalScreenState extends State<CamposProfesionalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Campos donde soy profesional'),
       ),
       body: cargando

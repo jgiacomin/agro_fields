@@ -10,6 +10,7 @@ import 'cultivos_textos.dart';
 import 'produccion_estilo.dart';
 import 'registrar_aplicacion_screen.dart';
 import 'registrar_monitoreo_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 /// GAP-AGRO-01: un cultivo de la campaña. Resumen calculado (hectáreas,
 /// toneladas, rendimiento) y sus siembras y cosechas (solo agregar).
@@ -126,10 +127,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
         .firstOrNull;
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: Text(g.nombre),
       ),
       body: cargando
@@ -195,14 +193,19 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: EstiloProduccion.rojoBorde),
                           ),
-                          child: Text(
+                          child: Row(children: [
+                            const Icon(Icons.warning_rounded,
+                                color: EstiloProduccion.rojo, size: 30),
+                            const SizedBox(width: 10),
+                            Expanded(child: Text(
                             'Se cosecharon ${numeroAgro(r.haCosechadas)} ha y '
                             'figuran ${numeroAgro(r.haSembradas)} ha sembradas. '
                             '¿Falta cargar la siembra?',
                             style: const TextStyle(
                                 color: EstiloProduccion.rojo,
                                 fontWeight: FontWeight.w600),
-                          ),
+                          )),
+                          ]),
                         ),
                       ],
                       const SizedBox(height: 6),
@@ -213,41 +216,46 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                             fontSize: 12, color: EstiloProduccion.textoSuave),
                       ),
                       const SizedBox(height: 22),
-                      const TituloSeccion('Siembras y cosechas'),
+                      const TituloSeccion('Siembras y cosechas', icono: Icons.eco),
                       if (eventos.isEmpty)
-                        const Text(
-                          'Todavía no hay registros. Empezá por la siembra.',
-                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        const EstadoVacio(
+                          icono: Icons.eco,
+                          texto: 'Todavía no hay registros. Empezá por la '
+                              'siembra.',
                         ),
                       ...eventos.map((e) => _tarjeta(e, corregidos)),
                       const SizedBox(height: 22),
-                      const TituloSeccion('Monitoreos'),
+                      const TituloSeccion('Monitoreos', icono: Icons.search),
                       BotonGrande(
                         texto: '+ Monitoreo',
-                        contorno: true,
+                        icono: Icons.search,
+                        flecha: true,
                         onPressed: _registrarMonitoreo,
                       ),
                       const SizedBox(height: 12),
                       if (monitoreos.isEmpty)
-                        const Text(
-                          'Todavía no hay monitoreos. Anotá lo que ves en '
-                          'cada recorrida: queda con su fecha y su fuente.',
-                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        const EstadoVacio(
+                          icono: Icons.search,
+                          texto: 'Todavía no hay monitoreos. Anotá lo que ves '
+                              'en cada recorrida: queda con su fecha y su '
+                              'fuente.',
                         ),
                       ...monitoreos.map(_tarjetaMonitoreo),
                       const SizedBox(height: 22),
-                      const TituloSeccion('Aplicaciones'),
+                      const TituloSeccion('Aplicaciones', icono: Icons.water_drop_outlined),
                       BotonGrande(
                         texto: '+ Aplicación',
-                        contorno: true,
+                        icono: Icons.water_drop_outlined,
+                        flecha: true,
                         onPressed: _registrarAplicacion,
                       ),
                       const SizedBox(height: 12),
                       if (aplicaciones.isEmpty)
-                        const Text(
-                          'Todavía no hay aplicaciones. Anotá cada pasada: '
-                          'producto, dosis, quién aplicó y las condiciones.',
-                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        const EstadoVacio(
+                          icono: Icons.water_drop_outlined,
+                          texto: 'Todavía no hay aplicaciones. Anotá cada '
+                              'pasada: producto, dosis, quién aplicó y las '
+                              'condiciones.',
                         ),
                       ...aplicaciones.map((e) => _tarjetaAplicacion(
                           e, superanSembrado.contains(e.eventoId))),
@@ -256,13 +264,13 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: Row(
             children: [
               Expanded(
                 child: BotonGrande(
                   texto: '+ Siembra',
+                  icono: Icons.grass,
                   onPressed: cargando
                       ? null
                       : () => _registrar(TipoEventoProductivo.siembra),
@@ -272,6 +280,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
               Expanded(
                 child: BotonGrande(
                   texto: '+ Cosecha',
+                  icono: Icons.agriculture,
                   contorno: true,
                   onPressed: cargando
                       ? null
@@ -298,13 +307,19 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Atención: monitoreo en nivel alto',
-            style: TextStyle(
-                color: EstiloProduccion.rojo,
-                fontWeight: FontWeight.w700,
-                fontSize: 15),
-          ),
+          const Row(children: [
+            Icon(Icons.warning_rounded, color: EstiloProduccion.rojo, size: 26),
+            SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                'Atención: monitoreo en nivel alto',
+                style: TextStyle(
+                    color: EstiloProduccion.rojo,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15),
+              ),
+            ),
+          ]),
           const SizedBox(height: 4),
           ...alertas.map((e) => Text(
                 '${nombreObjetivoMonitoreo(e.objetivoMonitoreo)} · '
@@ -339,7 +354,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.water_drop_outlined,
+              const IconoCirculo(Icons.water_drop_outlined,
                   color: EstiloProduccion.terracota),
               const SizedBox(width: 12),
               Expanded(
@@ -405,7 +420,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.search, color: color),
+              IconoCirculo(Icons.search, color: color),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -495,7 +510,7 @@ class _DetalleCultivoScreenState extends State<DetalleCultivoScreen> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Icon(esSiembra ? Icons.grass : Icons.agriculture,
+              IconoCirculo(esSiembra ? Icons.grass : Icons.agriculture,
                   color: esSiembra
                       ? EstiloProduccion.verde
                       : EstiloProduccion.terracota),
@@ -671,10 +686,7 @@ class _RegistrarEventoCultivoScreenState
   Widget build(BuildContext context) {
     final teclado = const TextInputType.numberWithOptions(decimal: true);
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: Text(widget.corrige != null
             ? (esSiembra ? 'Corregir siembra' : 'Corregir cosecha')
             : (esSiembra ? 'Registrar siembra' : 'Registrar cosecha')),
@@ -774,7 +786,6 @@ class _RegistrarEventoCultivoScreenState
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: widget.corrige != null

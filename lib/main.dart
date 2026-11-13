@@ -38,16 +38,59 @@ class AgroApp extends StatelessWidget {
       theme: AgroTema.tema,
       // En pantallas grandes (compu), toda la app queda centrada con un
       // ancho máximo, como una tablet. En el celular no cambia nada.
+      // Diseño V8 campo (13/11/2026): fondo común con el campo de trigo
+      // abajo, suave y desvanecido; las pantallas lo dejan ver.
       builder: (context, child) => ColoredBox(
         color: AgroTema.crema,
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: anchoMaximoApp),
-            child: child,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                const _FondoCampo(),
+                child ?? const SizedBox.shrink(),
+              ],
+            ),
           ),
         ),
       ),
       home: const AuthGate(),
+    );
+  }
+}
+
+/// Franja del campo de trigo abajo de todas las pantallas (Pixabay, uso
+/// libre). Se desvanece hacia arriba para no tapar el contenido.
+class _FondoCampo extends StatelessWidget {
+  const _FondoCampo();
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        height: 240,
+        width: double.infinity,
+        child: Opacity(
+          opacity: 0.55,
+          child: ShaderMask(
+            shaderCallback: (r) => const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0x00000000), Color(0xFF000000)],
+              stops: [0.0, 0.7],
+            ).createShader(r),
+            blendMode: BlendMode.dstIn,
+            child: Image.asset(
+              'assets/fondo_campo.jpg',
+              fit: BoxFit.cover,
+              alignment: Alignment.bottomCenter,
+              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

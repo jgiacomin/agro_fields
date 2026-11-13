@@ -23,13 +23,22 @@ class EstiloProduccion {
   static const Color rojo = AgroTema.rojo;
   static const Color rojoFondo = AgroTema.rojoFondo;
   static const Color rojoBorde = AgroTema.rojoBorde;
+  static const Color dorado = AgroTema.dorado;
+  static const Color terracotaClaro = AgroTema.terracotaClaro;
 }
 
+/// Diseño V8 campo (13/11/2026): el botón lleno va con un degradé
+/// naranja suave; el de contorno, blanco con borde naranja. Ícono opcional.
 class BotonGrande extends StatelessWidget {
   final String texto;
   final VoidCallback? onPressed;
   final bool ocupado;
   final bool contorno;
+  final IconData? icono;
+
+  /// Flecha a la derecha (como en la demo), para botones que abren otra
+  /// pantalla.
+  final bool flecha;
 
   const BotonGrande({
     super.key,
@@ -37,6 +46,8 @@ class BotonGrande extends StatelessWidget {
     required this.onPressed,
     this.ocupado = false,
     this.contorno = false,
+    this.icono,
+    this.flecha = false,
   });
 
   @override
@@ -47,10 +58,33 @@ class BotonGrande extends StatelessWidget {
             height: 22,
             child: CircularProgressIndicator(strokeWidth: 2.5),
           )
-        : Text(
-            texto,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icono != null) ...[
+                Icon(icono, size: 22),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: Text(
+                  texto,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
           );
+    final conFlecha = flecha && !ocupado
+        ? Row(
+            children: [
+              const SizedBox(width: 24),
+              Expanded(child: Center(child: contenido)),
+              const Icon(Icons.chevron_right, size: 26),
+            ],
+          )
+        : contenido;
+    final activo = onPressed != null && !ocupado;
 
     final forma = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
@@ -63,6 +97,7 @@ class BotonGrande extends StatelessWidget {
           ? OutlinedButton(
               onPressed: ocupado ? null : onPressed,
               style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white,
                 foregroundColor: EstiloProduccion.terracota,
                 side: const BorderSide(
                   color: EstiloProduccion.terracota,
@@ -70,38 +105,268 @@ class BotonGrande extends StatelessWidget {
                 ),
                 shape: forma,
               ),
-              child: contenido,
+              child: conFlecha,
             )
-          : ElevatedButton(
-              onPressed: ocupado ? null : onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: EstiloProduccion.terracota,
-                foregroundColor: Colors.white,
-                shape: forma,
+          : DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: activo
+                    ? const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AgroTema.terracotaVivo,
+                          AgroTema.terracotaOscuro,
+                        ],
+                      )
+                    : null,
+                color: activo ? null : const Color(0xFFE7DED2),
               ),
-              child: contenido,
+              child: ElevatedButton(
+                onPressed: ocupado ? null : onPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  disabledBackgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  shape: forma,
+                ),
+                child: conFlecha,
+              ),
             ),
     );
   }
 }
 
+/// Diseño V8 campo (13/11/2026): título de sección como banda oscura con
+/// ícono dorado y una línea dorada abajo.
 class TituloSeccion extends StatelessWidget {
   final String texto;
+  final IconData? icono;
 
-  const TituloSeccion(this.texto, {super.key});
+  const TituloSeccion(this.texto, {super.key, this.icono});
 
   @override
   Widget build(BuildContext context) {
+    // Como en la demo: la banda oscura sigue hacia la derecha con un
+    // pedazo del paisaje que se funde con el fondo.
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Text(
-        texto.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.8,
-          color: EstiloProduccion.textoSuave,
+      child: SizedBox(
+        height: 44,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: ShaderMask(
+                  shaderCallback: (r) => const LinearGradient(
+                    colors: [Color(0x00000000), Color(0xCC000000)],
+                    stops: [0.25, 1.0],
+                  ).createShader(r),
+                  blendMode: BlendMode.dstIn,
+                  child: Image.asset(
+                    'assets/encabezado_campo.jpg',
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0.4, 0.9),
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: _bandaTitulo(),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _bandaTitulo() {
+    return Container(
+          height: 44,
+          padding: const EdgeInsets.fromLTRB(16, 9, 26, 9),
+          decoration: const BoxDecoration(
+            color: EstiloProduccion.texto,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12),
+              topRight: Radius.circular(28),
+              bottomLeft: Radius.circular(4),
+              bottomRight: Radius.circular(4),
+            ),
+            border: Border(
+              bottom: BorderSide(color: EstiloProduccion.dorado, width: 3),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icono != null) ...[
+                Icon(icono, size: 22, color: EstiloProduccion.dorado),
+                const SizedBox(width: 10),
+              ],
+              Flexible(
+                child: Text(
+                  texto,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+}
+
+/// Diseño V8 campo (13/11/2026): ícono dentro de un círculo de color suave.
+class IconoCirculo extends StatelessWidget {
+  final IconData icono;
+  final Color color;
+  final double tamano;
+
+  const IconoCirculo(this.icono,
+      {super.key, required this.color, this.tamano = 54});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: tamano,
+      height: tamano,
+      decoration: BoxDecoration(
+        color: color.withAlpha(48),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icono, color: color, size: tamano * 0.55),
+    );
+  }
+}
+
+/// Diseño V8 campo: pone un ícono en círculo a la izquierda del contenido
+/// de una tarjeta.
+class FilaConIcono extends StatelessWidget {
+  final IconData icono;
+  final Color color;
+  final Widget child;
+
+  const FilaConIcono(
+      {super.key,
+      required this.icono,
+      required this.color,
+      required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 14),
+          child: IconoCirculo(icono, color: color, tamano: 48),
+        ),
+        Expanded(child: child),
+      ],
+    );
+  }
+}
+
+/// Diseño V8 campo: fila de números grandes de colores (resumen arriba).
+class ResumenNumeros extends StatelessWidget {
+  /// (número, texto, ícono, color)
+  final List<(String, String, IconData, Color)> datos;
+
+  const ResumenNumeros(this.datos, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (var i = 0; i < datos.length; i++) ...[
+          if (i > 0) const SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+              decoration: BoxDecoration(
+                color: datos[i].$4.withAlpha(30),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: datos[i].$4.withAlpha(90)),
+              ),
+              child: Row(
+                children: [
+                  Icon(datos[i].$3, color: datos[i].$4, size: 26),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          datos[i].$1,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            color: datos[i].$4,
+                          ),
+                        ),
+                        Text(
+                          datos[i].$2,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 12,
+                              color: EstiloProduccion.textoSuave),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Diseño V8 campo: pantalla o sección vacía, con un ícono grande y el
+/// texto que invita a empezar (en vez de un texto suelto).
+class EstadoVacio extends StatelessWidget {
+  final IconData icono;
+  final String texto;
+
+  const EstadoVacio({super.key, required this.icono, required this.texto});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFAF2),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE6D6BC)),
+      ),
+      child: Row(
+        children: [
+          IconoCirculo(icono, color: EstiloProduccion.terracota, tamano: 48),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              texto,
+              style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: EstiloProduccion.textoSuave),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -116,8 +381,8 @@ class TarjetaBlanca extends StatelessWidget {
   const TarjetaBlanca({
     super.key,
     required this.child,
-    this.colorBorde = EstiloProduccion.borde,
-    this.colorFondo = Colors.white,
+    this.colorBorde = const Color(0xFFE6D6BC),
+    this.colorFondo = const Color(0xFFFFFAF2),
     this.onTap,
   });
 
@@ -125,6 +390,9 @@ class TarjetaBlanca extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: colorFondo,
+      // Diseño V8 campo: sombra suave para que la tarjeta se despegue.
+      elevation: 1.5,
+      shadowColor: const Color(0x22000000),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(color: colorBorde),

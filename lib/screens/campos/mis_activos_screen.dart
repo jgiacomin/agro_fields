@@ -5,6 +5,7 @@ import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
 
 import 'detalle_activo_agro_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 class MisActivosScreen extends StatefulWidget {
   const MisActivosScreen({super.key});
@@ -135,7 +136,7 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Mis Activos")),
+      appBar: BarraCampo(title: const Text("Mis Activos")),
 
       body: cargando
           ? const Center(child: CircularProgressIndicator())

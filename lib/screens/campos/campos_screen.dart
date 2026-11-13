@@ -4,6 +4,7 @@ import '../../models/activos/activo_publico_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 
 import 'detalle_campo_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 
 
@@ -30,7 +31,7 @@ class CamposScreen extends StatelessWidget {
     return Scaffold(
 
 
-      appBar: AppBar(
+      appBar: BarraCampo(
 
         title:
         const Text(

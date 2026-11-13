@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../services/chat_service.dart';
 import 'chat_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 
 
@@ -53,7 +54,7 @@ class ChatPage extends StatelessWidget {
     return Scaffold(
 
 
-      appBar: AppBar(
+      appBar: BarraCampo(
 
         title:
 

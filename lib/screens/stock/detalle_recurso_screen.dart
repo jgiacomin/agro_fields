@@ -7,6 +7,7 @@ import '../../services/movimiento_stock_service.dart';
 import '../../services/recurso_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'stock_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// GAP-STOCK-01 (13/11/2026): un producto del stock.
 /// Saldo arriba, botones Entrada / Consumo / Ajuste y la historia de
@@ -78,10 +79,7 @@ class _DetalleRecursoScreenState extends State<DetalleRecursoScreen> {
   Widget build(BuildContext context) {
     final u = unidadCorta(recurso.unidad);
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: Text(recurso.nombre),
       ),
       body: cargando
@@ -144,11 +142,11 @@ class _DetalleRecursoScreenState extends State<DetalleRecursoScreen> {
                         ),
                       ),
                       const SizedBox(height: 22),
-                      const TituloSeccion('Movimientos'),
+                      const TituloSeccion('Movimientos', icono: Icons.swap_vert),
                       if (movimientos.isEmpty)
-                        const Text(
-                          'Todavía no hay movimientos.',
-                          style: TextStyle(color: EstiloProduccion.textoSuave),
+                        const EstadoVacio(
+                          icono: Icons.swap_vert,
+                          texto: 'Todavía no hay movimientos.',
                         ),
                       ...movimientos.map(_filaMovimiento),
                     ],
@@ -156,7 +154,6 @@ class _DetalleRecursoScreenState extends State<DetalleRecursoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: Row(
             children: [
@@ -203,8 +200,8 @@ class _DetalleRecursoScreenState extends State<DetalleRecursoScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(suma ? Icons.add_circle_outline : Icons.remove_circle_outline,
-                  color: color),
+              IconoCirculo(suma ? Icons.add : Icons.remove,
+                  color: color, tamano: 40),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

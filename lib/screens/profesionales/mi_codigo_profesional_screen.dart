@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../produccion/produccion_estilo.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-093: el profesional comparte su código para que un dueño lo invite.
 /// El código es su identificador interno: no da acceso a nada por sí solo;
@@ -14,10 +15,7 @@ class MiCodigoProfesionalScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Mi código de profesional'),
       ),
       body: ListView(

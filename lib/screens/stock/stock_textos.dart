@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// Textos del stock (GAP-STOCK-01).
 
 String nombreTipoRecurso(String? t) => switch (t) {
@@ -67,3 +69,14 @@ String mensajeErrorStock(Object e) {
   }
   return 'No se pudo guardar: $t';
 }
+
+/// Ícono de cada tipo de producto (diseño V8 campo).
+IconData iconoTipoRecurso(String? t) => switch (t) {
+      'semilla' => Icons.grass,
+      'fertilizante' => Icons.science_outlined,
+      'agroquimico' => Icons.water_drop_outlined,
+      'veterinario' => Icons.vaccines_outlined,
+      'combustible' => Icons.local_gas_station_outlined,
+      'alimento' => Icons.grain,
+      _ => Icons.inventory_2_outlined,
+    };

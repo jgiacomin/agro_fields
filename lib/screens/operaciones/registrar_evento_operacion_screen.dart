@@ -9,6 +9,7 @@ import '../../services/operacion_service.dart';
 import '../../widgets/adjuntar_archivo_boton.dart';
 import '../produccion/produccion_estilo.dart';
 import 'operaciones_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 4 (paso 7a-3, GAP-OPER-01): registrar lo que paso.
 /// Paso 1: ¿que paso? (seis botones grandes).
@@ -232,10 +233,7 @@ class _RegistrarEventoOperacionScreenState
     final elegido = tipo;
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: elegido == null ? 'Volver' : 'Cambiar qué pasó',
@@ -256,7 +254,6 @@ class _RegistrarEventoOperacionScreenState
           ? null
           : SafeArea(
               child: Container(
-                color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
                 child: BotonGrande(
                   texto: 'Guardar',

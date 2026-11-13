@@ -7,6 +7,7 @@ import '../operaciones/operaciones_textos.dart' show Aviso;
 import '../produccion/produccion_estilo.dart';
 import 'nuevo_traslado_screen.dart';
 import 'traslados_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-089: traslados del campo, con su estado y el control de coherencia
 /// (declarado / recibido).
@@ -152,10 +153,7 @@ class _TrasladosActivoScreenState extends State<TrasladosActivoScreen> {
   Widget build(BuildContext context) {
     final diferencias = lista.where((m) => m.hayDiferencia).toList();
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Traslados'),
       ),
       body: cargando
@@ -186,7 +184,7 @@ class _TrasladosActivoScreenState extends State<TrasladosActivoScreen> {
                       ),
                       if (diferencias.isNotEmpty) ...[
                         const SizedBox(height: 16),
-                        const TituloSeccion('Necesita atención'),
+                        const TituloSeccion('Necesita atención', icono: Icons.warning_amber_rounded),
                         for (final m in diferencias)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
@@ -199,7 +197,7 @@ class _TrasladosActivoScreenState extends State<TrasladosActivoScreen> {
                           ),
                       ],
                       const SizedBox(height: 16),
-                      const TituloSeccion('Traslados del campo'),
+                      const TituloSeccion('Traslados del campo', icono: Icons.local_shipping_outlined),
                       if (lista.isEmpty)
                         const Text(
                           'Todavía no hay traslados. Cargá cada salida de '
@@ -214,7 +212,6 @@ class _TrasladosActivoScreenState extends State<TrasladosActivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Nuevo traslado',
@@ -244,7 +241,10 @@ class _TrasladosActivoScreenState extends State<TrasladosActivoScreen> {
       padding: const EdgeInsets.only(bottom: 10),
       child: TarjetaBlanca(
         colorBorde: m.hayDiferencia ? EstiloProduccion.rojo : EstiloProduccion.borde,
-        child: Padding(
+        child: FilaConIcono(
+          icono: Icons.local_shipping_outlined,
+          color: m.hayDiferencia ? EstiloProduccion.rojo : EstiloProduccion.terracota,
+          child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,6 +311,7 @@ class _TrasladosActivoScreenState extends State<TrasladosActivoScreen> {
               ],
             ],
           ),
+        ),
         ),
       ),
     );

@@ -72,6 +72,10 @@ flutter:
   # Logo de Agro Fields (diseño del 12/11/2026).
   assets:
     - assets/logo_agro_fields.png
+    # Foto de la barra de arriba (Pixabay, uso libre; diseño V8 campo 13/11/2026).
+    - assets/encabezado_campo.jpg
+    # Campo de trigo abajo de todas las pantallas (Pixabay, uso libre).
+    - assets/fondo_campo.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:

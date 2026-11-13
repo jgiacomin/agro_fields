@@ -5,6 +5,7 @@ import '../../models/activos/intervencion_profesional_model.dart';
 import '../../services/profesional_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'profesionales_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// AF-093: intervenciones de un campo.
 /// - Profesional ([soyProfesional] = true): ve las suyas y puede registrar.
@@ -74,10 +75,7 @@ class _IntervencionesScreenState extends State<IntervencionesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: Text(widget.nombreActivo),
       ),
       body: cargando
@@ -101,7 +99,7 @@ class _IntervencionesScreenState extends State<IntervencionesScreen> {
                   child: ListView(
                     padding: const EdgeInsets.all(20),
                     children: [
-                      const TituloSeccion('Mis intervenciones en este campo'),
+                      const TituloSeccion('Mis intervenciones en este campo', icono: Icons.badge_outlined),
                       if (lista.isEmpty)
                         const Text(
                           'Todavía no registraste nada. Cada visita o '
@@ -115,7 +113,6 @@ class _IntervencionesScreenState extends State<IntervencionesScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Registrar intervención',
@@ -229,10 +226,7 @@ class _RegistrarIntervencionScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Registrar intervención'),
       ),
       body: ListView(
@@ -283,7 +277,6 @@ class _RegistrarIntervencionScreenState
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar intervención',

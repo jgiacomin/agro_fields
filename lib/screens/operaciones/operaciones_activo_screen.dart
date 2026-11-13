@@ -7,6 +7,7 @@ import '../produccion/produccion_estilo.dart';
 import 'detalle_operacion_screen.dart';
 import 'nueva_operacion_screen.dart';
 import 'operaciones_textos.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 1 (paso 7a-3, GAP-OPER-01): las operaciones protegidas de un
 /// campo. Arriba, lo que necesita atencion (cheques por vencer, vencidos o
@@ -103,10 +104,7 @@ class _OperacionesActivoScreenState extends State<OperacionesActivoScreen> {
         a.$2.pago.fechaVencimiento!.compareTo(b.$2.pago.fechaVencimiento!));
 
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Operaciones protegidas'),
       ),
       body: cargando
@@ -139,7 +137,7 @@ class _OperacionesActivoScreenState extends State<OperacionesActivoScreen> {
                       ),
                       if (alertas.isNotEmpty) ...[
                         const SizedBox(height: 20),
-                        const TituloSeccion('Necesita atención'),
+                        const TituloSeccion('Necesita atención', icono: Icons.warning_amber_rounded),
                         for (final (op, pago) in alertas)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
@@ -156,7 +154,7 @@ class _OperacionesActivoScreenState extends State<OperacionesActivoScreen> {
                           ),
                       ],
                       const SizedBox(height: 20),
-                      const TituloSeccion('En curso'),
+                      const TituloSeccion('En curso', icono: Icons.timelapse),
                       if (enCurso.isEmpty)
                         const Text(
                           'No hay operaciones en curso. Antes de entregar '
@@ -170,7 +168,7 @@ class _OperacionesActivoScreenState extends State<OperacionesActivoScreen> {
                       ...enCurso.map(_tarjeta),
                       if (cerradas.isNotEmpty) ...[
                         const SizedBox(height: 24),
-                        const TituloSeccion('Cerradas'),
+                        const TituloSeccion('Cerradas', icono: Icons.task_alt),
                         ...cerradas.map(_tarjeta),
                       ],
                       const LeyendaNoGarantia(),
@@ -179,7 +177,6 @@ class _OperacionesActivoScreenState extends State<OperacionesActivoScreen> {
                 ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Nueva operación',
@@ -199,7 +196,10 @@ class _OperacionesActivoScreenState extends State<OperacionesActivoScreen> {
       padding: const EdgeInsets.only(bottom: 10),
       child: TarjetaBlanca(
         onTap: () => abrir(op),
-        child: Padding(
+        child: FilaConIcono(
+          icono: Icons.verified_user_outlined,
+          color: EstiloProduccion.texto,
+          child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
@@ -248,6 +248,7 @@ class _OperacionesActivoScreenState extends State<OperacionesActivoScreen> {
                   color: EstiloProduccion.textoSuave),
             ],
           ),
+        ),
         ),
       ),
     );

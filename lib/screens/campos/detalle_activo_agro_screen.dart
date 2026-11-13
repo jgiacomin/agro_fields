@@ -11,6 +11,7 @@ import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
 import '../stock/stock_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 class DetalleActivoAgroScreen extends StatefulWidget {
   final ActivoAgroV2 activo;
@@ -123,8 +124,7 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AgroTema.crema,
-      appBar: AppBar(title: Text(activo.nombre)),
+      appBar: BarraCampo(title: Text(activo.nombre)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [

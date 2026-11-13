@@ -17,6 +17,7 @@ import '../../models/activos/evaluacion_confianza_model.dart';
 import '../../models/activos/participante_activo_model.dart';
 
 import '../../services/activo_agro_service_v2.dart';
+import '../../widgets/barra_campo.dart';
 
 class CrearActivoAgroScreen extends StatefulWidget {
   const CrearActivoAgroScreen({super.key});
@@ -320,7 +321,7 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Crear Activo Agro')),
+      appBar: BarraCampo(title: const Text('Crear Activo Agro')),
 
       body: Padding(
         padding: const EdgeInsets.all(16),

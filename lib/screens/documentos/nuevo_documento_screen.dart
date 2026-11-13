@@ -8,6 +8,7 @@ import '../../services/documento_archivo_service.dart';
 import '../../widgets/adjuntar_archivo_boton.dart';
 import '../produccion/produccion_estilo.dart';
 import 'documentos_activo_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 2 (paso 4b, pantalla pendiente): cargar un documento del campo.
 ///
@@ -176,10 +177,7 @@ class _NuevoDocumentoScreenState extends State<NuevoDocumentoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: EstiloProduccion.fondo,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: EstiloProduccion.texto,
+      appBar: BarraCampo(
         title: const Text('Nuevo documento'),
       ),
       body: ListView(
@@ -306,7 +304,6 @@ class _NuevoDocumentoScreenState extends State<NuevoDocumentoScreen> {
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
-          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: 'Guardar documento',

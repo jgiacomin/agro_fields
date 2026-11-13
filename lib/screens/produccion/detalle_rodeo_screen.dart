@@ -8,6 +8,7 @@ import '../../services/calculo_existencias.dart';
 import '../../services/produccion_service.dart';
 import 'produccion_estilo.dart';
 import 'registrar_evento_screen.dart';
+import '../../widgets/barra_campo.dart';
 
 /// Pantalla 3 (paso 6a, GAP-PROD-01): el detalle de un rodeo.
 /// Arriba las cuentas para revisar; despues cuantos hay, donde estan y la
@@ -107,10 +108,7 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
         if (!didPop) Navigator.of(context).pop(huboCambios);
       },
       child: Scaffold(
-        backgroundColor: EstiloProduccion.fondo,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          foregroundColor: EstiloProduccion.texto,
+        appBar: BarraCampo(
           title: Text(grupo.nombre),
         ),
         body: cargando
@@ -131,20 +129,19 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
                         ),
                         const SizedBox(height: 16),
                         ..._avisosDiscrepancias(),
-                        const TituloSeccion('Cuántos hay'),
+                        const TituloSeccion('Cuántos hay', icono: Icons.numbers),
                         _cuantosHay(),
                         const SizedBox(height: 22),
-                        const TituloSeccion('Dónde están'),
+                        const TituloSeccion('Dónde están', icono: Icons.place_outlined),
                         _dondeEstan(),
                         const SizedBox(height: 22),
-                        const TituloSeccion('Historia'),
+                        const TituloSeccion('Historia', icono: Icons.history),
                         _historia(),
                       ],
                     ),
                   ),
         bottomNavigationBar: SafeArea(
           child: Container(
-            color: Colors.white,
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
             child: BotonGrande(
               texto: 'Registrar evento',
