@@ -7674,7 +7674,7 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 # 13/11/2026 - GAP-SUELO-01: pantalla para cargar el suelo
 
-**Estado: PROBADO por Javier en Chrome (Campo Los Robles: textura, drenaje, pH y clase cargados; historial OK). flutter test 251 (+2 fallas conocidas).**
+**Estado: CERRADO. Probado por Javier en Chrome (Campo Los Robles: textura, drenaje, pH y clase cargados; historial OK). flutter test 251 (+2 fallas conocidas). main = 04002d7 (1bff746 pantalla + 04002d7 coma y fecha).**
 
 ### Decisión
 
@@ -7694,3 +7694,36 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 ### Pendiente
 
 * Paso B del punto 6: GAP-PESO-01 (peso en el pesaje) + AF-102 (mortandad % y ganancia diaria de peso).
+
+---
+
+# 13/11/2026 - GAP-PESO-01 + AF-102: pesaje, ganancia diaria de peso y mortandad
+
+**Estado: CÓDIGO ENTREGADO (rama gap-peso-01), pendiente de prueba de Javier y de publicar reglas.**
+
+### Decisión
+
+* El tipo de evento `pesaje` ya existía (preparado) y las reglas ya lo aceptaban: solo faltaba el dato del peso. Se reutiliza `cantidad` (cuántos se pesaron, opcional) y `categoria` (opcional, para comparar pesajes iguales).
+* Los indicadores NO se cargan a mano: salen de los eventos, igual que las existencias (AF-102, caso Pretto). Sin módulo nuevo.
+* Ganancia diaria = (último pesaje − pesaje anterior de la MISMA categoría) ÷ días. Si bajaron de peso da negativo: no se esconde.
+* Mortandad (últimos 12 meses) = muertes ÷ (animales al empezar + entradas del período). Las ventas no son muertes.
+* Los eventos corregidos por otro (`corrigeEventoId`) no cuentan en los indicadores.
+* Si hay más muertes que animales (datos que no cierran), la tarjeta dice "Para revisar" en vez de un % mayor a 100 (visto en la prueba de Javier: 12 muertes sobre 10 animales daba 120 %).
+
+### Solución
+
+* `lib/models/activos/evento_productivo_model.dart`: dato `pesoPromedioKg` (kg por animal); el pesaje exige peso > 0 y hasta 2000 kg (`pesoMaximoKg`, frena un cero de más).
+* `firestore.rules`: `pesoPromedioKg` número > 0 y ≤ 2000 si viene; el pesaje no se guarda sin peso.
+* `lib/services/calculo_rodeo.dart` (nuevo): `calcularGananciaDiaria` y `calcularMortandad`, sin Firebase.
+* `lib/screens/produccion/registrar_evento_screen.dart`: sexta opción "Pesaje" (peso promedio, cuántos se pesaron y categoría opcionales). Se reutiliza la pantalla, no se crea otra.
+* `lib/screens/produccion/detalle_rodeo_screen.dart`: sección "Indicadores" con las dos tarjetas ("Sin información" si faltan datos) y el pesaje en la historia.
+
+### Validación prevista
+
+* `test/rodeo_indicadores_test.dart`: 13 pruebas. Reglas PESO-01 a PESO-06.
+* Prueba a mano: rodeo → Registrar evento → Pesaje (320 kg) → otro pesaje otro día (posterior) → la tarjeta muestra los kg/día; una Salida por muerte → la mortandad cambia.
+
+### Pendiente
+
+* Matriz: AF-102 queda 🔴 hecho al cerrar este GAP (actualizar el nivel en la planilla).
+* 🟡 Pesaje individual por caravana (AF-104) e importación desde balanzas Tru-Test.

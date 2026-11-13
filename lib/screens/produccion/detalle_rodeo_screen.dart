@@ -5,6 +5,7 @@ import '../../models/activos/evento_productivo_model.dart';
 import '../../models/activos/grupo_productivo_model.dart';
 import '../../models/activos/unidad_productiva_model.dart';
 import '../../services/calculo_existencias.dart';
+import '../../services/calculo_rodeo.dart';
 import '../../services/produccion_service.dart';
 import 'produccion_estilo.dart';
 import 'registrar_evento_screen.dart';
@@ -37,6 +38,10 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
   ResultadoExistencias existencias =
       const ResultadoExistencias(porUnidad: {}, discrepancias: []);
 
+  // GAP-PESO-01 + AF-102: salen de los eventos, no se cargan a mano.
+  GananciaDiaria? ganancia;
+  Mortandad? mortandad;
+
   Map<String, UnidadProductiva> get unidadesPorId =>
       {for (final u in widget.unidades) u.unidadId: u};
 
@@ -65,6 +70,13 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
         existencias = calcularExistencias(
           lista,
           unidadInicialId: widget.grupo.unidadInicialId,
+        );
+        final hoy = DateTime.now();
+        ganancia = calcularGananciaDiaria(lista);
+        mortandad = calcularMortandad(
+          lista,
+          desde: DateTime(hoy.year - 1, hoy.month, hoy.day),
+          hasta: hoy,
         );
         cargando = false;
       });
@@ -131,6 +143,9 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
                         ..._avisosDiscrepancias(),
                         const TituloSeccion('Cuántos hay', icono: Icons.numbers),
                         _cuantosHay(),
+                        const SizedBox(height: 22),
+                        const TituloSeccion('Indicadores', icono: Icons.monitor_weight_outlined),
+                        _indicadores(),
                         const SizedBox(height: 22),
                         const TituloSeccion('Dónde están', icono: Icons.place_outlined),
                         _dondeEstan(),
@@ -260,6 +275,85 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
           ),
         );
       }).toList(),
+    );
+  }
+
+  String _decimal(double v, int decimales) =>
+      v.toStringAsFixed(decimales).replaceAll('.', ',');
+
+  /// GAP-PESO-01 + AF-102: ganancia diaria de peso y mortandad.
+  Widget _indicadores() {
+    final g = ganancia;
+    final m = mortandad;
+
+    Widget tarjeta(String valor, String titulo, String detalle) {
+      return SizedBox(
+        width: 220,
+        child: TarjetaBlanca(
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  valor,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: EstiloProduccion.texto,
+                  ),
+                ),
+                Text(
+                  titulo,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  detalle,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.4,
+                    color: EstiloProduccion.textoSuave,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        g == null
+            ? tarjeta('Sin información', 'Ganancia diaria de peso',
+                'Hacen falta dos pesajes de la misma categoría, en días distintos.')
+            : tarjeta(
+                '${_decimal(g.kgPorDia, 2)} kg/día',
+                'Ganancia diaria de peso',
+                'De ${_decimal(g.pesoInicialKg, 0)} a '
+                    '${_decimal(g.pesoFinalKg, 0)} kg en ${g.dias} días'
+                    '${g.categoria == null ? '' : ' (${nombreCategoria(g.categoria!).toLowerCase()})'}.',
+              ),
+        m == null
+            ? tarjeta('Sin información', 'Mortandad (últimos 12 meses)',
+                'Todavía no hay animales cargados en este período.')
+            : m.paraRevisar
+            ? tarjeta('Para revisar', 'Mortandad (últimos 12 meses)',
+                'Hay ${m.muertes} muertes cargadas y solo ${m.animalesBase} '
+                    'animales. Falta cargar una entrada o hay un error.')
+            : tarjeta(
+                '${_decimal(m.porcentaje, 1)} %',
+                'Mortandad (últimos 12 meses)',
+                '${m.muertes} ${m.muertes == 1 ? 'muerte' : 'muertes'} sobre '
+                    '${m.animalesBase} animales (los que había más los que entraron).',
+              ),
+      ],
     );
   }
 
@@ -415,6 +509,19 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
       case TipoEventoProductivo.sanidad:
         if (e.tratamiento != null) partes.add(e.tratamiento!);
         if (cantidad != null) partes.add('$cantidad animales');
+        break;
+      case TipoEventoProductivo.pesaje:
+        if (e.pesoPromedioKg != null) {
+          partes.add('${_decimal(e.pesoPromedioKg!, 0)} kg promedio');
+        }
+        if (cantidad != null && categoria != null) {
+          partes.add(
+              '$cantidad ${nombreCategoria(categoria, cantidad: cantidad).toLowerCase()}');
+        } else if (categoria != null) {
+          partes.add(nombreCategoria(categoria));
+        } else if (cantidad != null) {
+          partes.add('$cantidad animales');
+        }
         break;
       default:
         break;

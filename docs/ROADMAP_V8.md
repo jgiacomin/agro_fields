@@ -3813,9 +3813,11 @@ Referencia: Concepto General sección 25.1; `docs/BITACORA.md`.
 
 ## Suelo y pesajes — Estado
 
-🟡 **GAP-SUELO-01 ENTREGADO** (13/11/2026, rama `gap-suelo-01`), pendiente de prueba: pantalla para cargar el suelo sobre el modelo que ya existía (sin cambios de reglas).
+✅ **GAP-SUELO-01 CERRADO** (13/11/2026): pantalla para cargar el suelo; main = 04002d7.
 
-Siguiente: **GAP-PESO-01 + AF-102** (peso en el pesaje, ganancia diaria de peso y % de mortandad).
+🟡 **GAP-PESO-01 + AF-102 ENTREGADO** (13/11/2026, rama `gap-peso-01`), pendiente de prueba y de publicar reglas: peso en el pesaje, ganancia diaria de peso y % de mortandad (últimos 12 meses), calculados con los eventos.
+
+Con esto quedan hechos (o en prueba) los puntos 1 a 6 del plan. Siguiente: **7. Seguridad restante** (`solicitudes_contacto`, `inversiones`, `publicaciones_inversion`).
 
 Referencia documental:
 

@@ -38,6 +38,8 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
   final TextEditingController _dosis = TextEditingController();
   final TextEditingController _cantidadInsumo = TextEditingController();
   final TextEditingController _observaciones = TextEditingController();
+  // GAP-PESO-01: peso promedio por animal (kg).
+  final TextEditingController _peso = TextEditingController();
 
   /// ID armado al abrir la pantalla: si se toca "Guardar" dos veces, o se
   /// reintenta sin senal, no se duplica el evento.
@@ -65,6 +67,7 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
     (TipoEventoProductivo.movimiento, 'Mover animales de un lugar a otro'),
     (TipoEventoProductivo.cambioCategoria, 'Por ejemplo, de ternero a novillito'),
     (TipoEventoProductivo.sanidad, 'Puede descontar el producto del stock'),
+    (TipoEventoProductivo.pesaje, 'Peso promedio de los animales'),
   ];
 
   Map<String, int> get existentes => widget.existencias.porCategoria;
@@ -91,6 +94,7 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
     _dosis.dispose();
     _cantidadInsumo.dispose();
     _observaciones.dispose();
+    _peso.dispose();
     super.dispose();
   }
 
@@ -155,6 +159,15 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
 
     final esMovimiento = tipo == TipoEventoProductivo.movimiento;
     final esSanidad = tipo == TipoEventoProductivo.sanidad;
+    final esPesaje = tipo == TipoEventoProductivo.pesaje;
+    double? peso;
+    if (esPesaje) {
+      peso = double.tryParse(_peso.text.trim().replaceAll(',', '.'));
+      if (peso == null) {
+        _avisar('Poné el peso promedio por animal, en kg.');
+        return;
+      }
+    }
     final ahora = DateTime.now();
 
     final evento = EventoProductivo(
@@ -177,6 +190,7 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
       dosis: esSanidad && _dosis.text.trim().isNotEmpty
           ? _dosis.text.trim()
           : null,
+      pesoPromedioKg: esPesaje ? peso : null,
       observaciones: _observaciones.text.trim().isEmpty
           ? null
           : _observaciones.text.trim(),
@@ -337,10 +351,20 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
     final esSanidad = elegido == TipoEventoProductivo.sanidad;
     final esMovimiento = elegido == TipoEventoProductivo.movimiento;
     final esCambio = elegido == TipoEventoProductivo.cambioCategoria;
+    final esPesaje = elegido == TipoEventoProductivo.pesaje;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
       children: [
+        if (esPesaje) ...[
+          const EtiquetaCampo('Peso promedio por animal (kg)'),
+          TextField(
+            controller: _peso,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            decoration: decoracionCampo(ayuda: 'Ej.: 320'),
+          ),
+        ],
         if (esSanidad) ...[
           const EtiquetaCampo('Vacuna o tratamiento'),
           TextField(
@@ -351,7 +375,9 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
         ],
         EtiquetaCampo(esSanidad
             ? '¿A cuántos animales? (opcional)'
-            : 'Cantidad de animales'),
+            : esPesaje
+                ? '¿Cuántos se pesaron? (opcional)'
+                : 'Cantidad de animales'),
         TextField(
           controller: _cantidad,
           keyboardType: TextInputType.number,
@@ -359,7 +385,11 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
           decoration: decoracionCampo(ayuda: 'Ej.: 10'),
         ),
         if (!esSanidad) ...[
-          EtiquetaCampo(esCambio ? 'Categoría de antes' : 'Categoría'),
+          EtiquetaCampo(esCambio
+              ? 'Categoría de antes'
+              : esPesaje
+                  ? 'Categoría (opcional, para comparar pesajes)'
+                  : 'Categoría'),
           OpcionesTocar<String>(
             opciones: categoriasPosibles,
             elegida: categoria,

@@ -69,6 +69,10 @@ const Set<TipoEventoProductivo> tiposEventoAgricola = {
   TipoEventoProductivo.cosecha,
 };
 
+/// GAP-PESO-01 (13/11/2026): peso promedio máximo por animal que se
+/// acepta (kg). Sirve para frenar errores de tipeo (un 0 de más).
+const double pesoMaximoKg = 2000;
+
 /// Unidades para lo cosechado.
 const List<String> unidadesCosecha = ['tn', 'kg', 'qq'];
 
@@ -184,6 +188,11 @@ class EventoProductivo {
   /// la del grano en la cosecha.
   final double? humedadAmbiente;
 
+  // GAP-PESO-01 (13/11/2026): dato del pesaje. Se reutilizan cantidad
+  // (cuántos se pesaron, opcional) y categoria (opcional).
+  /// Peso promedio por animal (kg).
+  final double? pesoPromedioKg;
+
   const EventoProductivo({
     required this.eventoId,
     required this.activoAgroId,
@@ -224,6 +233,7 @@ class EventoProductivo {
     this.vientoKmh,
     this.temperatura,
     this.humedadAmbiente,
+    this.pesoPromedioKg,
   });
 
   /// Lo cosechado pasado a toneladas (null si no hay dato o unidad).
@@ -332,6 +342,17 @@ class EventoProductivo {
           errores.add('La humedad del aire tiene que estar entre 0 y 100.');
         }
         break;
+      case TipoEventoProductivo.pesaje:
+        if (pesoPromedioKg == null ||
+            pesoPromedioKg! <= 0 ||
+            pesoPromedioKg! > pesoMaximoKg) {
+          errores.add('El peso promedio tiene que ser mayor a 0 y hasta '
+              '${pesoMaximoKg.toInt()} kg.');
+        }
+        if (cantidad != null && cantidad! <= 0) {
+          errores.add('La cantidad tiene que ser mayor a cero.');
+        }
+        break;
       case TipoEventoProductivo.monitoreo:
         if (!objetivosMonitoreo.contains(objetivoMonitoreo)) {
           errores.add('Falta qué se miró.');
@@ -399,6 +420,7 @@ class EventoProductivo {
       vientoKmh: (map['vientoKmh'] as num?)?.toDouble(),
       temperatura: (map['temperatura'] as num?)?.toDouble(),
       humedadAmbiente: (map['humedadAmbiente'] as num?)?.toDouble(),
+      pesoPromedioKg: (map['pesoPromedioKg'] as num?)?.toDouble(),
     );
   }
 
@@ -443,6 +465,7 @@ class EventoProductivo {
       'vientoKmh': vientoKmh,
       'temperatura': temperatura,
       'humedadAmbiente': humedadAmbiente,
+      'pesoPromedioKg': pesoPromedioKg,
     };
   }
 

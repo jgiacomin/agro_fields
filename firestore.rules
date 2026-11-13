@@ -872,7 +872,16 @@ service cloud.firestore {
                 && request.resource.data.get('tratamiento', null) is string
                 && request.resource.data.tratamiento.size() > 0
                 && request.resource.data.get('dosis', null) is string
-                && request.resource.data.dosis.size() > 0));
+                && request.resource.data.dosis.size() > 0))
+        // GAP-PESO-01: el pesaje dice el peso promedio por animal, mayor a
+        // 0 y hasta 2000 kg (frena un cero de mas). Si viene en otro tipo,
+        // igual tiene que ser razonable.
+        && (request.resource.data.get('pesoPromedioKg', null) == null
+            || (request.resource.data.pesoPromedioKg is number
+                && request.resource.data.pesoPromedioKg > 0
+                && request.resource.data.pesoPromedioKg <= 2000))
+        && (request.resource.data.tipo != 'pesaje'
+            || request.resource.data.get('pesoPromedioKg', null) != null);
 
       allow update, delete: if false;
     }

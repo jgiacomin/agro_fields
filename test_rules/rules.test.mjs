@@ -1588,6 +1588,53 @@ test('APLI-06. El encargado con "crear producción" registra una aplicación con
 });
 
 // =====================================================================
+// PESO. PESAJE (GAP-PESO-01, 13/11/2026)
+// Un pesaje es un evento productivo mas: solo agregar.
+// =====================================================================
+
+const pesajeDe = (uid = DUENO, extra = {}) => eventoProdDe(uid, {
+  eventoId: 'ev_peso', tipo: 'pesaje', origen: null, cantidad: 40,
+  categoria: 'novillo', pesoPromedioKg: 320, ...extra,
+});
+
+test('PESO-01. El dueño registra un pesaje [PERMITIDO]', async () => {
+  await cargarGrupo();
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev_peso'), pesajeDe()));
+});
+
+test('PESO-02. NO se registra un pesaje sin peso [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_peso'), pesajeDe(DUENO, { pesoPromedioKg: null })));
+});
+
+test('PESO-03. NO se aceptan pesos de 0, negativos, de mas de 2000 kg o en texto [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_peso'), pesajeDe(DUENO, { pesoPromedioKg: 0 })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_peso'), pesajeDe(DUENO, { pesoPromedioKg: -5 })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_peso'), pesajeDe(DUENO, { pesoPromedioKg: 3200 })));
+  await assertFails(setDoc(doc(como(DUENO), 'eventos_productivos/ev_peso'), pesajeDe(DUENO, { pesoPromedioKg: '320' })));
+});
+
+test('PESO-04. Otro usuario NO registra pesajes en un campo ajeno [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await assertFails(setDoc(doc(como(OTRO), 'eventos_productivos/ev_peso'), pesajeDe(OTRO)));
+});
+
+test('PESO-05. Un pesaje NO se edita ni se borra [PROHIBIDO]', async () => {
+  await cargarGrupo();
+  await cargar((db) => setDoc(doc(db, 'eventos_productivos/ev_peso'), pesajeDe()));
+  await assertFails(updateDoc(doc(como(DUENO), 'eventos_productivos/ev_peso'), { pesoPromedioKg: 400 }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'eventos_productivos/ev_peso')));
+});
+
+test('PESO-06. El encargado con "crear producción" registra un pesaje sin cantidad ni categoría [PERMITIDO]', async () => {
+  await cargarGrupo();
+  await darAutorizacion('crear', 'produccion');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'eventos_productivos/ev_peso'),
+    pesajeDe(ENCARGADO, { cantidad: null, categoria: null })));
+});
+
+// =====================================================================
 // STOCK. STOCK E INSUMOS (GAP-STOCK-01, 13/11/2026)
 // El producto nace con saldo 0; el stock inicial entra como movimiento.
 // =====================================================================
