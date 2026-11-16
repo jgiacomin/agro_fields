@@ -14,6 +14,14 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // GAP-OFF-01 (16/11/2026): copia local de los datos en el teléfono (y en
+  // Chrome, donde venía apagada), sin límite de tamaño. Así se puede cargar
+  // sin señal y Firebase manda todo solo cuando vuelve la conexión.
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
+
   //if (kDebugMode) {
     //FirebaseFirestore.instance.useFirestoreEmulator(
       //'127.0.0.1',

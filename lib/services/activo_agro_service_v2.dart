@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../core/audit/audit_service.dart';
+import '../core/utils/guardado_offline.dart';
 import '../core/audit/audit_type.dart';
 import 'dart:convert';
 
@@ -1458,7 +1459,11 @@ Future<void> actualizarEconomia(
   );
 }
 
-Future<void> registrarEventoAfectacion(
+// GAP-OFF-01 (16/11/2026): funciona sin señal. Las tres escrituras
+// (evento, historial del Activo y auditoría) se lanzan juntas y no se
+// espera al servidor más de 2 segundos: quedan en el teléfono y se mandan
+// solas cuando vuelve la señal.
+Future<ResultadoGuardado> registrarEventoAfectacion(
   String activoId,
   EventoAfectacion evento, {
   Evidencia? evidencia,
@@ -1487,13 +1492,22 @@ Future<void> registrarEventoAfectacion(
   // EVITAR DUPLICACION DEL EVENTO
   // =====================================================
 
-  final eventoExistente =
-      await _db
-          .collection('eventos_afectacion')
-          .doc(evento.eventoId)
-          .get();
+  // GAP-OFF-01: sin señal esta consulta no se puede hacer y se saltea.
+  // No hay riesgo de duplicar: el ID del evento se arma en el teléfono al
+  // abrir la pantalla.
+  bool yaRegistrado = false;
+  try {
+    final eventoExistente = await _db
+        .collection('eventos_afectacion')
+        .doc(evento.eventoId)
+        .get()
+        .timeout(esperaServidor);
+    yaRegistrado = eventoExistente.exists;
+  } catch (e) {
+    if (!esErrorSinSenal(e)) rethrow;
+  }
 
-  if (eventoExistente.exists) {
+  if (yaRegistrado) {
     throw Exception(
       'El EventoAfectacion ya está registrado.',
     );
@@ -1536,7 +1550,7 @@ if (evidencia != null) {
 // PERSISTIR EVENTO — EVENTO AFECTACION
 // =====================================================
 
-  await _db
+  final escrituraEvento = _db
       .collection('eventos_afectacion')
       .doc(evento.eventoId)
       .set(
@@ -1600,7 +1614,7 @@ if (evidencia != null) {
     ],
   );
 
-  await _db
+  final escrituraHistorial = _db
       .collection(coleccion)
       .doc(activoId)
       .update(
@@ -1611,7 +1625,7 @@ if (evidencia != null) {
   // AUDITORIA — EVENTO AFECTACION
   // =====================================================
 
-  await _auditService.registrar(
+  final escrituraAuditoria = _auditService.registrar(
     activoId:
         activoId,
     usuarioId:
@@ -1646,6 +1660,12 @@ if (evidencia != null) {
             evidenciaId,
     },
   );
+
+  return guardarSinEsperar(Future.wait<Object?>([
+    escrituraEvento,
+    escrituraHistorial,
+    escrituraAuditoria,
+  ]));
 }
 
 // =====================================================

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../core/utils/guardado_offline.dart';
 
 import '../../models/activos/evento_productivo_model.dart';
 import '../../models/activos/grupo_productivo_model.dart';
@@ -668,9 +669,11 @@ class _RegistrarEventoCultivoScreenState
       return;
     }
     setState(() => guardando = true);
+    final mensajero = ScaffoldMessenger.of(context);
     try {
-      await _servicio.registrarEvento(evento);
+      final resultado = await _servicio.registrarEvento(evento);
       if (!mounted) return;
+      avisarGuardado(mensajero, resultado);
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;

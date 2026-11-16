@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../core/utils/guardado_offline.dart';
 import '../models/activos/cambio_territorio_model.dart';
 import 'documento_archivo_service.dart';
 
@@ -17,13 +18,14 @@ class TerritorioService {
   /// subir el archivo antes de guardar.
   String nuevoId() => _db.collection(CambioTerritorio.coleccion).doc().id;
 
-  Future<void> registrar(CambioTerritorio cambio) async {
+  /// GAP-OFF-01: sin señal no se queda esperando; queda en el teléfono.
+  Future<ResultadoGuardado> registrar(CambioTerritorio cambio) async {
     final errores = cambio.validar();
     if (errores.isNotEmpty) throw ArgumentError(errores.join(' '));
-    await _db
+    return guardarSinEsperar(_db
         .collection(CambioTerritorio.coleccion)
         .doc(cambio.cambioId)
-        .set(cambio.toMap());
+        .set(cambio.toMap()));
   }
 
   /// Todos los registros del campo (incluidos los corregidos).

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import '../core/utils/guardado_offline.dart';
 import '../models/activos/gasto_model.dart';
 import 'documento_archivo_service.dart';
 
@@ -18,13 +19,15 @@ class GastoService {
   /// no lo duplique (y para subir el comprobante antes de guardar).
   String nuevoId() => _db.collection(coleccion).doc().id;
 
-  Future<void> registrarGasto(Gasto gasto) async {
+  /// GAP-OFF-01: sin señal no se queda esperando; queda en el teléfono.
+  Future<ResultadoGuardado> registrarGasto(Gasto gasto) async {
     if (gasto.gastoId.trim().isEmpty) {
       throw ArgumentError('El gasto necesita su ID.');
     }
     final errores = gasto.validar();
     if (errores.isNotEmpty) throw ArgumentError(errores.join(' '));
-    await _db.collection(coleccion).doc(gasto.gastoId).set(gasto.toMap());
+    return guardarSinEsperar(
+        _db.collection(coleccion).doc(gasto.gastoId).set(gasto.toMap()));
   }
 
   Future<List<Gasto>> gastosDeActivo(String activoAgroId) async {

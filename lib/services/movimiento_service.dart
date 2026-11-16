@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../core/utils/guardado_offline.dart';
 import '../models/activos/movimiento_model.dart';
 
 /// AF-089: traslados (colección única `movimientos`).
@@ -7,14 +8,16 @@ class MovimientoService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   static const String coleccion = 'movimientos';
 
-  Future<void> registrar(Movimiento m) async {
+  /// GAP-OFF-01: sin señal no se queda esperando; queda en el teléfono.
+  Future<ResultadoGuardado> registrar(Movimiento m) async {
     final errores = m.validar();
     if (errores.isNotEmpty) throw ArgumentError(errores.join(' '));
     if (m.estado != EstadoMovimiento.programado &&
         m.estado != EstadoMovimiento.enCamino) {
       throw ArgumentError('Un traslado nuevo empieza programado o en camino.');
     }
-    await _db.collection(coleccion).doc(m.movimientoId).set(m.toMap());
+    return guardarSinEsperar(
+        _db.collection(coleccion).doc(m.movimientoId).set(m.toMap()));
   }
 
   /// Traslados de un campo, los más recientes primero.

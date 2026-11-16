@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../core/utils/guardado_offline.dart';
 import '../models/activos/evento_productivo_model.dart';
 import '../models/activos/grupo_productivo_model.dart';
 import '../models/activos/movimiento_stock_model.dart';
@@ -112,13 +113,14 @@ class ProduccionService {
   // ---------------------------------------------------------------
 
   /// Registra un evento. Antes lo revisa con EventoProductivo.validar().
-  Future<void> registrarEvento(EventoProductivo evento) async {
+  /// GAP-OFF-01: sin señal no se queda esperando; queda en el teléfono.
+  Future<ResultadoGuardado> registrarEvento(EventoProductivo evento) async {
     _revisar(evento);
 
-    await _db
+    return guardarSinEsperar(_db
         .collection(coleccionEventos)
         .doc(evento.eventoId)
-        .set(evento.toMap());
+        .set(evento.toMap()));
   }
 
   /// Registra una vacuna o tratamiento que usa un insumo del stock.
@@ -146,6 +148,13 @@ class ProduccionService {
           'Solo una sanidad o una aplicación descuentan stock.');
     }
     _revisar(evento);
+
+    // GAP-OFF-01 (opción A): descontar stock necesita señal (el saldo nunca
+    // debe quedar mal). Se comprueba ANTES de empezar el descuento.
+    await exigirSenal(
+      _db.collection('recursos').doc(recursoId),
+      mensaje: 'Para descontar el stock necesitás señal.',
+    );
 
     final movimiento = MovimientoStock(
       movimientoId: '',

@@ -7,6 +7,7 @@ import '../../services/activo_agro_service_v2.dart';
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../models/activos/documento_activo_model.dart';
+import '../../widgets/aviso_pendientes.dart';
 import '../../widgets/logo_agro_fields.dart';
 import '../campos/detalle_activo_agro_screen.dart';
 
@@ -375,6 +376,8 @@ debugPrint(
                       children: [
                         _encabezado(),
                         const SizedBox(height: 14),
+                        // GAP-OFF-01: datos guardados sin señal.
+                        const AvisoPendientes(),
                         _saludo(),
                         if (esPropietario) ...[
                           const SizedBox(height: 14),

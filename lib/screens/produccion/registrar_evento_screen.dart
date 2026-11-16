@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../core/utils/guardado_offline.dart';
 
 import '../../models/activos/evento_productivo_model.dart';
 import '../../models/activos/grupo_productivo_model.dart';
@@ -217,21 +218,34 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
     }
 
     setState(() => guardando = true);
-
+    final mensajero = ScaffoldMessenger.of(context);
     try {
+      ResultadoGuardado resultado;
       if (esSanidad && usaStock) {
-        await _servicio.registrarSanidadConStock(
-          evento: evento,
-          recursoId: recurso!.recursoId,
-          cantidadInsumo: cantidadInsumo!,
-          unidadInsumo: recurso!.unidad,
-          usuarioId: uid,
-        );
+        try {
+          await _servicio.registrarSanidadConStock(
+            evento: evento,
+            recursoId: recurso!.recursoId,
+            cantidadInsumo: cantidadInsumo!,
+            unidadInsumo: recurso!.unidad,
+            usuarioId: uid,
+          );
+          resultado = ResultadoGuardado.enviado;
+        } on SinSenalException {
+          // GAP-OFF-01 (opción A): sin señal no se descuenta el stock.
+          if (!mounted) return;
+          final sinDescontar = await preguntarGuardarSinDescontar(context);
+          if (!sinDescontar) {
+            if (mounted) setState(() => guardando = false);
+            return;
+          }
+          resultado = await _servicio.registrarEvento(evento);
+        }
       } else {
-        await _servicio.registrarEvento(evento);
+        resultado = await _servicio.registrarEvento(evento);
       }
-
       if (!mounted) return;
+      avisarGuardado(mensajero, resultado);
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;

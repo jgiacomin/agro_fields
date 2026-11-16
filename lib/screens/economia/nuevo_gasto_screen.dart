@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../core/utils/guardado_offline.dart';
 
 import '../../models/activos/gasto_model.dart';
 import '../../models/activos/grupo_productivo_model.dart';
@@ -134,9 +135,11 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
       return;
     }
     setState(() => guardando = true);
+    final mensajero = ScaffoldMessenger.of(context);
     try {
-      await _servicio.registrarGasto(gasto);
+      final resultado = await _servicio.registrarGasto(gasto);
       if (!mounted) return;
+      avisarGuardado(mensajero, resultado);
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;

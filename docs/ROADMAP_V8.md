@@ -3862,3 +3862,15 @@ Referencia documental:
 🟡 **GAP-SEG-02 ENTREGADO** (rama `gap-seg-02`): `solicitudes_contacto` sí se usa (marketplace → "enviar solicitud" → "Solicitudes recibidas"); se reabre endurecida en vez de congelada. `inversiones` y `publicaciones_inversion` siguen congeladas.
 
 Después: **8. Funcionamiento sin señal (GAP-OFF-01)**, ya programado y esperando.
+
+---
+
+## Funcionamiento sin señal (punto 8) — Estado
+
+✅ **GAP-SEG-02** unido a main (main = 4bf657d).
+
+✅ **GAP-OFF-01 CERRADO** (16/11/2026, probado en Chrome; falta verificar en Android real el aviso del Inicio y "¿Guardar sin descontar?"): lo diario se guarda sin señal y se manda solo; aviso en el Inicio; sin señal no se descuenta stock (pregunta "¿Guardar sin descontar?").
+
+🟡 marzo 2027: descuento de stock automático al volver la señal; crear lotes, rodeos y potreros sin señal; importación Tru-Test.
+
+Siguiente según el plan: **9. Términos de uso y privacidad**.

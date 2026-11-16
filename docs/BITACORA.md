@@ -7827,3 +7827,49 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 ### Aprendizaje
 
 * Antes de cerrar o congelar una colección, revisar TODOS los archivos de `lib` (no solo los abiertos) buscando quién la usa.
+
+---
+
+# 16/11/2026 - GAP-SEG-02 cerrado
+
+* Pruebas de reglas en verde, reglas publicadas, unido a main (main = 4bf657d).
+
+---
+
+# 16/11/2026 - GAP-OFF-01: funcionamiento sin señal (punto 8)
+
+**Estado: CERRADO (con una verificación pendiente en Android). flutter test 279 (+2 fallas conocidas).**
+
+* Probado por Javier en Chrome sin conexión: monitoreos y gasto guardados con el mensaje "Guardado en el teléfono. Se envía cuando haya señal", la pantalla ya no queda girando y lo cargado aparece en la lista.
+* Aviso del Inicio: revisa bien (sin errores) pero en Chrome siempre da "nada pendiente": el modo Offline de Chrome no corta del todo la conexión ya abierta con Firebase y los datos llegan igual. Se deja `debugPrint('AVISO_PENDIENTES: ...')` para verificarlo en un celular Android real en modo avión (prueba cerrada de diciembre). El emulador Android andaba muy lento.
+* Pendiente de probar también en Android: "¿Guardar sin descontar?" en una aplicación con producto del stock.
+* Arreglo de proceso: dos archivos no se habían copiado bien a la PC (se reescribía desde el mismo lugar); ahora cada copia sale de un lugar nuevo y se comprueba.
+
+### Auditoría
+
+* Firebase en Android ya guarda una copia local y manda lo pendiente cuando vuelve la señal, pero: (1) las pantallas esperaban la respuesta del servidor y sin señal quedaban "pensando"; (2) registrar emergencia consultaba antes de guardar y sin señal daba error; (3) el descuento de stock usa una transacción, que necesita señal; (4) subir archivos y crear campos necesitan señal; (5) en Chrome la copia local venía apagada.
+
+### Decisión (aprobada, opción A)
+
+* Funciona sin señal lo diario: eventos del rodeo (altas, bajas, pesajes, sanidad sin insumo), siembra, cosecha, monitoreo, aplicación sin descuento, gastos, traslados, emergencias y cambios del territorio.
+* Sin señal NO se descuenta stock: la app pregunta "¿Guardar sin descontar?" y el descuento se hace después a mano (el saldo nunca queda mal). Descuento automático al volver la señal: 🟡 marzo.
+* Siguen necesitando señal (con aviso): descontar stock, subir archivos, crear campos. Crear lotes, rodeos y potreros sin señal: 🟡.
+* Un solo aviso general en el Inicio ("hay datos guardados en el teléfono") en vez de marcar cada registro en cada lista. Sin paquetes nuevos y sin cambios en las reglas.
+
+### Solución
+
+* `lib/core/utils/guardado_offline.dart` (nuevo): `guardarSinEsperar` (espera al servidor 2 s; si no contesta, queda "en el teléfono"), `exigirSenal` (para lo que necesita señal sí o sí), `avisarGuardado` y el diálogo "¿Guardar sin descontar?".
+* `lib/widgets/aviso_pendientes.dart` (nuevo): aviso del Inicio con `waitForPendingWrites`.
+* `lib/main.dart`: copia local prendida también en Chrome y sin límite de tamaño.
+* Servicios: `produccion_service` (registrarEvento sin esperar; antes de descontar stock comprueba señal), `gasto_service`, `movimiento_service`, `territorio_service`, y en `activo_agro_service_v2` solo `registrarEventoAfectacion` (la consulta previa se saltea sin señal; las tres escrituras se lanzan juntas).
+* Pantallas: registrar evento, monitoreo, aplicación, siembra/cosecha (detalle del cultivo), gasto, traslado, emergencia y cambio del territorio muestran "Guardado en el teléfono. Se envía cuando haya señal"; el Inicio muestra el aviso de pendientes.
+
+### Validación prevista
+
+* `test/guardado_offline_test.dart`. flutter test sin fallas nuevas.
+* Prueba a mano en Chrome: herramientas del navegador (F12) → Red → "Sin conexión" → cargar un gasto, un evento y un cambio del territorio → aparece "Guardado en el teléfono" y el aviso en el Inicio → volver a "Sin limitación" → el aviso se va solo. Aplicación con producto del stock sin señal → pregunta "¿Guardar sin descontar?".
+
+### Cuidado
+
+* Si se cierra sesión con datos pendientes, esos datos pueden perderse: el aviso del Inicio lo dice.
+* Si una regla rechaza un registro guardado sin señal, Firebase lo descarta al volver la señal: por eso cada pantalla valida antes con las mismas condiciones que las reglas.

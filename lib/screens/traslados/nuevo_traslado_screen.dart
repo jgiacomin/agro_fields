@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../core/utils/guardado_offline.dart';
 
 import '../../models/activos/movimiento_model.dart';
 import '../../services/movimiento_service.dart';
@@ -84,9 +85,11 @@ class _NuevoTrasladoScreenState extends State<NuevoTrasladoScreen> {
       return;
     }
     setState(() => guardando = true);
+    final mensajero = ScaffoldMessenger.of(context);
     try {
-      await _servicio.registrar(m);
+      final resultado = await _servicio.registrar(m);
       if (!mounted) return;
+      avisarGuardado(mensajero, resultado);
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../core/utils/guardado_offline.dart';
 
 import '../../models/activos/evento_afectacion_model.dart';
 import '../../services/activo_agro_service_v2.dart';
@@ -88,9 +89,11 @@ class _RegistrarEmergenciaScreenState extends State<RegistrarEmergenciaScreen> {
     );
 
     setState(() => guardando = true);
+    final mensajero = ScaffoldMessenger.of(context);
     try {
-      await _activos.registrarEventoAfectacion(widget.activoAgroId, evento);
+      final resultado = await _activos.registrarEventoAfectacion(widget.activoAgroId, evento);
       if (!mounted) return;
+      avisarGuardado(mensajero, resultado);
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
