@@ -14,6 +14,7 @@ import '../legal/borrar_cuenta_screen.dart';
 import '../legal/terminos_screen.dart';
 import '../plan/mi_plan_screen.dart';
 import '../../widgets/logo_agro_fields.dart';
+import '../produccion/produccion_estilo.dart';
 import '../campos/detalle_activo_agro_screen.dart';
 
 import '../campos/crear_activo_agro_screen.dart';
@@ -432,27 +433,30 @@ debugPrint(
                       padding: EdgeInsets.fromLTRB(_margen(context), 12,
                           _margen(context), 24),
                       children: [
+                        // Diseño V8 (16/11/2026): foto del campo con el
+                        // logo y el saludo, como la barra de las demás
+                        // pantallas.
                         _encabezado(),
                         const SizedBox(height: 14),
                         // GAP-OFF-01: datos guardados sin señal.
                         const AvisoPendientes(),
-                        _saludo(),
                         if (esPropietario) ...[
-                          const SizedBox(height: 14),
+                          const TituloSeccion('Tu campo en resumen',
+                              icono: Icons.insights),
                           _resumen(),
+                          const SizedBox(height: 20),
                         ],
-                        const SizedBox(height: 14),
-                        _accesosRapidos(),
                         if (activos.isNotEmpty) ...[
-                          const SizedBox(height: 24),
                           _tituloConAccion(
                             'Mis campos',
                             'Ver todos',
                             abrirMisActivos,
                           ),
-                          const SizedBox(height: 12),
                           _carruselCampos(),
+                          const SizedBox(height: 20),
                         ],
+                        const TituloSeccion('Accesos', icono: Icons.apps),
+                        _accesosRapidos(),
                       ],
                     ),
                   ),
@@ -471,46 +475,127 @@ debugPrint(
     return ancho > 792 ? (ancho - 760) / 2 : 16;
   }
 
-  // ---------------- ENCABEZADO (diseño del 12/11/2026) ----------------
+  // ---------------- ENCABEZADO (diseño V8, 16/11/2026) ----------------
 
+  /// Foto del campo al atardecer (la misma de BarraCampo), con velo oscuro,
+  /// logo en círculo dorado, saludo y curva dorada abajo.
   Widget _encabezado() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 12, 6, 12),
-      decoration: BoxDecoration(
-        color: AgroTema.pizarra,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
+    final nombre = _primerNombre.isEmpty ? 'productor' : _primerNombre;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Stack(
         children: [
-          const LogoAgroFields(tamano: 52),
-          const SizedBox(width: 12),
-          const Expanded(
+          Positioned.fill(
+            child: Image.asset(
+              'assets/encabezado_campo.jpg',
+              fit: BoxFit.cover,
+              alignment: const Alignment(0.6, 0.3),
+              // Si la imagen no carga, queda el fondo oscuro.
+              errorBuilder: (_, __, ___) =>
+                  const ColoredBox(color: AgroTema.pizarra),
+            ),
+          ),
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xE62F3B46),
+                    Color(0xAA2F3B46),
+                    Color(0x222F3B46),
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 6, 30),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AgroTema.pizarra,
+                        border: Border.all(color: AgroTema.dorado, width: 2),
+                      ),
+                      child: const ClipOval(child: LogoAgroFields(tamano: 48)),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Agro Fields',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(color: Color(0x88000000), blurRadius: 6)
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Conectar · Crecer · Resolver',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                TextStyle(fontSize: 13, color: AgroTema.crema),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.notifications_none,
+                          color: Colors.white),
+                      tooltip: 'Avisos (pronto)',
+                      onPressed: null,
+                      disabledColor: Colors.white,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
                 Text(
-                  'Agro Fields',
-                  style: TextStyle(
+                  '$_saludoSegunHora, $nombre',
+                  style: const TextStyle(
                     fontSize: 22,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: Colors.white,
+                    shadows: [Shadow(color: Color(0x88000000), blurRadius: 6)],
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
-                  'Conectar · Crecer · Resolver',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 13, color: AgroTema.crema),
+                  esPropietario
+                      ? 'Que tengas una excelente jornada.'
+                      : 'Cargá tu primer campo para empezar.',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFFFFF3E6),
+                    shadows: [Shadow(color: Color(0x88000000), blurRadius: 4)],
+                  ),
                 ),
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.notifications_none, color: Colors.white),
-            tooltip: 'Avisos (pronto)',
-            onPressed: null,
-            disabledColor: Colors.white,
+          // Curva dorada abajo, igual que la barra de las demás pantallas.
+          const Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 18,
+            child: CustomPaint(painter: _CurvaDoradaInicio()),
           ),
         ],
       ),
@@ -524,55 +609,10 @@ debugPrint(
     return 'Buenas noches';
   }
 
-  /// Cartel de atardecer (dibujado, sin fotos de terceros).
-  Widget _saludo() {
-    final nombre = _primerNombre.isEmpty ? 'productor' : _primerNombre;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(18, 22, 18, 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFF2A65A), Color(0xFFD96A2B), Color(0xFF6B4A2E)],
-          stops: [0.0, 0.55, 1.0],
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.grass, color: Color(0xFFFBE3C8), size: 40),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '$_saludoSegunHora, $nombre',
-                  style: const TextStyle(
-                    fontSize: 21,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  esPropietario
-                      ? 'Que tengas una excelente jornada.'
-                      : 'Cargá tu primer campo para empezar.',
-                  style: const TextStyle(fontSize: 14, color: Color(0xFFFFF3E6)),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // ---------------- ACCESOS (dos columnas) ----------------
 
   Widget _accesosRapidos() {
+    // Los que todavía no existen ("Próximamente") van al final.
     final accesos = <_Acceso>[
       if (esPropietario)
         _Acceso(Icons.eco, 'Mis Activos Agro', AgroTema.verde, abrirMisActivos),
@@ -597,7 +637,7 @@ debugPrint(
       itemCount: accesos.length,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 260,
-        mainAxisExtent: 76,
+        mainAxisExtent: 78,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
       ),
@@ -691,104 +731,45 @@ debugPrint(
         0, (suma, a) => suma + (a.ubicacion.superficie > 0 ? a.ubicacion.superficie : 0));
     final enMapa = activos.where((a) => a.ubicacion.tieneCoordenadas).length;
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AgroTema.borde),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Tu campo en resumen',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: AgroTema.pizarra,
-            ),
+    // Diseño V8: los mismos números de colores que el resumen de Producción,
+    // en dos filas para que entren bien en el celular.
+    final colorDocs = vencidos > 0
+        ? AgroTema.rojo
+        : porVencer > 0
+            ? AgroTema.terracota
+            : AgroTema.pizarraSuave;
+    return Column(
+      children: [
+        ResumenNumeros([
+          (
+            '$cantidadActivosPropios',
+            cantidadActivosPropios == 1 ? 'campo' : 'campos',
+            Icons.agriculture,
+            AgroTema.verde,
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _dato(
-                  Icons.agriculture,
-                  AgroTema.verde,
-                  '$cantidadActivosPropios',
-                  cantidadActivosPropios == 1 ? 'campo' : 'campos',
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _dato(
-                  Icons.straighten,
-                  AgroTema.azul,
-                  hectareas > 0 ? _miles(hectareas) : '—',
-                  'hectáreas',
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _dato(
-                  Icons.description,
-                  vencidos > 0
-                      ? AgroTema.rojo
-                      : porVencer > 0
-                          ? AgroTema.terracota
-                          : AgroTema.pizarraSuave,
-                  '${vencidos + porVencer}',
-                  vencidos > 0 ? 'docs. vencidos' : 'docs. por vencer',
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _dato(
-                  Icons.location_on,
-                  AgroTema.terracota,
-                  '$enMapa/$cantidadActivosPropios',
-                  'en el mapa',
-                ),
-              ),
-            ],
+          (
+            hectareas > 0 ? _miles(hectareas) : '—',
+            'hectáreas',
+            Icons.straighten,
+            AgroTema.azul,
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _dato(IconData icono, Color color, String valor, String texto) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      decoration: BoxDecoration(
-        color: AgroTema.crema,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(icono, color: color, size: 24),
-          const SizedBox(height: 4),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              valor,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AgroTema.pizarra,
-              ),
-            ),
+        ]),
+        const SizedBox(height: 10),
+        ResumenNumeros([
+          (
+            '${vencidos + porVencer}',
+            vencidos > 0 ? 'docs. vencidos' : 'docs. por vencer',
+            Icons.description,
+            colorDocs,
           ),
-          Text(
-            texto,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11, color: AgroTema.pizarraSuave),
+          (
+            '$enMapa/$cantidadActivosPropios',
+            'en el mapa',
+            Icons.location_on,
+            AgroTema.terracota,
           ),
-        ],
-      ),
+        ]),
+      ],
     );
   }
 
@@ -804,20 +785,17 @@ debugPrint(
 
   // ---------------- MIS CAMPOS (tarjetas que se deslizan) ----------------
 
+  /// Banda oscura V8 con el botón "Ver todos" a la derecha.
   Widget _tituloConAccion(String titulo, String accion, VoidCallback alTocar) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            titulo,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AgroTema.pizarra,
-            ),
-          ),
+        Expanded(child: TituloSeccion(titulo, icono: Icons.agriculture)),
+        const SizedBox(width: 8),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: TextButton(onPressed: alTocar, child: Text('$accion  ›')),
         ),
-        TextButton(onPressed: alTocar, child: Text('$accion  ›')),
       ],
     );
   }
@@ -834,7 +812,7 @@ debugPrint(
   Widget _carruselCampos() {
     final lista = [...activos]..sort((a, b) => a.nombre.compareTo(b.nombre));
     return SizedBox(
-      height: 132,
+      height: 150,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: lista.length,
@@ -854,36 +832,32 @@ debugPrint(
         : 'Superficie sin información';
 
     return SizedBox(
-      width: 210,
-      child: Material(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AgroTema.borde),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
+      width: 220,
+      child: Padding(
+        // Lugar para la sombra de la tarjeta.
+        padding: const EdgeInsets.only(bottom: 4),
+        child: TarjetaBlanca(
           onTap: () => _abrirCampo(a),
           child: Padding(
             padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Sin flecha (se toca toda la tarjeta) y el nombre en hasta
+                // 2 renglones, para que se lea completo.
                 Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 16,
-                      backgroundColor: AgroTema.verdeClaro,
-                      child: Icon(Icons.grass, size: 18, color: AgroTema.verde),
-                    ),
-                    const SizedBox(width: 8),
+                    const IconoCirculo(Icons.grass,
+                        color: AgroTema.verde, tamano: 38),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         a.nombre,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 15,
+                          height: 1.2,
                           fontWeight: FontWeight.w700,
                           color: AgroTema.pizarra,
                         ),
@@ -891,24 +865,50 @@ debugPrint(
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  lugar.isEmpty ? 'Ubicación sin información' : lugar,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 13, color: AgroTema.pizarraSuave),
+                const Spacer(),
+                Row(
+                  children: [
+                    const Icon(Icons.place,
+                        size: 15, color: AgroTema.pizarraSuave),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        lugar.isEmpty ? 'Ubicación sin información' : lugar,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 13, color: AgroTema.pizarraSuave),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  superficie,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    fontStyle: u.superficie > 0 ? FontStyle.normal : FontStyle.italic,
-                    color: u.superficie > 0 ? AgroTema.verde : AgroTema.pizarraSuave,
-                  ),
+                Row(
+                  children: [
+                    Icon(Icons.straighten,
+                        size: 15,
+                        color: u.superficie > 0
+                            ? AgroTema.verde
+                            : AgroTema.pizarraSuave),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        superficie,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          fontStyle: u.superficie > 0
+                              ? FontStyle.normal
+                              : FontStyle.italic,
+                          color: u.superficie > 0
+                              ? AgroTema.verde
+                              : AgroTema.pizarraSuave,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -918,25 +918,23 @@ debugPrint(
     );
   }
 
+  /// Diseño V8: tarjeta crema con el ícono en círculo. Los "Próximamente"
+  /// quedan más apagados y sin flecha.
   Widget _cuadroAcceso(_Acceso acceso) {
     final pronto = acceso.alTocar == null;
-    return Material(
-      color: pronto ? const Color(0xFFF3EEE5) : Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AgroTema.borde),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: TarjetaBlanca(
         onTap: pronto ? null : acceso.alTocar,
+        colorFondo: pronto ? const Color(0xFFF3EEE5) : const Color(0xFFFFFAF2),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(
+              IconoCirculo(
                 acceso.icono,
-                size: 32,
                 color: pronto ? AgroTema.pizarraSuave : acceso.color,
+                tamano: 44,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -982,4 +980,36 @@ class _Acceso {
   final VoidCallback? alTocar;
 
   const _Acceso(this.icono, this.texto, this.color, this.alTocar);
+}
+
+/// Curva dorada abajo del encabezado del Inicio (la misma que dibuja
+/// BarraCampo en las demás pantallas).
+class _CurvaDoradaInicio extends CustomPainter {
+  const _CurvaDoradaInicio();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final relleno = Path()
+      ..moveTo(0, h * 0.35)
+      ..quadraticBezierTo(w * 0.35, h * 1.15, w, h * 0.55)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(relleno, Paint()..color = AgroTema.crema);
+    final linea = Path()
+      ..moveTo(0, h * 0.35)
+      ..quadraticBezierTo(w * 0.35, h * 1.15, w, h * 0.55);
+    canvas.drawPath(
+      linea,
+      Paint()
+        ..color = AgroTema.dorado
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
