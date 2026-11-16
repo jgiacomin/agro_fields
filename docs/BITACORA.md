@@ -8026,3 +8026,34 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 ### Pendiente
 
 * El profesional ve el registro del territorio pero no puede abrir su archivo (límite de las Storage Rules, ver AF-109).
+
+---
+
+# 16/11/2026 - GAP-ADMIN-01: pantalla de administración
+
+**Estado: CERRADO (16/11/2026). Probado por Javier en Chrome. Sin cambios en las reglas (el admin ya podía todo).**
+
+### Solución
+
+* `lib/core/auth/admin.dart`: misma lista de administradores que las reglas (solo decide qué se muestra; protegen las reglas).
+* `lib/services/admin_service.dart`: aprobar (resumen publicado y visible + expediente "publicado" + auditoría), rechazar con motivo (vuelve a borrador, `motivoRevision`, auditoría), alta de Fundadores (Pro Productor o Pro Broker por 12 meses, cupo 100 por grupo, sin repetir), pedidos de baja pendientes y marcar completada.
+* `lib/screens/admin/admin_screen.dart`: pestañas Publicaciones, Fundadores (contador "x de 100") y Bajas (con los pasos a mano).
+* `dashboard_screen.dart`: "Administración" en el menú, solo para el admin.
+
+### Validación prevista
+
+* `test/admin_test.dart`. Prueba a mano: aprobar una publicación pendiente y verla en el Mercado; dar de alta como Fundador a la cuenta de prueba y verlo en su "Mi plan"; ver el pedido de baja de la cuenta de prueba.
+
+### Validación
+
+* `flutter test`: 304 bien + las 2 fallas conocidas.
+* A mano: alta de la cuenta de prueba como Fundador (Gestión, gratis hasta el 16/11/2027; contador 1 de 100); pestaña Bajas muestra el pedido de compradorb (vence 16/12/2026, sin completar a propósito); la cuenta admin sigue en Esencial (correcto: no es Fundador).
+
+### Error encontrado y lección
+
+* Al dar de alta salió `permission-denied`: las reglas de `planes_usuarios` (GAP-PLAN-01) estaban en la PC pero **nunca se habían subido a Firebase**. El emulador las tenía, la app real no. Se arregló con `firebase deploy --only firestore:rules,storage`.
+* **Regla nueva de trabajo:** cada vez que cambia `firestore.rules` o `storage.rules`, después de las pruebas verdes se corre `firebase deploy --only firestore:rules,storage` antes de probar en la app.
+
+### Pendiente
+
+* Mostrarle al que publicó el motivo del rechazo dentro de su ficha (hoy queda guardado en el resumen).

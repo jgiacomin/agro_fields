@@ -3904,3 +3904,4 @@ Siguiente según el plan: **10. Plan gratuito y precio**.
 7. Revisión del abogado (Javier).
 
 2. ✅ **GAP-ARCH-01 Ver y descargar archivos** — CERRADO (probado en Chrome).
+3. ✅ **GAP-ADMIN-01 Pantalla de administración** — CERRADO (probado en Chrome; reglas subidas con `firebase deploy`).
