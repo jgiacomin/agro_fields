@@ -7801,3 +7801,29 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 * Mirar en la consola de Firebase si hay documentos reales en esas colecciones.
 * 🟢 Inversiones y registro de inversores: diseño nuevo después del lanzamiento.
+
+---
+
+# 16/11/2026 - GAP-SEG-01 cerrado
+
+* Pruebas de reglas 279/279, reglas publicadas, unido a main (main = 551a093).
+
+---
+
+# 16/11/2026 - GAP-SEG-02: corrección de GAP-SEG-01 (solicitudes_contacto)
+
+**Estado: CÓDIGO ENTREGADO (rama gap-seg-02), pendiente de pruebas de Javier y de publicar reglas.**
+
+### Qué pasó
+
+* En la auditoría de GAP-SEG-01 se dijo que `solicitudes_contacto` no la usaba ninguna pantalla. Era un error: la búsqueda se hizo sobre una parte de los archivos. Al preparar GAP-OFF-01 apareció el flujo real: Inicio → Marketplace (`activos_publicos`) → detalle del campo → "enviar solicitud" (crea la solicitud), y el dueño la acepta o rechaza en "Solicitudes recibidas", donde se abre el chat. Con la regla congelada ese flujo dejaba de andar.
+* `inversiones` y `publicaciones_inversion` siguen congeladas: se verificó que ninguna pantalla accesible las abre.
+
+### Solución
+
+* `firestore.rules`: `solicitudes_contacto` vuelve a funcionar, endurecida: el dueño indicado tiene que ser el real de una publicación publicada y visible (`activos_publicos`, mismo ID que el Activo); nace "pendiente" y sin chat; solo con los campos del modelo; solo el dueño marca vista, acepta (con el chat) o rechaza; el interesado solo cancela; un pedido aceptado, rechazado o cancelado ya no cambia; nadie borra.
+* `test_rules/rules.test.mjs`: SEG-02, SEG-02b, SEG-03 y SEG-03b reemplazan las dos pruebas de "congelada".
+
+### Aprendizaje
+
+* Antes de cerrar o congelar una colección, revisar TODOS los archivos de `lib` (no solo los abiertos) buscando quién la usa.

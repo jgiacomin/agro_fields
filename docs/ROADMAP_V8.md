@@ -3852,3 +3852,13 @@ Siguiente según el plan: **8. Funcionamiento sin señal (offline)**.
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Seguridad restante — corrección (16/11/2026)
+
+✅ **GAP-SEG-01** unido a main (main = 551a093).
+
+🟡 **GAP-SEG-02 ENTREGADO** (rama `gap-seg-02`): `solicitudes_contacto` sí se usa (marketplace → "enviar solicitud" → "Solicitudes recibidas"); se reabre endurecida en vez de congelada. `inversiones` y `publicaciones_inversion` siguen congeladas.
+
+Después: **8. Funcionamiento sin señal (GAP-OFF-01)**, ya programado y esperando.

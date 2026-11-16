@@ -1799,9 +1799,9 @@ test('TERR-10. El broker y otros usuarios NO ven ni cargan [PROHIBIDO]', async (
 });
 
 // =====================================================================
-// SEG. COLECCIONES VIEJAS CONGELADAS (GAP-SEG-01, 16/11/2026)
-// solicitudes_contacto, inversiones y publicaciones_inversion: se lee lo
-// que ya existe; solo el admin crea, cambia o borra.
+// SEG. COLECCIONES VIEJAS (GAP-SEG-01 y GAP-SEG-02, 16/11/2026)
+// inversiones y publicaciones_inversion: congeladas (solo admin escribe).
+// solicitudes_contacto: endurecida (GAP-SEG-02), sigue en uso.
 // =====================================================================
 
 const cargarViejas = () => cargar(async (db) => {
@@ -1821,16 +1821,36 @@ test('SEG-01. Las partes siguen leyendo lo que ya existe [PERMITIDO]', async () 
   await assertSucceeds(getDoc(doc(como(DUENO), 'publicaciones_inversion/pi1')));
 });
 
-test('SEG-02. Nadie crea pedidos de contacto desde la app [PROHIBIDO]', async () => {
-  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s2'),
-    { campoId: 'a1', interesadoId: COMPRADOR, propietarioId: DUENO, estado: 'pendiente' }));
+const pedidoDe = (extra = {}) => ({
+  campoId: 'p1', interesadoId: COMPRADOR, propietarioId: DUENO, tipoInteres: 'inversion',
+  estado: 'pendiente', chatId: null, fechaCreacion: new Date(), ...extra,
 });
 
-test('SEG-03. El interesado NO puede aceptar su propio pedido ni nadie lo borra [PROHIBIDO]', async () => {
+test('SEG-02. El interesado manda un pedido de contacto sobre un campo publicado [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s2'), pedidoDe()));
+});
+
+test('SEG-02b. NO se manda inventando al dueño, sobre algo no publicado, ya aceptado o a nombre de otro [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s3'), pedidoDe({ propietarioId: OTRO })));
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s4'), pedidoDe({ campoId: 'p2' })));
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s5'), pedidoDe({ estado: 'aceptada' })));
+  await assertFails(setDoc(doc(como(OTRO), 'solicitudes_contacto/s6'), pedidoDe()));
+  await assertFails(setDoc(doc(como(DUENO), 'solicitudes_contacto/s7'), pedidoDe({ interesadoId: DUENO })));
+});
+
+test('SEG-03. El interesado NO acepta su propio pedido; el dueño sí, con el chat; nadie borra', async () => {
   await cargarViejas();
   await assertFails(updateDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s1'), { estado: 'aceptada' }));
-  await assertFails(updateDoc(doc(como(DUENO), 'solicitudes_contacto/s1'), { estado: 'aceptada' }));
+  await assertFails(updateDoc(doc(como(DUENO), 'solicitudes_contacto/s1'), { estado: 'aceptada', propietarioId: OTRO }));
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'solicitudes_contacto/s1'), { estado: 'aceptada', chatId: 'c1' }));
   await assertFails(deleteDoc(doc(como(DUENO), 'solicitudes_contacto/s1')));
+});
+
+test('SEG-03b. El interesado puede cancelar; un pedido rechazado ya no cambia', async () => {
+  await cargarViejas();
+  await assertSucceeds(updateDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s1'), { estado: 'cancelada' }));
+  await cargar((db) => setDoc(doc(db, 'solicitudes_contacto/s8'), pedidoDe({ estado: 'rechazada' })));
+  await assertFails(updateDoc(doc(como(DUENO), 'solicitudes_contacto/s8'), { estado: 'aceptada' }));
 });
 
 test('SEG-04. Nadie publica un pedido de inversión desde la app, ni "activa" ni en un campo ajeno [PROHIBIDO]', async () => {

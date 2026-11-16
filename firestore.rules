@@ -422,11 +422,36 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
-    // SOLICITUDES_CONTACTO - CONGELADA (GAP-SEG-01, 16/11/2026)
-    // Modelo viejo: ninguna pantalla de la app la usa (el contacto del
-    // comprador va por el chat, paso 5). Se puede leer lo que ya existe
-    // (las partes y el admin); nadie crea, cambia ni borra desde la app.
-    // Archivar no es borrar.
+    // SOLICITUDES_CONTACTO (GAP-SEG-02, 16/11/2026)
+    // Pedido de contacto del interesado desde el marketplace. Corrige
+    // GAP-SEG-01, que la había congelado por error (sí se usa: Marketplace →
+    // detalle → "enviar solicitud"; y el dueño la acepta o rechaza en
+    // "Solicitudes recibidas", donde se abre el chat).
+    // Endurecida: el dueño tiene que ser el real de una publicación
+    // publicada y visible; nace "pendiente" y sin chat; solo el dueño
+    // acepta o rechaza; el interesado solo puede cancelar; nadie borra.
+    // -----------------------------------------------------------------
+    function publicacionDe(id) {
+      return get(/databases/$(database)/documents/activos_publicos/$(id)).data;
+    }
+
+    function solicitudNuevaValida(d) {
+      return d.keys().hasOnly(['campoId', 'interesadoId', 'propietarioId',
+                               'tipoInteres', 'estado', 'chatId',
+                               'fechaCreacion'])
+        && d.interesadoId == request.auth.uid
+        && d.propietarioId != request.auth.uid
+        && d.estado == 'pendiente'
+        && d.get('chatId', null) == null
+        && d.tipoInteres is string
+        && d.fechaCreacion is timestamp
+        && d.campoId is string
+        && exists(/databases/$(database)/documents/activos_publicos/$(d.campoId))
+        && publicacionDe(d.campoId).propietarioId == d.propietarioId
+        && publicacionDe(d.campoId).estadoPublicacion == 'publicado'
+        && publicacionDe(d.campoId).visible == true;
+    }
+
     match /solicitudes_contacto/{solicitudId} {
       allow get: if esAdmin()
         || (logueado()
@@ -438,7 +463,26 @@ service cloud.firestore {
             && (resource.data.interesadoId == request.auth.uid
                 || resource.data.propietarioId == request.auth.uid));
 
-      allow create, update, delete: if esAdmin();
+      allow create: if esAdmin()
+        || (logueado() && solicitudNuevaValida(request.resource.data));
+
+      // Dueño: marca vista, acepta (con el chat) o rechaza.
+      // Interesado: solo cancela. Siempre mientras esté pendiente o vista.
+      allow update: if esAdmin()
+        || (logueado()
+            && resource.data.propietarioId == request.auth.uid
+            && resource.data.estado in ['pendiente', 'vista']
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['estado', 'chatId'])
+            && request.resource.data.estado in ['vista', 'aceptada', 'rechazada'])
+        || (logueado()
+            && resource.data.interesadoId == request.auth.uid
+            && resource.data.estado in ['pendiente', 'vista']
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['estado'])
+            && request.resource.data.estado == 'cancelada');
+
+      allow delete: if false;
     }
 
     // -----------------------------------------------------------------
