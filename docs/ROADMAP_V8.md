@@ -3891,12 +3891,14 @@ Siguiente según el plan: **10. Plan gratuito y precio**.
 
 ---
 
-## Planes y precios (punto 10) — Estado
+## Lo que falta para enero (revisado 16/11/2026)
 
-✅ **GAP-LEGAL-01** subido (main = 16f351d).
+✅ **GAP-PLAN-01** cerrado.
 
-✅ **Planes y precios decididos** (16/11/2026): Esencial gratis; Pro Productor US$ 19, Pro Broker US$ 39, Business US$ 79, Business Inmobiliaria US$ 89; Fundadores 12 meses gratis + 40% para siempre. A validar con los Fundadores.
-
-🟡 **GAP-PLAN-01 ENTREGADO** (rama `gap-plan-01`): plan de cada usuario y pantalla "Mi plan". Pendiente de pruebas y de publicar reglas.
-
-Siguiente según el plan: **11. Demo, revisión general (QA) y publicación en Google Play** (diciembre).
+1. ✅ **GAP-ENC-01 Invitar encargados** — CERRADO (probado con dos cuentas).
+2. Ver y descargar archivos adjuntos.
+3. Pantalla de administrador: aprobar publicaciones, alta de Fundadores, pedidos de baja.
+4. Diseño V8 del Inicio y de la ficha del campo.
+5. Datos de demo y QA integral.
+6. Publicación: Android (antes del 12/12, prueba cerrada de 14 días desde ~15/12), web, páginas de privacidad y baja.
+7. Revisión del abogado (Javier).

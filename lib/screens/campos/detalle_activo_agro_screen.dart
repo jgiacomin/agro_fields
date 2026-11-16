@@ -5,6 +5,7 @@ import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../documentos/documentos_activo_screen.dart';
 import '../emergencias/emergencias_activo_screen.dart';
+import '../encargados/encargados_activo_screen.dart';
 import '../profesionales/profesionales_activo_screen.dart';
 import '../traslados/traslados_activo_screen.dart';
 import '../operaciones/operaciones_activo_screen.dart';
@@ -427,6 +428,14 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         'Agrónomos, veterinarios, técnicos',
         AgroTema.azul,
         () => _abrir(ProfesionalesActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.engineering,
+        'Encargados',
+        'Quién trabaja el campo y qué carga',
+        AgroTema.pizarra,
+        () => _abrir(EncargadosActivoScreen(
             activoAgroId: id, nombreActivo: nombre)),
       ),
       (

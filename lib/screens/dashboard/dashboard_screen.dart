@@ -20,6 +20,7 @@ import '../campos/campos_screen.dart';
 
 import '../solicitudes/solicitudes_recibidas_screen.dart';
 import '../chat/chat_page.dart';
+import '../encargados/campos_encargado_screen.dart';
 import '../profesionales/campos_profesional_screen.dart';
 import '../profesionales/mi_codigo_profesional_screen.dart';
 
@@ -294,12 +295,14 @@ debugPrint(
   void _abrirMenu() {
     showModalBottomSheet<void>(
       context: context,
+      // El menú tiene muchas opciones: se puede deslizar y ocupar más alto.
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (hoja) => SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -321,6 +324,16 @@ debugPrint(
                   abrirCamposDisponibles();
                 },
               ),
+              // GAP-ENC-01: para quien trabaja el campo de otro.
+              ListTile(
+                leading: const Icon(Icons.engineering_outlined),
+                title: const Text('Campos donde soy encargado'),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const CamposEncargadoScreen()));
+                },
+              ),
               // AF-093: para agrónomos, veterinarios y técnicos.
               ListTile(
                 leading: const Icon(Icons.badge_outlined),
@@ -333,7 +346,7 @@ debugPrint(
               ),
               ListTile(
                 leading: const Icon(Icons.qr_code_2),
-                title: const Text('Mi código de profesional'),
+                title: const Text('Mi código (para que me inviten)'),
                 onTap: () {
                   Navigator.of(hoja).pop();
                   Navigator.of(context).push(MaterialPageRoute(

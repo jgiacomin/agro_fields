@@ -7962,3 +7962,40 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 ### Pendiente
 
 * Pasos para dar de alta a los Fundadores desde la consola (diciembre).
+
+---
+
+# 16/11/2026 - GAP-PLAN-01 cerrado
+
+* flutter test 292 (+2 fallas conocidas), reglas 290/290, reglas publicadas.
+
+---
+
+# 16/11/2026 - Revisión de lo que falta para enero
+
+* Hallazgo: no había pantalla para invitar a un encargado (las reglas lo preveían desde el paso 3). También faltan: ver y descargar archivos adjuntos, pantalla de administrador (aprobar publicaciones, alta de Fundadores, pedidos de baja), diseño V8 del Inicio y la ficha, datos de demo y QA, publicación (Android antes del 12/12 por la prueba cerrada de 14 días), revisión del abogado.
+
+---
+
+# 16/11/2026 - GAP-ENC-01: invitar encargados
+
+**Estado: CERRADO. Probado por Javier en Chrome con dos cuentas: el encargado ve solo Producción y Gastos, carga un monitoreo y un gasto, y el dueño los ve. Sin cambios en las reglas.**
+
+* Arreglo en el camino: el menú del Inicio se cortaba (demasiadas opciones); ahora se desliza (`isScrollControlled` + `SingleChildScrollView`).
+* Aprendizaje de la prueba: un gasto cargado con la red cortada se perdió al cerrar sesión antes de que se enviara (lo avisa el cartel del Inicio y los Términos).
+
+### Decisión
+
+* Reutiliza la invitación por código de AF-093 y las autorizaciones del paso 3 (rol encargado). El dueño tilda áreas: Producción, Stock e insumos, Gastos, Traslados, Historia del territorio. Cada área = varias autorizaciones (ver/crear/modificar del ámbito).
+* El encargado NO ve el expediente privado, documentos, operaciones protegidas ni emergencias (así lo marcan las reglas). Documentos para el encargado: 🟡.
+* Quitar el acceso o destildar un área = autorizaciones "revocadas" (no se borran).
+
+### Solución
+
+* Nuevos: `lib/models/activos/permisos_encargado.dart`, `lib/services/encargado_service.dart`, `lib/screens/encargados/encargados_activo_screen.dart` (dueño), `lib/screens/encargados/campos_encargado_screen.dart` (encargado: sus campos y solo los botones habilitados, que abren las pantallas existentes).
+* `detalle_activo_agro_screen.dart`: botón "Encargados". `dashboard_screen.dart`: "Campos donde soy encargado" y "Mi código (para que me inviten)".
+
+### Validación prevista
+
+* `test/encargado_test.dart`: 6 pruebas. Reglas existentes ya cubren al encargado (ECO-07, STOCK-04, PESO-06, TERR-08, AUT-01).
+* Prueba a mano con dos cuentas: la cuenta B copia su código → la cuenta A (dueña) invita con Producción y Gastos → B ve el campo en "Campos donde soy encargado", carga un gasto y un evento → A los ve.
