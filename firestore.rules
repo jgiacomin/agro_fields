@@ -1100,6 +1100,52 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // -----------------------------------------------------------------
+    // ACEPTACIONES LEGALES (GAP-LEGAL-01, 16/11/2026)
+    // Prueba de que un usuario aceptó una versión de los Términos y la
+    // Política de privacidad. ID = usuario__version. Cada uno registra solo
+    // la suya. SOLO AGREGAR: nadie la cambia ni la borra.
+    // -----------------------------------------------------------------
+    match /aceptaciones_legales/{aceptacionId} {
+      allow get: if esAdmin()
+        || (logueado()
+            && (resource == null || resource.data.usuarioId == request.auth.uid));
+      allow list: if esAdmin();
+
+      allow create: if logueado()
+        && request.resource.data.keys().hasOnly(['usuarioId', 'version', 'fecha', 'plataforma'])
+        && request.resource.data.usuarioId == request.auth.uid
+        && request.resource.data.version is string
+        && request.resource.data.version.size() > 0
+        && aceptacionId == request.auth.uid + '__' + request.resource.data.version
+        && request.resource.data.fecha is timestamp
+        && request.resource.data.plataforma is string;
+
+      allow update, delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // SOLICITUDES DE BAJA (GAP-LEGAL-01, opción A, 16/11/2026)
+    // El usuario pide la baja de SU cuenta (ID = su usuario), "pendiente".
+    // La ve él y el admin. Solo el admin la completa. Nadie la borra.
+    // -----------------------------------------------------------------
+    match /solicitudes_baja/{usuarioId} {
+      allow get: if esAdmin() || esUsuario(usuarioId);
+      allow list: if esAdmin();
+
+      allow create: if esUsuario(usuarioId)
+        && request.resource.data.keys().hasOnly(['usuarioId', 'email', 'motivo', 'fechaPedido', 'estado'])
+        && request.resource.data.usuarioId == usuarioId
+        && request.resource.data.estado == 'pendiente'
+        && request.resource.data.fechaPedido is timestamp
+        && (request.resource.data.get('motivo', null) == null
+            || (request.resource.data.motivo is string
+                && request.resource.data.motivo.size() <= 500));
+
+      allow update: if esAdmin();
+      allow delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

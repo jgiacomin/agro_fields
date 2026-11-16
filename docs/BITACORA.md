@@ -7873,3 +7873,49 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 * Si se cierra sesión con datos pendientes, esos datos pueden perderse: el aviso del Inicio lo dice.
 * Si una regla rechaza un registro guardado sin señal, Firebase lo descarta al volver la señal: por eso cada pantalla valida antes con las mismas condiciones que las reglas.
+
+---
+
+# 16/11/2026 - GAP-OFF-01 subido
+
+* main = 3ca7760.
+
+---
+
+# 16/11/2026 - Punto 9: Términos de uso y Política de privacidad (borrador)
+
+**Estado: BORRADOR, pendiente de revisión de Javier y de un abogado (Argentina y Paraguay).**
+
+* Documento en Claude (Artifacts): "Agro Fields — Términos de uso y Política de privacidad (borrador)"; copia en Word en Desktop\App (`Agro_Fields_Terminos_y_Privacidad_borrador.docx`).
+* Texto común para todos los países + Anexo por país (Argentina, Paraguay; Uruguay como futuro). Recoge: no garante, informar no es certificar, no fija precios ni recomienda, privacidad primero, checks del campo y del propietario, excepción de trazabilidad.
+* Investigado: Paraguay Ley 7593/2025 (promulgada 27/11/2025, vigencia plena noviembre 2027); Argentina Ley 25.326 (Estados Unidos no es país adecuado: consentimiento expreso o cláusulas modelo); Google Play exige política en página pública, formulario de Seguridad de los datos y pedir el borrado de la cuenta desde la app y desde la web.
+* Pendientes de Javier: responsable (persona o empresa), emails, plazos, región de Firestore, abogado. Seis preguntas para el abogado en el documento.
+
+---
+
+# 16/11/2026 - GAP-LEGAL-01: aceptar términos y pedir la baja (opción A)
+
+**Estado: CERRADO. flutter test 286 (+2 fallas conocidas), reglas 287/287, reglas publicadas; probado en Chrome (aceptación y pedido de baja: "Ya pediste la baja... a más tardar el 16/12/2026").**
+
+### Decisión
+
+* Se programa ya con el borrador; cuando llegue el texto final solo se cambia `textos_legales.dart` y se sube `versionLegal` (la app pide aceptar de nuevo).
+* Borrar la cuenta, opción A: el usuario PIDE la baja desde la app y el administrador la completa dentro de 30 días (Google Play acepta el pedido). El borrado automático con una función del servidor queda para después del lanzamiento, cuando el abogado defina la excepción de trazabilidad.
+* Sin señal la puerta legal no bloquea: si no puede revisar, deja pasar y revisa la próxima vez (la primera aceptación igual se hace con señal, porque ingresar con Google la necesita).
+
+### Solución
+
+* Nuevos: `lib/core/legal/textos_legales.dart` (texto y versión), `lib/models/aceptacion_legal_model.dart` (AceptacionLegal y SolicitudBaja), `lib/services/legal_service.dart`, `lib/screens/legal/terminos_screen.dart` (leer o aceptar, dos pestañas), `lib/screens/legal/borrar_cuenta_screen.dart` (confirmar escribiendo BORRAR).
+* `lib/core/auth/auth_gate.dart`: `PuertaLegal` antes del Inicio.
+* `lib/screens/dashboard/dashboard_screen.dart`: menú "Términos y privacidad" y "Borrar mi cuenta".
+* `firestore.rules`: `aceptaciones_legales` (solo agregar, ID usuario__version) y `solicitudes_baja` (ID = usuario, nace pendiente, solo el admin la completa, nadie la borra).
+
+### Validación prevista
+
+* `test/legal_test.dart`. Reglas LEGAL-01 a LEGAL-06.
+* Prueba a mano: al abrir la app aparece "Términos y privacidad" con la casilla; "Acepto" lleva al Inicio; al volver a abrir no pregunta. Menú → Borrar mi cuenta → escribir BORRAR → queda "Ya pediste la baja...".
+
+### Pendiente
+
+* Páginas web de privacidad y de pedido de baja (diciembre, con el texto revisado).
+* Cómo completa el administrador una baja (pasos a mano en la consola) hasta tener el borrado automático.

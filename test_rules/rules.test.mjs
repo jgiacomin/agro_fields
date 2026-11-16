@@ -1882,3 +1882,49 @@ test('SEG-08. El admin sí puede corregir o archivar [PERMITIDO]', async () => {
   await assertSucceeds(updateDoc(doc(como(ADMIN), 'publicaciones_inversion/pi1'), { estado: 'cerrada' }));
   await assertSucceeds(updateDoc(doc(como(ADMIN), 'solicitudes_contacto/s1'), { estado: 'cancelada' }));
 });
+
+// =====================================================================
+// LEGAL. ACEPTACIONES Y PEDIDOS DE BAJA (GAP-LEGAL-01, 16/11/2026)
+// =====================================================================
+
+const aceptacionDe = (uid, extra = {}) => ({
+  usuarioId: uid, version: '1.0-borrador', fecha: new Date(), plataforma: 'web', ...extra,
+});
+
+test('LEGAL-01. El usuario registra su aceptación de la versión vigente [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(COMPRADOR), `aceptaciones_legales/${COMPRADOR}__1.0-borrador`), aceptacionDe(COMPRADOR)));
+});
+
+test('LEGAL-02. NO se registra la aceptación de otro ni con un ID que no coincide [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), `aceptaciones_legales/${COMPRADOR}__1.0-borrador`), aceptacionDe(COMPRADOR)));
+  await assertFails(setDoc(doc(como(COMPRADOR), `aceptaciones_legales/${COMPRADOR}__2.0`), aceptacionDe(COMPRADOR)));
+});
+
+test('LEGAL-03. Una aceptación NO se cambia ni se borra; otros no la ven [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, `aceptaciones_legales/${COMPRADOR}__1.0-borrador`), aceptacionDe(COMPRADOR)));
+  await assertFails(updateDoc(doc(como(COMPRADOR), `aceptaciones_legales/${COMPRADOR}__1.0-borrador`), { version: '0.1' }));
+  await assertFails(deleteDoc(doc(como(COMPRADOR), `aceptaciones_legales/${COMPRADOR}__1.0-borrador`)));
+  await assertFails(getDoc(doc(como(OTRO), `aceptaciones_legales/${COMPRADOR}__1.0-borrador`)));
+  await assertSucceeds(getDoc(doc(como(COMPRADOR), `aceptaciones_legales/${COMPRADOR}__1.0-borrador`)));
+});
+
+const bajaDe = (uid, extra = {}) => ({
+  usuarioId: uid, email: 'x@ejemplo.com', motivo: null, fechaPedido: new Date(), estado: 'pendiente', ...extra,
+});
+
+test('LEGAL-04. El usuario pide la baja de su cuenta [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(COMPRADOR), `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR)));
+});
+
+test('LEGAL-05. NO se pide la baja de otro ni ya "completada" [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(OTRO), `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR)));
+  await assertFails(setDoc(doc(como(COMPRADOR), `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR, { estado: 'completada' })));
+});
+
+test('LEGAL-06. El usuario NO cambia ni borra su pedido; el admin sí lo completa', async () => {
+  await cargar((db) => setDoc(doc(db, `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR)));
+  await assertFails(updateDoc(doc(como(COMPRADOR), `solicitudes_baja/${COMPRADOR}`), { estado: 'completada' }));
+  await assertFails(deleteDoc(doc(como(COMPRADOR), `solicitudes_baja/${COMPRADOR}`)));
+  await assertFails(getDoc(doc(como(OTRO), `solicitudes_baja/${COMPRADOR}`)));
+  await assertSucceeds(updateDoc(doc(como(ADMIN), `solicitudes_baja/${COMPRADOR}`), { estado: 'completada' }));
+});

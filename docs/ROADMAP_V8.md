@@ -3874,3 +3874,17 @@ Después: **8. Funcionamiento sin señal (GAP-OFF-01)**, ya programado y esperan
 🟡 marzo 2027: descuento de stock automático al volver la señal; crear lotes, rodeos y potreros sin señal; importación Tru-Test.
 
 Siguiente según el plan: **9. Términos de uso y privacidad**.
+
+---
+
+## Términos y privacidad (punto 9) — Estado
+
+✅ **GAP-OFF-01** subido (main = 3ca7760).
+
+🟡 **Borrador de Términos y Política de privacidad** listo, pendiente de revisión de Javier y de un abogado.
+
+✅ **GAP-LEGAL-01 CERRADO** (16/11/2026, probado en Chrome): aceptar al entrar (con versión), ver los textos desde el menú y pedir la baja de la cuenta (opción A, se completa a mano en 30 días).
+
+Diciembre: páginas web de privacidad y de baja (Google Play). Después del lanzamiento: borrado automático de cuentas.
+
+Siguiente según el plan: **10. Plan gratuito y precio**.
