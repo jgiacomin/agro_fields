@@ -1146,6 +1146,19 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // -----------------------------------------------------------------
+    // PLANES DE USUARIOS (GAP-PLAN-01, 16/11/2026)
+    // Un documento por usuario (ID = usuario). Cada uno lee el suyo.
+    // SOLO el administrador lo escribe (así nadie se pone un plan pago
+    // solo). Nadie lo borra. Sin documento = Esencial.
+    // -----------------------------------------------------------------
+    match /planes_usuarios/{usuarioId} {
+      allow get: if esAdmin() || esUsuario(usuarioId);
+      allow list: if esAdmin();
+      allow create, update: if esAdmin();
+      allow delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

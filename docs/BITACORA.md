@@ -7919,3 +7919,46 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 * Páginas web de privacidad y de pedido de baja (diciembre, con el texto revisado).
 * Cómo completa el administrador una baja (pasos a mano en la consola) hasta tener el borrado automático.
+
+---
+
+# 16/11/2026 - GAP-LEGAL-01 subido
+
+* main = 16f351d.
+
+---
+
+# 16/11/2026 - Punto 10: Planes y precios (decidido)
+
+**Estado: DECIDIDO (Javier delegó en la opción más eficiente), a validar con los Fundadores.**
+
+* Documento en Claude (Artifacts): "Agro Fields — Planes y precios (propuesta)"; copia en Word en Desktop\App. Parte de la Matriz remunerativa V0.3 y la ajusta con el relevamiento de mercado (Auravant US$ 25/mes hasta 1.000 ha, AgriWebb ~US$ 30, Farmbrite US$ 29, Propio US$ 8–30, Llavik ARS 49.900–149.900).
+* Decisiones: planes separados por público. Esencial gratis para siempre (2 personas invitadas, 500 MB, 1 campo publicado; en 2027 solo se informa). Pro Productor US$ 19, Pro Broker US$ 39, Business US$ 79, Business Inmobiliaria US$ 89 por mes; anual = 10 meses. Fundadores: 12 meses de Pro gratis y después 40% de descuento para siempre (Pro Productor US$ 11, Pro Broker US$ 23).
+* Google Play se queda con el 15% de las suscripciones. Para enero no se cobra nada.
+* Pendiente: preguntar el precio a los primeros Fundadores; elegir cómo cobrar (Google Play o pago web) antes del primer cobro.
+
+---
+
+# 16/11/2026 - GAP-PLAN-01: guardar el plan y marcar Fundadores
+
+**Estado: CÓDIGO ENTREGADO (rama gap-plan-01), pendiente de pruebas de Javier y de publicar reglas.**
+
+### Decisión
+
+* El plan NO va en `usuarios` (cada uno puede cambiar sus propios datos ahí): va en `planes_usuarios`, que solo escribe el administrador. Sin documento = Esencial.
+* Sin cobros ni cortes: solo se guarda y se muestra. Contar los límites queda para cuando haga falta.
+
+### Solución
+
+* Nuevos: `lib/models/plan_usuario_model.dart` (planes, precios, límites, Fundador, vencimiento), `lib/services/plan_service.dart`, `lib/screens/plan/mi_plan_screen.dart`.
+* `dashboard_screen.dart`: "Mi plan" en el menú.
+* `firestore.rules`: `planes_usuarios` (lee el dueño, escribe solo el admin, nadie borra).
+
+### Validación prevista
+
+* `test/plan_test.dart`: 6 pruebas. Reglas PLAN-01 a PLAN-03.
+* Prueba a mano: Menú → Mi plan → "Esencial (gratis)". Después, desde la consola, cargar un plan Fundador para la cuenta de prueba y ver "Plan Fundador: gratis hasta el ...".
+
+### Pendiente
+
+* Pasos para dar de alta a los Fundadores desde la consola (diciembre).

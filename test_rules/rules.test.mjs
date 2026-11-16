@@ -1928,3 +1928,30 @@ test('LEGAL-06. El usuario NO cambia ni borra su pedido; el admin sí lo complet
   await assertFails(getDoc(doc(como(OTRO), `solicitudes_baja/${COMPRADOR}`)));
   await assertSucceeds(updateDoc(doc(como(ADMIN), `solicitudes_baja/${COMPRADOR}`), { estado: 'completada' }));
 });
+
+// =====================================================================
+// PLAN. PLANES DE USUARIOS (GAP-PLAN-01, 16/11/2026)
+// =====================================================================
+
+const planDe = (uid, extra = {}) => ({
+  usuarioId: uid, plan: 'proProductor', grupoFundador: 'gestion',
+  fechaInicio: new Date(), fechaFin: null, ...extra,
+});
+
+test('PLAN-01. El usuario lee su plan [PERMITIDO]; otro NO lo lee [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, `planes_usuarios/${COMPRADOR}`), planDe(COMPRADOR)));
+  await assertSucceeds(getDoc(doc(como(COMPRADOR), `planes_usuarios/${COMPRADOR}`)));
+  await assertFails(getDoc(doc(como(OTRO), `planes_usuarios/${COMPRADOR}`)));
+});
+
+test('PLAN-02. Nadie se pone ni se cambia el plan solo [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(COMPRADOR), `planes_usuarios/${COMPRADOR}`), planDe(COMPRADOR, { plan: 'business' })));
+  await cargar((db) => setDoc(doc(db, `planes_usuarios/${DUENO}`), planDe(DUENO, { plan: 'esencial', grupoFundador: null })));
+  await assertFails(updateDoc(doc(como(DUENO), `planes_usuarios/${DUENO}`), { plan: 'business' }));
+  await assertFails(deleteDoc(doc(como(DUENO), `planes_usuarios/${DUENO}`)));
+});
+
+test('PLAN-03. El administrador carga y cambia planes [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(ADMIN), `planes_usuarios/${COMPRADOR}`), planDe(COMPRADOR)));
+  await assertSucceeds(updateDoc(doc(como(ADMIN), `planes_usuarios/${COMPRADOR}`), { plan: 'proBroker' }));
+});

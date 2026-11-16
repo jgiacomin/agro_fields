@@ -3888,3 +3888,15 @@ Siguiente según el plan: **9. Términos de uso y privacidad**.
 Diciembre: páginas web de privacidad y de baja (Google Play). Después del lanzamiento: borrado automático de cuentas.
 
 Siguiente según el plan: **10. Plan gratuito y precio**.
+
+---
+
+## Planes y precios (punto 10) — Estado
+
+✅ **GAP-LEGAL-01** subido (main = 16f351d).
+
+✅ **Planes y precios decididos** (16/11/2026): Esencial gratis; Pro Productor US$ 19, Pro Broker US$ 39, Business US$ 79, Business Inmobiliaria US$ 89; Fundadores 12 meses gratis + 40% para siempre. A validar con los Fundadores.
+
+🟡 **GAP-PLAN-01 ENTREGADO** (rama `gap-plan-01`): plan de cada usuario y pantalla "Mi plan". Pendiente de pruebas y de publicar reglas.
+
+Siguiente según el plan: **11. Demo, revisión general (QA) y publicación en Google Play** (diciembre).

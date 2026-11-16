@@ -10,6 +10,7 @@ import '../../models/activos/documento_activo_model.dart';
 import '../../widgets/aviso_pendientes.dart';
 import '../legal/borrar_cuenta_screen.dart';
 import '../legal/terminos_screen.dart';
+import '../plan/mi_plan_screen.dart';
 import '../../widgets/logo_agro_fields.dart';
 import '../campos/detalle_activo_agro_screen.dart';
 
@@ -340,6 +341,16 @@ debugPrint(
                 },
               ),
               const Divider(),
+              // GAP-PLAN-01: el plan de cada usuario (Esencial, Pro, Fundador).
+              ListTile(
+                leading: const Icon(Icons.workspace_premium_outlined),
+                title: const Text('Mi plan'),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const MiPlanScreen()));
+                },
+              ),
               // GAP-LEGAL-01: términos siempre a mano y pedido de baja.
               ListTile(
                 leading: const Icon(Icons.gavel_outlined),
