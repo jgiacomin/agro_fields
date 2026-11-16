@@ -5,6 +5,7 @@ import '../../models/activos/evento_afectacion_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../../services/territorio_service.dart';
 import '../../widgets/barra_campo.dart';
+import '../../widgets/ver_archivo_boton.dart';
 import '../emergencias/emergencias_textos.dart';
 import '../produccion/produccion_estilo.dart';
 import 'nuevo_cambio_territorio_screen.dart';
@@ -217,20 +218,8 @@ class _HistoriaTerritorioScreenState extends State<HistoriaTerritorioScreen> {
                   Text('Lo hizo: ${c.realizadoPor}',
                       style: const TextStyle(fontSize: 14)),
                 ],
-                if (c.archivoRuta != null) ...[
-                  const SizedBox(height: 4),
-                  const Row(
-                    children: [
-                      Icon(Icons.attach_file,
-                          size: 16, color: EstiloProduccion.textoSuave),
-                      SizedBox(width: 4),
-                      Text('Archivo adjunto',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: EstiloProduccion.textoSuave)),
-                    ],
-                  ),
-                ],
+                if (c.archivoRuta != null)
+                  VerArchivoBoton(ruta: c.archivoRuta!),
                 if (c.corrigeCambioId != null) ...[
                   const SizedBox(height: 4),
                   const Text('Corrige un registro anterior',

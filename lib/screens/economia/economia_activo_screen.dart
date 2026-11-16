@@ -5,6 +5,7 @@ import '../../models/activos/gasto_model.dart';
 import '../../services/calculo_economia.dart';
 import '../../services/gasto_service.dart';
 import '../../widgets/barra_campo.dart';
+import '../../widgets/ver_archivo_boton.dart';
 import '../produccion/produccion_estilo.dart';
 import 'economia_textos.dart';
 import 'nuevo_gasto_screen.dart';
@@ -299,9 +300,8 @@ class _EconomiaActivoScreenState extends State<EconomiaActivoScreen> {
                         style: const TextStyle(
                             fontSize: 13, color: EstiloProduccion.textoSuave)),
                     if (g.comprobanteRuta != null)
-                      const Text('Con comprobante',
-                          style: TextStyle(
-                              fontSize: 12, color: EstiloProduccion.verde)),
+                      VerArchivoBoton(
+                          ruta: g.comprobanteRuta!, texto: 'Ver comprobante'),
                     if (g.esCorreccion)
                       const Text('Corregido',
                           style: TextStyle(

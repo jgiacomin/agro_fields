@@ -8,6 +8,7 @@ import '../../services/control_operacion.dart';
 import '../../services/documento_archivo_service.dart';
 import '../../services/operacion_service.dart';
 import '../../widgets/adjuntar_archivo_boton.dart';
+import '../../widgets/ver_archivo_boton.dart';
 import '../produccion/produccion_estilo.dart';
 import 'operaciones_textos.dart';
 import 'registrar_evento_operacion_screen.dart';
@@ -360,6 +361,18 @@ class _DetalleOperacionScreenState extends State<DetalleOperacionScreen> {
       }
     }
 
+    // GAP-ARCH-01: si el contrato o el poder ya están adjuntos, se pueden ver.
+    if (accion == null &&
+        item.punto == PuntoControl.contrato &&
+        op.contratoArchivoRuta != null) {
+      accion = VerArchivoBoton(ruta: op.contratoArchivoRuta!, texto: 'Ver contrato');
+    } else if (accion == null &&
+        item.punto == PuntoControl.poderFirmante &&
+        op.comprador.facultadArchivoRuta != null) {
+      accion = VerArchivoBoton(
+          ruta: op.comprador.facultadArchivoRuta!, texto: 'Ver poder');
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -602,9 +615,17 @@ class _DetalleOperacionScreenState extends State<DetalleOperacionScreen> {
                   ),
                 ),
                 Expanded(
-                  child: Text(
-                    _resumenEvento(e),
-                    style: const TextStyle(fontSize: 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _resumenEvento(e),
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      // GAP-ARCH-01: ver la foto del cheque, el remito...
+                      for (final ruta in e.archivoRutas)
+                        VerArchivoBoton(ruta: ruta),
+                    ],
                   ),
                 ),
               ],

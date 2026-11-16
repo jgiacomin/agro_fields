@@ -3902,3 +3902,5 @@ Siguiente según el plan: **10. Plan gratuito y precio**.
 5. Datos de demo y QA integral.
 6. Publicación: Android (antes del 12/12, prueba cerrada de 14 días desde ~15/12), web, páginas de privacidad y baja.
 7. Revisión del abogado (Javier).
+
+2. ✅ **GAP-ARCH-01 Ver y descargar archivos** — CERRADO (probado en Chrome).

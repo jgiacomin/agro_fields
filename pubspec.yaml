@@ -43,6 +43,8 @@ dependencies:
   # AF-090: mapa con OpenStreetMap (gratis, sin clave).
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
+  # GAP-ARCH-01: abrir archivos adjuntos (foto o PDF).
+  url_launcher: ^6.3.1
 
 
 dev_dependencies:

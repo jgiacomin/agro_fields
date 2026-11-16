@@ -7999,3 +7999,30 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 * `test/encargado_test.dart`: 6 pruebas. Reglas existentes ya cubren al encargado (ECO-07, STOCK-04, PESO-06, TERR-08, AUT-01).
 * Prueba a mano con dos cuentas: la cuenta B copia su código → la cuenta A (dueña) invita con Producción y Gastos → B ve el campo en "Campos donde soy encargado", carga un gasto y un evento → A los ve.
+
+---
+
+# 16/11/2026 - GAP-ARCH-01: ver y descargar archivos adjuntos
+
+**Estado: CERRADO. flutter test 300 (+2 fallas conocidas). Probado por Javier en Chrome: el comprobante del gasto se abre en una pestaña nueva. Sin cambios en las reglas.**
+
+### Decisión
+
+* Un solo botón "Ver archivo" (`lib/widgets/ver_archivo_boton.dart`) reutilizado en los 4 lugares donde se sube algo: pide a Firebase un enlace temporal y lo abre (celular: visor del teléfono; compu: pestaña nueva). Las Storage Rules deciden quién puede abrirlo.
+* Paquete nuevo: `url_launcher` (oficial de Flutter). Android: permiso para abrir enlaces https en el AndroidManifest.
+
+### Solución
+
+* `documentos_activo_screen.dart`: "Ver archivo" en cada documento con archivo.
+* `economia_activo_screen.dart`: "Ver comprobante" en el gasto.
+* `detalle_operacion_screen.dart`: "Ver archivo" en cada evento con fotos (cheque, remito) y "Ver contrato" / "Ver poder" en la lista de control.
+* `historia_territorio_screen.dart`: "Ver archivo" en el cambio del territorio.
+
+### Validación prevista
+
+* `test/ver_archivo_test.dart`: 2 pruebas.
+* Prueba a mano: abrir un documento, un comprobante de gasto y un cheque ya adjuntos.
+
+### Pendiente
+
+* El profesional ve el registro del territorio pero no puede abrir su archivo (límite de las Storage Rules, ver AF-109).

@@ -7,6 +7,7 @@ import '../operaciones/operaciones_textos.dart';
 import '../produccion/produccion_estilo.dart';
 import 'nuevo_documento_screen.dart';
 import '../../widgets/barra_campo.dart';
+import '../../widgets/ver_archivo_boton.dart';
 
 /// Tipos de documento que se ofrecen para elegir tocando.
 const List<String> tiposDocumento = [
@@ -299,6 +300,8 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
                   color: EstiloProduccion.textoSuave,
                 ),
               ),
+              if (d.archivoRuta != null)
+                VerArchivoBoton(ruta: d.archivoRuta!),
             ],
           ),
         ),
