@@ -16,6 +16,7 @@ import '../territorio/historia_territorio_screen.dart';
 import 'suelo_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 import '../../widgets/barra_campo.dart';
+import '../produccion/produccion_estilo.dart';
 
 class DetalleActivoAgroScreen extends StatefulWidget {
   final ActivoAgroV2 activo;
@@ -153,27 +154,13 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
             const SizedBox(height: 12),
             _proximoPaso(),
           ],
-          const SizedBox(height: 18),
-          const Text(
-            'Gestión del campo',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AgroTema.pizarra,
-            ),
-          ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
+          // Diseño V8 (16/11/2026): títulos con la banda oscura.
+          const TituloSeccion('Gestión del campo', icono: Icons.agriculture),
           _modulos(),
           const SizedBox(height: 22),
-          const Text(
-            'Información del expediente',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AgroTema.pizarra,
-            ),
-          ),
-          const SizedBox(height: 10),
+          const TituloSeccion('Información del expediente',
+              icono: Icons.folder_open),
           _secciones(),
         ],
       ),
@@ -182,146 +169,133 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
 
   // ---------------- RESUMEN ----------------
 
+  /// Diseño V8 (16/11/2026): tarjeta crema con nombre y lugar, chips y los
+  /// números de colores (como el resumen de Producción), en dos filas para
+  /// que entren en el celular.
   Widget _resumen() {
     final u = activo.ubicacion;
     final lugar = [u.localidad, u.provincia, u.pais]
         .where((x) => x.trim().isNotEmpty)
         .join(', ');
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: AgroTema.pizarra,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            activo.nombre,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
+    final actividad = activo.produccionPrincipal == null
+        ? null
+        : _claro(activo.produccionPrincipal!.actividad);
+    return TarjetaBlanca(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const IconoCirculo(Icons.grass,
+                    color: AgroTema.verde, tamano: 50),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        activo.nombre,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: AgroTema.pizarra,
+                        ),
+                      ),
+                      if (activo.descripcion.trim().isNotEmpty)
+                        Text(
+                          activo.descripcion,
+                          style: const TextStyle(
+                              fontSize: 14, color: AgroTema.pizarraSuave),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          if (activo.descripcion.trim().isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              activo.descripcion,
-              style: const TextStyle(fontSize: 15, color: AgroTema.crema),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.place, size: 18, color: AgroTema.terracota),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    lugar.isEmpty ? 'Ubicación sin información' : lugar,
+                    style: const TextStyle(
+                        fontSize: 14, color: AgroTema.pizarra),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _chip(Icons.grass, actividad ?? 'Sin actividad cargada',
+                    color: AgroTema.verde),
+                _chip(
+                  u.tieneCoordenadas ? Icons.location_on : Icons.location_off,
+                  u.tieneCoordenadas ? 'En el mapa' : 'Sin marcar en el mapa',
+                  color: u.tieneCoordenadas
+                      ? AgroTema.azul
+                      : AgroTema.terracota,
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            ResumenNumeros([
+              (
+                u.superficie > 0 ? _numero(u.superficie) : '—',
+                'hectáreas',
+                Icons.straighten,
+                AgroTema.azul,
+              ),
+              (
+                '${activo.confianza.cantidadEvidencias}',
+                'evidencias',
+                Icons.photo_library,
+                AgroTema.terracota,
+              ),
+            ]),
+            const SizedBox(height: 10),
+            ResumenNumeros([
+              (
+                '${_numero(activo.madurez.porcentaje)}%',
+                'expediente',
+                Icons.trending_up,
+                AgroTema.verde,
+              ),
+              (
+                '${activo.confianza.nivelGeneral}%',
+                'confianza',
+                Icons.verified,
+                AgroTema.pizarra,
+              ),
+            ]),
           ],
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Icon(Icons.place, size: 18, color: Color(0xFFF2C08F)),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  lugar.isEmpty ? 'Ubicación sin información' : lugar,
-                  style: const TextStyle(fontSize: 14, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _datoGrande(
-                  Icons.straighten,
-                  u.superficie > 0 ? _numero(u.superficie) : '—',
-                  'Hectáreas',
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _datoGrande(
-                  Icons.grass,
-                  activo.produccionPrincipal == null
-                      ? '—'
-                      : _claro(activo.produccionPrincipal!.actividad),
-                  'Actividad',
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _datoGrande(
-                  Icons.photo_library,
-                  '${activo.confianza.cantidadEvidencias}',
-                  'Evidencias',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _chip(
-                u.tieneCoordenadas ? Icons.location_on : Icons.location_off,
-                u.tieneCoordenadas ? 'En el mapa' : 'Sin marcar en el mapa',
-                alerta: !u.tieneCoordenadas,
-              ),
-              _chip(Icons.trending_up,
-                  'Expediente ${_numero(activo.madurez.porcentaje)}%'),
-              _chip(Icons.verified, 'Confianza ${activo.confianza.nivelGeneral}%'),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _datoGrande(IconData icono, String valor, String texto) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icono, size: 18, color: const Color(0xFFF2C08F)),
-          const SizedBox(height: 6),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              valor,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Text(texto,
-              style: const TextStyle(fontSize: 12, color: AgroTema.crema)),
-        ],
-      ),
-    );
-  }
-
-  Widget _chip(IconData icono, String texto, {bool alerta = false}) {
+  Widget _chip(IconData icono, String texto, {required Color color}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: alerta
-            ? AgroTema.terracota.withValues(alpha: 0.25)
-            : Colors.white.withValues(alpha: 0.12),
+        color: color.withAlpha(30),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withAlpha(90)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icono, size: 16, color: Colors.white),
+          Icon(icono, size: 16, color: color),
           const SizedBox(width: 6),
           Text(texto,
-              style: const TextStyle(fontSize: 13, color: Colors.white)),
+              style: TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.w600, color: color)),
         ],
       ),
     );
@@ -330,18 +304,17 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   /// Un solo próximo paso (regla de diseño: una pantalla, una pregunta).
   Widget _proximoPaso() {
     final faltantes = activo.madurez.faltantes;
-    return Container(
-      width: double.infinity,
+    // Diseño V8: destacado con borde naranja e ícono en círculo.
+    return TarjetaBlanca(
+      colorBorde: AgroTema.terracota,
+      colorFondo: AgroTema.terracotaClaro,
+      child: Padding(
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AgroTema.borde),
-      ),
       child: Row(
         children: [
-          const Icon(Icons.flag, color: AgroTema.terracota),
-          const SizedBox(width: 10),
+          const IconoCirculo(Icons.flag,
+              color: AgroTema.terracota, tamano: 44),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,6 +345,7 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -478,27 +452,28 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
       itemCount: modulos.length,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 280,
-        mainAxisExtent: 82,
+        mainAxisExtent: 94,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
       ),
       itemBuilder: (_, i) {
         final (icono, texto, ayuda, color, alTocar) = modulos[i];
         final pronto = alTocar == null;
-        return Material(
-          color: pronto ? const Color(0xFFF3EEE5) : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: AgroTema.borde),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
+        // Diseño V8: tarjeta crema con el ícono en círculo. Sin flecha y con
+        // el nombre en hasta 2 renglones, para que no se corte en el celular.
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 2),
+          child: TarjetaBlanca(
             onTap: alTocar,
+            colorFondo:
+                pronto ? const Color(0xFFF3EEE5) : const Color(0xFFFFFAF2),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 children: [
-                  Icon(icono, size: 30, color: color),
+                  IconoCirculo(icono,
+                      color: pronto ? AgroTema.pizarraSuave : color,
+                      tamano: 44),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -507,11 +482,12 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
                       children: [
                         Text(
                           texto,
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
                             color: pronto
                                 ? AgroTema.pizarraSuave
                                 : AgroTema.pizarra,
@@ -523,14 +499,13 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                              fontSize: 12, color: AgroTema.pizarraSuave),
+                              fontSize: 12,
+                              height: 1.2,
+                              color: AgroTema.pizarraSuave),
                         ),
                       ],
                     ),
                   ),
-                  if (!pronto)
-                    const Icon(Icons.chevron_right,
-                        color: AgroTema.pizarraSuave),
                 ],
               ),
             ),
@@ -567,15 +542,19 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
       {String? resumen}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
+      // Diseño V8: tarjeta crema con sombra e ícono en círculo.
       child: Material(
-        color: Colors.white,
+        color: const Color(0xFFFFFAF2),
+        elevation: 1.5,
+        shadowColor: const Color(0x22000000),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: const BorderSide(color: AgroTema.borde),
+          side: const BorderSide(color: Color(0xFFE6D6BC)),
         ),
         clipBehavior: Clip.antiAlias,
         child: ExpansionTile(
-          leading: Icon(icono, color: AgroTema.terracota),
+          leading:
+              IconoCirculo(icono, color: AgroTema.terracota, tamano: 40),
           title: Text(titulo,
               style: const TextStyle(
                   fontSize: 16,

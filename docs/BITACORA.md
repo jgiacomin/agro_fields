@@ -8057,3 +8057,18 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 ### Pendiente
 
 * Mostrarle al que publicó el motivo del rechazo dentro de su ficha (hoy queda guardado en el resumen).
+
+---
+
+# 16/11/2026 - Diseño V8 del Inicio y de la ficha del campo (rama diseno-v8-inicio)
+
+**Estado: VALIDADO EN LA APP (Chrome de escritorio y modo celular). Solo visual: no cambia cómo funciona nada, ni reglas, ni datos.**
+
+Completa lo que quedó pendiente el 13/11: el Inicio y la ficha usaban el estilo anterior. Ahora usan las mismas piezas V8 de `produccion_estilo.dart` (sin piezas nuevas).
+
+* `lib/screens/dashboard/dashboard_screen.dart` (Inicio): encabezado con la foto del campo al atardecer, logo en círculo dorado, saludo encima de la foto y curva dorada (se sacó el cartel naranja aparte); "Tu campo en resumen" con banda de título y `ResumenNumeros` en dos filas; "Mis campos" antes de los accesos, tarjetas crema con ícono en círculo, sin flecha y nombre en hasta 2 renglones; "Accesos" con banda de título, tarjetas crema e íconos en círculo ("Próximamente" en gris, al final).
+* `lib/screens/campos/detalle_activo_agro_screen.dart` (ficha): la tarjeta oscura pasa a tarjeta crema con nombre, lugar y etiquetas de color (actividad, mapa); números de colores en dos filas (hectáreas, evidencias, % expediente, % confianza); "Próximo paso" destacado en naranja; títulos con banda oscura; módulos con ícono en círculo, sin flecha y nombre en hasta 2 renglones (ya no se cortan en el celular); secciones en tarjeta crema con ícono en círculo.
+
+### Validación
+
+* Capturas de Javier en Chrome y en modo celular (DevTools): nada se corta ni se aprieta.

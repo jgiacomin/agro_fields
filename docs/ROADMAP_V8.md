@@ -3905,3 +3905,4 @@ Siguiente según el plan: **10. Plan gratuito y precio**.
 
 2. ✅ **GAP-ARCH-01 Ver y descargar archivos** — CERRADO (probado en Chrome).
 3. ✅ **GAP-ADMIN-01 Pantalla de administración** — CERRADO (probado en Chrome; reglas subidas con `firebase deploy`).
+4. ✅ **Diseño V8 del Inicio y de la ficha del campo** — CERRADO (validado en Chrome y en modo celular; rama `diseno-v8-inicio`).
