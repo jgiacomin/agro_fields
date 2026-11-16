@@ -7727,3 +7727,45 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 
 * Matriz: AF-102 queda 🔴 hecho al cerrar este GAP (actualizar el nivel en la planilla).
 * 🟡 Pesaje individual por caravana (AF-104) e importación desde balanzas Tru-Test.
+
+---
+
+# 16/11/2026 - GAP-PESO-01: estado
+
+* Unido a main (fast-forward, main = e8cecef). flutter test al empezar AF-109: 264 bien + 2 fallas conocidas de conexión a Firebase.
+
+---
+
+# 16/11/2026 - AF-109 (GAP-TERR-02): Historia del territorio
+
+**Estado: CÓDIGO ENTREGADO (rama gap-terr-02), pendiente de prueba de Javier y de publicar reglas.**
+
+### Decisión
+
+* Versión chica para enero (🔴), aprobada el 13/11/2026. Matriz y auditoría hechas el 14/11/2026.
+* Colección propia `cambios_territorio`, NO se reutiliza `eventos_afectacion`: un desmonte o un canal no es una emergencia, esa colección no tiene "quién lo hizo", "fuente" ni "estado del dato", y su regla solo deja entrar al dueño.
+* Las emergencias de AF-092 NO se copian: la pantalla las lee de `eventos_afectacion` y las mezcla por fecha.
+* Se separan hechos de conclusiones: el registro cuenta qué pasó, no qué causó qué.
+* Solo agregar: no se edita ni se borra. Un error se corrige con otro registro (`corrigeCambioId`) y el anterior queda como "corregido".
+* Estado del dato: "declarado" o "con documento" (si tiene archivo). Nunca nace "verificado".
+* Permisos: cargan el dueño o quien tenga autorización en el ámbito nuevo "territorio"; ve también el profesional invitado (AF-093). El broker no.
+
+### Solución
+
+* `lib/models/activos/cambio_territorio_model.dart` (nuevo): tipo (desmonte, canal, camino, drenaje, cambio de uso, erosión, recuperación, otro), fecha desde y hasta opcional, descripción, quién lo hizo, fuente, archivo, estado del dato, corrección; `validar()` y `vigentes()`.
+* `lib/services/territorio_service.dart` (nuevo): registrar, listar y subir archivo a `activos/{id}/territorio/{cambioId}/`.
+* `lib/screens/territorio/territorio_textos.dart`, `historia_territorio_screen.dart` y `nuevo_cambio_territorio_screen.dart` (nuevos): línea de tiempo con cambios y emergencias, y formulario con el botón Adjuntar de siempre.
+* `lib/models/activos/autorizacion_activo_model.dart`: ámbito `territorio`.
+* `lib/screens/campos/detalle_activo_agro_screen.dart`: botón "Historia del territorio" en la ficha del campo.
+* `firestore.rules`: regla de `cambios_territorio`. `storage.rules`: carpeta `territorio` (dueño o ámbito "territorio"; foto o PDF de hasta 20 MB).
+
+### Validación prevista
+
+* `test/territorio_test.dart`: 9 pruebas. Reglas TERR-01 a TERR-10. Storage ST-TERR-01 a ST-TERR-03.
+* Prueba a mano: ficha del campo → Historia del territorio → Cargar un cambio (desmonte 2018, fuente vecinos) → aparece en la línea de tiempo junto con las emergencias → Corregir → el anterior desaparece de la lista y queda "1 registro corregido".
+
+### Pendiente
+
+* 🟡 El profesional ve el registro pero todavía no el archivo (las Storage Rules consultan como máximo 2 documentos de Firestore). Ver y descargar archivos sigue pendiente en toda la app.
+* 🟡 Mostrar la historia al comprador solo si se comparte (checks del marketplace).
+* 🟢 marzo: satélites, alertas automáticas y comparar épocas.

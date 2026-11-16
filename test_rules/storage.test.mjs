@@ -264,3 +264,22 @@ test('ST-ECO-02. El broker NO sube comprobantes de gastos [PROHIBIDO]', async ()
 test('ST-ECO-03. Otro usuario NO sube comprobantes de gastos [PROHIBIDO]', async () => {
   await assertFails(uploadBytes(ref(como(OTRO), rutaComprobante(3)), bytes(), PDF));
 });
+
+// =====================================================================
+// HISTORIA DEL TERRITORIO (AF-109, 16/11/2026): foto, plano o permiso.
+// Dueño o ámbito "territorio"; el broker no.
+// =====================================================================
+
+const rutaTerritorio = (n) => `activos/a1/territorio/ct_${CORRIDA}_${n}/plano.pdf`;
+
+test('ST-TERR-01. El dueño sube el archivo de un cambio del territorio [PERMITIDO]', async () => {
+  await assertSucceeds(uploadBytes(ref(como(DUENO), rutaTerritorio(1)), bytes(), PDF));
+});
+
+test('ST-TERR-02. El broker NO sube archivos del territorio [PROHIBIDO]', async () => {
+  await assertFails(uploadBytes(ref(como(BROKER), rutaTerritorio(2)), bytes(), PDF));
+});
+
+test('ST-TERR-03. Otro usuario NO sube archivos del territorio [PROHIBIDO]', async () => {
+  await assertFails(uploadBytes(ref(como(OTRO), rutaTerritorio(3)), bytes(), PDF));
+});

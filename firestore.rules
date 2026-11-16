@@ -1023,6 +1023,52 @@ service cloud.firestore {
 
     // TODO LO DEMAS: PROHIBIDO
     // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // HISTORIA DEL TERRITORIO (AF-109, GAP-TERR-02, 16/11/2026)
+    // Cambios del campo: desmonte, canal, camino, drenaje, cambio de uso,
+    // erosión, recuperación. Lo cargan el dueño o quien tenga autorización
+    // en "territorio"; lo ve además el profesional invitado (autorización
+    // "crear" en "expedienteProductivo", AF-093). El broker no.
+    // SOLO AGREGAR: no se edita ni se borra; un error se corrige con otro
+    // registro (corrigeCambioId). Nunca nace "verificado".
+    // -----------------------------------------------------------------
+    function puedeTerritorio(activoId, permiso) {
+      return esAdmin()
+        || (logueado()
+            && activoId is string
+            && (esDuenoActivo(activoId)
+                || tieneAutorizacion(activoId, permiso, 'territorio')));
+    }
+
+    function cambioTerritorioValido(d) {
+      return d.tipo in ['desmonte', 'canal', 'camino', 'drenaje',
+                        'cambioUso', 'erosion', 'recuperacion', 'otro']
+        && d.fuente in ['propia', 'documento', 'imagen', 'profesional',
+                        'vecino', 'organismo', 'otra']
+        && d.descripcion is string
+        && d.descripcion.size() > 0
+        && d.descripcion.size() <= 2000
+        && d.fechaDesde is timestamp
+        && (d.get('fechaHasta', null) == null
+            || (d.fechaHasta is timestamp && d.fechaHasta >= d.fechaDesde))
+        && (d.get('realizadoPor', null) == null || d.realizadoPor is string)
+        && (d.get('corrigeCambioId', null) == null || d.corrigeCambioId is string)
+        && ((d.estadoDato == 'declarado' && d.get('archivoRuta', null) == null)
+            || (d.estadoDato == 'conDocumento' && d.get('archivoRuta', null) is string));
+    }
+
+    match /cambios_territorio/{cambioId} {
+      allow get, list: if puedeTerritorio(resource.data.activoAgroId, 'ver')
+        || tieneAutorizacion(resource.data.activoAgroId, 'crear', 'expedienteProductivo');
+
+      allow create: if puedeTerritorio(request.resource.data.activoAgroId, 'crear')
+        && request.resource.data.cambioId == cambioId
+        && request.resource.data.cargadoPor == request.auth.uid
+        && cambioTerritorioValido(request.resource.data);
+
+      allow update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

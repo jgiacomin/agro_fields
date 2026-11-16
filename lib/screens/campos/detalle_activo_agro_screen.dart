@@ -11,6 +11,7 @@ import '../operaciones/operaciones_activo_screen.dart';
 import '../produccion/produccion_activo_screen.dart';
 import '../economia/economia_activo_screen.dart';
 import '../stock/stock_activo_screen.dart';
+import '../territorio/historia_territorio_screen.dart';
 import 'suelo_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 import '../../widgets/barra_campo.dart';
@@ -434,6 +435,14 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         'Inundación, sequía, incendio...',
         AgroTema.rojo,
         () => _abrir(EmergenciasActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.landscape,
+        'Historia del territorio',
+        'Desmontes, canales, caminos...',
+        AgroTema.verde,
+        () => _abrir(HistoriaTerritorioScreen(
             activoAgroId: id, nombreActivo: nombre)),
       ),
       (

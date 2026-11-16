@@ -164,6 +164,25 @@ service firebase.storage {
       allow update, delete: if esAdmin();
     }
 
+    // ---------------- HISTORIA DEL TERRITORIO (AF-109) ----------------
+    // Foto, plano o permiso de un cambio del territorio. Dueño o ámbito
+    // "territorio" (el broker no). Máximo 2 consultas a Firestore (Activo y
+    // una autorización): por eso el profesional ve el registro pero todavía
+    // no el archivo. Nadie reemplaza ni borra desde la app.
+    match /activos/{activoId}/territorio/{cambioId}/{archivo} {
+      allow read: if esAdmin()
+        || esDuenoActivo(activoId)
+        || tieneAutorizacion(activoId, 'ver', 'territorio');
+
+      allow create: if (esAdmin()
+          || esDuenoActivo(activoId)
+          || tieneAutorizacion(activoId, 'crear', 'territorio'))
+        && resource == null
+        && esDocumento() && pesaMenosDe(20);
+
+      allow update, delete: if esAdmin();
+    }
+
     // ---------------- TODO LO DEMAS: PROHIBIDO ----------------
     match /{allPaths=**} {
       allow read, write: if false;

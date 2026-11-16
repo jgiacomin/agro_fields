@@ -1719,3 +1719,81 @@ test('ECO-08. Otro usuario NO ve gastos de un campo ajeno [PROHIBIDO]', async ()
   await cargar((db) => setDoc(doc(db, 'gastos/g1'), gastoDe()));
   await assertFails(getDoc(doc(como(OTRO), 'gastos/g1')));
 });
+
+// =====================================================================
+// TERR. HISTORIA DEL TERRITORIO (AF-109, GAP-TERR-02, 16/11/2026)
+// Carga el dueño o el ámbito "territorio"; ve también el profesional
+// invitado ("crear" en "expedienteProductivo"). El broker no. Solo agregar.
+// =====================================================================
+
+const cambioTerrDe = (extra = {}) => ({
+  cambioId: 'ct1', activoAgroId: 'a1', tipo: 'desmonte',
+  fechaDesde: new Date('2018-03-15'), fechaHasta: null,
+  descripcion: 'Se desmontaron 80 ha del monte del fondo',
+  realizadoPor: 'El dueño anterior', fuente: 'vecino',
+  archivoRuta: null, estadoDato: 'declarado', corrigeCambioId: null,
+  cargadoPor: DUENO, fechaCarga: new Date(), ...extra,
+});
+
+test('TERR-01. El dueño carga un cambio del territorio [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'cambios_territorio/ct1'), cambioTerrDe()));
+});
+
+test('TERR-02. Con archivo queda "con documento" [PERMITIDO]; "con documento" sin archivo o "verificado" [PROHIBIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'cambios_territorio/ct2'),
+    cambioTerrDe({ cambioId: 'ct2', archivoRuta: 'activos/a1/territorio/ct2/plano.pdf', estadoDato: 'conDocumento' })));
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct3'),
+    cambioTerrDe({ cambioId: 'ct3', estadoDato: 'conDocumento' })));
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct4'),
+    cambioTerrDe({ cambioId: 'ct4', estadoDato: 'verificado' })));
+});
+
+test('TERR-03. NO se aceptan tipo o fuente inventados, ni sin descripción [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct1'), cambioTerrDe({ tipo: 'mina' })));
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct1'), cambioTerrDe({ fuente: 'rumor' })));
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct1'), cambioTerrDe({ descripcion: '' })));
+});
+
+test('TERR-04. NO se acepta "hasta" antes de "desde" [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct1'),
+    cambioTerrDe({ fechaHasta: new Date('2017-01-01') })));
+});
+
+test('TERR-05. NO se carga a nombre de otro ni con otro ID [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct1'), cambioTerrDe({ cargadoPor: OTRO })));
+  await assertFails(setDoc(doc(como(DUENO), 'cambios_territorio/ct9'), cambioTerrDe()));
+});
+
+test('TERR-06. Un cambio NO se edita ni se borra [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'cambios_territorio/ct1'), cambioTerrDe()));
+  await assertFails(updateDoc(doc(como(DUENO), 'cambios_territorio/ct1'), { descripcion: 'otra cosa' }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'cambios_territorio/ct1')));
+});
+
+test('TERR-07. Una corrección se carga como registro nuevo [PERMITIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'cambios_territorio/ct1'), cambioTerrDe()));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'cambios_territorio/ct2'),
+    cambioTerrDe({ cambioId: 'ct2', descripcion: 'Eran 60 ha, no 80', corrigeCambioId: 'ct1' })));
+});
+
+test('TERR-08. El encargado con "crear territorio" carga un cambio [PERMITIDO]', async () => {
+  await darAutorizacion('crear', 'territorio');
+  await assertSucceeds(setDoc(doc(como(ENCARGADO), 'cambios_territorio/ct1'), cambioTerrDe({ cargadoPor: ENCARGADO })));
+});
+
+test('TERR-09. El profesional invitado VE la historia pero NO carga [PERMITIDO / PROHIBIDO]', async () => {
+  await darAutorizacion('crear', 'expedienteProductivo');
+  await cargar((db) => setDoc(doc(db, 'cambios_territorio/ct1'), cambioTerrDe()));
+  await assertSucceeds(getDoc(doc(como(ENCARGADO), 'cambios_territorio/ct1')));
+  await assertSucceeds(getDocs(query(collection(como(ENCARGADO), 'cambios_territorio'), where('activoAgroId', '==', 'a1'))));
+  await assertFails(setDoc(doc(como(ENCARGADO), 'cambios_territorio/ct2'),
+    cambioTerrDe({ cambioId: 'ct2', cargadoPor: ENCARGADO })));
+});
+
+test('TERR-10. El broker y otros usuarios NO ven ni cargan [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, 'cambios_territorio/ct1'), cambioTerrDe()));
+  await assertFails(getDoc(doc(como(BROKER), 'cambios_territorio/ct1')));
+  await assertFails(getDoc(doc(como(OTRO), 'cambios_territorio/ct1')));
+  await assertFails(setDoc(doc(como(BROKER), 'cambios_territorio/ct2'),
+    cambioTerrDe({ cambioId: 'ct2', cargadoPor: BROKER })));
+});

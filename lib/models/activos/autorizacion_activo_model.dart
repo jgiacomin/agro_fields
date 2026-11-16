@@ -70,6 +70,7 @@ enum TipoAmbitoAutorizacion {
   produccion, // paso 6a: unidades, grupos y eventos productivos
   operaciones, // paso 7a: operaciones protegidas y sus eventos
   movimientos, // AF-089: traslados (núcleo común de transporte)
+  territorio, // AF-109: historia del territorio (cambios del campo)
 }
 
 /// Tipo de exclusividad comercial.

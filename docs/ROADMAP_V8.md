@@ -3822,3 +3822,19 @@ Con esto quedan hechos (o en prueba) los puntos 1 a 6 del plan. Siguiente: **7. 
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Suelo y pesajes — Estado (actualizado 16/11/2026)
+
+✅ **GAP-PESO-01 + AF-102** unido a main (main = e8cecef).
+
+## Territorio — Estado
+
+🟡 **AF-109 Historia del territorio ENTREGADO** (16/11/2026, rama `gap-terr-02`), pendiente de prueba y de publicar reglas: cambios del territorio (desmonte, canal, camino, drenaje, cambio de uso, erosión, recuperación) en una línea de tiempo junto con las emergencias de AF-092. Colección propia `cambios_territorio`, solo agregar, ámbito nuevo "territorio".
+
+🟢 marzo 2027: satélites, alertas automáticas y comparar épocas.
+
+Referencia documental:
+
+`docs/BITACORA.md`
