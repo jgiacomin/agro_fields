@@ -3838,3 +3838,17 @@ Referencia documental:
 Referencia documental:
 
 `docs/BITACORA.md`
+
+---
+
+## Seguridad restante (punto 7) — Estado
+
+✅ **AF-109** subido: main = bdeb0b3.
+
+🟡 **GAP-SEG-01 ENTREGADO** (16/11/2026, rama `gap-seg-01`): `solicitudes_contacto`, `inversiones` y `publicaciones_inversion` congeladas (solo admin escribe; se lee lo existente). Pendiente de pruebas y de publicar reglas.
+
+Siguiente según el plan: **8. Funcionamiento sin señal (offline)**.
+
+Referencia documental:
+
+`docs/BITACORA.md`

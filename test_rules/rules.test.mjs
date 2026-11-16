@@ -1797,3 +1797,68 @@ test('TERR-10. El broker y otros usuarios NO ven ni cargan [PROHIBIDO]', async (
   await assertFails(setDoc(doc(como(BROKER), 'cambios_territorio/ct2'),
     cambioTerrDe({ cambioId: 'ct2', cargadoPor: BROKER })));
 });
+
+// =====================================================================
+// SEG. COLECCIONES VIEJAS CONGELADAS (GAP-SEG-01, 16/11/2026)
+// solicitudes_contacto, inversiones y publicaciones_inversion: se lee lo
+// que ya existe; solo el admin crea, cambia o borra.
+// =====================================================================
+
+const cargarViejas = () => cargar(async (db) => {
+  await setDoc(doc(db, 'solicitudes_contacto/s1'),
+    { campoId: 'a1', interesadoId: COMPRADOR, propietarioId: DUENO, tipoInteres: 'compra', estado: 'pendiente' });
+  await setDoc(doc(db, 'publicaciones_inversion/pi1'),
+    { campoId: 'a1', propietarioId: DUENO, titulo: 'Siembra', estado: 'activa', montoObjetivo: 1000, montoRecaudado: 0 });
+  await setDoc(doc(db, 'inversiones/i1'),
+    { inversorId: COMPRADOR, publicacionId: 'pi1', monto: 100, porcentaje: 1, estado: 'activa' });
+});
+
+test('SEG-01. Las partes siguen leyendo lo que ya existe [PERMITIDO]', async () => {
+  await cargarViejas();
+  await assertSucceeds(getDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s1')));
+  await assertSucceeds(getDoc(doc(como(DUENO), 'solicitudes_contacto/s1')));
+  await assertSucceeds(getDoc(doc(como(COMPRADOR), 'inversiones/i1')));
+  await assertSucceeds(getDoc(doc(como(DUENO), 'publicaciones_inversion/pi1')));
+});
+
+test('SEG-02. Nadie crea pedidos de contacto desde la app [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s2'),
+    { campoId: 'a1', interesadoId: COMPRADOR, propietarioId: DUENO, estado: 'pendiente' }));
+});
+
+test('SEG-03. El interesado NO puede aceptar su propio pedido ni nadie lo borra [PROHIBIDO]', async () => {
+  await cargarViejas();
+  await assertFails(updateDoc(doc(como(COMPRADOR), 'solicitudes_contacto/s1'), { estado: 'aceptada' }));
+  await assertFails(updateDoc(doc(como(DUENO), 'solicitudes_contacto/s1'), { estado: 'aceptada' }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'solicitudes_contacto/s1')));
+});
+
+test('SEG-04. Nadie publica un pedido de inversión desde la app, ni "activa" ni en un campo ajeno [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'publicaciones_inversion/pi2'),
+    { campoId: 'a1', propietarioId: DUENO, estado: 'activa', montoObjetivo: 1000, montoRecaudado: 0 }));
+  await assertFails(setDoc(doc(como(OTRO), 'publicaciones_inversion/pi3'),
+    { campoId: 'a1', propietarioId: OTRO, estado: 'activa', montoObjetivo: 1000, montoRecaudado: 0 }));
+});
+
+test('SEG-05. Un pedido de inversión NO se cambia ni se borra [PROHIBIDO]', async () => {
+  await cargarViejas();
+  await assertFails(updateDoc(doc(como(DUENO), 'publicaciones_inversion/pi1'), { montoRecaudado: 999999 }));
+  await assertFails(deleteDoc(doc(como(DUENO), 'publicaciones_inversion/pi1')));
+});
+
+test('SEG-06. Nadie anota inversiones desde la app [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(COMPRADOR), 'inversiones/i2'),
+    { inversorId: COMPRADOR, publicacionId: 'pi1', monto: 100, porcentaje: 50, estado: 'activa' }));
+});
+
+test('SEG-07. Otros NO leen inversiones ajenas ni pedidos de contacto ajenos [PROHIBIDO]', async () => {
+  await cargarViejas();
+  await assertFails(getDoc(doc(como(OTRO), 'inversiones/i1')));
+  await assertFails(getDoc(doc(como(OTRO), 'solicitudes_contacto/s1')));
+});
+
+test('SEG-08. El admin sí puede corregir o archivar [PERMITIDO]', async () => {
+  await cargarViejas();
+  await assertSucceeds(updateDoc(doc(como(ADMIN), 'publicaciones_inversion/pi1'), { estado: 'cerrada' }));
+  await assertSucceeds(updateDoc(doc(como(ADMIN), 'solicitudes_contacto/s1'), { estado: 'cancelada' }));
+});

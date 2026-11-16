@@ -422,8 +422,11 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
-    // SOLICITUDES_CONTACTO (entre interesado y propietario)
-    // -----------------------------------------------------------------
+    // SOLICITUDES_CONTACTO - CONGELADA (GAP-SEG-01, 16/11/2026)
+    // Modelo viejo: ninguna pantalla de la app la usa (el contacto del
+    // comprador va por el chat, paso 5). Se puede leer lo que ya existe
+    // (las partes y el admin); nadie crea, cambia ni borra desde la app.
+    // Archivar no es borrar.
     match /solicitudes_contacto/{solicitudId} {
       allow get: if esAdmin()
         || (logueado()
@@ -435,17 +438,7 @@ service cloud.firestore {
             && (resource.data.interesadoId == request.auth.uid
                 || resource.data.propietarioId == request.auth.uid));
 
-      allow create: if logueado()
-        && request.resource.data.interesadoId == request.auth.uid
-        && request.resource.data.propietarioId != request.auth.uid;
-
-      allow update: if esAdmin()
-        || (logueado()
-            && (resource.data.interesadoId == request.auth.uid
-                || resource.data.propietarioId == request.auth.uid)
-            && !cambia(['interesadoId', 'propietarioId', 'campoId']));
-
-      allow delete: if false;
+      allow create, update, delete: if esAdmin();
     }
 
     // -----------------------------------------------------------------
@@ -518,7 +511,15 @@ service cloud.firestore {
     }
 
     // -----------------------------------------------------------------
-    // INVERSIONES (las ve solo quien invierte)
+    // INVERSIONES y PUBLICACIONES_INVERSION - CONGELADAS (GAP-SEG-01,
+    // 16/11/2026)
+    // Modelo viejo: ninguna pantalla de la app las usa. Estaban abiertas
+    // (cualquiera publicaba "activa" sin revisión ni ser dueño, se podía
+    // borrar, y cualquiera anotaba montos y porcentajes). Invertir con
+    // porcentaje puede tener reglas legales de inversión: se diseña
+    // después del lanzamiento con su propio GAP (registro de inversores,
+    // billetera con un banco). Se puede leer lo que ya existe; nadie crea,
+    // cambia ni borra desde la app. Archivar no es borrar.
     // -----------------------------------------------------------------
     match /inversiones/{inversionId} {
       allow get: if esAdmin()
@@ -528,15 +529,9 @@ service cloud.firestore {
       allow list: if esAdmin()
         || (logueado() && resource.data.inversorId == request.auth.uid);
 
-      allow create: if logueado()
-        && request.resource.data.inversorId == request.auth.uid;
-
-      allow update, delete: if esAdmin();
+      allow create, update, delete: if esAdmin();
     }
 
-    // -----------------------------------------------------------------
-    // PUBLICACIONES_INVERSION
-    // -----------------------------------------------------------------
     match /publicaciones_inversion/{publicacionId} {
       allow get: if esAdmin()
         || (logueado()
@@ -548,17 +543,9 @@ service cloud.firestore {
             && (resource.data.estado == 'activa'
                 || resource.data.propietarioId == request.auth.uid));
 
-      allow create: if logueado()
-        && request.resource.data.propietarioId == request.auth.uid;
-
-      allow update: if esAdmin()
-        || (logueado()
-            && resource.data.propietarioId == request.auth.uid
-            && !cambia(['propietarioId']));
-
-      allow delete: if esAdmin()
-        || (logueado() && resource.data.propietarioId == request.auth.uid);
+      allow create, update, delete: if esAdmin();
     }
+
     // -----------------------------------------------------------------
     // TRABAJOS = TRABAJO OPERACIONAL V1
     // El trabajo pertenece al Activo Agro y hereda su autorizaciÃ³n.

@@ -7769,3 +7769,35 @@ Tomado de la demo de Javier (pantalla de la Soja con atardecer). Solo visual: no
 * 🟡 El profesional ve el registro pero todavía no el archivo (las Storage Rules consultan como máximo 2 documentos de Firestore). Ver y descargar archivos sigue pendiente en toda la app.
 * 🟡 Mostrar la historia al comprador solo si se comparte (checks del marketplace).
 * 🟢 marzo: satélites, alertas automáticas y comparar épocas.
+
+---
+
+# 16/11/2026 - AF-109 cerrado y subido
+
+* main = bdeb0b3 (commit hecho directamente en main), subido a GitHub.
+
+---
+
+# 16/11/2026 - GAP-SEG-01: colecciones viejas congeladas (punto 7, Seguridad restante)
+
+**Estado: CÓDIGO ENTREGADO (rama gap-seg-01), pendiente de pruebas de Javier y de publicar reglas.**
+
+### Auditoría
+
+* `solicitudes_contacto`, `inversiones` y `publicaciones_inversion` no las usa ninguna pantalla accesible de la app (restos del modelo viejo; el contacto del comprador va por el chat, paso 5).
+* Fallas encontradas: se podía mandar un pedido de contacto inventando al dueño y el interesado podía aceptar su propio pedido; cualquiera publicaba un pedido de inversión "activo" sin revisión ni ser dueño, y se podía borrar; cualquiera anotaba inversiones con cualquier monto y porcentaje; además invertir no funcionaba (la regla no dejaba sumar el monto juntado).
+* Invertir con porcentaje de un campo puede tener reglas legales de inversión (Argentina y Paraguay): queda para después del lanzamiento, con su propio GAP.
+
+### Decisión
+
+* Congelar las tres, igual que `campos` en el paso 5: se lee lo que ya existe (las partes y el admin); solo el admin crea, cambia o borra. No se borra nada. No se tocan pantallas ni modelos.
+
+### Solución
+
+* `firestore.rules`: create/update/delete solo admin en las tres colecciones; lectura igual que antes.
+* `test_rules/rules.test.mjs`: SEG-01 a SEG-08 (no había pruebas de estas colecciones).
+
+### Pendiente
+
+* Mirar en la consola de Firebase si hay documentos reales en esas colecciones.
+* 🟢 Inversiones y registro de inversores: diseño nuevo después del lanzamiento.
