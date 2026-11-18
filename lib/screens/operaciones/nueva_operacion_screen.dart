@@ -171,7 +171,8 @@ class _NuevaOperacionScreenState extends State<NuevaOperacionScreen> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: decoracionCampo(ayuda: 'Ej.: 40'),
           ),
-          const SizedBox(height: 10),
+          // QA T1-27 (18/11/2026): que se entienda qué son estos botones.
+          const EtiquetaCampo('¿En qué unidad?'),
           OpcionesTocar<String>(
             opciones: unidades,
             elegida: unidad,

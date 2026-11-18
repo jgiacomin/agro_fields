@@ -810,7 +810,10 @@ debugPrint(
   }
 
   Widget _carruselCampos() {
-    final lista = [...activos]..sort((a, b) => a.nombre.compareTo(b.nombre));
+    // QA T1-02 (18/11/2026): el más nuevo primero, para no tocar otro
+    // campo por error cuando hay muchos.
+    final lista = [...activos]
+      ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
     return SizedBox(
       height: 150,
       child: ListView.separated(

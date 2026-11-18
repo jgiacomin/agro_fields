@@ -364,10 +364,18 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         AgroTema.azul,
         _abrirMapa,
       ),
+      // QA T1-06 (18/11/2026): el suelo estaba escondido abajo.
+      (
+        Icons.terrain,
+        'Suelo',
+        'Textura, pH, materia orgánica',
+        AgroTema.terracota,
+        _abrirSuelo,
+      ),
       (
         Icons.pets,
         'Producción',
-        'Rodeos, potreros y eventos',
+        'Lugares, animales y cultivos',
         AgroTema.verde,
         () => _abrir(ProduccionActivoScreen(
             activoAgroId: id, nombreActivo: nombre)),

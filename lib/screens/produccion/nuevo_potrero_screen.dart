@@ -21,6 +21,7 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
   final ProduccionService _servicio = ProduccionService();
   final TextEditingController _nombre = TextEditingController();
   final TextEditingController _hectareas = TextEditingController();
+  final TextEditingController _capacidad = TextEditingController();
 
   static const tipos = [
     TipoUnidadProductiva.potrero,
@@ -40,6 +41,7 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
   void dispose() {
     _nombre.dispose();
     _hectareas.dispose();
+    _capacidad.dispose();
     super.dispose();
   }
 
@@ -52,7 +54,7 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
 
     final nombre = _nombre.text.trim();
     if (nombre.isEmpty) {
-      _avisar('Poné un nombre, por ejemplo "Potrero 1".');
+      _avisar('Poné un nombre, por ejemplo "Potrero 1" o "Galpón 2".');
       return;
     }
 
@@ -68,6 +70,19 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
       }
     }
 
+    // QA T1-07 (18/11/2026): capacidad (cabezas, aves, colmenas...).
+    // Vacío = no se sabe (nunca 0).
+    int? capacidad;
+    final textoCap = _capacidad.text.trim().replaceAll('.', '');
+    if (textoCap.isNotEmpty) {
+      capacidad = int.tryParse(textoCap);
+      if (capacidad == null || capacidad <= 0) {
+        _avisar('La capacidad tiene que ser un número entero mayor a cero, '
+            'o dejala vacía si no la sabés.');
+        return;
+      }
+    }
+
     setState(() => guardando = true);
 
     try {
@@ -77,6 +92,7 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
         tipo: tipo,
         nombre: nombre,
         superficieHa: hectareas,
+        capacidad: capacidad,
         creadoPor: uid,
         fechaCreacion: DateTime.now(),
       ));
@@ -98,7 +114,7 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BarraCampo(
-        title: const Text('Nuevo potrero'),
+        title: const Text('Nuevo lugar'),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
@@ -122,13 +138,20 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: decoracionCampo(ayuda: 'Si no las sabés, dejalo vacío'),
           ),
+          const EtiquetaCampo('Capacidad (opcional)'),
+          TextField(
+            controller: _capacidad,
+            keyboardType: TextInputType.number,
+            decoration: decoracionCampo(
+                ayuda: 'Cuántos animales entran. Ej.: 500 cabezas, 3000 aves'),
+          ),
         ],
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
-            texto: 'Guardar potrero',
+            texto: 'Guardar lugar',
             ocupado: guardando,
             onPressed: guardar,
           ),

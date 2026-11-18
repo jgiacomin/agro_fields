@@ -66,6 +66,10 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
         return;
       }
 
+      // QA T1-02 (18/11/2026): el más nuevo primero.
+      resultadoActualizado
+          .sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
+
       setState(() {
         activos = resultadoActualizado;
 

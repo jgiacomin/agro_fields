@@ -113,8 +113,11 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
       // GAP-PROD-02 (18/11/2026): aves y peces no tienen tenencia ni
       // "cabezas"; se dice "animales".
       if (grupo.esGanadero) nombreTenencia(grupo.tenencia),
-      '${existencias.totalCabezas} '
-          '${grupo.esGanadero ? 'cabezas' : 'animales'}',
+      // QA (18/11/2026): un total negativo es un error de carga.
+      existencias.totalCabezas < 0
+          ? 'cuentas para revisar'
+          : '${existencias.totalCabezas} '
+              '${grupo.esGanadero ? 'cabezas' : 'animales'}',
     ].join(' · ');
 
     return PopScope<bool>(
@@ -232,7 +235,8 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
     final categorias = existencias.porCategoria;
     if (categorias.isEmpty) {
       return const Text(
-        'Todavía no hay animales. Registrá una Entrada para cargarlos.',
+        'Todavía no hay animales. Tocá "Registrar evento" (abajo) → '
+        'Entrada para cargarlos.',
         style: TextStyle(color: EstiloProduccion.textoSuave),
       );
     }

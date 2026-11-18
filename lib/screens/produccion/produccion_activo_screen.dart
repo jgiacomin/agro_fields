@@ -136,6 +136,9 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
         rodeos.fold<int>(0, (suma, r) => suma + r.existencias.totalCabezas);
     // GAP-PROD-02 (18/11/2026): con aves o peces se dice "animales".
     final soloGanaderia = rodeos.every((r) => r.grupo.esGanadero);
+    // QA (18/11/2026): un total negativo es un error de carga: se muestra
+    // "Revisar" en vez del número.
+    final totalNegativo = totalCabezas < 0;
     final palabraTotal = soloGanaderia
         ? (totalCabezas == 1 ? 'cabeza' : 'cabezas')
         : (totalCabezas == 1 ? 'animal' : 'animales');
@@ -156,7 +159,10 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                       Text(
                         [
                           widget.nombreActivo,
-                          if (rodeos.isNotEmpty) '$totalCabezas $palabraTotal',
+                          if (rodeos.isNotEmpty)
+                            totalNegativo
+                                ? 'cuentas para revisar'
+                                : '$totalCabezas $palabraTotal',
                           if (cultivos.isNotEmpty)
                             '${cultivos.length} '
                                 '${cultivos.length == 1 ? 'cultivo' : 'cultivos'}',
@@ -169,7 +175,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                       const SizedBox(height: 14),
                       ResumenNumeros([
                         (
-                          '$totalCabezas',
+                          totalNegativo ? 'Revisar' : '$totalCabezas',
                           palabraTotal,
                           Icons.pets,
                           EstiloProduccion.terracota,
@@ -194,8 +200,11 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                       if (rodeos.isEmpty)
                         const EstadoVacio(
                           icono: Icons.pets,
-                          texto: 'Todavía no hay animales. Tocá "+ Animales" '
-                              'para cargar un rodeo, aves o peces.',
+                          texto: 'Todavía no hay animales. Primero cargá tus '
+                              'lugares con "+ Lote o potrero". Después tocá '
+                              '"+ Animales" para crear un rodeo o un lote, y '
+                              'adentro "Registrar evento" → Entrada para '
+                              'sumar los animales.',
                         ),
                       ...rodeos.map(_tarjetaRodeo),
                       const SizedBox(height: 24),
@@ -223,8 +232,9 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                       if (unidades.isEmpty)
                         const EstadoVacio(
                           icono: Icons.crop_square,
-                          texto: 'Todavía no hay lotes ni potreros. Cargá al '
-                              'menos uno para saber dónde está cada cosa.',
+                          texto: 'Empezá por acá: tocá "+ Lote o potrero" y '
+                              'cargá tus potreros, lotes, corrales, galpones '
+                              'o estanques.',
                         )
                       else
                         TarjetaBlanca(
@@ -316,8 +326,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${existencias.totalCabezas} '
-                      '${rodeo.grupo.esGanadero ? 'cabezas' : 'animales'}'
+                      '${existencias.totalCabezas < 0 ? 'Revisar las cuentas' : '${existencias.totalCabezas} ${rodeo.grupo.esGanadero ? 'cabezas' : 'animales'}'}'
                       '${lugares.isEmpty ? '' : ' · $lugares'}',
                       style: const TextStyle(
                         fontSize: 14,
@@ -411,8 +420,15 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
   }
 
   Widget _filaUnidad(UnidadProductiva unidad, {required bool ultima}) {
-    final detalle = unidad.superficieHa != null
+    final ha = unidad.superficieHa != null
         ? '${unidad.superficieHa!.toStringAsFixed(unidad.superficieHa! % 1 == 0 ? 0 : 1)} ha'
+        : null;
+    // QA T1-07 (18/11/2026): se muestra la capacidad si está cargada.
+    final cap =
+        unidad.capacidad != null ? 'capacidad ${unidad.capacidad}' : null;
+    final partes = [if (ha != null) ha, if (cap != null) cap];
+    final detalle = partes.isNotEmpty
+        ? partes.join(' · ')
         : unidad.tipo == TipoUnidadProductiva.potrero
             ? 'Sin información'
             : nombreTipoUnidad(unidad.tipo);
