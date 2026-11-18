@@ -742,7 +742,9 @@ service cloud.firestore {
     }
 
     function actividadesMovimiento() {
-      return ['ganaderia', 'agricultura', 'apicultura', 'piscicultura', 'otra'];
+      // GAP-PROD-02 (18/11/2026): se suma 'avicultura'.
+      return ['ganaderia', 'agricultura', 'apicultura', 'piscicultura',
+              'avicultura', 'otra'];
     }
 
     function estadosMovimiento() {

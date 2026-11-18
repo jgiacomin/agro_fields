@@ -18,6 +18,8 @@ class Movimiento {
     'agricultura',
     'apicultura',
     'piscicultura',
+    // GAP-PROD-02 (18/11/2026)
+    'avicultura',
     'otra',
   ];
 
@@ -27,6 +29,7 @@ class Movimiento {
     'agricultura': ['tn', 'kg', 'bolsas'],
     'apicultura': ['colmenas', 'kg'],
     'piscicultura': ['kg', 'unidades'],
+    'avicultura': ['unidades', 'kg', 'jaulas'],
     'otra': ['unidades', 'kg', 'tn'],
   };
 

@@ -3906,3 +3906,12 @@ Siguiente según el plan: **10. Plan gratuito y precio**.
 2. ✅ **GAP-ARCH-01 Ver y descargar archivos** — CERRADO (probado en Chrome).
 3. ✅ **GAP-ADMIN-01 Pantalla de administración** — CERRADO (probado en Chrome; reglas subidas con `firebase deploy`).
 4. ✅ **Diseño V8 del Inicio y de la ficha del campo** — CERRADO (validado en Chrome y en modo celular; rama `diseno-v8-inicio`).
+
+## Aves y peces + alertas oficiales — Estado (18/11/2026)
+
+✅ **GAP-PROD-02 (AF-110) Aves y peces, versión mínima** — CERRADO (probado en Chrome; reglas 292/292; flutter test 313 + 2 fallas conocidas).
+✅ **AF-111 Botón "Ver alertas oficiales"** — CERRADO (SMN para Argentina, DMH para Paraguay).
+
+Concepto General: casos 25.2 (Tonelli), 25.3 (aves y peces), 25.4 (tormentas sur de Córdoba), 25.5 (Inteligencia Hídrica) y 25.6 (mercado mundial de carne vacuna). Matriz AF-110 a AF-117.
+
+Para marzo 2027 (🟡/🟢): ocupación de corrales (AF-112), días de permanencia (AF-113), estado de caminos y accesos (AF-114), napas y planchado (AF-115), evaluación de daños (AF-116), alertas automáticas por ubicación (AF-117), identificación individual y requisitos por mercado.

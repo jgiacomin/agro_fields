@@ -28,6 +28,8 @@ class _NuevoPotreroScreenState extends State<NuevoPotreroScreen> {
     TipoUnidadProductiva.lote,
     TipoUnidadProductiva.galpon,
     TipoUnidadProductiva.tambo,
+    // GAP-PROD-02 (18/11/2026): para peces.
+    TipoUnidadProductiva.estanque,
     TipoUnidadProductiva.otro,
   ];
 

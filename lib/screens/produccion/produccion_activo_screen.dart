@@ -134,6 +134,11 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
   Widget build(BuildContext context) {
     final totalCabezas =
         rodeos.fold<int>(0, (suma, r) => suma + r.existencias.totalCabezas);
+    // GAP-PROD-02 (18/11/2026): con aves o peces se dice "animales".
+    final soloGanaderia = rodeos.every((r) => r.grupo.esGanadero);
+    final palabraTotal = soloGanaderia
+        ? (totalCabezas == 1 ? 'cabeza' : 'cabezas')
+        : (totalCabezas == 1 ? 'animal' : 'animales');
 
     return Scaffold(
       appBar: BarraCampo(
@@ -151,7 +156,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                       Text(
                         [
                           widget.nombreActivo,
-                          if (rodeos.isNotEmpty) '$totalCabezas cabezas',
+                          if (rodeos.isNotEmpty) '$totalCabezas $palabraTotal',
                           if (cultivos.isNotEmpty)
                             '${cultivos.length} '
                                 '${cultivos.length == 1 ? 'cultivo' : 'cultivos'}',
@@ -165,7 +170,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                       ResumenNumeros([
                         (
                           '$totalCabezas',
-                          totalCabezas == 1 ? 'cabeza' : 'cabezas',
+                          palabraTotal,
                           Icons.pets,
                           EstiloProduccion.terracota,
                         ),
@@ -184,12 +189,13 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                         ),
                       ]),
                       const SizedBox(height: 20),
-                      const TituloSeccion('Rodeos', icono: Icons.pets),
+                      TituloSeccion(soloGanaderia ? 'Rodeos' : 'Animales',
+                          icono: Icons.pets),
                       if (rodeos.isEmpty)
                         const EstadoVacio(
                           icono: Icons.pets,
-                          texto: 'Todavía no hay rodeos. Tocá "Nuevo rodeo" '
-                              'para empezar.',
+                          texto: 'Todavía no hay animales. Tocá "+ Animales" '
+                              'para cargar un rodeo, aves o peces.',
                         ),
                       ...rodeos.map(_tarjetaRodeo),
                       const SizedBox(height: 24),
@@ -240,7 +246,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
             children: [
               Expanded(
                 child: BotonGrande(
-                  texto: '+ Nuevo rodeo',
+                  texto: '+ Animales',
                   onPressed: () => abrir(NuevoRodeoScreen(
                     activoAgroId: widget.activoAgroId,
                     unidades: unidades,
@@ -264,6 +270,18 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
     );
   }
 
+  /// GAP-PROD-02: ícono según la especie del lote.
+  IconData _iconoActividad(String actividad) {
+    switch (actividad) {
+      case 'avicultura':
+        return Icons.egg_outlined;
+      case 'piscicultura':
+        return Icons.set_meal;
+      default:
+        return Icons.pets;
+    }
+  }
+
   Widget _tarjetaRodeo(_RodeoConExistencias rodeo) {
     final existencias = rodeo.existencias;
     final lugares = existencias.porUnidad.keys
@@ -282,7 +300,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const IconoCirculo(Icons.pets,
+              IconoCirculo(_iconoActividad(rodeo.grupo.actividad),
                   color: EstiloProduccion.terracota, tamano: 48),
               const SizedBox(width: 12),
               Expanded(
@@ -298,7 +316,8 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${existencias.totalCabezas} cabezas'
+                      '${existencias.totalCabezas} '
+                      '${rodeo.grupo.esGanadero ? 'cabezas' : 'animales'}'
                       '${lugares.isEmpty ? '' : ' · $lugares'}',
                       style: const TextStyle(
                         fontSize: 14,

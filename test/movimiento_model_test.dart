@@ -64,4 +64,17 @@ void main() {
       expect(leido.actividad, 'otra');
     });
   });
+
+  group('GAP-PROD-02 - traslado de aves (18/11/2026)', () {
+    test('avicultura es una actividad de traslado con sus unidades', () {
+      expect(Movimiento.actividades, contains('avicultura'));
+      expect(Movimiento.unidadesPorActividad['avicultura'], isNotEmpty);
+    });
+
+    test('toda actividad tiene unidades sugeridas', () {
+      for (final a in Movimiento.actividades) {
+        expect(Movimiento.unidadesPorActividad[a], isNotNull, reason: a);
+      }
+    });
+  });
 }

@@ -1016,6 +1016,15 @@ Todo lo marcado 🔴 debe pasar al cuadro de lanzamiento, a la Matriz y al Roadm
 
 - Caso de referencia Pretto Agronegocios con cuadro de lo que existe y lo que falta (sección 25.1). Matriz AF-102 a AF-108.
 
+### Incorporaciones del 18/11/2026
+
+- Caso de referencia "Nueva era de la ganadería" (antecedente: declaraciones de Víctor Tonelli) (sección 25.2). Matriz AF-112 y AF-113.
+- Avicultura y piscicultura: estado del núcleo productivo según la auditoría del código del 18/11/2026 (sección 25.3). Matriz AF-110.
+- Caso de referencia: tormentas en el sur de Córdoba (sección 25.4). Matriz AF-111, AF-116 y AF-117.
+- Caso de referencia: Inteligencia Hídrica Territorial, excesos hídricos en el sur de Santa Fe (sección 25.5). Matriz AF-114 y AF-115.
+
+Los cuatro casos se cargaron a partir de los antecedentes registrados en las jornadas del 16 y 17/11/2026, no de los documentos originales completos. Toda cifra se confirma con su fuente antes de usarla.
+
 ---
 
 ## 25. Casos de referencia estratégicos
@@ -1047,3 +1056,81 @@ Todo lo marcado 🔴 debe pasar al cuadro de lanzamiento, a la Matriz y al Roadm
 | Trazabilidad de la carne hasta el consumidor | Eventos, movimientos y documentos | Faena, desposte, rendimiento de carne (conexión con frigoríficos) | 🟢 |
 
 **Criterio:** no se crea un módulo por caso. Cada punto se apoya en lo que ya existe (núcleo productivo, movimientos, stock, economía, autorizaciones). Lo 🔴 entra con el punto 6 del plan (Suelo y pesajes), sin módulo nuevo.
+
+### 25.2. "Nueva era de la ganadería" (antecedente: declaraciones de Víctor Tonelli, El Rural, 16/11/2026)
+
+**Estado:** antecedente estratégico registrado el 16/11/2026 a partir del análisis del usuario; no es el documento original ni una especificación técnica. Las cifras son las atribuidas a Tonelli y se confirman con la fuente antes de usarlas.
+
+**Síntesis del antecedente:** animales terminados de 550 a 600 kg; transformación genética y nutricional; más recría y permanencia en feedlot; ocupación de corrales del 72 %; según Tonelli, potencial de aumentar un 60 % la producción de carne.
+
+**Principio:** los indicadores se calculan con los datos que el productor ya carga (pesajes, altas, bajas, movimientos, capacidad de las unidades). No se escriben a mano ni se crea un módulo nuevo.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Peso de terminación (550–600 kg) | Pesaje con peso promedio y ganancia diaria (GAP-PESO-01) | — | ✅ |
+| Ocupación de corrales | Unidad "corral" con capacidad; existencias calculadas por eventos | Calcular existencias ÷ capacidad de cada corral | 🟡 |
+| Recría y permanencia en feedlot | Etapas del rodeo (recría pastoril, de corral, mixta, feedlot); altas, bajas y movimientos con fecha | Calcular días de permanencia por lote | 🟡 |
+| Nutrición y conversión | Evento "alimentación" preparado; stock de alimento | Registrar alimentación y cruzarla con pesajes | 🟡 |
+| Genética | — | Registro genético por lote o animal (enlaza con identificación individual) | 🟢 |
+| Producción de carne del campo | Pesajes, ventas y bajas | Kilos producidos por hectárea y por año | 🟢 |
+
+### 25.3. Avicultura y piscicultura
+
+**Estado:** el 16/11/2026 el usuario señaló que todavía falta todo lo avícola y piscícola, y que no se sabe si habrá productores de esas actividades entre los primeros Fundadores (cualquiera puede registrarse con un mail). El 18/11/2026 se auditó el código del núcleo productivo (GAP-PROD-01).
+
+**Qué ya sirve (sin cambiar reglas de producción):**
+
+- Unidades productivas: el modelo ya tiene "galpón" y "estanque".
+- Grupo productivo: la actividad es texto libre; no está atado a la ganadería bovina.
+- Categorías: texto libre; cada productor puede usar las suyas.
+- Eventos: alta, baja (mortandad), pesaje (acepta decimales), sanidad y movimiento sirven igual para aves y peces.
+- Traslados: la colección única de movimientos ya acepta "piscicultura".
+
+**Qué falta para una versión mínima:**
+
+- Elegir la actividad al crear el grupo (hoy la pantalla guarda siempre "ganadería").
+- Ofrecer "estanque" en la lista de unidades.
+- Categorías sugeridas por especie (aves: pollitos BB, parrilleros, ponedoras, reproductores; peces: alevines, juveniles, engorde, reproductores).
+- Textos neutros ("lote", "animales") en lugar de "rodeo" y "cabezas" cuando no es ganadería.
+- Sumar "avicultura" a los traslados y, si se decide, "avicultura" y "piscicultura" a las actividades de gastos (hoy se puede usar "general").
+
+**Para después:** conversión alimenticia, biomasa y densidad del estanque, postura de huevos y calidad de agua como indicadores propios (🟡/🟢). Antes de programarlos se estudia el funcionamiento real de cada actividad (sección 4.7).
+
+**Decisión (18/11/2026):** versión mínima para enero (GAP-PROD-02, Matriz AF-110).
+
+### 25.4. Tormentas en el sur de Córdoba (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 16/11/2026; no es especificación técnica.
+
+**Síntesis:** tormentas fuertes con granizo, lluvias intensas y viento en Río Cuarto, General Cabrera, San Basilio y Adelia María; alerta naranja del Servicio Meteorológico Nacional para Córdoba y sectores de Catamarca, La Rioja, San Luis y Santa Fe. El usuario señaló que Emergencias puede potenciar mucho el sistema, más con El Niño.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Registrar lo que pasó en cada campo | Registrar emergencia en el expediente (AF-092) | — | ✅ |
+| Campos que pueden recibir hacienda | Marca voluntaria "disponible para recibir" (AF-092) | — | ✅ |
+| Memoria del territorio | Historia del territorio en la ficha del campo (AF-109) | — | ✅ |
+| Saber qué campos están en la zona afectada | Ubicación del campo en el mapa (AF-090) | Cruzar la ubicación con la zona de la alerta | 🟡 |
+| Evaluación de daños | Afectaciones dentro del evento de emergencia | Pantalla guiada de daños (superficie, cultivo, animales, infraestructura) | 🟡 |
+| Llegar a la alerta oficial | — | Botón "Ver alertas oficiales" según el país del campo (AF-111) | 🔴 |
+| Alertas automáticas | — | Conexión con alertas del SMN por vías oficiales y avisos automáticos (AF-117) | 🟢 |
+
+**Criterio:** Agro Fields informa y registra; la alerta oficial es del organismo. No se generan alertas propias como si fueran oficiales.
+
+### 25.5. Inteligencia Hídrica Territorial (antecedente: excesos hídricos en el sur de Santa Fe, 17/11/2026)
+
+**Estado:** antecedente estratégico registrado el 17/11/2026; no es el documento original ni una especificación técnica.
+
+**Síntesis del antecedente:** excesos hídricos en el sur de Santa Fe; demoras en siembra y cosecha; anegamientos y planchado de suelos; caminos rurales intransitables; dificultades para trasladar maquinaria. Temas que abre: agua, napas, caminos, cuencas, transitabilidad y logística.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Registrar el anegamiento | Emergencia en el expediente (AF-092); monitoreo con objetivo "agua" (GAP-MON-01) | — | ✅ |
+| Obras que cambian el agua (canales, drenajes, caminos) | Historia del territorio con tipos canal, drenaje y camino (AF-109) | — | ✅ |
+| Planchado y estado del suelo | Pantalla de suelo (GAP-SUELO-01) | Registrar el planchado con fecha y evidencia | 🟡 |
+| Caminos y accesos intransitables | — | Estado de acceso del campo (transitable / con dificultad / intransitable) con fecha y fuente | 🟡 |
+| Demoras en siembra y cosecha | Siembra y cosecha con fecha | Comparar fecha planificada contra real | 🟡 |
+| Napas | — | Dato de profundidad de napa con fuente y fecha | 🟡 |
+| Cuencas, satélite y transitabilidad regional | — | Capas territoriales y fuentes oficiales | 🟢 |
+| Traslado de maquinaria y logística | Núcleo común de movimientos (sección 8) | Avisos de acceso para transporte | 🟢 |
+
+**Criterio:** se conecta con Territorio (sección 9) y Emergencias (sección 10) sin duplicar datos. Se separan hechos, estimaciones e hipótesis, y no se atribuye una causa ambiental sin evidencia suficiente.

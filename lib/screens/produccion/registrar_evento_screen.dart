@@ -73,10 +73,14 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
 
   Map<String, int> get existentes => widget.existencias.porCategoria;
 
+  /// GAP-PROD-02 (18/11/2026): categorias sugeridas segun la especie
+  /// del lote (vacas, aves o peces).
+  List<String> get _categoriasBase => categoriasBasePara(widget.grupo.actividad);
+
   /// Para una entrada se ofrecen todas; para lo demas, las que hay.
   List<String> get categoriasPosibles {
     if (tipo == TipoEventoProductivo.alta || existentes.isEmpty) {
-      return {...categoriasGanaderasBase, ...existentes.keys}.toList();
+      return {..._categoriasBase, ...existentes.keys}.toList();
     }
     return existentes.keys.toList();
   }
@@ -417,7 +421,7 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
         if (esCambio) ...[
           const EtiquetaCampo('Categoría nueva'),
           OpcionesTocar<String>(
-            opciones: {...categoriasGanaderasBase, ...existentes.keys}
+            opciones: {..._categoriasBase, ...existentes.keys}
                 .where((c) => c != categoria)
                 .toList(),
             elegida: categoriaNueva,

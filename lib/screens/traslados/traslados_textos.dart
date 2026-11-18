@@ -12,6 +12,8 @@ String nombreActividad(String a) {
       return 'Colmenas / miel';
     case 'piscicultura':
       return 'Peces';
+    case 'avicultura':
+      return 'Aves';
     case 'otra':
       return 'Otro';
   }

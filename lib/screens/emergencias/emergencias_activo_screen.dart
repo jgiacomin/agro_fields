@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/activos/disponibilidad_recepcion_model.dart';
 import '../../models/activos/evento_afectacion_model.dart';
@@ -35,6 +36,9 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
   String? error;
   List<EventoAfectacion> eventos = [];
 
+  /// AF-111: país del campo, para el botón de alertas oficiales.
+  String? pais;
+
   bool disponible = false;
   Set<String> recursos = {};
 
@@ -62,6 +66,7 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
       final d = activo?.disponibleParaRecibir;
       setState(() {
         eventos = lista;
+        pais = activo?.ubicacion.pais;
         disponible = d?.activa ?? false;
         recursos = {...?d?.recursos};
         _capacidad.text = d?.capacidad ?? '';
@@ -151,7 +156,9 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
                           color: EstiloProduccion.textoSuave,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
+                      _botonAlertasOficiales(),
+                      const SizedBox(height: 12),
                       _tarjetaDisponible(),
                       const SizedBox(height: 24),
                       const TituloSeccion('Emergencias registradas', icono: Icons.warning_amber_rounded),
@@ -178,6 +185,30 @@ class _EmergenciasActivoScreenState extends State<EmergenciasActivoScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  /// AF-111 (18/11/2026): abre la página oficial de alertas del país del
+  /// campo. No guarda nada ni toca reglas.
+  Widget _botonAlertasOficiales() {
+    final alerta = alertaOficialPara(pais);
+    if (alerta == null) return const SizedBox.shrink();
+    return BotonGrande(
+      texto: 'Ver alertas oficiales',
+      contorno: true,
+      onPressed: () async {
+        final mensajero = ScaffoldMessenger.of(context);
+        try {
+          final ok = await launchUrl(Uri.parse(alerta.url),
+              mode: LaunchMode.externalApplication);
+          if (!ok) throw StateError('no se pudo abrir');
+        } catch (_) {
+          mensajero.showSnackBar(SnackBar(
+            content: Text('No se pudo abrir la página de ${alerta.organismo}. '
+                '¿Hay señal?'),
+          ));
+        }
+      },
     );
   }
 

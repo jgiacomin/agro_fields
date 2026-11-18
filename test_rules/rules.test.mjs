@@ -1351,6 +1351,31 @@ test('MOV-05. NO se registra con actividad inventada, cantidad cero o sin destin
   await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { destinoDescripcion: '' })));
 });
 
+// GAP-PROD-02 (18/11/2026): aves y peces sobre el mismo núcleo.
+test('MOV-05b. Se registran traslados de aves y de peces [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'movimientos/mv1'),
+    trasladoDe(DUENO, { actividad: 'avicultura', carga: 'Parrilleros', cantidadDeclarada: 5000, unidad: 'unidades' })));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'movimientos/mv2'),
+    trasladoDe(DUENO, { movimientoId: 'mv2', actividad: 'piscicultura', carga: 'Alevines', cantidadDeclarada: 200, unidad: 'kg' })));
+});
+
+test('PROD-AVES. Galpón con parrilleros y estanque con alevines: alta, muerte y pesaje [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(DUENO), 'unidades_productivas/u1'),
+    unidadDe(DUENO, { tipo: 'galpon', nombre: 'Galpón 1' })));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'unidades_productivas/u2'),
+    unidadDe(DUENO, { unidadId: 'u2', tipo: 'estanque', nombre: 'Estanque 2' })));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'grupos_productivos/g1'),
+    grupoDe(DUENO, { actividad: 'avicultura', nombre: 'Galpón 1 parrilleros', etapa: null, tenencia: 'desconocida' })));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'grupos_productivos/g2'),
+    grupoDe(DUENO, { grupoId: 'g2', actividad: 'piscicultura', nombre: 'Estanque 2 tilapias', etapa: null, tenencia: 'desconocida' })));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev1'),
+    eventoProdDe(DUENO, { categoria: 'parrilleros', cantidad: 5000, unidadId: 'u1' })));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev2'),
+    eventoProdDe(DUENO, { eventoId: 'ev2', tipo: 'baja', motivo: 'muerte', origen: null, categoria: 'parrilleros', cantidad: 40 })));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'eventos_productivos/ev3'),
+    eventoProdDe(DUENO, { eventoId: 'ev3', grupoId: 'g2', tipo: 'pesaje', origen: null, categoria: 'alevines', cantidad: null, pesoPromedioKg: 0.35 })));
+});
+
 test('MOV-06. NO se registra ya entregado ni como verificado [PROHIBIDO]', async () => {
   await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { estado: 'entregado' })));
   await assertFails(setDoc(doc(como(DUENO), 'movimientos/mv1'), trasladoDe(DUENO, { estadoDato: 'verificado' })));

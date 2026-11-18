@@ -50,6 +50,44 @@ const List<String> categoriasGanaderasBase = [
   'novillo',
 ];
 
+/// GAP-PROD-02 (18/11/2026): actividades con animales que la app ofrece
+/// al crear un lote. El núcleo es el mismo para todas (altas, bajas,
+/// pesajes, sanidad, movimientos); solo cambian las categorías sugeridas.
+const List<String> actividadesAnimales = [
+  'ganaderia',
+  'avicultura',
+  'piscicultura',
+];
+
+/// GAP-PROD-02: categorías base de avicultura (sugerencias, no lista fija).
+const List<String> categoriasAvicolasBase = [
+  'pollitos BB',
+  'parrilleros',
+  'ponedoras',
+  'reproductores',
+];
+
+/// GAP-PROD-02: categorías base de piscicultura (sugerencias, no lista fija).
+const List<String> categoriasPiscicolasBase = [
+  'alevines',
+  'juveniles',
+  'engorde',
+  'reproductores',
+];
+
+/// GAP-PROD-02: categorías sugeridas según la actividad del lote.
+/// Cualquier otra actividad usa las de ganadería (como hasta ahora).
+List<String> categoriasBasePara(String actividad) {
+  switch (actividad) {
+    case 'avicultura':
+      return categoriasAvicolasBase;
+    case 'piscicultura':
+      return categoriasPiscicolasBase;
+    default:
+      return categoriasGanaderasBase;
+  }
+}
+
 /// GAP-AGRO-01 (12/11/2026): cultivos base de agricultura. Como las
 /// categorías ganaderas, el cultivo es texto: el productor puede usar otro.
 const List<String> cultivosBase = [
@@ -118,6 +156,10 @@ class GrupoProductivo {
   });
 
   bool get esAgricola => actividad == 'agricultura';
+
+  /// GAP-PROD-02: true si es un rodeo de ganadería (o un grupo viejo sin
+  /// actividad). Aves y peces se muestran como "lote" y "animales".
+  bool get esGanadero => actividad == 'ganaderia' || actividad.isEmpty;
 
   factory GrupoProductivo.fromMap(Map<String, dynamic> map, String id) {
     return GrupoProductivo(

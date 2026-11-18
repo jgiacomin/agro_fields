@@ -8072,3 +8072,43 @@ Completa lo que quedó pendiente el 13/11: el Inicio y la ficha usaban el estilo
 ### Validación
 
 * Capturas de Javier en Chrome y en modo celular (DevTools): nada se corta ni se aprieta.
+
+---
+
+# 18/11/2026 - GAP-PROD-02 Aves y peces + AF-111 Alertas oficiales (rama gap-prod-02)
+
+**Estado: VALIDADO EN LA APP (Chrome).**
+
+Origen: el 16/11 se señaló que faltaba todo lo avícola y piscícola. El 18/11 se auditó GAP-PROD-01 y se vio que el núcleo ya servía (unidades galpón y estanque, actividad y categorías libres, eventos comunes). Decisión (delegada en lo más eficiente): versión mínima para enero (Matriz AF-110) y botón de alertas oficiales en Emergencias (AF-111, caso tormentas del sur de Córdoba). Concepto General 25.2 a 25.6 sumados el mismo día.
+
+### Solución
+
+* `grupo_productivo_model.dart`: `actividadesAnimales` (ganaderia, avicultura, piscicultura), categorías base de aves y de peces, `categoriasBasePara(actividad)` y `esGanadero` (también true para grupos viejos sin actividad).
+* `nuevo_rodeo_screen.dart`: se elige Ganadería, Aves o Peces; etapa y tenencia solo en ganadería; títulos "Nuevo lote" / "Guardar lote".
+* `nuevo_potrero_screen.dart`: "Estanque" en la lista.
+* `registrar_evento_screen.dart`: categorías sugeridas según la especie; "lugar" en vez de "potrero" para aves y peces.
+* `produccion_activo_screen.dart`: botón "+ Animales"; "animales" en vez de "cabezas" cuando hay aves o peces; ícono por especie.
+* `detalle_rodeo_screen.dart`: sin tenencia ni "cabezas" para aves y peces; los pesos se muestran con los decimales necesarios (0,35 kg ya no se ve "0").
+* `movimiento_model.dart` y `traslados_textos.dart`: "avicultura" (Aves) en traslados.
+* `emergencias_textos.dart` y `emergencias_activo_screen.dart`: botón "Ver alertas oficiales" según el país del campo (Argentina → SMN, Paraguay → DMH; otro país, sin botón). Solo abre la página oficial: no guarda datos.
+* `firestore.rules`: se suma 'avicultura' a las actividades de traslados. Nada más.
+* No se tocó Gastos: aves y peces usan "general" en enero.
+
+### Validación
+
+* `flutter test`: 313 bien + las 2 fallas conocidas (antes 304; 9 nuevos en `grupo_productivo_model_test`, `movimiento_model_test` y `alertas_oficiales_test`).
+* Reglas: 292/292 (antes 290; MOV-05b y PROD-AVES).
+* `flutter analyze`: 0 errores en `lib` y `test`. Los 866 errores que muestra son de la carpeta `diseno_v8_parte3` (copia de la demo de diseño, no es parte de la app).
+* A mano en Chrome: galpón con 5000 parrilleros, salida por muerte de 40 → 4960 y mortandad 0,8 %; estanque con 2000 alevines y pesaje de 0,35 kg; rodeos de vacas sin cambios (el "Rodeo de prueba" muestra -2 cabezas con "1 cuenta para revisar": datos de prueba viejos, discrepancia conservada a propósito); botón de alertas oficiales abre la página del SMN.
+
+### Correcciones durante la prueba
+
+* "¿A qué potrero entran?" aparecía en peces → ahora dice "lugar".
+* El pesaje de 0,35 kg se veía "0 kg promedio" → se muestran los decimales necesarios.
+
+### Pendiente
+
+* Publicar las reglas: `firebase deploy --only firestore:rules,storage`.
+* Indicadores propios de aves y peces (conversión, biomasa, postura) 🟡/🟢.
+* Opcional: excluir `diseno_v8_parte3` del análisis.
+* Mejora para el QA de diciembre: en el resumen de Producción, mostrar "revisar" en vez de un total negativo.

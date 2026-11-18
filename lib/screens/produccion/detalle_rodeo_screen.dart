@@ -110,8 +110,11 @@ class _DetalleRodeoScreenState extends State<DetalleRodeoScreen> {
     final grupo = widget.grupo;
     final subtitulo = [
       if (grupo.etapa != null) nombreEtapa(grupo.etapa!),
-      nombreTenencia(grupo.tenencia),
-      '${existencias.totalCabezas} cabezas',
+      // GAP-PROD-02 (18/11/2026): aves y peces no tienen tenencia ni
+      // "cabezas"; se dice "animales".
+      if (grupo.esGanadero) nombreTenencia(grupo.tenencia),
+      '${existencias.totalCabezas} '
+          '${grupo.esGanadero ? 'cabezas' : 'animales'}',
     ].join(' · ');
 
     return PopScope<bool>(

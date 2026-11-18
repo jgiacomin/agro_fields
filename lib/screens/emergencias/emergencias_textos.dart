@@ -68,3 +68,28 @@ String nombreRecurso(String recurso) {
   }
   return recurso;
 }
+
+/// AF-111 (18/11/2026): página oficial de alertas según el país del campo.
+/// Agro Fields no genera alertas: solo lleva a la del organismo oficial.
+/// Devuelve null si el país no tiene página cargada todavía.
+class AlertaOficial {
+  final String organismo;
+  final String url;
+
+  const AlertaOficial(this.organismo, this.url);
+}
+
+AlertaOficial? alertaOficialPara(String? pais) {
+  // El país se escribe a mano al crear el campo: se acepta "Argentina",
+  // "argentina", "Rep. Argentina", "AR", etc.
+  final p = (pais ?? '').trim().toLowerCase();
+  if (p.contains('argentin') || p == 'ar') {
+    return const AlertaOficial(
+        'Servicio Meteorológico Nacional (SMN)', 'https://www.smn.gob.ar/');
+  }
+  if (p.contains('paraguay') || p == 'py') {
+    return const AlertaOficial('Dirección de Meteorología e Hidrología (DMH)',
+        'https://www.meteorologia.gov.py/');
+  }
+  return null;
+}
