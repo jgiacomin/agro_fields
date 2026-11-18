@@ -16,16 +16,23 @@ import '../../core/theme/agro_tema.dart';
 import 'produccion_estilo.dart';
 import '../../widgets/barra_campo.dart';
 
+/// QA Grupo B (18/11/2026): desde dónde se entra a Producción.
+/// Desde "Primeros pasos" se muestra un solo botón (el del paso), para no
+/// confundir; desde el botón "Producción" de la ficha, los dos.
+enum EnfoqueProduccion { normal, lugares, animales }
+
 /// Pantalla 1 (paso 6a, GAP-PROD-01): la produccion de un campo.
 /// Muestra los rodeos con su total de cabezas y los potreros.
 class ProduccionActivoScreen extends StatefulWidget {
   final String activoAgroId;
   final String nombreActivo;
+  final EnfoqueProduccion enfoque;
 
   const ProduccionActivoScreen({
     super.key,
     required this.activoAgroId,
     required this.nombreActivo,
+    this.enfoque = EnfoqueProduccion.normal,
   });
 
   @override
@@ -252,31 +259,70 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: BotonGrande(
-                  texto: '+ Animales',
-                  onPressed: () => abrir(NuevoRodeoScreen(
-                    activoAgroId: widget.activoAgroId,
-                    unidades: unidades,
-                  )),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: BotonGrande(
-                  texto: '+ Lote o potrero',
-                  contorno: true,
-                  onPressed: () => abrir(NuevoPotreroScreen(
-                    activoAgroId: widget.activoAgroId,
-                  )),
-                ),
-              ),
-            ],
-          ),
+          child: _botonesAbajo(),
         ),
       ),
+    );
+  }
+
+  /// QA Grupo B (18/11/2026): qué botones van abajo.
+  /// - Desde el paso "lugares": solo "+ Lote o potrero".
+  /// - Desde el paso "animales": solo "+ Animales".
+  /// - Normal: los dos; si todavía no hay lugares, "+ Lote o potrero" va
+  ///   primero y grande (es lo que hay que hacer antes).
+  Widget _botonesAbajo() {
+    final lugar = BotonGrande(
+      texto: '+ Lote o potrero',
+      onPressed: () => abrir(NuevoPotreroScreen(
+        activoAgroId: widget.activoAgroId,
+      )),
+    );
+    final animales = BotonGrande(
+      texto: '+ Animales',
+      onPressed: () => abrir(NuevoRodeoScreen(
+        activoAgroId: widget.activoAgroId,
+        unidades: unidades,
+      )),
+    );
+
+    switch (widget.enfoque) {
+      case EnfoqueProduccion.lugares:
+        return lugar;
+      case EnfoqueProduccion.animales:
+        return animales;
+      case EnfoqueProduccion.normal:
+        break;
+    }
+
+    final lugaresPrimero = !cargando && unidades.isEmpty;
+    final lugarContorno = BotonGrande(
+      texto: '+ Lote o potrero',
+      contorno: true,
+      onPressed: () => abrir(NuevoPotreroScreen(
+        activoAgroId: widget.activoAgroId,
+      )),
+    );
+    final animalesContorno = BotonGrande(
+      texto: '+ Animales',
+      contorno: true,
+      onPressed: () => abrir(NuevoRodeoScreen(
+        activoAgroId: widget.activoAgroId,
+        unidades: unidades,
+      )),
+    );
+
+    return Row(
+      children: lugaresPrimero
+          ? [
+              Expanded(child: lugar),
+              const SizedBox(width: 12),
+              Expanded(child: animalesContorno),
+            ]
+          : [
+              Expanded(child: animales),
+              const SizedBox(width: 12),
+              Expanded(child: lugarContorno),
+            ],
     );
   }
 

@@ -184,8 +184,16 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         _abrirSuelo();
         break;
       case PasoInicial.lugares:
+        _abrir(ProduccionActivoScreen(
+            activoAgroId: id,
+            nombreActivo: nombre,
+            enfoque: EnfoqueProduccion.lugares));
+        break;
       case PasoInicial.animalesOCultivos:
-        _abrir(ProduccionActivoScreen(activoAgroId: id, nombreActivo: nombre));
+        _abrir(ProduccionActivoScreen(
+            activoAgroId: id,
+            nombreActivo: nombre,
+            enfoque: EnfoqueProduccion.animales));
         break;
     }
   }

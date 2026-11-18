@@ -109,13 +109,15 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 
 | Paso | Qué pasó | Gravedad (🔴 bloquea / 🟡 molesta / ⚪ estético) | Arreglado en |
 |---|---|---|---|
-| General | Cuesta entender cómo se usa sin preguntar: dónde está el suelo, que los lugares se cargan dentro de Producción, que a un rodeo se le suman animales con "Registrar evento", cómo confirmar el punto del mapa. Propuesta aprobada (18/11): "Primeros pasos" con tildes en la ficha (cada renglón lleva a su pantalla) + una frase de ayuda en cada pantalla, sobre todo vacía. Después del lanzamiento: videos cortos y manual simple | 🔴 | |
-| — | Resumen de Producción muestra "-2 cabezas" con datos de prueba viejos (visto el 18/11) | ⚪ | |
-| T1-02 | "Mis campos" no está ordenado por fecha: el campo nuevo aparece al final y es fácil tocar otro por error (pasó: secciones 2 y 3 cargadas en "La Esperanza"). Ordenar del más nuevo al más viejo | 🟡 | |
+| General | Cuesta entender cómo se usa sin preguntar: dónde está el suelo, que los lugares se cargan dentro de Producción, que a un rodeo se le suman animales con "Registrar evento", cómo confirmar el punto del mapa. Propuesta aprobada (18/11): "Primeros pasos" con tildes en la ficha (cada renglón lleva a su pantalla) + una frase de ayuda en cada pantalla, sobre todo vacía. Después del lanzamiento: videos cortos y manual simple | 🔴 | Grupo A (ayudas) + Grupo B "Primeros pasos" (rama qa-primeros-pasos) |
+| — | Resumen de Producción muestra "-2 cabezas" con datos de prueba viejos (visto el 18/11) | ⚪ | Grupo A: "Revisar" / "cuentas para revisar" |
+| T1-02 | "Mis campos" no está ordenado por fecha: el campo nuevo aparece al final y es fácil tocar otro por error (pasó: secciones 2 y 3 cargadas en "La Esperanza"). Ordenar del más nuevo al más viejo | 🟡 | Grupo A (main d70ed3d) |
 | T1-03 | El mapa arrancaba mostrando todo Argentina y Paraguay: costaba encontrar el campo | 🟡 | rama `qa-mapa`: arranca en la localidad + buscar pueblo + pegar coordenadas o link |
 | T1-04 | No se puede archivar un documento cargado por error. Agregar "Archivar" (queda en la historia, sale de la lista; no se borra) | 🟡 | |
-| T1-06 | Suelo es difícil de encontrar (está abajo, en "Información del expediente"). Ponerlo entre los botones de "Gestión del campo" | 🟡 | |
-| T1-03 | La lupa de la cajita de búsqueda del mapa queda escondida a la derecha | ⚪ | |
-| T1-07 | Al crear un lugar no se puede cargar la capacidad (cabezas del corral, aves del galpón). El modelo y las reglas ya la aceptan; falta en la pantalla. La necesita AF-112 (ocupación de corrales) | 🟡 | |
-| T1-07 | La pantalla dice "Nuevo potrero" / "Guardar potrero" aunque se elija corral, galpón o estanque | ⚪ | |
-| T1-27 | En "Nueva operación", los botones cabezas / kg / toneladas / unidades no tienen título: no se entiende que son la unidad de la cantidad. Agregar "¿En qué unidad?" | ⚪ | |
+| T1-06 | Suelo es difícil de encontrar (está abajo, en "Información del expediente"). Ponerlo entre los botones de "Gestión del campo" | 🟡 | Grupo A (main d70ed3d) |
+| T1-03 | La lupa de la cajita de búsqueda del mapa queda escondida a la derecha | ⚪ | Grupo A: botón "Buscar" |
+| T1-07 | Al crear un lugar no se puede cargar la capacidad (cabezas del corral, aves del galpón). El modelo y las reglas ya la aceptan; falta en la pantalla. La necesita AF-112 (ocupación de corrales) | 🟡 | Grupo A (main d70ed3d) |
+| T1-07 | La pantalla dice "Nuevo potrero" / "Guardar potrero" aunque se elija corral, galpón o estanque | ⚪ | Grupo A (main d70ed3d) |
+| T1-27 | En "Nueva operación", los botones cabezas / kg / toneladas / unidades no tienen título: no se entiende que son la unidad de la cantidad. Agregar "¿En qué unidad?" | ⚪ | Grupo A (main d70ed3d) |
+| T1-02 | La pantalla de crear campo dice "Crear Activo Agro" / "Nombre del activo" (palabra interna): debería decir "Crear campo" / "Nombre del campo" | ⚪ | |
+| T1-02 | La pantalla de crear campo tiene el diseño viejo (campos con rayita) y la superficie queda debajo de la descripción: es fácil poner las hectáreas en la descripción | ⚪ | |
