@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../../services/produccion_service.dart';
 import '../documentos/documentos_activo_screen.dart';
 import '../emergencias/emergencias_activo_screen.dart';
 import '../encargados/encargados_activo_screen.dart';
@@ -13,6 +15,7 @@ import '../produccion/produccion_activo_screen.dart';
 import '../economia/economia_activo_screen.dart';
 import '../stock/stock_activo_screen.dart';
 import '../territorio/historia_territorio_screen.dart';
+import 'primeros_pasos.dart';
 import 'suelo_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 import '../../widgets/barra_campo.dart';
@@ -30,6 +33,12 @@ class DetalleActivoAgroScreen extends StatefulWidget {
 
 class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   final ActivoAgroServiceV2 _activoService = ActivoAgroServiceV2();
+  final ProduccionService _produccion = ProduccionService();
+
+  /// QA Grupo B: cuántos lugares y cuántos rodeos/lotes/cultivos tiene el
+  /// campo (para "Primeros pasos"). null = todavía no se sabe.
+  int? _lugares;
+  int? _animalesOCultivos;
 
   late ActivoAgroV2 activo;
 
@@ -117,6 +126,68 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     super.initState();
 
     activo = widget.activo;
+    _cargarProduccion();
+  }
+
+  bool get _esDueno =>
+      FirebaseAuth.instance.currentUser?.uid == activo.propietarioId;
+
+  /// QA Grupo B: solo hace falta para "Primeros pasos" (lo ve el dueño).
+  Future<void> _cargarProduccion() async {
+    if (!_esDueno) return;
+    try {
+      final unidades = await _produccion.unidadesDeActivo(activo.activoId);
+      final grupos = await _produccion.gruposDeActivo(activo.activoId);
+      if (!mounted) return;
+      setState(() {
+        _lugares = unidades.length;
+        _animalesOCultivos = grupos.length;
+      });
+    } catch (_) {
+      // Sin señal o sin permiso: la tarjeta no se muestra.
+    }
+  }
+
+  /// Al volver de otra pantalla: relee el campo y lo de Producción, así
+  /// las tildes de "Primeros pasos" se actualizan solas.
+  Future<void> _recargar() async {
+    try {
+      final actualizado =
+          await _activoService.obtenerActivoPorId(activo.activoId);
+      if (mounted && actualizado != null) {
+        setState(() => activo = actualizado);
+      }
+    } catch (_) {}
+    await _cargarProduccion();
+  }
+
+  EstadoPrimerosPasos? get _primerosPasos {
+    final lugares = _lugares;
+    final animales = _animalesOCultivos;
+    if (!_esDueno || lugares == null || animales == null) return null;
+    final estado = EstadoPrimerosPasos.desdeActivo(activo,
+        lugares: lugares, animalesOCultivos: animales);
+    return estado.completos ? null : estado;
+  }
+
+  void _abrirPaso(PasoInicial paso) {
+    final id = activo.activoId;
+    final nombre = activo.nombre;
+    switch (paso) {
+      case PasoInicial.mapa:
+        _abrirMapa();
+        break;
+      case PasoInicial.documento:
+        _abrir(DocumentosActivoScreen(activoAgroId: id, nombreActivo: nombre));
+        break;
+      case PasoInicial.suelo:
+        _abrirSuelo();
+        break;
+      case PasoInicial.lugares:
+      case PasoInicial.animalesOCultivos:
+        _abrir(ProduccionActivoScreen(activoAgroId: id, nombreActivo: nombre));
+        break;
+    }
   }
 
   // =====================================================
@@ -138,8 +209,11 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
       ? v.toInt().toString()
       : v.toString().replaceAll('.', ',');
 
-  void _abrir(Widget pantalla) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => pantalla));
+  Future<void> _abrir(Widget pantalla) async {
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => pantalla));
+    // QA Grupo B: al volver se actualizan las tildes de "Primeros pasos".
+    await _recargar();
   }
 
   @override
@@ -150,7 +224,13 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [
           _resumen(),
-          if (activo.madurez.faltantes.isNotEmpty) ...[
+          // QA Grupo B: mientras falten primeros pasos, se muestran ellos
+          // en vez del "Próximo paso" (una pantalla, una pregunta).
+          if (_primerosPasos != null) ...[
+            const SizedBox(height: 12),
+            TarjetaPrimerosPasos(
+                estado: _primerosPasos!, alTocar: _abrirPaso),
+          ] else if (activo.madurez.faltantes.isNotEmpty) ...[
             const SizedBox(height: 12),
             _proximoPaso(),
           ],

@@ -118,3 +118,4 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 | T1-03 | La lupa de la cajita de búsqueda del mapa queda escondida a la derecha | ⚪ | |
 | T1-07 | Al crear un lugar no se puede cargar la capacidad (cabezas del corral, aves del galpón). El modelo y las reglas ya la aceptan; falta en la pantalla. La necesita AF-112 (ocupación de corrales) | 🟡 | |
 | T1-07 | La pantalla dice "Nuevo potrero" / "Guardar potrero" aunque se elija corral, galpón o estanque | ⚪ | |
+| T1-27 | En "Nueva operación", los botones cabezas / kg / toneladas / unidades no tienen título: no se entiende que son la unidad de la cantidad. Agregar "¿En qué unidad?" | ⚪ | |
