@@ -8,6 +8,8 @@ import '../produccion/produccion_estilo.dart';
 import 'intervenciones_screen.dart';
 import 'profesionales_textos.dart';
 import '../../widgets/barra_campo.dart';
+import '../../widgets/aviso_codigo_equivocado.dart';
+import '../../services/encargado_service.dart' show CodigoNoValido;
 
 /// AF-093: el dueño invita profesionales a su campo, les quita el acceso
 /// y ve todo lo que registraron.
@@ -120,6 +122,9 @@ class _ProfesionalesActivoScreenState extends State<ProfesionalesActivoScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profesional invitado.')),
       );
+    } on CodigoNoValido {
+      if (!mounted) return;
+      await mostrarCodigoEquivocado(context);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

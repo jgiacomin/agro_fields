@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/activos/permisos_encargado.dart';
 import '../../services/encargado_service.dart';
+import '../../widgets/aviso_codigo_equivocado.dart';
 import '../../widgets/barra_campo.dart';
 import '../produccion/produccion_estilo.dart';
 import '../profesionales/profesionales_textos.dart';
@@ -137,6 +138,9 @@ class _EncargadosActivoScreenState extends State<EncargadosActivoScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(existente == null ? 'Encargado invitado.' : 'Tareas guardadas.')));
+    } on CodigoNoValido {
+      if (!mounted) return;
+      await mostrarCodigoEquivocado(context);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
