@@ -82,7 +82,7 @@ String ayudaPaso(PasoInicial paso) {
     case PasoInicial.lugares:
       return 'En Producción → "+ Lote o potrero"';
     case PasoInicial.animalesOCultivos:
-      return 'En Producción → "+ Animales" o "+ Nuevo cultivo"';
+      return 'En Producción → "+ Cargar"';
   }
 }
 

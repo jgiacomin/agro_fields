@@ -17,9 +17,13 @@ import 'produccion_estilo.dart';
 import '../../widgets/barra_campo.dart';
 
 /// QA Grupo B (18/11/2026): desde dónde se entra a Producción.
-/// Desde "Primeros pasos" se muestra un solo botón (el del paso), para no
-/// confundir; desde el botón "Producción" de la ficha, los dos.
+/// QA 20/11/2026: abajo hay un solo botón. Desde el paso "lugares" es
+/// "+ Lote o potrero"; en los demás casos es "+ Cargar", que pregunta qué
+/// cargar (desde el paso "animales" solo ofrece animales o cultivo).
 enum EnfoqueProduccion { normal, lugares, animales }
+
+/// QA 20/11/2026: opciones del botón "+ Cargar".
+enum _QueCargar { lugar, animales, cultivo }
 
 /// Pantalla 1 (paso 6a, GAP-PROD-01): la produccion de un campo.
 /// Muestra los rodeos con su total de cabezas y los potreros.
@@ -208,40 +212,30 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                         const EstadoVacio(
                           icono: Icons.pets,
                           texto: 'Todavía no hay animales. Primero cargá tus '
-                              'lugares con "+ Lote o potrero". Después tocá '
-                              '"+ Animales" para crear un rodeo o un lote, y '
-                              'adentro "Registrar evento" → Entrada para '
-                              'sumar los animales.',
+                              'lugares. Después tocá "+ Cargar" → Animales '
+                              'para crear un rodeo o un lote, y adentro '
+                              '"Registrar evento" → Entrada para sumar los '
+                              'animales.',
                         ),
                       ...rodeos.map(_tarjetaRodeo),
                       const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          const Expanded(child: TituloSeccion('Cultivos', icono: Icons.grass)),
-                          TextButton(
-                            onPressed: () => abrir(NuevoCultivoScreen(
-                              activoAgroId: widget.activoAgroId,
-                              unidades: unidades,
-                            )),
-                            child: const Text('+ Nuevo cultivo'),
-                          ),
-                        ],
-                      ),
+                      const TituloSeccion('Cultivos', icono: Icons.grass),
                       if (cultivos.isEmpty)
                         const EstadoVacio(
                           icono: Icons.grass,
                           texto: 'Todavía no hay cultivos. Cargá un lote y '
-                              'después tocá "Nuevo cultivo".',
+                              'después tocá "+ Cargar" → Cultivo.',
                         ),
                       ...cultivos.map(_tarjetaCultivo),
                       const SizedBox(height: 24),
                       const TituloSeccion('Lotes, potreros y corrales', icono: Icons.crop_square),
                       if (unidades.isEmpty)
-                        const EstadoVacio(
+                        EstadoVacio(
                           icono: Icons.crop_square,
-                          texto: 'Empezá por acá: tocá "+ Lote o potrero" y '
-                              'cargá tus potreros, lotes, corrales, galpones '
-                              'o estanques.',
+                          texto: 'Empezá por acá: tocá '
+                              '${widget.enfoque == EnfoqueProduccion.lugares ? '"+ Lote o potrero"' : '"+ Cargar" → Lugar'}'
+                              ' y cargá tus potreros, lotes, corrales, '
+                              'galpones o estanques.',
                         )
                       else
                         TarjetaBlanca(
@@ -265,64 +259,163 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
     );
   }
 
-  /// QA Grupo B (18/11/2026): qué botones van abajo.
-  /// - Desde el paso "lugares": solo "+ Lote o potrero".
-  /// - Desde el paso "animales": solo "+ Animales".
-  /// - Normal: los dos; si todavía no hay lugares, "+ Lote o potrero" va
-  ///   primero y grande (es lo que hay que hacer antes).
+  /// QA 20/11/2026: un solo botón abajo.
+  /// - Desde el paso "lugares": "+ Lote o potrero" (como antes).
+  /// - Desde el paso "animales": "+ Cargar" con animales o cultivo.
+  /// - Normal: "+ Cargar" con lugar, animales o cultivo.
+  /// Mientras carga la pantalla el botón espera, para no abrir las
+  /// pantallas sin la lista de lugares.
   Widget _botonesAbajo() {
-    final lugar = BotonGrande(
-      texto: '+ Lote o potrero',
-      onPressed: () => abrir(NuevoPotreroScreen(
-        activoAgroId: widget.activoAgroId,
-      )),
+    if (widget.enfoque == EnfoqueProduccion.lugares) {
+      return BotonGrande(
+        texto: '+ Lote o potrero',
+        onPressed: () => abrir(NuevoPotreroScreen(
+          activoAgroId: widget.activoAgroId,
+        )),
+      );
+    }
+    return BotonGrande(
+      texto: '+ Cargar',
+      onPressed: cargando
+          ? null
+          : () => _elegirQueCargar(
+                conLugar: widget.enfoque == EnfoqueProduccion.normal,
+              ),
     );
-    final animales = BotonGrande(
-      texto: '+ Animales',
-      onPressed: () => abrir(NuevoRodeoScreen(
-        activoAgroId: widget.activoAgroId,
-        unidades: unidades,
-      )),
+  }
+
+  /// QA 20/11/2026: menú de abajo que pregunta qué cargar.
+  Future<void> _elegirQueCargar({required bool conLugar}) async {
+    final eleccion = await showModalBottomSheet<_QueCargar>(
+      context: context,
+      backgroundColor: EstiloProduccion.fondo,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                '¿Qué querés cargar?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: EstiloProduccion.texto,
+                ),
+              ),
+              if (conLugar && unidades.isEmpty) ...[
+                const SizedBox(height: 4),
+                const Text(
+                  'Si es la primera vez, empezá por Lugar.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: EstiloProduccion.textoSuave,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 14),
+              if (conLugar)
+                _opcionCargar(
+                  ctx,
+                  _QueCargar.lugar,
+                  Icons.crop_square,
+                  AgroTema.azul,
+                  'Lugar',
+                  'Potrero, lote, corral, galpón o estanque',
+                ),
+              _opcionCargar(
+                ctx,
+                _QueCargar.animales,
+                Icons.pets,
+                EstiloProduccion.terracota,
+                'Animales',
+                'Rodeo o lote de animales',
+              ),
+              _opcionCargar(
+                ctx,
+                _QueCargar.cultivo,
+                Icons.grass,
+                EstiloProduccion.verde,
+                'Cultivo',
+                'Siembra en un lote',
+              ),
+            ],
+          ),
+        ),
+      ),
     );
 
-    switch (widget.enfoque) {
-      case EnfoqueProduccion.lugares:
-        return lugar;
-      case EnfoqueProduccion.animales:
-        return animales;
-      case EnfoqueProduccion.normal:
+    if (eleccion == null || !mounted) return;
+    switch (eleccion) {
+      case _QueCargar.lugar:
+        await abrir(NuevoPotreroScreen(activoAgroId: widget.activoAgroId));
+        break;
+      case _QueCargar.animales:
+        await abrir(NuevoRodeoScreen(
+          activoAgroId: widget.activoAgroId,
+          unidades: unidades,
+        ));
+        break;
+      case _QueCargar.cultivo:
+        await abrir(NuevoCultivoScreen(
+          activoAgroId: widget.activoAgroId,
+          unidades: unidades,
+        ));
         break;
     }
+  }
 
-    final lugaresPrimero = !cargando && unidades.isEmpty;
-    final lugarContorno = BotonGrande(
-      texto: '+ Lote o potrero',
-      contorno: true,
-      onPressed: () => abrir(NuevoPotreroScreen(
-        activoAgroId: widget.activoAgroId,
-      )),
-    );
-    final animalesContorno = BotonGrande(
-      texto: '+ Animales',
-      contorno: true,
-      onPressed: () => abrir(NuevoRodeoScreen(
-        activoAgroId: widget.activoAgroId,
-        unidades: unidades,
-      )),
-    );
-
-    return Row(
-      children: lugaresPrimero
-          ? [
-              Expanded(child: lugar),
+  Widget _opcionCargar(
+    BuildContext ctx,
+    _QueCargar valor,
+    IconData icono,
+    Color color,
+    String titulo,
+    String ayuda,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: TarjetaBlanca(
+        onTap: () => Navigator.of(ctx).pop(valor),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              IconoCirculo(icono, color: color, tamano: 44),
               const SizedBox(width: 12),
-              Expanded(child: animalesContorno),
-            ]
-          : [
-              Expanded(child: animales),
-              const SizedBox(width: 12),
-              Expanded(child: lugarContorno),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      titulo,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      ayuda,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: EstiloProduccion.textoSuave,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right,
+                  color: EstiloProduccion.textoSuave),
             ],
+          ),
+        ),
+      ),
     );
   }
 
