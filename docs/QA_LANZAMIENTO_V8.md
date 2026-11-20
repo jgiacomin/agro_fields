@@ -69,15 +69,15 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 
 | Paso | Qué hacer | Debería | ✅/❌ | Nota |
 |---|---|---|---|---|
-| T2-01 | Dueño: Encargados → invitar con áreas "producción" y "stock" | Da un código | | |
-| T2-02 | Segunda cuenta: usar el código | Ve el campo de demo como encargado | | |
-| T2-03 | Encargado: cargar una entrada en el rodeo | Se guarda | | |
-| T2-04 | Encargado: intentar entrar a Economía | No puede (no tiene esa área) | | |
-| T2-05 | Dueño: quitarle el permiso al encargado | El encargado deja de ver el campo | | |
-| T2-06 | Segunda cuenta: Mi código profesional → copiar | Muestra el código | | |
-| T2-07 | Dueño: Profesionales → invitar con ese código | Queda invitado | | |
-| T2-08 | Profesional: registrar una intervención con evidencia | El dueño la ve | | |
-| T2-09 | Profesional: ver Historia del territorio | La ve, pero no puede cargar | | |
+| T2-01 | Dueño: Encargados → invitar con áreas "producción" y "stock" | Da un código | ✅ | Probado 20/11. Primero aceptó un código inventado (ver Errores). |
+| T2-02 | Segunda cuenta: usar el código | Ve el campo de demo como encargado | ✅ | La segunda cuenta ve el campo como encargado. |
+| T2-03 | Encargado: cargar una entrada en el rodeo | Se guarda | ✅ | Lo que carga el encargado lo ve el dueño (stock de combustible). |
+| T2-04 | Encargado: intentar entrar a Economía | No puede (no tiene esa área) | ✅ | En La tana no aparece Economía; en Campo La Esperanza sí, porque tiene "Gastos". |
+| T2-05 | Dueño: quitarle el permiso al encargado | El encargado deja de ver el campo | ✅ | Quedan "Sin acceso (quitado)" en la lista (trazabilidad). |
+| T2-06 | Segunda cuenta: Mi código profesional → copiar | Muestra el código | ✅ |  |
+| T2-07 | Dueño: Profesionales → invitar con ese código | Queda invitado | ✅ |  |
+| T2-08 | Profesional: registrar una intervención con evidencia | El dueño la ve | 🟡 | Se registra y el dueño la ve, pero no se puede adjuntar evidencia (ver Errores). |
+| T2-09 | Profesional: ver Historia del territorio | La ve, pero no puede cargar | ✅ | Antes no había cómo llegar (ver Errores). Arreglado: solo lectura. |
 
 ## Tanda 3 — El mercado (publicar, aprobar, contactar)
 
@@ -121,3 +121,8 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 | T1-27 | En "Nueva operación", los botones cabezas / kg / toneladas / unidades no tienen título: no se entiende que son la unidad de la cantidad. Agregar "¿En qué unidad?" | ⚪ | Grupo A (main d70ed3d) |
 | T1-02 | La pantalla de crear campo dice "Crear Activo Agro" / "Nombre del activo" (palabra interna): debería decir "Crear campo" / "Nombre del campo" | ⚪ | |
 | T1-02 | La pantalla de crear campo tiene el diseño viejo (campos con rayita) y la superficie queda debajo de la descripción: es fácil poner las hectáreas en la descripción | ⚪ | |
+| T2-01 | Al invitar encargado (o profesional) se aceptaba cualquier código, aunque no fuera de ningún usuario: quedaba un "encargado fantasma". Además el administrador saltaba el control | 🟡 | rama `qa-codigo-valido` (58deff2): regla `exists(usuarios/...)` para todos, también el admin; cartel "Código equivocado" |
+| T2-09 | El profesional no tenía cómo llegar a la Historia del territorio (la regla lo permitía, faltaba el botón) y la pantalla mostraba "+ Cargar" y "Corregir" | 🟡 | rama `qa-prof-territorio` (2df11d2): "Ver historia del territorio" + modo solo lectura |
+| T2-08 | La intervención del profesional no permite adjuntar evidencia (el Concepto la pide con evidencia). Requiere que el profesional pueda subir archivos (Storage Rules, mismo límite que el archivo del territorio) | 🟡 | Pendiente |
+| T2-05 | El título "Campos donde soy encargado" se corta en pantallas angostas | ⚪ | Pendiente: acortar a "Soy encargado" |
+| General | Las pruebas como dueño se hicieron con la cuenta de administrador, que salta controles. Para las tandas 3 y 4 usar como dueño una cuenta común | — | Anotado |

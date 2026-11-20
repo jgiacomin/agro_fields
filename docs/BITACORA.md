@@ -8156,3 +8156,24 @@ Origen: en el QA del 18/11 el usuario se perdía al cargar en Producción (dos b
 
 * Grupo C: archivar documento (con cambio de reglas).
 * Tandas 2 a 4 del QA.
+
+---
+
+# 20/11/2026 - QA tanda 2: el equipo (encargado y profesional)
+
+**Estado: TANDA 2 TERMINADA** (8 ✅, 1 🟡). Detalle en `docs/QA_LANZAMIENTO_V8.md`.
+
+### Arreglos hechos
+
+* **Código fantasma** (rama `qa-codigo-valido`, commits 0e59e8c, 7953060 y 58deff2): se aceptaba cualquier código al invitar encargado o profesional. `firestore.rules`: crear una autorización exige `exists(usuarios/{código})`, también para el administrador (la cuenta de pruebas es admin y saltaba el control); solo se comprueba que exista, no se leen datos. `encargado_service.dart` y `profesional_service.dart`: el rechazo se traduce a `CodigoNoValido`. `lib/widgets/aviso_codigo_equivocado.dart` (nuevo): cartel "Código equivocado" que queda hasta tocar "Entendido". Pruebas de reglas: usuarios de prueba `encargado` y `profesional` registrados; COD-01 y COD-02. Regla publicada.
+* **Profesional y Historia del territorio** (rama `qa-prof-territorio`, 2df11d2): la regla ya permitía ver, pero no había botón. `intervenciones_screen.dart`: tarjeta "Ver historia del territorio". `historia_territorio_screen.dart`: `soloLectura` (sin "+ Cargar un cambio", sin "Corregir", texto vacío propio). Sin cambios de datos ni reglas.
+
+### Pendientes de la tanda
+
+* Evidencia en las intervenciones del profesional (subir archivos: Storage Rules, mismo límite que el archivo del territorio, ver AF-109).
+* Acortar el título "Campos donde soy encargado".
+* Encargados quitados: si la lista crece, juntarlos en una sección cerrada (idea, no urgente).
+
+### Aprendizaje
+
+* La cuenta de pruebas es administrador y salta controles: las tandas 3 y 4 se prueban con una cuenta común como dueño.
