@@ -56,7 +56,8 @@ class LegalService {
     final errores = pedido.validar();
     if (errores.isNotEmpty) throw ArgumentError(errores.join(' '));
     final ya = await pedidoDeBaja(pedido.usuarioId);
-    if (ya != null) {
+    // QA 20/11/2026: si el pedido anterior se anuló, se puede pedir de nuevo.
+    if (ya != null && ya.estado != 'anulada') {
       throw StateError('Ya pediste la baja de tu cuenta.');
     }
     await _db

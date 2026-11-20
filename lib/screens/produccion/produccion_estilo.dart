@@ -289,44 +289,63 @@ class ResumenNumeros extends StatelessWidget {
         for (var i = 0; i < datos.length; i++) ...[
           if (i > 0) const SizedBox(width: 10),
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-              decoration: BoxDecoration(
-                color: datos[i].$4.withAlpha(30),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: datos[i].$4.withAlpha(90)),
-              ),
-              child: Row(
-                children: [
-                  Icon(datos[i].$3, color: datos[i].$4, size: 26),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          datos[i].$1,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: datos[i].$4,
-                          ),
-                        ),
-                        Text(
-                          datos[i].$2,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 12,
-                              color: EstiloProduccion.textoSuave),
-                        ),
-                      ],
+            // QA T4-08 (20/11/2026): en pantallas angostas el número y la
+            // palabra se cortaban ("417 anima…"). Si no entra al lado, el
+            // ícono va arriba y la palabra puede usar dos renglones.
+            child: LayoutBuilder(
+              builder: (context, caja) {
+                final angosto = caja.maxWidth < 130;
+                final numero = FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    datos[i].$1,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: datos[i].$4,
                     ),
                   ),
-                ],
-              ),
+                );
+                final palabra = Text(
+                  datos[i].$2,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontSize: 12, color: EstiloProduccion.textoSuave),
+                );
+                return Container(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                  decoration: BoxDecoration(
+                    color: datos[i].$4.withAlpha(30),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: datos[i].$4.withAlpha(90)),
+                  ),
+                  child: angosto
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(datos[i].$3, color: datos[i].$4, size: 22),
+                            const SizedBox(height: 4),
+                            numero,
+                            palabra,
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Icon(datos[i].$3, color: datos[i].$4, size: 26),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [numero, palabra],
+                              ),
+                            ),
+                          ],
+                        ),
+                );
+              },
             ),
           ),
         ],

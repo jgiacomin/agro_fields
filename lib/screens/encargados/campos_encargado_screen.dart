@@ -57,7 +57,7 @@ class _CamposEncargadoScreenState extends State<CamposEncargadoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BarraCampo(title: const Text('Campos donde soy encargado')),
+      appBar: BarraCampo(title: const Text('Soy encargado')),
       body: cargando
           ? const Center(child: CircularProgressIndicator())
           : error != null

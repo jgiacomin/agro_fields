@@ -10,6 +10,7 @@ import '../../services/calculo_existencias.dart';
 import '../../services/produccion_service.dart';
 import '../../services/recurso_service.dart';
 import 'produccion_estilo.dart';
+import '../operaciones/operaciones_textos.dart' show Aviso;
 import '../../widgets/barra_campo.dart';
 
 /// Pantallas 4a y 4b (paso 6a, GAP-PROD-01): registrar un evento.
@@ -455,6 +456,18 @@ class _RegistrarEventoScreenState extends State<RegistrarEventoScreen> {
                   : '¿En qué potrero?'),
           _elegirUnidad(unidadId, (id) => setState(() => unidadId = id)),
         ],
+        // QA T4-03 (20/11/2026): sin potreros cargados, la entrada queda
+        // "Sin ubicación". Se avisa, sin frenar la carga.
+        if (widget.unidades.isEmpty &&
+            elegido == TipoEventoProductivo.alta)
+          const Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Aviso(
+              'Este campo todavía no tiene potreros cargados: los animales '
+              'quedan "Sin ubicación". Podés cargar los potreros después en '
+              'Producción → "+ Cargar" → Lugar.',
+            ),
+          ),
         if (esMovimiento && widget.unidades.isNotEmpty) ...[
           const EtiquetaCampo('¿Hacia qué potrero?'),
           _elegirUnidad(

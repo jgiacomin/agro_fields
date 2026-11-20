@@ -290,11 +290,14 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
       context: context,
       backgroundColor: EstiloProduccion.fondo,
       showDragHandle: true,
+      // QA T4-08 (20/11/2026): en celulares chicos no entraba ("Cultivo"
+      // quedaba cortado). Ahora el menú se desliza si no entra.
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) => SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,

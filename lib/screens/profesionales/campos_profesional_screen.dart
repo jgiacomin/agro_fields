@@ -56,7 +56,7 @@ class _CamposProfesionalScreenState extends State<CamposProfesionalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BarraCampo(
-        title: const Text('Campos donde soy profesional'),
+        title: const Text('Soy profesional'),
       ),
       body: cargando
           ? const Center(child: CircularProgressIndicator())

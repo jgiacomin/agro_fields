@@ -7,6 +7,8 @@ import '../../models/aceptacion_legal_model.dart';
 import '../../models/activos/activo_publico_model.dart';
 import '../../models/plan_usuario_model.dart';
 import '../../services/admin_service.dart';
+import '../../services/encargado_service.dart' show CodigoNoValido;
+import '../../widgets/aviso_codigo_equivocado.dart';
 import '../produccion/produccion_estilo.dart';
 
 /// GAP-ADMIN-01 (16/11/2026): pantalla del administrador.
@@ -265,6 +267,13 @@ class _FundadoresState extends State<_Fundadores> {
       setState(() {
         _futuro = _admin.fundadores();
       });
+    } on CodigoNoValido {
+      if (!mounted) return;
+      await mostrarCodigoEquivocado(context);
+    } on StateError catch (e) {
+      // QA 20/11/2026: sin el "Bad state:" en inglés.
+      if (!mounted) return;
+      _avisar(context, e.message);
     } catch (e) {
       if (!mounted) return;
       _avisar(context, 'No se pudo dar de alta: $e');
@@ -398,6 +407,58 @@ class _BajasState extends State<_Bajas> {
     }
   }
 
+  /// QA 20/11/2026: anular un pedido (prueba o arrepentimiento), con motivo.
+  Future<void> _anular(SolicitudBaja p) async {
+    final control = TextEditingController();
+    final motivo = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Anular el pedido de baja'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'La cuenta sigue activa. El pedido no se borra: queda anulado '
+              'con el motivo, y la persona puede volver a pedir la baja.',
+              style: TextStyle(height: 1.4),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: control,
+              decoration: decoracionCampo(
+                  ayuda: 'Motivo (ej.: era una prueba, se arrepintió)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancelar')),
+          ElevatedButton(
+              onPressed: () {
+                final m = control.text.trim();
+                if (m.isNotEmpty) Navigator.of(ctx).pop(m);
+              },
+              child: const Text('Anular')),
+        ],
+      ),
+    );
+    control.dispose();
+    if (motivo == null) return;
+    try {
+      await _admin.anularBaja(p.usuarioId, widget.adminId, motivo);
+      if (!mounted) return;
+      _avisar(context, 'Pedido anulado.');
+      setState(() {
+        _futuro = _admin.pedidosBajaPendientes();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      _avisar(context, 'No se pudo anular: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<SolicitudBaja>>(
@@ -455,9 +516,19 @@ class _BajasState extends State<_Bajas> {
                           Text('Motivo: ${p.motivo}'),
                         ],
                         const SizedBox(height: 8),
-                        OutlinedButton(
-                          onPressed: () => _completar(p),
-                          child: const Text('Marcar completada'),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            OutlinedButton(
+                              onPressed: () => _completar(p),
+                              child: const Text('Marcar completada'),
+                            ),
+                            TextButton(
+                              onPressed: () => _anular(p),
+                              child: const Text('Anular (prueba o arrepentido)'),
+                            ),
+                          ],
                         ),
                       ],
                     ),

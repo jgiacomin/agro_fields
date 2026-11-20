@@ -5,6 +5,7 @@ import '../core/audit/audit_type.dart';
 import '../models/aceptacion_legal_model.dart';
 import '../models/activos/activo_publico_model.dart';
 import '../models/plan_usuario_model.dart';
+import 'encargado_service.dart' show CodigoNoValido;
 
 /// GAP-ADMIN-01 (16/11/2026): tareas del administrador.
 /// Las reglas ya dejan todo esto solo al admin; la app no agrega permisos.
@@ -135,6 +136,10 @@ class AdminService {
     final error = revisarCodigo(codigo);
     if (error != null) throw ArgumentError(error);
     final c = codigo.trim();
+    // QA 20/11/2026: el código tiene que ser de un usuario registrado
+    // (si no, se gastaba un lugar de Fundador en nadie).
+    final usuario = await _db.collection('usuarios').doc(c).get();
+    if (!usuario.exists) throw const CodigoNoValido();
     final todos = await fundadores();
     if (todos.any((p) => p.usuarioId == c)) {
       throw StateError('Esa persona ya es Fundador.');
@@ -158,6 +163,19 @@ class AdminService {
         .get();
     return q.docs.map((d) => SolicitudBaja.fromMap(d.data())).toList()
       ..sort((a, b) => a.fechaPedido.compareTo(b.fechaPedido));
+  }
+
+  /// QA 20/11/2026: anula un pedido de baja (era una prueba o la persona
+  /// se arrepintió). No se borra: queda con el motivo, y la persona puede
+  /// volver a pedir la baja más adelante.
+  Future<void> anularBaja(
+      String usuarioId, String adminId, String motivo) async {
+    await _db.collection(SolicitudBaja.coleccion).doc(usuarioId).update({
+      'estado': 'anulada',
+      'motivoAnulacion': motivo,
+      'fechaAnulada': Timestamp.now(),
+      'anuladaPor': adminId,
+    });
   }
 
   Future<void> completarBaja(String usuarioId, String adminId) async {

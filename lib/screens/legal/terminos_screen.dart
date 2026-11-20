@@ -132,6 +132,10 @@ class TextoLegal extends StatelessWidget {
   final String texto;
   const TextoLegal(this.texto, {super.key});
 
+  /// Letra grande y bien oscura para leer con anteojos o al sol.
+  static const TextStyle _estiloTexto =
+      TextStyle(fontSize: 16, height: 1.5, color: AgroTema.pizarra);
+
   static List<TextSpan> _conNegrita(String linea) {
     final partes = linea.split('**');
     return [
@@ -156,7 +160,7 @@ class TextoLegal extends StatelessWidget {
           child: Text(
             l.substring(4),
             style: const TextStyle(
-                fontSize: 17,
+                fontSize: 19,
                 fontWeight: FontWeight.w700,
                 color: AgroTema.pizarra),
           ),
@@ -167,11 +171,11 @@ class TextoLegal extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('•  '),
+              const Text('•  ', style: _estiloTexto),
               Expanded(
                 child: Text.rich(
                   TextSpan(children: _conNegrita(l.substring(2))),
-                  style: const TextStyle(height: 1.4),
+                  style: _estiloTexto,
                 ),
               ),
             ],
@@ -180,14 +184,19 @@ class TextoLegal extends StatelessWidget {
       } else {
         widgets.add(Text.rich(
           TextSpan(children: _conNegrita(l)),
-          style: const TextStyle(height: 1.45),
+          style: _estiloTexto,
         ));
       }
     }
-    return SelectionArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(18, 12, 18, 24),
-        children: widgets,
+    // QA T4-06 (20/11/2026): el texto quedaba sobre la foto del pasto y
+    // costaba leerlo. Ahora va sobre fondo liso, con letra más grande.
+    return ColoredBox(
+      color: const Color(0xFFFFFAF2),
+      child: SelectionArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(18, 12, 18, 24),
+          children: widgets,
+        ),
       ),
     );
   }

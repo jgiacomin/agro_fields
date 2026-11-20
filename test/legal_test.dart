@@ -58,4 +58,13 @@ void main() {
     });
     expect(p.estado, 'pendiente');
   });
+
+  test('LEGAL-T8. Un pedido anulado se lee como anulado', () {
+    final p = SolicitudBaja.fromMap({
+      'usuarioId': 'u1',
+      'fechaPedido': Timestamp.fromDate(DateTime(2026, 11, 16)),
+      'estado': 'anulada',
+    });
+    expect(p.estado, 'anulada');
+  });
 }

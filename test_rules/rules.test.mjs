@@ -47,6 +47,7 @@ beforeEach(async () => {
     // QA 20/11/2026: solo se invita a usuarios registrados.
     await setDoc(doc(db, 'usuarios/encargado'), { uid: 'encargado', nombre: 'Encargado', rol: 'Comprador' });
     await setDoc(doc(db, 'usuarios/profesional'), { uid: 'profesional', nombre: 'Profesional', rol: 'Comprador' });
+    await setDoc(doc(db, 'usuarios/comprador'), { uid: 'comprador', nombre: 'Comprador', rol: 'Comprador' });
     await setDoc(doc(db, 'activos_agro/a1'), { propietarioId: DUENO, publicadorId: BROKER, nombre: 'Campo de prueba' });
     await setDoc(doc(db, 'activos_publicos/p1'), { propietarioId: DUENO, estadoPublicacion: 'publicado', visible: true });
     await setDoc(doc(db, 'activos_publicos/p2'), { propietarioId: DUENO, estadoPublicacion: 'pendienteRevision', visible: false });
@@ -2044,4 +2045,25 @@ test('COD-01. El dueño NO invita a un código inventado (encargado ni profesion
 test('COD-02. Tampoco el administrador invita a un código inventado [PROHIBIDO]', async () => {
   await assertFails(setDoc(doc(como(ADMIN), 'autorizaciones_activos', idAut('crear', 'trabajo', 'fantasma')),
     autorizacionDe('crear', 'trabajo', { usuarioAutorizado: 'fantasma', quienOtorga: ADMIN })));
+});
+
+// =====================================================================
+// RETOQUES 20/11/2026: Fundadores con código real y bajas anuladas
+// =====================================================================
+
+test('PLAN-04. El admin NO da de alta un Fundador con código inventado [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(ADMIN), 'planes_usuarios/fantasma'), planDe('fantasma')));
+});
+
+test('LEGAL-07. El admin anula un pedido y la persona puede volver a pedir la baja [PERMITIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR)));
+  await assertSucceeds(updateDoc(doc(como(ADMIN), `solicitudes_baja/${COMPRADOR}`), { estado: 'anulada' }));
+  await assertSucceeds(setDoc(doc(como(COMPRADOR), `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR)));
+});
+
+test('LEGAL-08. Con un pedido completado o pendiente NO se vuelve a pedir [PROHIBIDO]', async () => {
+  await cargar((db) => setDoc(doc(db, `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR, { estado: 'completada' })));
+  await assertFails(setDoc(doc(como(COMPRADOR), `solicitudes_baja/${COMPRADOR}`), bajaDe(COMPRADOR)));
+  await cargar((db) => setDoc(doc(db, `solicitudes_baja/${DUENO}`), bajaDe(DUENO)));
+  await assertFails(setDoc(doc(como(DUENO), `solicitudes_baja/${DUENO}`), bajaDe(DUENO)));
 });

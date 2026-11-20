@@ -1147,16 +1147,23 @@ service cloud.firestore {
       allow get: if esAdmin() || esUsuario(usuarioId);
       allow list: if esAdmin();
 
-      allow create: if esUsuario(usuarioId)
-        && request.resource.data.keys().hasOnly(['usuarioId', 'email', 'motivo', 'fechaPedido', 'estado'])
-        && request.resource.data.usuarioId == usuarioId
-        && request.resource.data.estado == 'pendiente'
-        && request.resource.data.fechaPedido is timestamp
-        && (request.resource.data.get('motivo', null) == null
-            || (request.resource.data.motivo is string
-                && request.resource.data.motivo.size() <= 500));
+      function bajaNuevaValida(uid) {
+        return esUsuario(uid)
+          && request.resource.data.keys().hasOnly(['usuarioId', 'email', 'motivo', 'fechaPedido', 'estado'])
+          && request.resource.data.usuarioId == uid
+          && request.resource.data.estado == 'pendiente'
+          && request.resource.data.fechaPedido is timestamp
+          && (request.resource.data.get('motivo', null) == null
+              || (request.resource.data.motivo is string
+                  && request.resource.data.motivo.size() <= 500));
+      }
 
-      allow update: if esAdmin();
+      allow create: if bajaNuevaValida(usuarioId);
+
+      // QA 20/11/2026: el admin completa o anula; si el pedido se anuló,
+      // la persona puede volver a pedir la baja.
+      allow update: if esAdmin()
+        || (resource.data.estado == 'anulada' && bajaNuevaValida(usuarioId));
       allow delete: if false;
     }
 
@@ -1169,7 +1176,10 @@ service cloud.firestore {
     match /planes_usuarios/{usuarioId} {
       allow get: if esAdmin() || esUsuario(usuarioId);
       allow list: if esAdmin();
-      allow create, update: if esAdmin();
+      // QA 20/11/2026: solo a usuarios registrados (no se gasta un lugar de
+      // Fundador en un código inventado).
+      allow create, update: if esAdmin()
+        && exists(/databases/$(database)/documents/usuarios/$(usuarioId));
       allow delete: if false;
     }
 

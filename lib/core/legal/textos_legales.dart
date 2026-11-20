@@ -75,7 +75,7 @@ Si pasa, podemos suspender o cerrar la cuenta, avisando el motivo.
 
 ### 11. Cambios
 
-Si cambiamos estos términos, avisamos en la app con al menos [30] días de anticipación y pedimos aceptarlos de nuevo. Cada versión queda guardada con su fecha.
+Si cambiamos estos términos, avisamos en la app con al menos 30 días de anticipación y pedimos aceptarlos de nuevo. Cada versión queda guardada con su fecha.
 
 ### 12. Ley aplicable
 

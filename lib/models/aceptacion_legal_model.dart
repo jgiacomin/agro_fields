@@ -66,7 +66,7 @@ class SolicitudBaja {
   final String? email;
   final String? motivo;
   final DateTime fechaPedido;
-  final String estado; // pendiente | completada
+  final String estado; // pendiente | completada | anulada
 
   const SolicitudBaja({
     required this.usuarioId,
@@ -112,7 +112,11 @@ class SolicitudBaja {
       fechaPedido: f is Timestamp
           ? f.toDate()
           : (f is DateTime ? f : DateTime.fromMillisecondsSinceEpoch(0)),
-      estado: map['estado'] == 'completada' ? 'completada' : 'pendiente',
+      // QA 20/11/2026: se suma "anulada" (el admin anula una prueba o un
+      // arrepentimiento). Cualquier otro valor raro se lee como pendiente.
+      estado: const ['completada', 'anulada'].contains(map['estado'])
+          ? map['estado'] as String
+          : 'pendiente',
     );
   }
 }
