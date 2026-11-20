@@ -6,6 +6,7 @@ import '../../services/profesional_service.dart';
 import '../produccion/produccion_estilo.dart';
 import 'profesionales_textos.dart';
 import '../../widgets/barra_campo.dart';
+import '../territorio/historia_territorio_screen.dart';
 
 /// AF-093: intervenciones de un campo.
 /// - Profesional ([soyProfesional] = true): ve las suyas y puede registrar.
@@ -99,6 +100,52 @@ class _IntervencionesScreenState extends State<IntervencionesScreen> {
                   child: ListView(
                     padding: const EdgeInsets.all(20),
                     children: [
+                      // QA 20/11/2026: el profesional ve la historia del
+                      // territorio, sin poder cargar (AF-109).
+                      TarjetaBlanca(
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => HistoriaTerritorioScreen(
+                              activoAgroId: widget.activoAgroId,
+                              nombreActivo: widget.nombreActivo,
+                              soloLectura: true,
+                            ),
+                          ),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              IconoCirculo(Icons.landscape_outlined,
+                                  color: EstiloProduccion.verde, tamano: 44),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Ver historia del territorio',
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    SizedBox(height: 2),
+                                    Text(
+                                      'Desmontes, canales, caminos y otros cambios',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: EstiloProduccion.textoSuave),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(Icons.chevron_right,
+                                  color: EstiloProduccion.textoSuave),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       const TituloSeccion('Mis intervenciones en este campo', icono: Icons.badge_outlined),
                       if (lista.isEmpty)
                         const Text(

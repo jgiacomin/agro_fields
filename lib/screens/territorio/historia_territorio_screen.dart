@@ -23,10 +23,15 @@ class HistoriaTerritorioScreen extends StatefulWidget {
   final String activoAgroId;
   final String nombreActivo;
 
+  /// QA 20/11/2026: el profesional invitado la ve sin poder cargar ni
+  /// corregir (AF-109: carga el dueño o el encargado con permiso).
+  final bool soloLectura;
+
   const HistoriaTerritorioScreen({
     super.key,
     required this.activoAgroId,
     required this.nombreActivo,
+    this.soloLectura = false,
   });
 
   @override
@@ -170,15 +175,17 @@ class _HistoriaTerritorioScreenState extends State<HistoriaTerritorioScreen> {
                     ],
                   ),
                 ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-          child: BotonGrande(
-            texto: '+ Cargar un cambio',
-            onPressed: cargando ? null : () => _abrirFormulario(),
-          ),
-        ),
-      ),
+      bottomNavigationBar: widget.soloLectura
+          ? null
+          : SafeArea(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                child: BotonGrande(
+                  texto: '+ Cargar un cambio',
+                  onPressed: cargando ? null : () => _abrirFormulario(),
+                ),
+              ),
+            ),
     );
   }
 
@@ -228,14 +235,15 @@ class _HistoriaTerritorioScreenState extends State<HistoriaTerritorioScreen> {
                           fontStyle: FontStyle.italic,
                           color: EstiloProduccion.textoSuave)),
                 ],
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    onPressed: () => _abrirFormulario(corrige: c),
-                    icon: const Icon(Icons.edit_note, size: 18),
-                    label: const Text('Corregir'),
+                if (!widget.soloLectura)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () => _abrirFormulario(corrige: c),
+                      icon: const Icon(Icons.edit_note, size: 18),
+                      label: const Text('Corregir'),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
