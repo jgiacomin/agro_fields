@@ -83,12 +83,12 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 
 | Paso | Qué hacer | Debería | ✅/❌ | Nota |
 |---|---|---|---|---|
-| T3-01 | Dueño: publicar el campo de demo en venta | Queda "pendiente de aprobación" | | |
-| T3-02 | Admin: Administración → Publicaciones → aprobar | Pasa a publicado | | |
-| T3-03 | Segunda cuenta: Mercado | Ve el campo con los datos públicos, sin datos privados | | |
-| T3-04 | Comprador: "Enviar solicitud" | El dueño la ve en "Solicitudes recibidas" | | |
-| T3-05 | Comprador y dueño: chat | Los mensajes llegan a los dos | | |
-| T3-06 | Admin: rechazar otra publicación con un motivo | Vuelve a borrador | | |
+| T3-01 | Dueño: publicar el campo de demo en venta | Queda "pendiente de aprobación" | ✅ | Con una cuenta común (comprador.agrofields). |
+| T3-02 | Admin: Administración → Publicaciones → aprobar | Pasa a publicado | ✅ | Se aprobaba pero salía un error en inglés al recargar (ver Errores). Arreglado. |
+| T3-03 | Segunda cuenta: Mercado | Ve el campo con los datos públicos, sin datos privados | 🟡 | Solo datos públicos, bien. Falta precio, venta/alquiler y fotos (ver Errores). |
+| T3-04 | Comprador: "Enviar solicitud" | El dueño la ve en "Solicitudes recibidas" | ✅ | La solicitud llega. Quedaba cargando para siempre (ver Errores). Arreglado. |
+| T3-05 | Comprador y dueño: chat | Los mensajes llegan a los dos | ✅ | Con usuarios comunes la lista de conversaciones salía vacía (ver Errores). Arreglado. |
+| T3-06 | Admin: rechazar otra publicación con un motivo | Vuelve a borrador | ✅ | Sin el error de recarga. |
 
 ## Tanda 4 — Cuenta, plan, sin señal y celular
 
@@ -126,3 +126,10 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 | T2-08 | La intervención del profesional no permite adjuntar evidencia (el Concepto la pide con evidencia). Requiere que el profesional pueda subir archivos (Storage Rules, mismo límite que el archivo del territorio) | 🟡 | Pendiente |
 | T2-05 | El título "Campos donde soy encargado" se corta en pantallas angostas | ⚪ | Pendiente: acortar a "Soy encargado" |
 | General | Las pruebas como dueño se hicieron con la cuenta de administrador, que salta controles. Para las tandas 3 y 4 usar como dueño una cuenta común | — | Anotado |
+| T3-02 | Al aprobar (y al dar de alta Fundadores o completar bajas) salía "setState() callback argument returned a Future"; la acción se guardaba igual | 🟡 | rama `qa-mercado-arreglos` (ba6af68) |
+| T3-04 | "Solicitudes recibidas" quedaba cargando para siempre: intentaba leer nombre y email del interesado, que las reglas no dejan (privacidad). Al aceptar no llevaba al chat | 🟡 | rama `qa-mercado-arreglos`: texto "Un usuario de Agro Fields está interesado…" y abre el chat al aceptar |
+| T3-05 | Con usuarios comunes "Mis conversaciones" salía vacía (misma causa: leer datos del otro usuario). Con la cuenta admin andaba | 🔴 | rama `qa-mercado-arreglos`: muestra "Interesado" / "Dueño del campo" |
+| T3-03 | El Mercado no muestra precio ni si es venta o alquiler, y no tiene fotos | 🔴 | Pendiente: GAP del Mercado para inmobiliarias |
+| T3-03 | "Confianza 44 %" y "Madurez 55 %" no se explican; "Tipo: agricola", "agricultura" e "Interés: inversion" sin tilde ni mayúscula; tarjetas con diseño viejo (rosado, emojis) | 🟡 | Pendiente: GAP del Mercado |
+| T3-04 | El tipo de interés aparece como "inversion" aunque el campo está en venta | 🟡 | Pendiente: revisar en el GAP del Mercado |
+| T3-05 | Los dos participantes del chat no se ven por su nombre (privacidad); que cada uno elija qué nombre mostrar al consultar o aceptar | 🟡 | Pendiente: GAP del Mercado (cambia datos y reglas) |

@@ -8177,3 +8177,24 @@ Origen: en el QA del 18/11 el usuario se perdía al cargar en Producción (dos b
 ### Aprendizaje
 
 * La cuenta de pruebas es administrador y salta controles: las tandas 3 y 4 se prueban con una cuenta común como dueño.
+
+---
+
+# 20/11/2026 - QA tanda 3: el mercado (rama qa-mercado-arreglos)
+
+**Estado: TANDA 3 TERMINADA** (5 ✅, 1 🟡). Probada con tres cuentas: dueño común (comprador.agrofields), administrador y comprador (compradorb). Commit: ba6af68.
+
+### Arreglos hechos
+
+* `admin_screen.dart`: `setState(() => _futuro = ...)` devolvía un Future y daba error después de aprobar, rechazar, dar de alta Fundadores o completar bajas. Ahora se asigna dentro de un bloque (3 lugares).
+* `solicitudes_recibidas_screen.dart`: leía `usuarios/{interesado}` (las reglas no lo permiten: privacidad) y quedaba cargando para siempre. Ahora muestra "Un usuario de Agro Fields está interesado. Sus datos de contacto se comparten cuando aceptás." Al aceptar se abre el chat.
+* `chat_service.dart`: la lista de conversaciones fallaba entera con usuarios comunes por la misma lectura. Ahora, si no puede leer al otro, muestra "Interesado" o "Dueño del campo".
+* Sin cambios de datos ni reglas.
+
+### Hallazgo para el lanzamiento
+
+El Mercado no muestra precio, venta o alquiler, ni fotos; confianza y madurez no se explican; textos sin tilde y diseño viejo; el tipo de interés sale "inversion". Confirma la prioridad del Mercado para inmobiliarias. Propuesta: un GAP propio (GAP-MERC-01) antes de publicar.
+
+### Aprendizaje
+
+* Varias pantallas leían datos de otros usuarios y solo andaban con la cuenta admin. Antes de publicar, revisar todas las lecturas de `usuarios/` en `lib`.
