@@ -771,7 +771,7 @@ Agro Fields no decide por el productor qué mercado o plataforma usar. Conoce e 
 - Interoperabilidad autorizada con plataformas como VISEC, sin depender de ninguna en exclusiva.
 - Aviso de cambios regulatorios.
 
-No es autoridad, certificadora ni intermediario obligatorio. Informar no es certificar y conectar no es intermediar (va en los términos de uso). Caso de referencia adicional: la cadena caprina exportadora del Chaco.
+No es autoridad, certificadora ni intermediario obligatorio. Informar no es certificar y conectar no es intermediar (va en los términos de uso). Casos de referencia adicionales: la cadena caprina exportadora del Chaco y la trazabilidad de soja con blockchain de Bunge y CP hacia Vietnam (sección 25.7).
 
 ### 15.1. Etapas
 
@@ -1025,6 +1025,18 @@ Todo lo marcado 🔴 debe pasar al cuadro de lanzamiento, a la Matriz y al Roadm
 
 Los cuatro casos se cargaron a partir de los antecedentes registrados en las jornadas del 16 y 17/11/2026, no de los documentos originales completos. Toda cifra se confirma con su fuente antes de usarla.
 
+- Caso de referencia: trazabilidad de soja con blockchain de Bunge y CP, ampliada a Vietnam con harina de soja argentina (sección 25.7). Matriz AF-118.
+
+### Incorporaciones del 20/11/2026
+
+- Caso de referencia: polémica VISEC Carne (sección 25.8). Sin AF nuevo; se vincula a AF-118 y AF-104.
+- Caso de referencia: carne argentina terminada a grano en China y Asia (sección 25.9). Matriz AF-119; actualiza AF-103 y AF-118.
+- Caso de referencia: compra de campos por extranjeros (sección 25.10). Matriz AF-120.
+- Caso de referencia: estafas ganaderas (sección 25.11). Matriz AF-121 (GAP-CLI-01).
+- Caso de referencia: Drively.me (sección 25.12). Matriz AF-122 a AF-125.
+
+Los cinco casos se cargaron a partir de los antecedentes registrados en las jornadas del 18 y 19/11/2026, no de los documentos originales completos. Toda cifra y toda norma se confirman con su fuente antes de usarlas.
+
 ---
 
 ## 25. Casos de referencia estratégicos
@@ -1134,3 +1146,106 @@ Los cuatro casos se cargaron a partir de los antecedentes registrados en las jor
 | Traslado de maquinaria y logística | Núcleo común de movimientos (sección 8) | Avisos de acceso para transporte | 🟢 |
 
 **Criterio:** se conecta con Territorio (sección 9) y Emergencias (sección 10) sin duplicar datos. Se separan hechos, estimaciones e hipótesis, y no se atribuye una causa ambiental sin evidencia suficiente.
+
+### 25.7. Trazabilidad de soja con blockchain: Bunge y CP amplían a Vietnam (17/11/2026)
+
+**Fuente:** anuncio de Bunge y Bangkok Produce Merchandising (BKP, grupo Charoen Pokphand) del 17/11/2026, nota de Clarín Rural y otras coberturas del mismo anuncio. **Estado:** caso de referencia registrado el 18/11/2026; no es especificación técnica ni acuerdo con ninguna empresa.
+
+**Síntesis:** el programa de trazabilidad de soja con blockchain que ya funcionaba de Brasil a Tailandia se amplía a Vietnam y suma por primera vez harina de soja argentina, que Bunge entrega directamente a CP Vietnam. El origen y los atributos de sustentabilidad se verifican combinando blockchain, documentación de la cadena y monitoreo satelital.
+
+**Qué confirma para Agro Fields:**
+
+- El comprador internacional pide saber de qué campo sale el grano y si ese campo está en regla. Eso es dato de origen: el núcleo de Agro Fields.
+- El blockchain es una herramienta del exportador, no el valor en sí. El valor es el dato de origen confiable, con fuente, fecha, aportante, evidencia y estado. Se mantiene el principio: identidad persistente y trazable, no token especulativo.
+- Estos programas los manejan hoy las grandes empresas, del puerto hacia adelante. Agro Fields le da al productor sus propios datos de origen, ordenados, para que los comparta él, con permiso, con cualquier comprador, sin quedar atado a un solo intermediario («Una plataforma propia. Muchas conexiones.»).
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Ubicación del lote de origen | Ubicación del campo en el mapa (AF-090) | — | ✅ |
+| Sin desmonte / historia del uso del suelo | Historia del territorio (AF-109) | — | ✅ |
+| Certificados y atributos de sustentabilidad | Documentos del campo con "certificación" como tipo (AF-095) | — | ✅ |
+| Cultivo, cosecha y trazabilidad del producto | Cadena Activo → Lote → Cultivo → Cosecha; movimientos | — | ✅ |
+| Compartir el origen con un exportador o comprador | Copia congelada y acceso revocable del marketplace; estados del dato | "Paquete de origen" que el productor comparte con permiso (AF-118) | 🟡 |
+| Requisitos de cada mercado | — | Requisitos por mercado y semáforo de brechas (sección 15) | 🟡 |
+| Monitoreo satelital | Campo "fuente del dato" en Monitoreo (GAP-MON-01) | Capas satelitales (sección 9) | 🟢 |
+| Conexión con plataformas de exportadores | — | VISEC y plataformas de exportadores por vías oficiales (sección 17) | 🟢 |
+
+**Criterio:** no se crea un módulo nuevo ni se usa blockchain. El "paquete de origen" reutiliza lo que ya existe. Agro Fields informa y conecta; no certifica, no garantiza el cumplimiento ni es intermediario obligatorio.
+
+### 25.8. Polémica VISEC Carne (denuncia de la Sociedad Rural de Santa Fe, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 18/11/2026 a partir del análisis del usuario; no es especificación técnica ni toma posición en la polémica.
+
+**Síntesis:** la Sociedad Rural de Santa Fe cuestionó públicamente el funcionamiento de VISEC Carne, la plataforma de verificación usada para exportar carne vacuna con exigencias de origen.
+
+**Qué confirma para Agro Fields:**
+
+- Con buena trazabilidad del rodeo y de cada animal, Agro Fields puede ser una buena vidriera del productor frente al comprador.
+- Principio (también va en los términos de uso): **Agro Fields es un servicio de trazabilidad de los datos que el productor brinda al cliente, sin certificar ni garantizar.**
+- Agro Fields no compite con VISEC ni la reemplaza; puede conectarse por vías oficiales (sección 17) sin depender de una sola plataforma.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Mostrar al comprador el origen del ganado | Copia congelada, acceso revocable y estados del dato | Paquete de origen (AF-118) | 🟡 |
+| Trazabilidad animal por animal | Modo de identificación "por animal" preparado en el rodeo | Caravana individual e historia por animal (AF-104) | 🟡 marzo 2027 |
+| Conexión con VISEC u otras plataformas | — | Interoperabilidad por vías oficiales (sección 17) | 🟢 |
+
+**Criterio:** no se crea un módulo nuevo. Informar ≠ certificar.
+
+### 25.9. Carne argentina terminada a grano en China y Asia (feria CIIE, Shanghái, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 19/11/2026; no es especificación técnica. Requisitos y precios por mercado se confirman con fuente oficial.
+
+**Síntesis:** el IPCVA y frigoríficos argentinos presentaron en la feria CIIE de Shanghái carne terminada a grano; también se apuntan Filipinas, Vietnam y Singapur. Estos compradores valoran saber cómo se terminó el animal y cuántos días estuvo a corral.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Cómo se terminó el lote | Etapas del rodeo (recría, feedlot) en GAP-PROD-01 | Tipo de terminación (pasto / grano / mixto), fecha de entrada al corral y días de encierre (AF-119) | 🔴 enero |
+| Ración y consumo del lote de feedlot | Evento "alimentación" preparado; stock de alimento | Ración unida al stock y conversión alimenticia (AF-103) | 🟡 |
+| Mostrarlo al comprador | — | "Terminado a grano, X días" dentro del paquete de origen (AF-118) | 🟡 |
+| Requisitos y precios de cada mercado | — | Inteligencia regulatoria y de mercados (secciones 14 y 15) | 🟡 |
+
+**Criterio:** se apoya en el núcleo productivo existente, sin módulo nuevo. El código se escribe recién después de la Matriz y la Auditoría.
+
+### 25.10. Compra de campos por extranjeros (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 19/11/2026; las normas de cada país se confirman con fuente oficial antes de usarlas.
+
+**Síntesis:** inversores brasileños eligen comprar campos en Paraguay y Bolivia por las restricciones que tiene Argentina para la compra de tierras rurales por extranjeros.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Saber si un campo puede venderse a un extranjero | Publicación con país y provincia | Marca "apto para comprador extranjero" en la publicación (declarada por quien publica) (AF-120) | 🟡 |
+| Reglas de cada país o provincia | — | Reglas por jurisdicción con fuente, fecha y vigencia (AF-120) | 🟢 |
+
+**Criterio:** Agro Fields informa lo que declara quien publica; no da asesoramiento legal ni garantiza que la operación sea posible.
+
+### 25.11. Estafas ganaderas (El Doce, Córdoba y Santa Fe, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 19/11/2026 a partir del análisis del usuario; no es especificación técnica. Las propuestas del análisis (PROP-EST) se asignan a AF existentes; el detalle se completa con el documento original.
+
+**Síntesis:** casos de estafas en la compraventa de hacienda en Córdoba y Santa Fe, donde el productor entrega sin saber bien con quién opera.
+
+**Qué confirma para Agro Fields:**
+
+- El productor necesita conocer a su cliente antes de operar. De ahí nace el **registro de clientes** (AF-121, GAP-CLI-01) para enero: el productor puede ver la información que el propio cliente brinda (trazabilidad de datos y confianza, como dice el lema).
+- Se reutiliza lo que ya existe: Operación Agropecuaria Protegida y cheques (sección 6.2), estados del dato, documentos y permisos.
+
+**Criterio:** Agro Fields no es garante. Muestra lo que el cliente declaró y con qué respaldo, con su estado (declarado / con documento / verificado); la decisión y el riesgo son de las partes. No se publican listas de "malos clientes" ni acusaciones: los datos de una persona son privados y solo se comparten con su permiso.
+
+### 25.12. Drively.me: concesionaria virtual con IA (Forbes, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 19/11/2026; no es especificación técnica ni acuerdo con la empresa.
+
+**Síntesis:** concesionaria virtual de autos que usa inteligencia artificial y una red de vendedores sobre un mismo catálogo. Sirve de ejemplo para el Mercado de inmobiliarias y brokers de Agro Fields.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Que el comprador o arrendatario siga usando Agro Fields | El dueño puede tomar posesión del expediente y pasarlo a gestión | Invitar al comprador o arrendatario a pasar el campo a gestión (AF-122) | 🔴 enero |
+| Crecer de boca en boca | Plan Fundadores | Código de invitación para Fundadores, con premio a definir (AF-123) | 🔴 enero |
+| Un campo, muchos vendedores | Un solo registro por campo; cualquier broker lo ofrece | Marca "otros brokers pueden ofrecerlo" y registro de quién trajo cada consulta (AF-124) | 🔴 enero |
+| Vidriera y página propia | — | Vidriera por broker y página propia de la inmobiliaria (AF-125) | 🟡 |
+| Carga rápida con IA y videos | Carga rápida en 4 pasos | Carga con IA pegando un aviso; videos del campo (AF-125) | 🟡 / 🟢 |
+| Comisiones | — | Solo a estudiar (AF-125) | 🟢 |
+
+**Criterio:** se apoya en el marketplace existente (un campo, un registro). La IA ayuda a cargar pero no verifica. Conectar no es intermediar.
