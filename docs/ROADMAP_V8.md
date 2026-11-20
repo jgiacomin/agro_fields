@@ -3915,3 +3915,14 @@ Siguiente según el plan: **10. Plan gratuito y precio**.
 Concepto General: casos 25.2 (Tonelli), 25.3 (aves y peces), 25.4 (tormentas sur de Córdoba), 25.5 (Inteligencia Hídrica) y 25.6 (mercado mundial de carne vacuna). Matriz AF-110 a AF-117.
 
 Para marzo 2027 (🟡/🟢): ocupación de corrales (AF-112), días de permanencia (AF-113), estado de caminos y accesos (AF-114), napas y planchado (AF-115), evaluación de daños (AF-116), alertas automáticas por ubicación (AF-117), identificación individual y requisitos por mercado.
+
+## QA integral — Estado (20/11/2026)
+
+✅ Tanda 1 terminada (cálculos bien; fallas de facilidad de uso).
+✅ Grupo A retoques — CERRADO (main = d70ed3d).
+✅ Grupo B "Primeros pasos" — CERRADO.
+✅ Botón único "+ Cargar" en Producción — CERRADO (rama `qa-boton-cargar`, 4ceb766).
+⬜ Grupo C: archivar documento (con cambio de reglas).
+⬜ Tandas 2 a 4 del QA.
+
+Nuevos 🔴 para enero desde el Concepto (20/11/2026): AF-119 terminación del lote y días de encierre; AF-121 registro de clientes (GAP-CLI-01); AF-122 invitar al comprador a pasar a gestión; AF-123 código de invitación de Fundadores; AF-124 catálogo compartido entre brokers. Cada uno pasa por Auditoría antes de programarse.

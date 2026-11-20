@@ -8112,3 +8112,47 @@ Origen: el 16/11 se señaló que faltaba todo lo avícola y piscícola. El 18/11
 * Indicadores propios de aves y peces (conversión, biomasa, postura) 🟡/🟢.
 * Opcional: excluir `diseno_v8_parte3` del análisis.
 * Mejora para el QA de diciembre: en el resumen de Producción, mostrar "revisar" en vez de un total negativo.
+
+---
+
+# 18/11/2026 - QA tanda 1: Grupo A y "Primeros pasos" (ramas qa-mapa y qa-primeros-pasos)
+
+**Estado: VALIDADO EN LA APP (Chrome).** Registro resumido el 20/11/2026.
+
+* Grupo A (retoques de facilidad de uso): mapa que arranca en la localidad y busca pueblo o coordenadas, orden de "Mis campos" por fecha, Suelo como botón, capacidad en "Nuevo lugar", "¿En qué unidad?", "Revisar" en vez de totales negativos y frases de ayuda. Unido a main (d70ed3d).
+* Grupo B: tarjeta "Primeros pasos" con 5 pasos que se tildan solos y Producción con el botón del paso. Probado ("es genial, más fácil"). Unido a main y commit "QA Grupo B (en curso)" (0e9234b, d6db9a8).
+
+---
+
+# 20/11/2026 - Concepto 25.7 a 25.12 y Matriz AF-118 a AF-125
+
+**Estado: DOCUMENTADO (sin código).** Commit en main: 2c4e385.
+
+* Concepto General: 25.7 Bunge y CP (blockchain de soja a Vietnam), 25.8 VISEC Carne, 25.9 carne terminada a grano en China, 25.10 compra de campos por extranjeros, 25.11 estafas ganaderas, 25.12 Drively.me. Cargados desde los antecedentes registrados, no desde los documentos originales.
+* Principio sumado (25.8): Agro Fields es un servicio de trazabilidad de los datos que el productor brinda al cliente, sin certificar ni garantizar. Pendiente: llevarlo al borrador de términos.
+* Matriz: 🔴 enero AF-119 (terminación pasto/grano/mixto y días de encierre), AF-121 (registro de clientes, GAP-CLI-01), AF-122 (invitar al comprador a pasar a gestión), AF-123 (código de invitación de Fundadores), AF-124 (catálogo compartido entre brokers); 🟡/🟢 AF-120 (comprador extranjero) y AF-125 (herramientas para brokers). Actualizadas AF-103, AF-104 y AF-118.
+* Pendientes: el caso 25.6 (mercado mundial de carne vacuna) figura como sumado el 18/11 pero no está escrito en el Concepto; falta el detalle de las propuestas PROP-EST del caso 25.11.
+
+---
+
+# 20/11/2026 - QA: botón único "+ Cargar" en Producción (rama qa-boton-cargar)
+
+**Estado: VALIDADO EN LA APP (Chrome).** Commit: 4ceb766.
+
+Origen: en el QA del 18/11 el usuario se perdía al cargar en Producción (dos botones abajo y "+ Nuevo cultivo" arriba; desde el paso 5 de "Primeros pasos" no aparecía el cultivo).
+
+### Solución
+
+* `produccion_activo_screen.dart`: abajo un solo botón. Normal: "+ Cargar" abre un menú con Lugar, Animales y Cultivo. Desde el paso "lugares": "+ Lote o potrero". Desde el paso "animales": "+ Cargar" solo con Animales y Cultivo. Se sacó "+ Nuevo cultivo" de la sección Cultivos. El botón espera a que cargue la pantalla. Frases de ayuda actualizadas.
+* `primeros_pasos.dart`: ayuda del paso 5 → 'En Producción → "+ Cargar"'.
+* Sin cambios de datos ni de reglas. Las pantallas de carga son las mismas.
+
+### Validación
+
+* `flutter test`: 323 bien + las 2 fallas conocidas (antes del cambio también 323 + 2).
+* A mano en Chrome: probado por el usuario.
+
+### Pendiente
+
+* Grupo C: archivar documento (con cambio de reglas).
+* Tandas 2 a 4 del QA.
