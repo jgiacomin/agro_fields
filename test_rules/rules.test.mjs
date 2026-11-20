@@ -1980,3 +1980,48 @@ test('PLAN-03. El administrador carga y cambia planes [PERMITIDO]', async () => 
   await assertSucceeds(setDoc(doc(como(ADMIN), `planes_usuarios/${COMPRADOR}`), planDe(COMPRADOR)));
   await assertSucceeds(updateDoc(doc(como(ADMIN), `planes_usuarios/${COMPRADOR}`), { plan: 'proBroker' }));
 });
+
+// =====================================================================
+// DOC-ARCH. ARCHIVAR DOCUMENTOS (QA Grupo C, 20/11/2026)
+// La lista de documentos del expediente solo crece: un documento no se
+// borra, se archiva.
+// =====================================================================
+
+const docEstructurado = (id, extra = {}) => ({
+  documentoId: id, tipo: 'escritura', descripcion: `Doc ${id}`,
+  estado: 'documentado', evidenciaIds: [], archivado: false, ...extra,
+});
+
+const cargarDosDocumentos = () => cargar((db) =>
+  setDoc(doc(db, 'activos_agro/a1'), {
+    propietarioId: DUENO, publicadorId: BROKER, nombre: 'Campo de prueba',
+    documentacion: { documentosEstructurados: [docEstructurado('d1'), docEstructurado('d2')] },
+  }));
+
+test('DOC-ARCH-01. El dueño archiva un documento (sigue en la lista) y agrega otro [PERMITIDO]', async () => {
+  await cargarDosDocumentos();
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'activos_agro/a1'), {
+    documentacion: { documentosEstructurados: [
+      docEstructurado('d1', { archivado: true, motivoArchivo: 'Cargado por error' }),
+      docEstructurado('d2'),
+    ] },
+  }));
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'activos_agro/a1'), {
+    documentacion: { documentosEstructurados: [
+      docEstructurado('d1', { archivado: true }), docEstructurado('d2'), docEstructurado('d3'),
+    ] },
+  }));
+});
+
+test('DOC-ARCH-02. Nadie borra un documento de la lista; solo el administrador [PROHIBIDO / PERMITIDO admin]', async () => {
+  await cargarDosDocumentos();
+  await assertFails(updateDoc(doc(como(DUENO), 'activos_agro/a1'), {
+    documentacion: { documentosEstructurados: [docEstructurado('d2')] },
+  }));
+  await assertFails(updateDoc(doc(como(BROKER), 'activos_agro/a1'), {
+    documentacion: { documentosEstructurados: [] },
+  }));
+  await assertSucceeds(updateDoc(doc(como(ADMIN), 'activos_agro/a1'), {
+    documentacion: { documentosEstructurados: [docEstructurado('d2')] },
+  }));
+});

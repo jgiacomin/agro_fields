@@ -42,7 +42,10 @@ class EstadoPrimerosPasos {
   }) {
     return EstadoPrimerosPasos.calcular(
       tieneMapa: activo.ubicacion.tieneCoordenadas,
-      documentos: activo.documentacion.documentosEstructurados.length,
+      // QA Grupo C: los documentos archivados no cuentan.
+      documentos: activo.documentacion.documentosEstructurados
+          .where((d) => !d.archivado)
+          .length,
       estadoSuelo: activo.suelo.estado,
       lugares: lugares,
       animalesOCultivos: animalesOCultivos,

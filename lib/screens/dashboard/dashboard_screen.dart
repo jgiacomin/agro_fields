@@ -722,6 +722,8 @@ debugPrint(
     var porVencer = 0;
     for (final a in activos) {
       for (final d in a.documentacion.documentosEstructurados) {
+        // QA Grupo C: los archivados no avisan.
+        if (d.archivado) continue;
         final e = d.estadoVigencia();
         if (e == EstadoVigenciaDocumento.vencido) vencidos++;
         if (e == EstadoVigenciaDocumento.porVencer) porVencer++;

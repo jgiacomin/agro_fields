@@ -77,6 +77,22 @@ class DocumentoActivo {
   /// A qué animales o producción aplica (ej.: "Rodeo de engorde").
   final String? aplicaA;
 
+  // =====================================================
+  // QA Grupo C (20/11/2026) — ARCHIVAR. Un documento no se
+  // borra: se archiva con fecha y motivo. Sale de la lista y
+  // de los avisos, pero se conserva (trazabilidad).
+  // =====================================================
+
+  /// Si el documento está archivado. Los documentos viejos se leen
+  /// como "no archivado".
+  final bool archivado;
+
+  /// Cuándo se archivó.
+  final DateTime? fechaArchivo;
+
+  /// Por qué se archivó (ej.: "Cargado por error").
+  final String? motivoArchivo;
+
   DocumentoActivo({
     required this.documentoId,
     required this.tipo,
@@ -96,7 +112,44 @@ class DocumentoActivo {
     this.archivoRuta,
     this.alcance,
     this.aplicaA,
+    this.archivado = false,
+    this.fechaArchivo,
+    this.motivoArchivo,
   });
+
+  /// Devuelve una copia archivada, con fecha y motivo.
+  DocumentoActivo archivar(String motivo, {DateTime? fecha}) {
+    return copyWith(
+      archivado: true,
+      fechaArchivo: fecha ?? DateTime.now(),
+      motivoArchivo: motivo,
+    );
+  }
+
+  /// Devuelve una copia que vuelve a la lista. La fecha y el motivo del
+  /// archivo quedan en el historial del campo.
+  DocumentoActivo desarchivar() {
+    return DocumentoActivo(
+      documentoId: documentoId,
+      tipo: tipo,
+      descripcion: descripcion,
+      fecha: fecha,
+      estado: estado,
+      responsableId: responsableId,
+      evidenciaIds: evidenciaIds,
+      observaciones: observaciones,
+      emisor: emisor,
+      numero: numero,
+      fechaVencimiento: fechaVencimiento,
+      pais: pais,
+      provinciaEstado: provinciaEstado,
+      transferibilidad: transferibilidad,
+      contieneDatosPersonales: contieneDatosPersonales,
+      archivoRuta: archivoRuta,
+      alcance: alcance,
+      aplicaA: aplicaA,
+    );
+  }
 
   /// Dice si el documento está vigente, por vencer o vencido.
   /// Es la base de las alertas de vencimiento.
@@ -150,6 +203,9 @@ class DocumentoActivo {
       archivoRuta: map['archivoRuta'],
       alcance: map['alcance'],
       aplicaA: map['aplicaA'],
+      archivado: map['archivado'] == true,
+      fechaArchivo: _leerFecha(map['fechaArchivo']),
+      motivoArchivo: map['motivoArchivo'],
     );
   }
 
@@ -177,6 +233,11 @@ class DocumentoActivo {
       'archivoRuta': archivoRuta,
       'alcance': alcance,
       'aplicaA': aplicaA,
+      'archivado': archivado,
+      'fechaArchivo': fechaArchivo != null
+          ? Timestamp.fromDate(fechaArchivo!)
+          : null,
+      'motivoArchivo': motivoArchivo,
     };
   }
 
@@ -199,6 +260,9 @@ class DocumentoActivo {
     String? archivoRuta,
     String? alcance,
     String? aplicaA,
+    bool? archivado,
+    DateTime? fechaArchivo,
+    String? motivoArchivo,
   }) {
     return DocumentoActivo(
       documentoId: documentoId ?? this.documentoId,
@@ -220,6 +284,9 @@ class DocumentoActivo {
       archivoRuta: archivoRuta ?? this.archivoRuta,
       alcance: alcance ?? this.alcance,
       aplicaA: aplicaA ?? this.aplicaA,
+      archivado: archivado ?? this.archivado,
+      fechaArchivo: fechaArchivo ?? this.fechaArchivo,
+      motivoArchivo: motivoArchivo ?? this.motivoArchivo,
     );
   }
 

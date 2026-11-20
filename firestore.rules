@@ -44,6 +44,11 @@ service cloud.firestore {
     }
 
     // true si la escritura modifica alguno de esos campos.
+    // QA Grupo C (20/11/2026): cuántos documentos tiene el expediente.
+    function cantidadDocumentos(d) {
+      return d.get('documentacion', {}).get('documentosEstructurados', []).size();
+    }
+
     function cambia(campos) {
       return request.resource.data.diff(resource.data)
         .affectedKeys().hasAny(campos);
@@ -141,10 +146,14 @@ service cloud.firestore {
 
       // Editar: dueÃ±o o publicador, sin cambiar quiÃ©n es dueÃ±o ni publicador.
       // (La toma de posesiÃ³n del dueÃ±o se harÃ¡ por un flujo aparte.)
+      // QA Grupo C (20/11/2026): la lista de documentos solo crece; un
+      // documento no se borra, se archiva.
       allow update: if esAdmin()
         || (logueado()
             && parteDeActivo(resource.data)
-            && !cambia(['propietarioId', 'publicadorId']));
+            && !cambia(['propietarioId', 'publicadorId'])
+            && cantidadDocumentos(request.resource.data)
+                >= cantidadDocumentos(resource.data));
 
       // Un expediente no se borra desde la app (trazabilidad).
       allow delete: if esAdmin();

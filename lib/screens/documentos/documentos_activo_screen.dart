@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/activos/activo_agro_model_v2.dart';
+import '../../models/activos/documentacion_activo_model.dart';
 import '../../models/activos/documento_activo_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../operaciones/operaciones_textos.dart';
@@ -75,8 +76,17 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
   final ActivoAgroServiceV2 _activos = ActivoAgroServiceV2();
 
   bool cargando = true;
+  bool guardando = false;
   String? error;
   ActivoAgroV2? activo;
+
+  /// QA Grupo C (20/11/2026): motivos para archivar, para elegir tocando.
+  static const List<String> motivosArchivo = [
+    'Cargado por error',
+    'Reemplazado por uno nuevo',
+    'Ya no corresponde',
+    'Otro',
+  ];
 
   @override
   void initState() {
@@ -115,11 +125,114 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
     if (guardo == true) await cargar();
   }
 
+  /// QA Grupo C (20/11/2026): pregunta el motivo antes de archivar.
+  Future<String?> _pedirMotivo(DocumentoActivo d) {
+    String? elegido;
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogo) => AlertDialog(
+          title: Text('¿Archivar "${_nombre(d)}"?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'No se borra: queda en "Archivados" y en el historial del '
+                'campo. Deja de avisar el vencimiento.',
+                style: TextStyle(height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '¿Por qué lo archivás?',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              OpcionesTocar<String>(
+                opciones: motivosArchivo,
+                elegida: elegido,
+                etiqueta: (m) => m,
+                alElegir: (m) => setDialogo(() => elegido = m),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: elegido == null
+                  ? null
+                  : () => Navigator.of(ctx).pop(elegido),
+              child: const Text('Archivar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> archivar(DocumentoActivo d) async {
+    final motivo = await _pedirMotivo(d);
+    if (motivo == null) return;
+    await _cambiarArchivo(d, motivo: motivo);
+  }
+
+  /// Archiva (con motivo) o vuelve a la lista (sin motivo). Se relee el
+  /// campo para no pisar documentos cargados mientras tanto. El historial
+  /// del campo guarda el antes y el después.
+  Future<void> _cambiarArchivo(DocumentoActivo d, {String? motivo}) async {
+    setState(() => guardando = true);
+    try {
+      final actual = await _activos.obtenerActivoPorId(widget.activoAgroId);
+      if (actual == null) throw Exception('No se encontró el campo.');
+      final doc = actual.documentacion;
+
+      final nueva = DocumentacionActivo(
+        documentacionCompleta: doc.documentacionCompleta,
+        documentos: doc.documentos,
+        certificaciones: doc.certificaciones,
+        permisos: doc.permisos,
+        archivos: doc.archivos,
+        documentosEstructurados: [
+          for (final x in doc.documentosEstructurados)
+            if (x.documentoId != d.documentoId)
+              x
+            else if (motivo != null)
+              x.archivar(motivo)
+            else
+              x.desarchivar(),
+        ],
+        observaciones: doc.observaciones,
+        fechaActualizacion: DateTime.now(),
+      );
+
+      await _activos.actualizarDocumentacion(actual.activoId, nueva);
+      if (!mounted) return;
+      setState(() => guardando = false);
+      _avisar(motivo != null
+          ? 'Documento archivado.'
+          : 'El documento volvió a la lista.');
+      await cargar();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => guardando = false);
+      _avisar('No se pudo guardar: $e');
+    }
+  }
+
+  void _avisar(String texto) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(texto)));
+  }
+
   @override
   Widget build(BuildContext context) {
-    final documentos = [
-      ...?activo?.documentacion.documentosEstructurados,
-    ]..sort((a, b) => _orden(a).compareTo(_orden(b)));
+    final todos = [...?activo?.documentacion.documentosEstructurados];
+    // QA Grupo C: los archivados van aparte y no avisan.
+    final documentos = todos.where((d) => !d.archivado).toList()
+      ..sort((a, b) => _orden(a).compareTo(_orden(b)));
+    final archivados = todos.where((d) => d.archivado).toList();
 
     final avisos = documentos.where((d) {
       final e = d.estadoVigencia();
@@ -188,6 +301,10 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
                           ),
                         ),
                       ...documentos.map(_tarjeta),
+                      if (archivados.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        _seccionArchivados(archivados),
+                      ],
                     ],
                   ),
                 ),
@@ -196,7 +313,8 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
           child: BotonGrande(
             texto: '+ Nuevo documento',
-            onPressed: cargando || activo == null ? null : nuevo,
+            onPressed:
+                cargando || guardando || activo == null ? null : nuevo,
           ),
         ),
       ),
@@ -302,10 +420,85 @@ class _DocumentosActivoScreenState extends State<DocumentosActivoScreen> {
               ),
               if (d.archivoRuta != null)
                 VerArchivoBoton(ruta: d.archivoRuta!),
+              // QA Grupo C: archivar en vez de borrar.
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: guardando ? null : () => archivar(d),
+                  icon: const Icon(Icons.archive_outlined, size: 18),
+                  label: const Text('Archivar'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: EstiloProduccion.textoSuave,
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
         ),
+      ),
+    );
+  }
+
+  /// QA Grupo C: sección cerrada con los documentos archivados.
+  Widget _seccionArchivados(List<DocumentoActivo> archivados) {
+    return TarjetaBlanca(
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          leading: const Icon(Icons.archive_outlined,
+              color: EstiloProduccion.textoSuave),
+          title: Text(
+            'Archivados (${archivados.length})',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          subtitle: const Text(
+            'No avisan vencimientos. Se conservan por trazabilidad.',
+            style: TextStyle(fontSize: 13, color: EstiloProduccion.textoSuave),
+          ),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          children: [
+            for (final d in archivados) _filaArchivado(d),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _filaArchivado(DocumentoActivo d) {
+    final cuando = d.fechaArchivo != null
+        ? 'Archivado el ${fechaCorta(d.fechaArchivo!)}'
+        : 'Archivado';
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _nombre(d),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            [
+              cuando,
+              if (d.motivoArchivo != null) d.motivoArchivo!,
+            ].join(' · '),
+            style: const TextStyle(
+                fontSize: 13, color: EstiloProduccion.textoSuave),
+          ),
+          if (d.archivoRuta != null) VerArchivoBoton(ruta: d.archivoRuta!),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: guardando ? null : () => _cambiarArchivo(d),
+              icon: const Icon(Icons.unarchive_outlined, size: 18),
+              label: const Text('Volver a la lista'),
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+            ),
+          ),
+        ],
       ),
     );
   }

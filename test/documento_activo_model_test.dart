@@ -170,4 +170,50 @@ void main() {
       expect(viejo.aplicaA, isNull);
     });
   });
+
+  group('DocumentoActivo - archivar (QA Grupo C)', () {
+    test('un documento viejo se lee como no archivado', () {
+      final viejo = DocumentoActivo.fromMap({
+        'tipo': 'escritura',
+        'descripcion': 'Escritura',
+        'estado': 'documentado',
+      }, 'doc_viejo');
+
+      expect(viejo.archivado, isFalse);
+      expect(viejo.fechaArchivo, isNull);
+      expect(viejo.motivoArchivo, isNull);
+    });
+
+    test('archivar guarda fecha y motivo y no toca el resto', () {
+      final archivado = documento(vencimiento: DateTime(2026, 10, 1))
+          .archivar('Cargado por error', fecha: hoy);
+
+      expect(archivado.archivado, isTrue);
+      expect(archivado.fechaArchivo, hoy);
+      expect(archivado.motivoArchivo, 'Cargado por error');
+      expect(archivado.documentoId, 'doc1');
+      expect(archivado.descripcion, 'Escritura del campo');
+    });
+
+    test('el archivado se guarda y se lee igual', () {
+      final original = documento().archivar('Reemplazado', fecha: hoy);
+      final recuperado =
+          DocumentoActivo.fromMap(original.toMap(), original.documentoId);
+
+      expect(recuperado.archivado, isTrue);
+      expect(recuperado.fechaArchivo, hoy);
+      expect(recuperado.motivoArchivo, 'Reemplazado');
+    });
+
+    test('volver a la lista saca la marca de archivado', () {
+      final vuelto = documento()
+          .archivar('Cargado por error', fecha: hoy)
+          .desarchivar();
+
+      expect(vuelto.archivado, isFalse);
+      expect(vuelto.fechaArchivo, isNull);
+      expect(vuelto.motivoArchivo, isNull);
+      expect(vuelto.documentoId, 'doc1');
+    });
+  });
 }
