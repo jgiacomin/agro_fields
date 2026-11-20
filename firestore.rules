@@ -656,7 +656,10 @@ service cloud.firestore {
                 || activoDe(resource.data.activoId).propietarioId
                      == request.auth.uid));
 
-      allow create: if esAdmin()
+      // QA 20/11/2026: el código tiene que ser de un usuario registrado,
+      // también para el administrador (solo se comprueba que exista).
+      allow create: if exists(/databases/$(database)/documents/usuarios/$(request.resource.data.usuarioAutorizado))
+        && (esAdmin()
         || (
           logueado()
           && request.resource.data.autorizacionId == autorizacionId
@@ -667,9 +670,6 @@ service cloud.firestore {
           && request.resource.data.quienOtorga == request.auth.uid
           && activoDe(request.resource.data.activoId).propietarioId
                == request.auth.uid
-          // QA 20/11/2026: el código tiene que ser de un usuario registrado
-          // (solo se comprueba que exista; no se leen sus datos).
-          && exists(/databases/$(database)/documents/usuarios/$(request.resource.data.usuarioAutorizado))
           // Nombre armado (paso 3): activoId__usuario__permiso__ambito
           // y, si tiene referencia, __referencia al final.
           && request.resource.data.permiso is string
@@ -687,7 +687,7 @@ service cloud.firestore {
                   + request.resource.data.ambito.tipo + '__'
                   + request.resource.data.ambito.referenciaId)
           )
-        );
+        ));
 
       allow update: if esAdmin()
         || (

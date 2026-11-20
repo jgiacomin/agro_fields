@@ -2040,3 +2040,8 @@ test('COD-01. El dueño NO invita a un código inventado (encargado ni profesion
   await assertFails(setDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('crear', 'expedienteProductivo', 'fantasma')),
     autorizacionDe('crear', 'expedienteProductivo', { usuarioAutorizado: 'fantasma', rol: 'profesional' })));
 });
+
+test('COD-02. Tampoco el administrador invita a un código inventado [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(ADMIN), 'autorizaciones_activos', idAut('crear', 'trabajo', 'fantasma')),
+    autorizacionDe('crear', 'trabajo', { usuarioAutorizado: 'fantasma', quienOtorga: ADMIN })));
+});
