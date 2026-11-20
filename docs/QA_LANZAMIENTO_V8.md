@@ -94,14 +94,14 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 
 | Paso | Qué hacer | Debería | ✅/❌ | Nota |
 |---|---|---|---|---|
-| T4-01 | Mi plan (dueño) | Muestra Esencial | | |
-| T4-02 | Admin: dar de alta a la segunda cuenta como Fundador | Su "Mi plan" muestra Pro gratis por 12 meses | | |
-| T4-03 | Sin señal (F12 → Network → Offline): cargar un evento en el rodeo | Se guarda en el teléfono; aparece el aviso de pendientes | | |
-| T4-04 | Volver a Online | El evento sube solo y el aviso desaparece | | |
-| T4-05 | Sin señal: intentar adjuntar un archivo | Avisa que hace falta señal | | |
-| T4-06 | Términos: leerlos desde el menú | Se ven completos | | |
-| T4-07 | Segunda cuenta: "Borrar mi cuenta" | Queda el pedido; el admin lo ve en Bajas | | |
-| T4-08 | Recorrer Inicio, ficha, Producción, Stock y Emergencias en modo celular | Nada se corta | | |
+| T4-01 | Mi plan (dueño) | Muestra Esencial | ✅ | comprador.agrofields muestra Esencial. |
+| T4-02 | Admin: dar de alta a la segunda cuenta como Fundador | Su "Mi plan" muestra Pro gratis por 12 meses | ✅ | compradorb ya era Fundador (16/11): el sistema no deja repetir. Mensaje "Bad state:" y código inventado arreglados (452abda). |
+| T4-03 | Sin señal (F12 → Network → Offline): cargar un evento en el rodeo | Se guarda en el teléfono; aparece el aviso de pendientes | 📱 | La carga sin señal anda y el dato no se pierde. El aviso no se puede probar en Chrome (el modo Offline no corta la conexión abierta de Firebase): probar en Android con modo avión en diciembre. |
+| T4-04 | Volver a Online | El evento sube solo y el aviso desaparece | 📱 | Igual que T4-03: va al celular Android. |
+| T4-05 | Sin señal: intentar adjuntar un archivo | Avisa que hace falta señal | 📱 | Igual que T4-03: va al celular Android. |
+| T4-06 | Términos: leerlos desde el menú | Se ven completos | ✅ | Se leía mal sobre la foto y quedaba "[30]". Arreglado (452abda). |
+| T4-07 | Segunda cuenta: "Borrar mi cuenta" | Queda el pedido; el admin lo ve en Bajas | ✅ | El pedido aparece en Bajas. Se sumó "Anular" para pruebas o arrepentimientos. |
+| T4-08 | Recorrer Inicio, ficha, Producción, Stock y Emergencias en modo celular | Nada se corta | ✅ | Menú "+ Cargar" cortado y números que se cortaban en celular chico. Arreglados (452abda). |
 
 ---
 
@@ -133,3 +133,12 @@ Se usa un campo **ficticio**, inspirado en el aviso de Carlos Tejedor pero **sin
 | T3-03 | "Confianza 44 %" y "Madurez 55 %" no se explican; "Tipo: agricola", "agricultura" e "Interés: inversion" sin tilde ni mayúscula; tarjetas con diseño viejo (rosado, emojis) | 🟡 | Pendiente: GAP del Mercado |
 | T3-04 | El tipo de interés aparece como "inversion" aunque el campo está en venta | 🟡 | Pendiente: revisar en el GAP del Mercado |
 | T3-05 | Los dos participantes del chat no se ven por su nombre (privacidad); que cada uno elija qué nombre mostrar al consultar o aceptar | 🟡 | Pendiente: GAP del Mercado (cambia datos y reglas) |
+| T4-08 | El menú "+ Cargar" no entraba en celular chico (rayas amarillas, "Cultivo" cortado) | 🔴 | rama `qa-retoques` (452abda): el menú se desliza |
+| T4-08 | Los números del resumen se cortaban ("417 anima…", "23… ha") | 🟡 | rama `qa-retoques`: en angosto, ícono arriba y palabra en dos renglones |
+| T4-06 | Términos sobre la foto del pasto: difícil de leer con anteojos; quedaba "[30]" | 🔴 | rama `qa-retoques`: fondo liso, letra 16; "30 días" |
+| T4-02 | Fundadores aceptaba códigos inventados (gastaba un lugar) y mostraba "Bad state:" | 🟡 | rama `qa-retoques`: regla `exists(usuarios/...)` + cartel "Código equivocado" |
+| T4-07 | No había cómo anular un pedido de baja de prueba o de alguien arrepentido | 🟡 | rama `qa-retoques`: "Anular" con motivo; se puede volver a pedir |
+| T4-03 | Una entrada sin potreros queda "Sin ubicación" sin avisar | ⚪ | rama `qa-retoques`: aviso, sin frenar la carga |
+| T4-03/04/05 | El aviso de datos pendientes no se puede probar en Chrome | — | Probar en Android con modo avión (diciembre) |
+| General | Regla de diseño: el texto nunca va directo sobre la foto, siempre sobre fondo liso. Revisar las demás pantallas largas en la revisión de diseño | 🟡 | Anotado |
+| General | Los términos tienen datos sin completar entre corchetes (fecha, razón social, CUIT, domicilio, emails, página de baja y de precios) | 🔴 | Completar antes de publicar, con la revisión legal |

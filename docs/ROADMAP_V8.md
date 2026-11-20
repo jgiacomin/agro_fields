@@ -3925,6 +3925,9 @@ Para marzo 2027 (🟡/🟢): ocupación de corrales (AF-112), días de permanenc
 ✅ Grupo C: archivar documento — CERRADO (rama `qa-archivar-documento`, 8237e5b; regla "la lista de documentos solo crece" publicada).
 ✅ Tanda 2 (equipo) — TERMINADA: arreglados el código fantasma (58deff2) y el acceso del profesional a la historia del territorio (2df11d2). Pendientes: evidencia en las intervenciones del profesional y título "Soy encargado".
 ✅ Tanda 3 (mercado) — TERMINADA: arreglados el error al aprobar, la solicitud que no cargaba y el chat con usuarios comunes (ba6af68). Pendiente grande: GAP-MERC-01 (precio, venta/alquiler, fotos, textos y diseño del Mercado).
-⬜ Tanda 4 (cuenta, plan, sin señal y celular).
+✅ Tanda 4 (cuenta, plan, sin señal y celular) — TERMINADA en Chrome; sin señal se prueba en Android en diciembre.
+✅ Paquete de retoques — CERRADO (rama `qa-retoques`, 452abda; reglas publicadas).
+
+**Antes de publicar (diciembre):** 1) GAP-MERC-01 Mercado para inmobiliarias; 2) evidencia en las intervenciones del profesional; 3) revisar lecturas de `usuarios/` en `lib`; 4) completar los corchetes de los términos + revisión legal; 5) pantallas largas con texto sobre la foto; 6) prueba en Android (sin señal, GPS); 7) los 🔴 nuevos del Concepto (AF-119, AF-121 a AF-124).
 
 Nuevos 🔴 para enero desde el Concepto (20/11/2026): AF-119 terminación del lote y días de encierre; AF-121 registro de clientes (GAP-CLI-01); AF-122 invitar al comprador a pasar a gestión; AF-123 código de invitación de Fundadores; AF-124 catálogo compartido entre brokers. Cada uno pasa por Auditoría antes de programarse.

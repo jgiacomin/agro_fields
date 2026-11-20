@@ -8198,3 +8198,33 @@ El Mercado no muestra precio, venta o alquiler, ni fotos; confianza y madurez no
 ### Aprendizaje
 
 * Varias pantallas leían datos de otros usuarios y solo andaban con la cuenta admin. Antes de publicar, revisar todas las lecturas de `usuarios/` en `lib`.
+
+---
+
+# 20/11/2026 - QA tanda 4 y paquete de retoques (rama qa-retoques)
+
+**Estado: QA DE CHROME TERMINADO (tandas 1 a 4).** Commit: 452abda. Detalle en `docs/QA_LANZAMIENTO_V8.md`.
+
+### Tanda 4
+
+* Plan, Fundadores, términos y baja: andan. Sin señal: la carga anda y el dato no se pierde; el aviso de pendientes no se puede probar en Chrome (el modo Offline de DevTools no corta la conexión ya abierta de Firebase; la consola mostraba "AVISO_PENDIENTES: nada pendiente"). T4-03 a T4-05 pasan al celular Android con modo avión (diciembre).
+
+### Retoques
+
+* `produccion_activo_screen.dart`: el menú "+ Cargar" se desliza (`isScrollControlled` + `SingleChildScrollView`).
+* `produccion_estilo.dart` (`ResumenNumeros`): en ancho < 130 el ícono va arriba, el número se achica si no entra y la palabra usa dos renglones.
+* `terminos_screen.dart`: fondo liso, letra 16 color pizarra, títulos 19. `textos_legales.dart`: "30 días" (decidido por el usuario).
+* `admin_service.dart` / `admin_screen.dart`: Fundadores comprueba que el código exista (`CodigoNoValido` + cartel); sin "Bad state:"; "Anular" pedido de baja con motivo (`anularBaja`).
+* `aceptacion_legal_model.dart` y `legal_service.dart`: estado "anulada"; con un pedido anulado se puede pedir de nuevo.
+* `campos_encargado_screen.dart` y `campos_profesional_screen.dart`: títulos "Soy encargado" y "Soy profesional".
+* `registrar_evento_screen.dart`: aviso si se carga una entrada sin potreros.
+* `firestore.rules`: `planes_usuarios` exige `exists(usuarios/{id})`; `solicitudes_baja` con `bajaNuevaValida` y re-pedido si está "anulada". Pruebas: PLAN-04, LEGAL-07, LEGAL-08 y LEGAL-T8. Reglas publicadas.
+
+### Pendiente antes de publicar
+
+* GAP-MERC-01: Mercado para inmobiliarias (precio, venta/alquiler, fotos, textos, diseño, interés, nombres en el chat).
+* Evidencia en las intervenciones del profesional.
+* Revisar lecturas de `usuarios/` en toda `lib` (solo andaban con la cuenta admin).
+* Completar los corchetes de los términos y la revisión legal.
+* Revisar las pantallas largas con texto sobre la foto.
+* Probar en Android: sin señal (aviso de pendientes, adjuntar), "¿Guardar sin descontar?" y GPS.
