@@ -4,6 +4,29 @@ import '../models/activos/autorizacion_activo_model.dart';
 import '../models/activos/permisos_encargado.dart';
 import 'autorizacion_activo_service.dart';
 
+/// QA 20/11/2026: el código pegado no es de ningún usuario registrado.
+/// Las reglas lo rechazan; acá se traduce a un mensaje claro.
+class CodigoNoValido implements Exception {
+  static const String mensaje =
+      'Ese código no es de ningún usuario de Agro Fields. Pedile que lo '
+      'copie de nuevo desde Menú → Mi código.';
+
+  const CodigoNoValido();
+
+  @override
+  String toString() => mensaje;
+}
+
+/// Si las reglas rechazaron la autorización por el código, avisa claro.
+Future<void> guardarConCodigoRevisado(Future<void> Function() guardar) async {
+  try {
+    await guardar();
+  } on FirebaseException catch (e) {
+    if (e.code == 'permission-denied') throw const CodigoNoValido();
+    rethrow;
+  }
+}
+
 /// GAP-ENC-01 (16/11/2026): invitar encargados al campo, quitarles el
 /// acceso y listar los campos donde uno es encargado. Reutiliza las
 /// autorizaciones del paso 3 (las reglas ya existen).
@@ -50,7 +73,7 @@ class EncargadoService {
             .where((a) => a.permiso == permiso && a.ambito.tipo == ambito)
             .firstOrNull;
         if (areas.contains(area)) {
-          await _autorizaciones.guardar(AutorizacionActivo(
+          await guardarConCodigoRevisado(() => _autorizaciones.guardar(AutorizacionActivo(
             autorizacionId: '',
             activoId: activoId,
             usuarioAutorizado: codigo,
@@ -62,7 +85,7 @@ class EncargadoService {
             estado: EstadoAutorizacion.activa,
             fechaOtorgamiento: previa?.fechaOtorgamiento ?? ahora,
             motivo: motivoInvitacion,
-          ));
+          )));
         } else if (previa != null && previa.estado == EstadoAutorizacion.activa) {
           await _autorizaciones.guardar(previa.copyWith(
             estado: EstadoAutorizacion.revocada,

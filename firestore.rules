@@ -667,6 +667,9 @@ service cloud.firestore {
           && request.resource.data.quienOtorga == request.auth.uid
           && activoDe(request.resource.data.activoId).propietarioId
                == request.auth.uid
+          // QA 20/11/2026: el código tiene que ser de un usuario registrado
+          // (solo se comprueba que exista; no se leen sus datos).
+          && exists(/databases/$(database)/documents/usuarios/$(request.resource.data.usuarioAutorizado))
           // Nombre armado (paso 3): activoId__usuario__permiso__ambito
           // y, si tiene referencia, __referencia al final.
           && request.resource.data.permiso is string

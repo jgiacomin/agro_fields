@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/activos/autorizacion_activo_model.dart';
 import '../models/activos/intervencion_profesional_model.dart';
 import 'autorizacion_activo_service.dart';
+import 'encargado_service.dart' show guardarConCodigoRevisado;
 
 /// AF-093 (12/11/2026): invitar profesionales al campo y registrar sus
 /// intervenciones. Reutiliza las autorizaciones del paso 3:
@@ -46,7 +47,8 @@ class ProfesionalService {
     // autorización igual queda vigente para las reglas.
     final ahora = DateTime.now().subtract(const Duration(minutes: 1));
 
-    await _autorizaciones.guardar(
+    // QA 20/11/2026: si el código no existe, mensaje claro.
+    await guardarConCodigoRevisado(() => _autorizaciones.guardar(
       AutorizacionActivo(
         autorizacionId: '',
         activoId: activoId,
@@ -63,7 +65,7 @@ class ProfesionalService {
         fechaOtorgamiento: ahora,
         motivo: motivoInvitacion,
       ),
-    );
+    ));
   }
 
   /// Profesionales invitados a un campo (lo consulta el dueño).

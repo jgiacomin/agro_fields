@@ -44,6 +44,9 @@ beforeEach(async () => {
   await env.withSecurityRulesDisabled(async (ctx) => {
     const db = ctx.firestore();
     await setDoc(doc(db, 'usuarios/user1'), { uid: 'user1', nombre: 'Ana', rol: 'Comprador' });
+    // QA 20/11/2026: solo se invita a usuarios registrados.
+    await setDoc(doc(db, 'usuarios/encargado'), { uid: 'encargado', nombre: 'Encargado', rol: 'Comprador' });
+    await setDoc(doc(db, 'usuarios/profesional'), { uid: 'profesional', nombre: 'Profesional', rol: 'Comprador' });
     await setDoc(doc(db, 'activos_agro/a1'), { propietarioId: DUENO, publicadorId: BROKER, nombre: 'Campo de prueba' });
     await setDoc(doc(db, 'activos_publicos/p1'), { propietarioId: DUENO, estadoPublicacion: 'publicado', visible: true });
     await setDoc(doc(db, 'activos_publicos/p2'), { propietarioId: DUENO, estadoPublicacion: 'pendienteRevision', visible: false });
@@ -2024,4 +2027,16 @@ test('DOC-ARCH-02. Nadie borra un documento de la lista; solo el administrador [
   await assertSucceeds(updateDoc(doc(como(ADMIN), 'activos_agro/a1'), {
     documentacion: { documentosEstructurados: [docEstructurado('d2')] },
   }));
+});
+
+// =====================================================================
+// COD. CÓDIGO VÁLIDO AL INVITAR (QA 20/11/2026)
+// Solo se da permiso a un código que sea de un usuario registrado.
+// =====================================================================
+
+test('COD-01. El dueño NO invita a un código inventado (encargado ni profesional) [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('crear', 'trabajo', 'fantasma')),
+    autorizacionDe('crear', 'trabajo', { usuarioAutorizado: 'fantasma' })));
+  await assertFails(setDoc(doc(como(DUENO), 'autorizaciones_activos', idAut('crear', 'expedienteProductivo', 'fantasma')),
+    autorizacionDe('crear', 'expedienteProductivo', { usuarioAutorizado: 'fantasma', rol: 'profesional' })));
 });
