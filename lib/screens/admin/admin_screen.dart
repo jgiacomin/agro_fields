@@ -85,7 +85,11 @@ class _PublicacionesState extends State<_Publicaciones> {
     _futuro = _admin.publicacionesPendientes();
   }
 
-  void _recargar() => setState(() => _futuro = _admin.publicacionesPendientes());
+  // QA 20/11/2026: setState no puede devolver un Future (daba error al
+  // aprobar o rechazar). Se asigna adentro de un bloque.
+  void _recargar() => setState(() {
+        _futuro = _admin.publicacionesPendientes();
+      });
 
   Future<void> _aprobar(ActivoPublico p) async {
     try {
@@ -258,7 +262,9 @@ class _FundadoresState extends State<_Fundadores> {
       if (!mounted) return;
       _codigo.clear();
       _avisar(context, 'Fundador dado de alta: Pro gratis por 12 meses.');
-      setState(() => _futuro = _admin.fundadores());
+      setState(() {
+        _futuro = _admin.fundadores();
+      });
     } catch (e) {
       if (!mounted) return;
       _avisar(context, 'No se pudo dar de alta: $e');
@@ -383,7 +389,9 @@ class _BajasState extends State<_Bajas> {
     try {
       await _admin.completarBaja(p.usuarioId, widget.adminId);
       if (!mounted) return;
-      setState(() => _futuro = _admin.pedidosBajaPendientes());
+      setState(() {
+        _futuro = _admin.pedidosBajaPendientes();
+      });
     } catch (e) {
       if (!mounted) return;
       _avisar(context, 'No se pudo marcar: $e');

@@ -10,6 +10,7 @@ import '../../services/activo_agro_service_v2.dart';
 import '../../services/chat_service.dart';
 import '../../enums/solicitud_estado.dart';
 import '../../widgets/barra_campo.dart';
+import '../chat/chat_screen.dart';
 
 
 
@@ -364,13 +365,21 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
 
 
 
-                          if (!usuarioSnap.hasData) {
-
-
-
-                            return const CircularProgressIndicator();
-
-
+                          // QA 20/11/2026: los datos del interesado no se pueden leer
+                          // (privacidad); antes quedaba cargando para siempre.
+                          if (usuarioSnap.connectionState ==
+                              ConnectionState.waiting) {
+                            return const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            );
+                          }
+                          if (usuarioSnap.hasError || usuarioSnap.data == null) {
+                            return const Text(
+                              '👤 Un usuario de Agro Fields está interesado. '
+                              'Sus datos de contacto se comparten cuando aceptás.',
+                            );
                           }
 
 
@@ -530,6 +539,16 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
                              SolicitudEstado.aceptada,
                       chatId: chatId,
                                       );
+                                  // QA 20/11/2026: al aceptar se abre el chat.
+                                  if (!context.mounted) return;
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => ChatScreen(
+                                        chatId: chatId,
+                                        otroUsuarioId: solicitud.interesadoId,
+                                      ),
+                                    ),
+                                  );
                                 }
 
 

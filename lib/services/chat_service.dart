@@ -9,6 +9,7 @@ import '../models/campo_model.dart';
 import 'campo_service.dart';
 import 'activo_agro_service_v2.dart';
 import 'user_service.dart';
+import '../models/user_model.dart';
 
 
 class ChatService {
@@ -285,13 +286,39 @@ Future<String> crearChat({
             continue;
           }
 
-          final contacto = await userService.getUsuario(
-            contactoId,
-          );
+          // QA 20/11/2026: las reglas no dejan leer los datos de otro usuario
 
-          if (contacto == null) {
-            continue;
+          // (privacidad). Si no se pueden leer, la conversación se muestra igual,
+
+          // con "Interesado" o "Dueño del campo".
+
+          UserModel? contacto;
+
+          try {
+
+            contacto = await userService.getUsuario(contactoId);
+
+          } on FirebaseException {
+
+            contacto = null;
+
           }
+
+          contacto ??= UserModel(
+
+            uid: contactoId,
+
+            nombre: esDueno ? 'Interesado' : 'Dueño del campo',
+
+            email: '',
+
+            foto: '',
+
+            rol: '',
+
+            fechaAlta: DateTime.now(),
+
+          );
 
           // 5. Fecha de creación
           final fechaCreacion =
