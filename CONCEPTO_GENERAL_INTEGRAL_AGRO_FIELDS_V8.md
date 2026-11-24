@@ -1037,6 +1037,15 @@ Los cuatro casos se cargaron a partir de los antecedentes registrados en las jor
 
 Los cinco casos se cargaron a partir de los antecedentes registrados en las jornadas del 18 y 19/11/2026, no de los documentos originales completos. Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 
+### Incorporaciones del 24/11/2026
+
+- Caso de referencia: Uruguay, trazabilidad ganadera y acceso al mercado europeo (sección 25.13). Sin AF nuevo; refuerza el Expediente, AF-104 y AF-118.
+- Caso de referencia: curso de invernada y feedlot (sección 25.14). Matriz AF-126 (carga animal) y AF-127 (resultado del rodeo).
+- Caso de referencia: limón caviar en Paraguay (sección 25.15). Matriz AF-134 (cultivo perenne / frutales).
+- AF nuevos aprobados entre el 21 y el 23/11/2026, sin caso propio: AF-128 (superficie en el mapa vs. escritura), AF-129 (piscicultura chica), AF-130 (genética), AF-131 (Emergencia ↔ Traslado), AF-132 (granos guardados) y AF-133 ("¿A dónde va la plata de mi venta?").
+
+Toda cifra y toda norma se confirman con su fuente antes de usarlas.
+
 ---
 
 ## 25. Casos de referencia estratégicos
@@ -1249,3 +1258,52 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en las jorn
 | Comisiones | — | Solo a estudiar (AF-125) | 🟢 |
 
 **Criterio:** se apoya en el marketplace existente (un campo, un registro). La IA ayuda a cargar pero no verifica. Conectar no es intermediar.
+
+### 25.13. Uruguay: trazabilidad ganadera, sostenibilidad y acceso al mercado europeo (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica. Cifras a confirmar con su fuente antes de usarlas.
+
+**Síntesis:** con la aplicación provisional del acuerdo MERCOSUR–Unión Europea (desde el 01/05/2026), Uruguay busca vender más carne vacuna a Europa. El INAC lanzó la campaña "Uruguay Beef – Made in Nature" (Alemania y Países Bajos) apoyada en origen, calidad y pastizales, y destaca su trazabilidad obligatoria del ganado y su bajo riesgo de deforestación. En los primeros meses se concretó solo una parte chica de lo pedido dentro de la cuota (alrededor del 15 %), por falta de acuerdo entre los países del bloque para repartir el contingente.
+
+| Lo que pide el mercado | Respuesta de Agro Fields | Etapa |
+|---|---|---|
+| Identificación del animal | Caravana individual (AF-104) | 🟡 / 🟢 |
+| Origen | Activo Agro y ubicación en el mapa (AF-090) | 🔴 hecho |
+| Trazabilidad | Historial de movimientos (AF-089) | 🔴 hecho |
+| Alimentación y producción | Expediente productivo; terminación del lote (AF-119) | 🔴 |
+| Sanidad | Documentos y evidencias del campo | 🔴 hecho |
+| Sostenibilidad | Historia del territorio (AF-109) | 🔴 hecho |
+| Información para compradores | Paquete de origen (AF-118) | 🟡 |
+| Auditoría | Registro de quién cargó y quién vio cada dato | 🔴 hecho |
+
+**Criterio:** la trazabilidad no es solo una obligación: puede ser una ventaja comercial. La confianza comercial se construye con información verificable, no solo con lo que declara el vendedor. Sin AF nuevo; refuerza el Expediente, AF-104 y AF-118. Agro Fields no certifica ni garantiza el acceso a un mercado.
+
+**Fuentes a conservar:** INAC (campaña Uruguay Beef); Cancillería de Uruguay (acuerdo MERCOSUR–UE); DOXA (uso de las cuotas); Noticias AgroPecuarias (balance de seis meses, 23/11/2026).
+
+### 25.14. Curso de invernada y feedlot (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026 a partir de lo aprobado el 21 y el 23/11/2026; no es especificación técnica.
+
+**Síntesis:** el productor de invernada o feedlot necesita saber cuántos animales aguanta su campo y si el rodeo le deja plata: kilos producidos, kilos por hectárea, costo por kilo y kilos necesarios para cubrir los costos.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Cuántos animales aguanta el campo | Rodeos y lugares (GAP-PROD-01) | Carga animal con semáforo (AF-126) | 🔴 enero |
+| Si el rodeo gana o pierde | Pesajes (GAP-PESO-01) y gastos (GAP-ECO-01) | Resultado del rodeo (AF-127) | 🔴 si llega, si no marzo |
+| Estacionalidad y materia seca | — | Ampliación de AF-126 | 🟢 marzo |
+
+**Criterio:** todo se calcula con datos que el productor ya carga; sin colecciones nuevas. Los valores de referencia son orientativos y los ajusta el productor o su ingeniero.
+
+### 25.15. Limón caviar en Paraguay: cultivos perennes y frutales (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026 a partir de lo aprobado el 23/11/2026; no es especificación técnica.
+
+**Síntesis:** productores que plantan frutales o cultivos que producen varios años (por ejemplo, limón caviar en Paraguay, o nogales) también necesitan llevar su producción y mostrar su origen.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Registrar un frutal | Agricultura (cultivo) | Auditar que acepte un frutal (y el maní, cultivo anual común) | 🔴 enero, nada nuevo |
+| Cultivo de varios años | — | Cultivo perenne / frutales (AF-134) | 🟡 |
+| Módulo completo y origen | Paquete de origen (AF-118) | Módulo de frutales completo | 🟢 |
+
+**Criterio:** en enero no se agrega nada nuevo; primero se audita lo que ya existe.
