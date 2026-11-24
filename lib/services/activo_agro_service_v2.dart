@@ -349,6 +349,7 @@ Future<void> publicarActivo(
   String activoId, {
   List<OfertaMercado>? ofertas,
   List<String>? fotos,
+  List<String>? actividades,
 }) async {
 
   final activo =
@@ -439,7 +440,8 @@ Future<void> publicarActivo(
   }
 
   final resumen =
-      ActivoPublico.desdeActivo(activoActualizado, fotos: fotosResumen);
+      ActivoPublico.desdeActivo(activoActualizado,
+          fotos: fotosResumen, actividades: actividades);
 
   final batch = _db.batch();
 

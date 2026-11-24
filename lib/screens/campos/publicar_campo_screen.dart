@@ -6,6 +6,10 @@ import '../../models/activos/activo_agro_model_v2.dart';
 import '../../models/activos/economia_activo_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../../services/foto_mercado_service.dart';
+import '../../models/activos/grupo_productivo_model.dart';
+import '../../services/produccion_service.dart';
+import '../produccion/produccion_activo_screen.dart' show actividadDeGrupo;
+import 'detalle_activo_agro_screen.dart' show actividadesDeclaradas;
 import '../../widgets/barra_campo.dart';
 import '../produccion/produccion_estilo.dart';
 
@@ -64,6 +68,29 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
       _ofertas[o.operacion] = f;
     }
     _cargarFotos();
+  }
+
+  /// GAP-MERC-01 Parte D: actividades reales del campo para el Mercado
+  /// (declaradas al crearlo + cargadas en Producción). null = no se pudo
+  /// saber (se usan las del expediente, como antes).
+  Future<List<String>?> _actividades() async {
+    try {
+      const orden = ['ganaderia', 'agricultura', 'avicultura', 'piscicultura'];
+      final grupos =
+          await ProduccionService().gruposDeActivo(widget.activo.activoId);
+      final todas = {
+        ...actividadesDeclaradas(widget.activo),
+        ...grupos
+            .where((g) => g.estado == EstadoGrupoProductivo.activo)
+            .map(actividadDeGrupo),
+      };
+      return [
+        ...orden.where(todas.contains),
+        ...todas.where((a) => !orden.contains(a)),
+      ];
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> _cargarFotos() async {
@@ -159,7 +186,7 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
     setState(() => _enviando = true);
     try {
       await _servicio.publicarActivo(widget.activo.activoId,
-          ofertas: ofertas, fotos: _fotos);
+          ofertas: ofertas, fotos: _fotos, actividades: await _actividades());
       // Las fotos quitadas se borran recién ahora (si se cancelaba, la
       // publicación anterior seguía usándolas).
       for (final ruta in _quitadas) {

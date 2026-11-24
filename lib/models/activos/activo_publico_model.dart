@@ -72,8 +72,10 @@ class ActivoPublico {
 
   /// Arma el resumen a partir del expediente, copiando solo lo publicable.
   /// Siempre nace pendiente de revisión y no visible.
+  /// GAP-MERC-01 Parte D: [actividades] son las actividades reales del
+  /// campo; si no vienen, se usan las del expediente (como antes).
   factory ActivoPublico.desdeActivo(ActivoAgroV2 activo,
-      {List<String> fotos = const []}) {
+      {List<String> fotos = const [], List<String>? actividades}) {
     return ActivoPublico(
       activoId: activo.activoId,
       nombre: activo.nombre,
@@ -85,7 +87,7 @@ class ActivoPublico {
       superficie: activo.ubicacion.superficie,
       nivelConfianza: activo.confianza.nivelGeneral,
       madurezPorcentaje: activo.madurez.porcentaje,
-      producciones:
+      producciones: actividades ??
           activo.producciones.map((p) => p.actividad).toList(),
       propietarioId: activo.propietarioId,
       estadoPublicacion: 'pendienteRevision',

@@ -1045,6 +1045,7 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en las jorn
 - AF nuevos aprobados entre el 21 y el 23/11/2026, sin caso propio: AF-128 (superficie en el mapa vs. escritura), AF-129 (piscicultura chica), AF-130 (genética), AF-131 (Emergencia ↔ Traslado), AF-132 (granos guardados) y AF-133 ("¿A dónde va la plata de mi venta?").
 
 - Caso de referencia: maíz amarillento por fósforo bloqueado (sección 25.16). Matriz AF-136 (nutrientes en el suelo), AF-137 (síntomas en el monitoreo) y AF-138 (fertilizante en la siembra).
+- Caso de referencia: El Niño muy fuerte 2026-2027 (sección 25.17). Matriz AF-139 (plan de emergencia del campo) y ampliación de AF-111 (INUMET, Uruguay).
 
 Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 
@@ -1324,3 +1325,20 @@ Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 | Entender posibles causas | Suelo + Monitoreo + clima; profesional invitado (AF-093) | "Posibles causas para consultar con tu ingeniero" cruzando síntoma, suelo y clima (dentro de AF-137) | 🟢 marzo |
 
 **Criterio:** la IA es copiloto: sugiere posibles causas para consultar, no diagnostica ni receta. La decisión es del productor y su profesional. En enero no se agrega nada nuevo.
+
+### 25.17. El Niño muy fuerte 2026-2027 (Infobae, 24/11/2026, con datos del boletín del CIIFEN)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica. Cifras a confirmar con el boletín del CIIFEN (próxima actualización: primera quincena de diciembre de 2026) y los servicios meteorológicos de cada país.
+
+**Síntesis:** el CIIFEN clasifica el evento como "muy fuerte"; los modelos ubican el pico entre diciembre de 2026 y febrero de 2027 y prevén más lluvias en el sur de Brasil, Argentina, Paraguay y Uruguay. En octubre ya hubo exceso de lluvias en partes de Paraguay y el sur de Brasil. La nota no detalla inundaciones ni efectos concretos en el agro de estos países.
+
+**Por qué importa:** el pico coincide con el lanzamiento y los primeros Fundadores. Prepararse antes de la lluvia y reaccionar rápido es un valor concreto de Emergencias y Territorio Inteligente.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Prepararse antes de la lluvia | Emergencias (AF-092); lugares de Producción; historia del territorio (AF-109) | Plan de emergencia del campo: potreros altos o seguros, caminos que se cortan, contactos y vecino que puede recibir; "Trasladar animales" propone el potrero seguro (AF-139) | 🔴 enero, versión chica |
+| Saber qué dicen los organismos | Botón "Ver alertas oficiales" (SMN, DMH) (AF-111) | Sumar INUMET (Uruguay) | 🔴 enero |
+| Mover animales y registrar daños | Emergencia ↔ Traslado (AF-131) | Mapa de campos "disponibles para recibir" cercanos (🟡 en AF-131): evaluar adelantarlo a enero o febrero | Evaluar |
+| Avisos automáticos por ubicación | — | Alertas por ubicación (AF-117) | 🟢 marzo |
+
+**Criterio:** Agro Fields no pronostica ni reemplaza a los servicios meteorológicos: muestra las alertas oficiales con su fuente y ayuda a prepararse y registrar. No atribuir causas sin evidencia.

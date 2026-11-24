@@ -1,574 +1,315 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_publico_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../../services/foto_mercado_service.dart';
-
+import '../produccion/produccion_activo_screen.dart' show nombreActividad;
+import '../produccion/produccion_estilo.dart';
+import 'detalle_activo_agro_screen.dart' show emojiActividad;
 import 'detalle_campo_screen.dart';
 import '../../widgets/barra_campo.dart';
 
-
-
-class CamposScreen extends StatelessWidget {
-
-
-  CamposScreen({
-    super.key,
-  });
-
-
-
-  final ActivoAgroServiceV2 _service =
-      ActivoAgroServiceV2();
-
-
-
-
+/// Mercado de campos (lista de campos aprobados).
+/// GAP-MERC-01 Parte D (24/11/2026): diseño nuevo con foto, precio sobre
+/// la foto, filtro por operación y tarjeta que se toca entera.
+class CamposScreen extends StatefulWidget {
+  const CamposScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-
-
-    return Scaffold(
-
-
-      appBar: BarraCampo(
-
-        title:
-        const Text(
-          "Campos disponibles",
-        ),
-
-        centerTitle:true,
-
-      ),
-
-
-
-
-
-      body:
-
-      FutureBuilder<List<ActivoPublico>>(
-
-
-        future:
-        _service.obtenerActivosPublicados(),
-
-
-
-        builder:(context,snapshot){
-
-
-
-          if(snapshot.connectionState ==
-              ConnectionState.waiting){
-
-
-            return const Center(
-
-              child:
-              CircularProgressIndicator(),
-
-            );
-
-
-          }
-
-
-
-
-
-          if(snapshot.hasError){
-
-
-            return Center(
-
-              child:
-              Text(
-                "Error: ${snapshot.error}",
-              ),
-
-            );
-
-
-          }
-
-
-
-
-
-
-          if(!snapshot.hasData ||
-              snapshot.data!.isEmpty){
-
-
-            return const Center(
-
-              child:
-              Text(
-                "No hay campos disponibles",
-              ),
-
-            );
-
-
-          }
-
-
-
-
-
-
-          final activos =
-              snapshot.data!;
-
-
-
-
-
-
-          return ListView.builder(
-
-
-            padding:
-            const EdgeInsets.all(10),
-
-
-
-            itemCount:
-            activos.length,
-
-
-
-            itemBuilder:(context,index){
-
-
-              final activo =
-                  activos[index];
-
-
-
-              return _ActivoCard(
-
-                activo:
-                activo,
-
-              );
-
-
-            },
-
-
-
-          );
-
-
-
-        },
-
-
-      ),
-
-
-    );
-
-
-  }
-
-
+  State<CamposScreen> createState() => _CamposScreenState();
 }
 
+class _CamposScreenState extends State<CamposScreen> {
+  final ActivoAgroServiceV2 _service = ActivoAgroServiceV2();
+  late Future<List<ActivoPublico>> _campos;
 
+  /// null = Todos; si no, 'venta' | 'alquiler' | 'arrendamiento'.
+  String? _filtro;
 
+  @override
+  void initState() {
+    super.initState();
+    _campos = _service.obtenerActivosPublicados();
+  }
 
-
-
-
-class _ActivoCard extends StatelessWidget {
-
-
-  final ActivoPublico activo;
-
-
-
-  const _ActivoCard({
-
-    required this.activo,
-
-  });
-
-
-
-
-
+  Future<void> _recargar() async {
+    setState(() => _campos = _service.obtenerActivosPublicados());
+    await _campos;
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
-    return Card(
-
-
-      elevation:4,
-
-
-      margin:
-      const EdgeInsets.only(
-
-        bottom:12,
-
+    return Scaffold(
+      backgroundColor: AgroTema.crema,
+      appBar: BarraCampo(
+        title: const Text("Mercado de campos"),
+        centerTitle: true,
       ),
-
-
-
-      shape:
-      RoundedRectangleBorder(
-
-        borderRadius:
-        BorderRadius.circular(12),
-
-      ),
-
-
-
-
-      child:
-
-      InkWell(
-
-
-        borderRadius:
-        BorderRadius.circular(12),
-
-
-
-        onTap:(){
-
-
-
-          Navigator.push(
-
-
-            context,
-
-
-            MaterialPageRoute(
-
-
-              builder:(context)=>
-
-
-              DetalleCampoScreen(
-
-                activo:
-                activo,
-
+      body: FutureBuilder<List<ActivoPublico>>(
+        future: _campos,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: EstadoVacio(
+                icono: Icons.wifi_off,
+                texto: "No se pudo cargar el Mercado: ${snapshot.error}",
               ),
+            );
+          }
+          final todos = snapshot.data ?? const <ActivoPublico>[];
+          final filtrados = _filtro == null
+              ? todos
+              : todos
+                  .where((c) => c.ofertas.any((o) => o.operacion == _filtro))
+                  .toList();
 
-
-            ),
-
-
-          );
-
-
-
-        },
-
-
-
-
-
-        child:
-
-        Padding(
-
-
-          padding:
-          const EdgeInsets.all(15),
-
-
-
-
-          child:
-
-          Column(
-
-
-
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
-
-
-
-            children:[
-              // GAP-MERC-01 Parte B: la portada arriba de la tarjeta.
-              if (activo.fotos.isNotEmpty) ...[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: FotoDelMercado(ruta: activo.fotos.first, alto: 170),
-                ),
-                const SizedBox(height: 10),
+          return RefreshIndicator(
+            onRefresh: _recargar,
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+              children: [
+                _filtros(),
+                const SizedBox(height: 14),
+                if (filtrados.isEmpty)
+                  EstadoVacio(
+                    icono: Icons.storefront,
+                    texto: todos.isEmpty
+                        ? "Todavía no hay campos publicados."
+                        : "No hay campos con esa operación.",
+                  ),
+                for (final campo in filtrados) _TarjetaCampo(campo: campo),
               ],
-
-
-
-
-
-              Text(
-
-                activo.nombre,
-
-
-                style:
-                const TextStyle(
-
-                  fontSize:20,
-
-                  fontWeight:
-                  FontWeight.bold,
-
-                ),
-
-              ),
-
-
-
-
-
-              const SizedBox(
-                height:8,
-              ),
-
-
-
-
-
-              Text(
-
-                activo.descripcion,
-
-
-                maxLines:4,
-
-
-                overflow:
-                TextOverflow.ellipsis,
-
-
-              ),
-
-
-
-
-
-              const SizedBox(
-                height:10,
-              ),
-
-
-
-
-
-              Row(
-
-                children:[
-
-
-                  const Icon(
-
-                    Icons.location_on,
-
-                    size:18,
-
-                    color:
-                    Colors.green,
-
-                  ),
-
-
-
-
-                  const SizedBox(
-                    width:5,
-                  ),
-
-
-
-
-                  Text(
-
-                    "${activo.localidad}, "
-                    "${activo.provincia}",
-
-                  ),
-
-
-                ],
-
-              ),
-
-
-
-
-
-              const SizedBox(
-                height:8,
-              ),
-
-
-
-
-
-              // GAP-MERC-01 Parte A: qué se ofrece y a qué precio (el "Tipo"
-              // se sacó: quedaba siempre "agricola").
-              for (final o in activo.ofertas)
-                Text(
-                  o.texto,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFFD96A2B),
-                  ),
-                ),
-
-
-
-
-
-              Text(
-
-                "Superficie: ${activo.superficie} ha",
-
-              ),
-
-
-
-
-
-              const SizedBox(
-                height:10,
-              ),
-
-
-
-
-
-              Container(
-
-
-                padding:
-                const EdgeInsets.symmetric(
-
-                  horizontal:10,
-
-                  vertical:6,
-
-                ),
-
-
-
-                decoration:
-                BoxDecoration(
-
-                  color:
-                  Colors.green.shade100,
-
-
-                  borderRadius:
-                  BorderRadius.circular(8),
-
-                ),
-
-
-
-                child:
-
-                const Text(
-
-                  "PUBLICADO",
-
-                  style:
-                  TextStyle(
-
-                    color:
-                    Colors.green,
-
-                    fontWeight:
-                    FontWeight.bold,
-
-                  ),
-
-                ),
-
-
-              ),
-
-
-
-
-
-              const SizedBox(
-                height:12,
-              ),
-
-
-
-
-
-              Align(
-
-
-                alignment:
-                Alignment.centerRight,
-
-
-
-                child:
-
-                Text(
-
-                  "Ver detalle →",
-
-
-                  style:
-                  TextStyle(
-
-                    color:
-                    Colors.blue.shade700,
-
-                    fontWeight:
-                    FontWeight.bold,
-
-                  ),
-
-                ),
-
-
-              ),
-
-
-
-            ],
-
-
-          ),
-
-
-
-        ),
-
-
-
+            ),
+          );
+        },
       ),
-
-
-
     );
-
-
   }
 
+  Widget _filtros() {
+    const opciones = [
+      (null, "Todos"),
+      ('venta', "Venta"),
+      ('alquiler', "Alquiler"),
+      ('arrendamiento', "Arrendamiento"),
+    ];
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final (valor, texto) in opciones)
+          ChoiceChip(
+            label: Text(texto),
+            selected: _filtro == valor,
+            showCheckmark: false,
+            selectedColor: AgroTema.terracota,
+            backgroundColor: Colors.white,
+            side: const BorderSide(color: AgroTema.borde),
+            labelStyle: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: _filtro == valor ? Colors.white : AgroTema.pizarra,
+            ),
+            onSelected: (_) => setState(() => _filtro = valor),
+          ),
+      ],
+    );
+  }
+}
 
-}
+/// "2.390" o "6,5" (como se escribe en la región).
+String hectareasTexto(double ha) {
+  final entero = ha.truncate();
+  final s = entero.toString();
+  final b = StringBuffer();
+  for (var i = 0; i < s.length; i++) {
+    if (i > 0 && (s.length - i) % 3 == 0) b.write('.');
+    b.write(s[i]);
+  }
+  final dec = ((ha - entero) * 10).round();
+  return dec > 0 ? '$b,$dec' : '$b';
+}
+
+class _TarjetaCampo extends StatelessWidget {
+  final ActivoPublico campo;
+
+  const _TarjetaCampo({required this.campo});
+
+  @override
+  Widget build(BuildContext context) {
+    final lugar = [campo.localidad, campo.provincia]
+        .where((x) => x.trim().isNotEmpty)
+        .join(', ');
+    final precio = campo.ofertas.isEmpty ? null : campo.ofertas.first.texto;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: TarjetaBlanca(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetalleCampoScreen(activo: campo),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Foto con el precio encima (o un fondo si no tiene fotos).
+            Stack(
+              children: [
+                campo.fotos.isNotEmpty
+                    ? FotoDelMercado(ruta: campo.fotos.first, alto: 190)
+                    : Container(
+                        height: 120,
+                        color: AgroTema.verdeClaro,
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.landscape,
+                            size: 48, color: AgroTema.verde),
+                      ),
+                if (precio != null)
+                  Positioned(
+                    left: 10,
+                    bottom: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AgroTema.terracota,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        precio,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (campo.fotos.length > 1)
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.photo_library,
+                              size: 14, color: Colors.white),
+                          const SizedBox(width: 4),
+                          Text('${campo.fotos.length}',
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          campo.nombre,
+                          style: const TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                            color: AgroTema.pizarra,
+                          ),
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right,
+                          color: AgroTema.pizarraSuave),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      const Icon(Icons.place,
+                          size: 16, color: AgroTema.terracota),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          lugar.isEmpty ? "Ubicación sin información" : lugar,
+                          style: const TextStyle(
+                              fontSize: 14, color: AgroTema.pizarraSuave),
+                        ),
+                      ),
+                      const Icon(Icons.straighten,
+                          size: 16, color: AgroTema.azul),
+                      const SizedBox(width: 4),
+                      Text(
+                        campo.superficie > 0
+                            ? "${hectareasTexto(campo.superficie)} ha"
+                            : "— ha",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AgroTema.pizarra,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (campo.ofertas.length > 1) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      campo.ofertas.skip(1).map((o) => o.texto).join(" · "),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AgroTema.terracota,
+                      ),
+                    ),
+                  ],
+                  if (campo.producciones.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (final a in campo.producciones)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AgroTema.verdeClaro,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              "${emojiActividad(a)} ${nombreActividad(a)}",
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AgroTema.verde,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

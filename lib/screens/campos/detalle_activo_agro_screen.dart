@@ -31,6 +31,17 @@ List<String> actividadesDeclaradas(ActivoAgroV2 a) => [
           p.actividad,
     ];
 
+/// GAP-MERC-01 Parte D (24/11/2026): un dibujito por actividad, para los
+/// chips de la ficha y del Mercado.
+String emojiActividad(String actividad) => switch (actividad) {
+      'ganaderia' => '🐄',
+      'agricultura' => '🌾',
+      'avicultura' => '🐔',
+      'piscicultura' => '🐟',
+      'apicultura' => '🐝',
+      _ => '🌱',
+    };
+
 class DetalleActivoAgroScreen extends StatefulWidget {
   final ActivoAgroV2 activo;
 
@@ -302,8 +313,11 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     // Producción), no la vieja "actividad principal", que en los campos
     // viejos quedaba siempre "agricultura".
     final presentes = _actividadesPresentes;
-    final actividad =
-        presentes.isEmpty ? null : presentes.map(nombreActividad).join(' · ');
+    final actividad = presentes.isEmpty
+        ? null
+        : presentes
+            .map((a) => '${emojiActividad(a)} ${nombreActividad(a)}')
+            .join(' · ');
     return TarjetaBlanca(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -357,7 +371,7 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _chip(Icons.grass, actividad ?? 'Sin actividad cargada',
+                _chip(Icons.agriculture, actividad ?? 'Sin actividad cargada',
                     color: AgroTema.verde),
                 _chip(
                   u.tieneCoordenadas ? Icons.location_on : Icons.location_off,
