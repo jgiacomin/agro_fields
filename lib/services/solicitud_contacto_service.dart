@@ -59,6 +59,10 @@ Future<void> crearSolicitud(
     estado: solicitud.estado,
     chatId: solicitud.chatId,
     fechaCreacion: solicitud.fechaCreacion,
+    // GAP-MERC-01 Parte C: no perder lo que comparte el interesado.
+    interesadoNombre: solicitud.interesadoNombre,
+    interesadoTelefono: solicitud.interesadoTelefono,
+    mensaje: solicitud.mensaje,
   );
 
   

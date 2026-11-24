@@ -9,10 +9,14 @@ class ChatScreen extends StatefulWidget {
   final String chatId;
   final String otroUsuarioId;
 
+  /// GAP-MERC-01 Parte C: nombre de la otra persona (para el título).
+  final String? nombreOtro;
+
   const ChatScreen({
     super.key,
     required this.chatId,
     required this.otroUsuarioId,
+    this.nombreOtro,
   });
 
   @override
@@ -45,7 +49,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BarraCampo(
-        title: const Text('Chat de negociación'),
+        title: Text(widget.nombreOtro == null || widget.nombreOtro!.isEmpty
+            ? 'Chat de negociación'
+            : 'Chat con ${widget.nombreOtro}'),
       ),
       body: Column(
         children: [
@@ -122,4 +128,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-}
+}

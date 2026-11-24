@@ -347,6 +347,10 @@ class ChatPage extends StatelessWidget {
 
                               chat.contacto.uid,
 
+                            // GAP-MERC-01 Parte C: título con el nombre.
+                            nombreOtro:
+                              chat.contacto.nombre,
+
 
                           ),
 
@@ -387,4 +391,4 @@ class ChatPage extends StatelessWidget {
   }
 
 
-}
+}

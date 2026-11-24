@@ -22,6 +22,12 @@ class SolicitudContacto {
 
   final DateTime fechaCreacion;
 
+  /// GAP-MERC-01 Parte C (24/11/2026): lo que el interesado elige
+  /// compartir con el dueño (el dueño no puede leer su cuenta).
+  final String interesadoNombre;
+  final String? interesadoTelefono;
+  final String? mensaje;
+
 
 
 
@@ -42,7 +48,9 @@ class SolicitudContacto {
     this.chatId,
 
     required this.fechaCreacion,
-
+    this.interesadoNombre = '',
+    this.interesadoTelefono,
+    this.mensaje,
   });
 
 
@@ -105,6 +113,9 @@ class SolicitudContacto {
               .toDate()
 
           : DateTime.now(),
+      interesadoNombre: map['interesadoNombre'] as String? ?? '',
+      interesadoTelefono: map['interesadoTelefono'] as String?,
+      mensaje: map['mensaje'] as String?,
 
 
     );
@@ -152,6 +163,12 @@ class SolicitudContacto {
 
       'fechaCreacion':
           fechaCreacion,
+      'interesadoNombre':
+          interesadoNombre,
+      'interesadoTelefono':
+          interesadoTelefono,
+      'mensaje':
+          mensaje,
 
 
     };
@@ -161,4 +178,4 @@ class SolicitudContacto {
 
 
 
-}
+}

@@ -43,6 +43,8 @@ class _DetalleCampoScreenState extends State<DetalleCampoScreen> {
     super.dispose();
   }
 
+  /// GAP-MERC-01 Parte C: antes de enviar, el interesado elige qué datos
+  /// comparte con el dueño (nombre, teléfono, qué le interesa, mensaje).
   Future<void> enviarSolicitud() async {
     final user = FirebaseAuth.instance.currentUser;
 
@@ -62,14 +64,31 @@ class _DetalleCampoScreenState extends State<DetalleCampoScreen> {
       return;
     }
 
+    final datos = await showModalBottomSheet<_DatosInteres>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AgroTema.crema,
+      showDragHandle: true,
+      builder: (_) => _FormularioInteres(
+        nombreInicial: user.displayName ?? '',
+        operaciones: [
+          for (final o in widget.activo.ofertas) o.operacion,
+        ],
+      ),
+    );
+    if (datos == null || !mounted) return;
+
     final solicitud = SolicitudContacto(
       solicitudId: '',
       campoId: widget.activo.activoId,
       interesadoId: user.uid,
       propietarioId: widget.activo.propietarioId,
-      tipoInteres: 'inversion',
+      tipoInteres: datos.interes,
       estado: SolicitudEstado.pendiente,
       fechaCreacion: DateTime.now(),
+      interesadoNombre: datos.nombre,
+      interesadoTelefono: datos.telefono,
+      mensaje: datos.mensaje,
     );
 
     try {
@@ -422,6 +441,188 @@ class _DetalleCampoScreenState extends State<DetalleCampoScreen> {
                 fontWeight: FontWeight.w700,
                 color: AgroTema.pizarra)),
       ],
+    );
+  }
+}
+
+/// GAP-MERC-01 Parte C: lo que completa el interesado.
+class _DatosInteres {
+  final String nombre;
+  final String? telefono;
+  final String interes;
+  final String? mensaje;
+
+  const _DatosInteres({
+    required this.nombre,
+    required this.telefono,
+    required this.interes,
+    required this.mensaje,
+  });
+}
+
+class _FormularioInteres extends StatefulWidget {
+  final String nombreInicial;
+
+  /// Operaciones que ofrece el campo ('venta', 'alquiler', ...).
+  final List<String> operaciones;
+
+  const _FormularioInteres({
+    required this.nombreInicial,
+    required this.operaciones,
+  });
+
+  @override
+  State<_FormularioInteres> createState() => _FormularioInteresState();
+}
+
+class _FormularioInteresState extends State<_FormularioInteres> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _nombre =
+      TextEditingController(text: widget.nombreInicial);
+  final TextEditingController _telefono = TextEditingController();
+  final TextEditingController _mensaje = TextEditingController();
+  late String _interes =
+      widget.operaciones.isEmpty ? 'consulta' : widget.operaciones.first;
+
+  @override
+  void dispose() {
+    _nombre.dispose();
+    _telefono.dispose();
+    _mensaje.dispose();
+    super.dispose();
+  }
+
+  static String _nombreInteres(String op) => switch (op) {
+        'venta' => 'Comprar',
+        'alquiler' => 'Alquilar',
+        'arrendamiento' => 'Arrendar',
+        _ => 'Saber más',
+      };
+
+  InputDecoration _decoracion(String etiqueta, {String? ayuda}) {
+    final borde = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: AgroTema.borde),
+    );
+    return InputDecoration(
+      labelText: etiqueta,
+      hintText: ayuda,
+      filled: true,
+      fillColor: Colors.white,
+      border: borde,
+      enabledBorder: borde,
+      focusedBorder: borde.copyWith(
+          borderSide: const BorderSide(color: AgroTema.terracota, width: 2)),
+    );
+  }
+
+  void _enviar() {
+    if (!_formKey.currentState!.validate()) return;
+    String? opcional(TextEditingController c) =>
+        c.text.trim().isEmpty ? null : c.text.trim();
+    Navigator.of(context).pop(_DatosInteres(
+      nombre: _nombre.text.trim(),
+      telefono: opcional(_telefono),
+      interes: _interes,
+      mensaje: opcional(_mensaje),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final opciones = widget.operaciones.isEmpty
+        ? const ['consulta']
+        : widget.operaciones;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          20, 0, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                "Me interesa este campo",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: AgroTema.pizarra,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                "El dueño va a ver estos datos para contactarte.",
+                style: TextStyle(fontSize: 14, color: AgroTema.pizarraSuave),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _nombre,
+                maxLength: 80,
+                textCapitalization: TextCapitalization.words,
+                decoration: _decoracion("Tu nombre"),
+                validator: (v) => (v ?? '').trim().isEmpty
+                    ? "Escribí tu nombre"
+                    : null,
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _telefono,
+                maxLength: 30,
+                keyboardType: TextInputType.phone,
+                decoration: _decoracion("Teléfono o WhatsApp (opcional)",
+                    ayuda: "+54 9 11 1234-5678"),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "¿Qué te interesa?",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AgroTema.pizarra),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final op in opciones)
+                    ChoiceChip(
+                      label: Text(_nombreInteres(op)),
+                      selected: _interes == op,
+                      showCheckmark: false,
+                      selectedColor: AgroTema.verde,
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: AgroTema.borde),
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color:
+                            _interes == op ? Colors.white : AgroTema.pizarra,
+                      ),
+                      onSelected: (_) => setState(() => _interes = op),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _mensaje,
+                maxLength: 500,
+                maxLines: 3,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: _decoracion("Mensaje (opcional)",
+                    ayuda: "¿Se puede visitar el campo?"),
+              ),
+              const SizedBox(height: 12),
+              BotonGrande(
+                texto: "Enviar",
+                icono: Icons.send,
+                onPressed: _enviar,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

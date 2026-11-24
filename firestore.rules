@@ -501,9 +501,20 @@ service cloud.firestore {
     }
 
     function solicitudNuevaValida(d) {
+      // GAP-MERC-01 Parte C: el interesado comparte su nombre (obligatorio)
+      // y, si quiere, teléfono y un mensaje.
       return d.keys().hasOnly(['campoId', 'interesadoId', 'propietarioId',
                                'tipoInteres', 'estado', 'chatId',
-                               'fechaCreacion'])
+                               'fechaCreacion', 'interesadoNombre',
+                               'interesadoTelefono', 'mensaje'])
+        && d.get('interesadoNombre', '') is string
+        && d.get('interesadoNombre', '').size() > 0
+        && d.get('interesadoNombre', '').size() <= 80
+        && (d.get('interesadoTelefono', null) == null
+            || (d.interesadoTelefono is string
+                && d.interesadoTelefono.size() <= 30))
+        && (d.get('mensaje', null) == null
+            || (d.mensaje is string && d.mensaje.size() <= 500))
         && d.interesadoId == request.auth.uid
         && d.propietarioId != request.auth.uid
         && d.estado == 'pendiente'

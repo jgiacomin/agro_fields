@@ -39,6 +39,10 @@ Future<String> crearChat({
   required String campoId,
   required String propietarioId,
   required String interesadoId,
+  // GAP-MERC-01 Parte C: nombres que se muestran en el chat (los datos de
+  // la cuenta del otro no se pueden leer, por privacidad).
+  String? interesadoNombre,
+  String? propietarioNombre,
 
 }) async {
 
@@ -63,6 +67,15 @@ Future<String> crearChat({
 
   // Si ya existe, reutilizamos ese chat.
   if (existente.docs.isNotEmpty) {
+    final nombres = <String, dynamic>{
+      if (interesadoNombre != null && interesadoNombre.trim().isNotEmpty)
+        'interesadoNombre': interesadoNombre.trim(),
+      if (propietarioNombre != null && propietarioNombre.trim().isNotEmpty)
+        'propietarioNombre': propietarioNombre.trim(),
+    };
+    if (nombres.isNotEmpty) {
+      await existente.docs.first.reference.update(nombres);
+    }
     return existente.docs.first.id;
   }
 
@@ -83,6 +96,12 @@ Future<String> crearChat({
     ],
 
     'estado': 'activo',
+
+    if (interesadoNombre != null && interesadoNombre.trim().isNotEmpty)
+      'interesadoNombre': interesadoNombre.trim(),
+
+    if (propietarioNombre != null && propietarioNombre.trim().isNotEmpty)
+      'propietarioNombre': propietarioNombre.trim(),
 
     'fechaCreacion':
         FieldValue.serverTimestamp(),
@@ -308,7 +327,11 @@ Future<String> crearChat({
 
             uid: contactoId,
 
-            nombre: esDueno ? 'Interesado' : 'Dueño del campo',
+            // GAP-MERC-01 Parte C: el nombre guardado en el chat.
+            nombre: (esDueno
+                    ? data['interesadoNombre']
+                    : data['propietarioNombre']) as String? ??
+                (esDueno ? 'Interesado' : 'Dueño del campo'),
 
             email: '',
 
@@ -344,4 +367,4 @@ Future<String> crearChat({
       },
     );
   }
-}
+}

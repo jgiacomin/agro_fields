@@ -1852,7 +1852,9 @@ test('SEG-01. Las partes siguen leyendo lo que ya existe [PERMITIDO]', async () 
 
 const pedidoDe = (extra = {}) => ({
   campoId: 'p1', interesadoId: COMPRADOR, propietarioId: DUENO, tipoInteres: 'inversion',
-  estado: 'pendiente', chatId: null, fechaCreacion: new Date(), ...extra,
+  estado: 'pendiente', chatId: null, fechaCreacion: new Date(),
+  // GAP-MERC-01 Parte C: el nombre que comparte el interesado.
+  interesadoNombre: 'Comprador de prueba', ...extra,
 });
 
 test('SEG-02. El interesado manda un pedido de contacto sobre un campo publicado [PERMITIDO]', async () => {
@@ -2135,4 +2137,20 @@ test('MERC-09. NO más de 6 fotos [PROHIBIDO]', async () => {
   await assertFails(publicarConOfertas([ofertaDe()], {
     fotos: [1, 2, 3, 4, 5, 6, 7].map(fotoDe),
   }));
+});
+
+// GAP-MERC-01 Parte C (24/11/2026): datos que comparte el interesado
+test('MERC-10. El interesado deja nombre, teléfono y mensaje [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/m10'),
+    pedidoDe({ tipoInteres: 'venta', interesadoTelefono: '+54 9 11 1234-5678', mensaje: '¿Se puede visitar?' })));
+});
+
+test('MERC-11. NO se manda sin nombre ni con un dato de más [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/m11'), pedidoDe({ interesadoNombre: '' })));
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/m12'), pedidoDe({ dni: '12345678' })));
+});
+
+test('MERC-12. NO se acepta un mensaje larguísimo ni un teléfono raro [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/m13'), pedidoDe({ mensaje: 'x'.repeat(501) })));
+  await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/m14'), pedidoDe({ interesadoTelefono: 12345 })));
 });

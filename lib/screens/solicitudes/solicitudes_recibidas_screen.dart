@@ -346,6 +346,11 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
 
 
 
+                      // GAP-MERC-01 Parte C: los datos que dejó el
+                      // interesado (si es una solicitud vieja, como antes).
+                      if (solicitud.interesadoNombre.isNotEmpty)
+                        _datosInteresado(solicitud)
+                      else
                       FutureBuilder(
 
 
@@ -463,7 +468,7 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
 
                       Text(
 
-                        'Interés: ${solicitud.tipoInteres}',
+                        'Le interesa: ${_textoInteres(solicitud.tipoInteres)}',
 
                       ),
 
@@ -527,6 +532,14 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
                                         interesadoId:
                                           solicitud.interesadoId,
 
+                                        // GAP-MERC-01 Parte C: nombres
+                                        // para el chat.
+                                        interesadoNombre:
+                                          solicitud.interesadoNombre,
+                                        propietarioNombre: FirebaseAuth
+                                            .instance.currentUser?.displayName,
+
+
 
                                       );
 
@@ -546,6 +559,7 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
                                       builder: (_) => ChatScreen(
                                         chatId: chatId,
                                         otroUsuarioId: solicitud.interesadoId,
+                                        nombreOtro: solicitud.interesadoNombre,
                                       ),
                                     ),
                                   );
@@ -664,7 +678,38 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
 
 
   }
- }
 
+  /// GAP-MERC-01 Parte C: "venta" -> "Comprar", etc.
+  static String _textoInteres(String tipo) => switch (tipo) {
+        'venta' => 'Comprar',
+        'alquiler' => 'Alquilar',
+        'arrendamiento' => 'Arrendar',
+        'compra' => 'Comprar',
+        _ => 'Saber más del campo',
+      };
 
-
+  /// GAP-MERC-01 Parte C: nombre, teléfono y mensaje del interesado.
+  Widget _datosInteresado(SolicitudContacto s) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '👤 ${s.interesadoNombre}',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        ),
+        if (s.interesadoTelefono != null &&
+            s.interesadoTelefono!.trim().isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: SelectableText('📞 ${s.interesadoTelefono}'),
+          ),
+        if (s.mensaje != null && s.mensaje!.trim().isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text('💬 "${s.mensaje}"',
+                style: const TextStyle(fontStyle: FontStyle.italic)),
+          ),
+      ],
+    );
+  }
+}
