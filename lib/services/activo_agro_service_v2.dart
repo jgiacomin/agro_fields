@@ -340,9 +340,13 @@ Future<List<ActivoAgroV2>> buscarPorPublicador(
 // PUBLICAR ACTIVO
 // =====================================================
 
+/// GAP-MERC-01 Parte A (24/11/2026): [ofertas] es lo que el dueño ofrece
+/// (operación y precio). Se guarda en la Economía del expediente y se copia
+/// al resumen público. Sin ofertas se publica como antes.
 Future<void> publicarActivo(
-  String activoId,
-) async {
+  String activoId, {
+  List<OfertaMercado>? ofertas,
+}) async {
 
   final activo =
       await obtenerActivoPorId(activoId);
@@ -391,8 +395,23 @@ Future<void> publicarActivo(
   // aprueba (estadoPublicacion 'publicado' y visible true).
   // =====================================================
 
+  // GAP-MERC-01: la primera oferta también llena los campos de siempre
+  // (operación, precio y moneda) para no romper lo que ya los usa.
+  final economia = ofertas == null || ofertas.isEmpty
+      ? activoEvaluado.economia
+      : EconomiaActivo.fromMap({
+          ...activoEvaluado.economia.toMap(),
+          'ofertas': ofertas.map((o) => o.toMap()).toList(),
+          'tipoOperacion': ofertas.first.operacion,
+          'valorSolicitado': ofertas.first.precio ?? 0,
+          'moneda': ofertas.first.moneda,
+          'fechaActualizacion': DateTime.now(),
+        });
+
   final activoActualizado =
       activoEvaluado.copyWith(
+    economia:
+        economia,
     estado:
         EstadoActivo.pendienteRevision,
     estadoPublicacion:

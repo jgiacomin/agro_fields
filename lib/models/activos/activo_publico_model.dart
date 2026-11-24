@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'activo_agro_model_v2.dart';
+import 'economia_activo_model.dart';
 
 /// Resumen público de un Activo Agro.
 ///
@@ -41,6 +42,10 @@ class ActivoPublico {
 
   final DateTime ultimaActualizacion;
 
+  /// GAP-MERC-01 Parte A: qué se ofrece y a qué precio (dato publicable
+  /// que elige el dueño al publicar).
+  final List<OfertaMercado> ofertas;
+
   const ActivoPublico({
     required this.activoId,
     required this.nombre,
@@ -57,6 +62,7 @@ class ActivoPublico {
     required this.estadoPublicacion,
     required this.visible,
     required this.ultimaActualizacion,
+    this.ofertas = const [],
   });
 
   /// Arma el resumen a partir del expediente, copiando solo lo publicable.
@@ -79,6 +85,7 @@ class ActivoPublico {
       estadoPublicacion: 'pendienteRevision',
       visible: false,
       ultimaActualizacion: DateTime.now(),
+      ofertas: activo.economia.ofertas,
     );
   }
 
@@ -100,6 +107,7 @@ class ActivoPublico {
       estadoPublicacion: map['estadoPublicacion'] ?? 'borrador',
       visible: map['visible'] == true,
       ultimaActualizacion: _leerFecha(map['ultimaActualizacion']),
+      ofertas: OfertaMercado.listaDesde(map['ofertas']),
     );
   }
 
@@ -120,6 +128,7 @@ class ActivoPublico {
       'estadoPublicacion': estadoPublicacion,
       'visible': visible,
       'ultimaActualizacion': Timestamp.fromDate(ultimaActualizacion),
+      'ofertas': ofertas.map((o) => o.toMap()).toList(),
     };
   }
 

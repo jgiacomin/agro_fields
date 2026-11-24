@@ -1044,6 +1044,8 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en las jorn
 - Caso de referencia: limón caviar en Paraguay (sección 25.15). Matriz AF-134 (cultivo perenne / frutales).
 - AF nuevos aprobados entre el 21 y el 23/11/2026, sin caso propio: AF-128 (superficie en el mapa vs. escritura), AF-129 (piscicultura chica), AF-130 (genética), AF-131 (Emergencia ↔ Traslado), AF-132 (granos guardados) y AF-133 ("¿A dónde va la plata de mi venta?").
 
+- Caso de referencia: maíz amarillento por fósforo bloqueado (sección 25.16). Matriz AF-136 (nutrientes en el suelo), AF-137 (síntomas en el monitoreo) y AF-138 (fertilizante en la siembra).
+
 Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 
 ---
@@ -1307,3 +1309,18 @@ Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 | Módulo completo y origen | Paquete de origen (AF-118) | Módulo de frutales completo | 🟢 |
 
 **Criterio:** en enero no se agrega nada nuevo; primero se audita lo que ya existe.
+
+### 25.16. Maíz amarillento por fósforo bloqueado (publicación de Agrobull Ecuador, 23/11/2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica. Es una publicación de una empresa que vende productos: no se toma su oferta comercial, y lo agronómico se confirma con una fuente técnica (por ejemplo, INTA) antes de usarlo en la app.
+
+**Síntesis:** el maíz que nace amarillento y con poco vigor muchas veces tiene el fósforo bloqueado (suelo compactado, muy húmedo o con pH alto), aunque se haya aplicado. Se relacionan la ubicación del fertilizante (en la línea), la humedad y el zinc.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Saber qué nutrientes tiene el suelo | Suelo (pH, materia orgánica, textura, drenaje); botón Adjuntar | Análisis de nutrientes: fósforo, zinc, nitrógeno, potasio, con fecha, laboratorio y archivo (AF-136) | 🟡 |
+| Registrar lo que se ve en el cultivo | Monitoreo con fuente del dato y fotos (GAP-MON-01) | Síntomas: hojas amarillas, poco vigor, nacimiento desparejo, con foto y lote (AF-137) | 🟡 |
+| Saber qué fertilizante se puso y dónde | Aplicaciones y Stock (GAP-APLI-01, GAP-STOCK-01) | Fertilizante en la línea de siembra: producto y kg/ha, descontado del stock (AF-138) | 🟡 |
+| Entender posibles causas | Suelo + Monitoreo + clima; profesional invitado (AF-093) | "Posibles causas para consultar con tu ingeniero" cruzando síntoma, suelo y clima (dentro de AF-137) | 🟢 marzo |
+
+**Criterio:** la IA es copiloto: sugiere posibles causas para consultar, no diagnostica ni receta. La decisión es del productor y su profesional. En enero no se agrega nada nuevo.

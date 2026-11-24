@@ -412,11 +412,17 @@ class _ActivoCard extends StatelessWidget {
 
 
 
-              Text(
-
-                "Tipo: ${activo.tipoActivo}",
-
-              ),
+              // GAP-MERC-01 Parte A: qué se ofrece y a qué precio (el "Tipo"
+              // se sacó: quedaba siempre "agricola").
+              for (final o in activo.ofertas)
+                Text(
+                  o.texto,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFD96A2B),
+                  ),
+                ),
 
 
 
@@ -556,4 +562,4 @@ class _ActivoCard extends StatelessWidget {
   }
 
 
-}
+}

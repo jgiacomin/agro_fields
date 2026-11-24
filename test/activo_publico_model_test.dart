@@ -56,6 +56,9 @@ void main() {
           'estadoPublicacion',
           'visible',
           'ultimaActualizacion',
+          // GAP-MERC-01 Parte A (24/11/2026): operación y precio que elige
+          // el dueño al publicar (dato publicable aprobado).
+          'ofertas',
         },
       );
 

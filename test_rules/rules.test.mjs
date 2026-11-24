@@ -2067,3 +2067,54 @@ test('LEGAL-08. Con un pedido completado o pendiente NO se vuelve a pedir [PROHI
   await cargar((db) => setDoc(doc(db, `solicitudes_baja/${DUENO}`), bajaDe(DUENO)));
   await assertFails(setDoc(doc(como(DUENO), `solicitudes_baja/${DUENO}`), bajaDe(DUENO)));
 });
+
+// =====================================================================
+// GAP-MERC-01 Parte A (24/11/2026): operación y precio en el resumen
+// público, con lista cerrada de datos permitidos
+// =====================================================================
+
+const ofertaDe = (extra = {}) => ({
+  operacion: 'venta', precio: 6000000, moneda: 'USD', precioPor: 'total', ...extra,
+});
+
+const publicarConOfertas = (ofertas, extra = {}) => {
+  const db = como(DUENO);
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'activos_agro/a1'), {
+    estadoPublicacion: 'pendienteRevision',
+    visible: false,
+  });
+  batch.set(doc(db, 'activos_publicos/a1'), {
+    ...resumenDe('pendienteRevision', false), ofertas, ...extra,
+  });
+  return batch.commit();
+};
+
+test('MERC-01. El dueño publica con venta y alquiler en distintas monedas [PERMITIDO]', async () => {
+  await assertSucceeds(publicarConOfertas([
+    ofertaDe(),
+    ofertaDe({ operacion: 'alquiler', precio: 250, moneda: 'UYU', precioPor: 'hectarea_anio' }),
+  ]));
+});
+
+test('MERC-02. "Consultar precio" (precio vacío) [PERMITIDO]', async () => {
+  await assertSucceeds(publicarConOfertas([ofertaDe({ precio: null, moneda: 'PYG' })]));
+});
+
+test('MERC-03. NO se cuela un dato privado en el resumen (ej: economía) [PROHIBIDO]', async () => {
+  await assertFails(publicarConOfertas([ofertaDe()], { economia: { capitalRequerido: 1 } }));
+});
+
+test('MERC-04. NO se acepta una operación inventada [PROHIBIDO]', async () => {
+  await assertFails(publicarConOfertas([ofertaDe({ operacion: 'permuta' })]));
+});
+
+test('MERC-05. NO se acepta precio negativo ni moneda inventada [PROHIBIDO]', async () => {
+  await assertFails(publicarConOfertas([ofertaDe({ precio: -5 })]));
+  await assertFails(publicarConOfertas([ofertaDe({ moneda: 'BTC' })]));
+});
+
+test('MERC-06. NO más de 3 ofertas ni datos de más dentro de una oferta [PROHIBIDO]', async () => {
+  await assertFails(publicarConOfertas([ofertaDe(), ofertaDe(), ofertaDe(), ofertaDe()]));
+  await assertFails(publicarConOfertas([ofertaDe({ telefono: '123' })]));
+});

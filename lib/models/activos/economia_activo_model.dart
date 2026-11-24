@@ -76,6 +76,10 @@ class EconomiaActivo {
 
   final DateTime fechaActualizacion;
 
+  /// GAP-MERC-01 Parte A (24/11/2026): lo que se ofrece en el Mercado
+  /// (venta, alquiler y/o arrendamiento, cada una con su precio).
+  final List<OfertaMercado> ofertas;
+
   EconomiaActivo({
 
     required this.objetivoProyecto,
@@ -114,6 +118,8 @@ class EconomiaActivo {
     required this.datosEconomicos,
 
     required this.fechaActualizacion,
+
+    this.ofertas = const [],
 
   });
 
@@ -209,6 +215,8 @@ map['periodoEvaluacion'] ?? '',
 
               : DateTime.now(),
 
+      ofertas: OfertaMercado.listaDesde(map['ofertas']),
+
     );
 
   }
@@ -293,6 +301,9 @@ map['periodoEvaluacion'] ?? '',
 
       'fechaActualizacion':
       fechaActualizacion,
+
+      'ofertas':
+      ofertas.map((o) => o.toMap()).toList(),
 
     };
 
@@ -381,4 +392,88 @@ map['periodoEvaluacion'] ?? '',
   }
 
 
+}
+
+/// GAP-MERC-01 Parte A (24/11/2026): una oferta del campo en el Mercado.
+/// Va en el expediente (Economía) y se copia al resumen público.
+class OfertaMercado {
+  /// venta | alquiler | arrendamiento
+  final String operacion;
+
+  /// null = "Consultar precio".
+  final double? precio;
+
+  /// USD | ARS | PYG | UYU
+  final String moneda;
+
+  /// total | hectarea | hectarea_anio
+  final String precioPor;
+
+  const OfertaMercado({
+    required this.operacion,
+    required this.precio,
+    required this.moneda,
+    required this.precioPor,
+  });
+
+  static const operaciones = ['venta', 'alquiler', 'arrendamiento'];
+  static const monedas = ['USD', 'ARS', 'PYG', 'UYU'];
+
+  factory OfertaMercado.fromMap(Map<String, dynamic> map) {
+    return OfertaMercado(
+      operacion: map['operacion'] as String? ?? 'venta',
+      precio: (map['precio'] as num?)?.toDouble(),
+      moneda: map['moneda'] as String? ?? 'USD',
+      precioPor: map['precioPor'] as String? ?? 'total',
+    );
+  }
+
+  static List<OfertaMercado> listaDesde(dynamic valor) {
+    if (valor is! List) return const [];
+    return [
+      for (final item in valor)
+        if (item is Map) OfertaMercado.fromMap(Map<String, dynamic>.from(item)),
+    ];
+  }
+
+  Map<String, dynamic> toMap() => {
+        'operacion': operacion,
+        'precio': precio,
+        'moneda': moneda,
+        'precioPor': precioPor,
+      };
+
+  String get nombreOperacion => switch (operacion) {
+        'alquiler' => 'Alquiler',
+        'arrendamiento' => 'Arrendamiento',
+        _ => 'Venta',
+      };
+
+  /// "6.000.000" (miles con punto, como se escribe en la región).
+  static String numero(double v) {
+    final entero = v.truncate();
+    final s = entero.abs().toString();
+    final b = StringBuffer();
+    for (var i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) b.write('.');
+      b.write(s[i]);
+    }
+    final dec = ((v - entero).abs() * 100).round();
+    return '${entero < 0 ? '-' : ''}$b${dec > 0 ? ',${dec.toString().padLeft(2, '0')}' : ''}';
+  }
+
+  /// "USD 6.000.000", "USD 250/ha/año" o "Consultar precio".
+  String get textoPrecio {
+    final p = precio;
+    if (p == null) return 'Consultar precio';
+    final unidad = switch (precioPor) {
+      'hectarea' => '/ha',
+      'hectarea_anio' => '/ha/año',
+      _ => '',
+    };
+    return '$moneda ${numero(p)}$unidad';
+  }
+
+  /// "Venta · USD 6.000.000"
+  String get texto => '$nombreOperacion · $textoPrecio';
 }

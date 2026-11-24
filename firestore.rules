@@ -163,6 +163,40 @@ service cloud.firestore {
     // ACTIVOS_PUBLICOS = RESUMEN PUBLICABLE (lo que lee el marketplace)
     // El ID del documento es el mismo activoId del expediente.
     // -----------------------------------------------------------------
+    // GAP-MERC-01 Parte A (24/11/2026): lista cerrada de lo que puede ir
+    // en el resumen publico. Nada privado (economia completa, documentos,
+    // suelo, personas) puede colarse. Las ofertas: hasta 3, cada una con
+    // operacion, precio (numero > 0 o null = "Consultar precio"), moneda y
+    // a que corresponde el precio.
+    function ofertaValida(o) {
+      return o is map
+        && o.keys().hasOnly(['operacion', 'precio', 'moneda', 'precioPor'])
+        && o.get('operacion', '') in ['venta', 'alquiler', 'arrendamiento']
+        && (o.get('precio', null) == null
+            || (o.precio is number && o.precio > 0))
+        && o.get('moneda', '') in ['USD', 'ARS', 'PYG', 'UYU']
+        && o.get('precioPor', '') in ['total', 'hectarea', 'hectarea_anio'];
+    }
+
+    function ofertasValidas(d) {
+      return !('ofertas' in d)
+        || (d.ofertas is list
+            && d.ofertas.size() <= 3
+            && (d.ofertas.size() < 1 || ofertaValida(d.ofertas[0]))
+            && (d.ofertas.size() < 2 || ofertaValida(d.ofertas[1]))
+            && (d.ofertas.size() < 3 || ofertaValida(d.ofertas[2])));
+    }
+
+    function resumenPublicoValido(d) {
+      return d.keys().hasOnly([
+          'activoId', 'nombre', 'descripcion', 'tipoActivo', 'pais',
+          'provincia', 'localidad', 'superficie', 'nivelConfianza',
+          'madurezPorcentaje', 'producciones', 'propietarioId',
+          'estadoPublicacion', 'visible', 'ultimaActualizacion',
+          'motivoRevision', 'ofertas'])
+        && ofertasValidas(d);
+    }
+
     match /activos_publicos/{activoId} {
       allow get: if esAdmin()
         || (logueado()
@@ -182,7 +216,8 @@ service cloud.firestore {
         || (esDuenoActivo(activoId)
             && request.resource.data.propietarioId == request.auth.uid
             && request.resource.data.estadoPublicacion == 'pendienteRevision'
-            && request.resource.data.visible == false);
+            && request.resource.data.visible == false
+            && resumenPublicoValido(request.resource.data));
 
       // El dueÃ±o puede editar borrador/pendiente/pausar, pero NO poner 'publicado'.
       allow update: if esAdmin()
@@ -191,7 +226,8 @@ service cloud.firestore {
             && request.resource.data.propietarioId == resource.data.propietarioId
             && request.resource.data.estadoPublicacion
                  in ['borrador', 'pendienteRevision', 'pausado']
-            && request.resource.data.visible == false);
+            && request.resource.data.visible == false
+            && resumenPublicoValido(request.resource.data));
 
       allow delete: if esAdmin();
     }

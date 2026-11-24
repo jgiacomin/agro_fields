@@ -327,6 +327,22 @@ class _DetalleCampoScreenState
 
             const SizedBox(height:15),
 
+            // GAP-MERC-01 Parte A: qué se ofrece y a qué precio.
+            for (final o in activo.ofertas)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Text(
+                  o.texto,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFFD96A2B),
+                  ),
+                ),
+              ),
+            if (activo.ofertas.isNotEmpty) const SizedBox(height: 10),
+
+
 
 
 
@@ -764,4 +780,4 @@ class _DetalleCampoScreenState
 
 
 
-}
+}

@@ -11,6 +11,7 @@ import '../produccion/produccion_activo_screen.dart'
 import '../produccion/produccion_estilo.dart';
 
 import 'detalle_activo_agro_screen.dart';
+import 'publicar_campo_screen.dart';
 import '../../widgets/barra_campo.dart';
 
 class MisActivosScreen extends StatefulWidget {
@@ -151,29 +152,16 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
     }
   }
 
-  /// Diseño "Mis campos": publicar es serio, se pregunta antes.
-  Future<void> confirmarPublicar(ActivoAgroV2 activo) async {
-    final si = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('¿Publicar este campo?'),
-        content: Text(
-          '"${activo.nombre}" se envía a revisión. Cuando se apruebe, '
-          'se verá en el Mercado con el resumen público.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Publicar'),
-          ),
-        ],
+  /// GAP-MERC-01 Parte A: publicar abre "Publicar en el Mercado"
+  /// (operación y precio). Si se envió, se recarga la lista.
+  Future<void> abrirPublicar(ActivoAgroV2 activo) async {
+    final envio = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PublicarCampoScreen(activo: activo),
       ),
     );
-    if (si == true) await publicar(activo.activoId);
+    if (envio == true) await cargarActivos();
   }
 
   Future<void> publicar(String id) async {
@@ -338,6 +326,9 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
                           ? AgroTema.pizarraSuave
                           : AgroTema.verde,
                     ),
+                  // GAP-MERC-01: lo que se ofrece en el Mercado.
+                  for (final o in activo.economia.ofertas)
+                    _chip(Icons.sell_outlined, o.texto, AgroTema.azul),
                   _chip(
                     estado == "publicado"
                         ? Icons.storefront
@@ -389,7 +380,7 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: OutlinedButton.icon(
-                    onPressed: () => confirmarPublicar(activo),
+                    onPressed: () => abrirPublicar(activo),
                     icon: const Icon(Icons.publish, size: 18),
                     label: const Text("Publicar en el Mercado"),
                     style: OutlinedButton.styleFrom(
