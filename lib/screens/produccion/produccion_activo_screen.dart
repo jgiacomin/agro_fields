@@ -25,6 +25,29 @@ enum EnfoqueProduccion { normal, lugares, animales }
 /// QA 20/11/2026: opciones del botón "+ Cargar".
 enum _QueCargar { lugar, animales, cultivo }
 
+/// Ficha por actividades (24/11/2026): actividad de un lote; los lotes
+/// viejos sin actividad son de ganadería (igual que esGanadero).
+String actividadDeGrupo(GrupoProductivo g) =>
+    g.actividad.isEmpty ? 'ganaderia' : g.actividad;
+
+/// Nombre claro de cada actividad, para títulos y botones.
+String nombreActividad(String actividad) {
+  switch (actividad) {
+    case 'ganaderia':
+      return 'Ganadería';
+    case 'agricultura':
+      return 'Agricultura';
+    case 'avicultura':
+      return 'Avicultura';
+    case 'piscicultura':
+      return 'Piscicultura';
+    default:
+      return actividad.isEmpty
+          ? 'Producción'
+          : actividad[0].toUpperCase() + actividad.substring(1);
+  }
+}
+
 /// Pantalla 1 (paso 6a, GAP-PROD-01): la produccion de un campo.
 /// Muestra los rodeos con su total de cabezas y los potreros.
 class ProduccionActivoScreen extends StatefulWidget {
@@ -32,11 +55,17 @@ class ProduccionActivoScreen extends StatefulWidget {
   final String nombreActivo;
   final EnfoqueProduccion enfoque;
 
+  /// Ficha por actividades (24/11/2026): si viene, se muestra solo esa
+  /// actividad ('ganaderia', 'agricultura', 'avicultura', 'piscicultura').
+  /// Los lugares se ven siempre porque son de todo el campo.
+  final String? actividad;
+
   const ProduccionActivoScreen({
     super.key,
     required this.activoAgroId,
     required this.nombreActivo,
     this.enfoque = EnfoqueProduccion.normal,
+    this.actividad,
   });
 
   @override
@@ -91,6 +120,10 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
       final todasLasUnidades = resultados[0] as List<UnidadProductiva>;
       final grupos = (resultados[1] as List<GrupoProductivo>)
           .where((g) => g.estado == EstadoGrupoProductivo.activo)
+          // Ficha por actividades: solo la actividad elegida, si hay una.
+          .where((g) =>
+              widget.actividad == null ||
+              actividadDeGrupo(g) == widget.actividad)
           .toList()
         ..sort((a, b) => a.nombre.compareTo(b.nombre));
 
@@ -153,10 +186,16 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
     final palabraTotal = soloGanaderia
         ? (totalCabezas == 1 ? 'cabeza' : 'cabezas')
         : (totalCabezas == 1 ? 'animal' : 'animales');
+    // Ficha por actividades: qué partes se muestran.
+    final verAnimales = widget.actividad != 'agricultura';
+    final verCultivos =
+        widget.actividad == null || widget.actividad == 'agricultura';
 
     return Scaffold(
       appBar: BarraCampo(
-        title: const Text('Producción'),
+        title: Text(widget.actividad == null
+            ? 'Producción'
+            : nombreActividad(widget.actividad!)),
       ),
       body: cargando
           ? const Center(child: CircularProgressIndicator())
@@ -185,12 +224,14 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                       ),
                       const SizedBox(height: 14),
                       ResumenNumeros([
+                        if (verAnimales)
                         (
                           totalNegativo ? 'Revisar' : '$totalCabezas',
                           palabraTotal,
                           Icons.pets,
                           EstiloProduccion.terracota,
                         ),
+                        if (verCultivos)
                         (
                           '${cultivos.length}',
                           cultivos.length == 1 ? 'cultivo' : 'cultivos',
@@ -206,6 +247,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                         ),
                       ]),
                       const SizedBox(height: 20),
+                      if (verAnimales) ...[
                       TituloSeccion(soloGanaderia ? 'Rodeos' : 'Animales',
                           icono: Icons.pets),
                       if (rodeos.isEmpty)
@@ -219,6 +261,8 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                         ),
                       ...rodeos.map(_tarjetaRodeo),
                       const SizedBox(height: 24),
+                      ],
+                      if (verCultivos) ...[
                       const TituloSeccion('Cultivos', icono: Icons.grass),
                       if (cultivos.isEmpty)
                         const EstadoVacio(
@@ -228,6 +272,7 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                         ),
                       ...cultivos.map(_tarjetaCultivo),
                       const SizedBox(height: 24),
+                      ],
                       const TituloSeccion('Lotes, potreros y corrales', icono: Icons.crop_square),
                       if (unidades.isEmpty)
                         EstadoVacio(
@@ -331,6 +376,8 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                   'Lugar',
                   'Potrero, lote, corral, galpón o estanque',
                 ),
+              // Ficha por actividades: en Agricultura no se ofrecen animales.
+              if (widget.actividad != 'agricultura')
               _opcionCargar(
                 ctx,
                 _QueCargar.animales,
@@ -339,6 +386,10 @@ class _ProduccionActivoScreenState extends State<ProduccionActivoScreen> {
                 'Animales',
                 'Rodeo o lote de animales',
               ),
+              // Ficha por actividades: en una actividad con animales no se
+              // ofrece cultivo.
+              if (widget.actividad == null ||
+                  widget.actividad == 'agricultura')
               _opcionCargar(
                 ctx,
                 _QueCargar.cultivo,

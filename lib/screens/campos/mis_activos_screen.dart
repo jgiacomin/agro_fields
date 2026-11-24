@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
+import '../../models/activos/grupo_productivo_model.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../../services/produccion_service.dart';
+import '../produccion/produccion_activo_screen.dart'
+    show actividadDeGrupo, nombreActividad;
+import '../produccion/produccion_estilo.dart';
 
 import 'detalle_activo_agro_screen.dart';
 import '../../widgets/barra_campo.dart';
@@ -18,6 +24,11 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
   final ActivoAgroServiceV2 servicio = ActivoAgroServiceV2();
 
   List<ActivoAgroV2> activos = [];
+
+  /// Diseño "Mis campos" (24/11/2026): actividades reales de cada campo,
+  /// sacadas de lo cargado en Producción (no del "tipo", que siempre
+  /// quedaba "agrícola"). Si no se pueden leer, no se muestran.
+  Map<String, List<String>> actividadesPorCampo = {};
 
   bool cargando = true;
 
@@ -70,8 +81,15 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
       resultadoActualizado
           .sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
 
+      final actividades = await _leerActividades(resultadoActualizado);
+
+      if (!mounted) {
+        return;
+      }
+
       setState(() {
         activos = resultadoActualizado;
+        actividadesPorCampo = actividades;
 
         cargando = false;
       });
@@ -88,6 +106,30 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text("Error cargando activos: $e")));
     }
+  }
+
+  /// Diseño "Mis campos": actividades de cada campo (en paralelo).
+  Future<Map<String, List<String>>> _leerActividades(
+      List<ActivoAgroV2> campos) async {
+    final produccion = ProduccionService();
+    const orden = ['ganaderia', 'agricultura', 'avicultura', 'piscicultura'];
+    final resultado = <String, List<String>>{};
+    await Future.wait(campos.map((c) async {
+      try {
+        final grupos = await produccion.gruposDeActivo(c.activoId);
+        final presentes = grupos
+            .where((g) => g.estado == EstadoGrupoProductivo.activo)
+            .map(actividadDeGrupo)
+            .toSet();
+        resultado[c.activoId] = [
+          ...orden.where(presentes.contains),
+          ...presentes.where((a) => !orden.contains(a)),
+        ];
+      } catch (_) {
+        // Sin señal o sin permiso: ese campo queda sin chips de actividad.
+      }
+    }));
+    return resultado;
   }
 
   String estadoTexto(String estado) {
@@ -107,6 +149,31 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
       default:
         return estado;
     }
+  }
+
+  /// Diseño "Mis campos": publicar es serio, se pregunta antes.
+  Future<void> confirmarPublicar(ActivoAgroV2 activo) async {
+    final si = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Publicar este campo?'),
+        content: Text(
+          '"${activo.nombre}" se envía a revisión. Cuando se apruebe, '
+          'se verá en el Mercado con el resumen público.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Publicar'),
+          ),
+        ],
+      ),
+    );
+    if (si == true) await publicar(activo.activoId);
   }
 
   Future<void> publicar(String id) async {
@@ -137,130 +204,104 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
     }
   }
 
+  Future<void> _abrirFicha(ActivoAgroV2 activo) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetalleActivoAgroScreen(activo: activo),
+      ),
+    );
+
+    await cargarActivos();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Diseño "Mis campos" (24/11/2026): mismo estilo que la ficha.
     return Scaffold(
-      appBar: BarraCampo(title: const Text("Mis Activos")),
+      appBar: BarraCampo(title: const Text("Mis campos")),
 
       body: cargando
           ? const Center(child: CircularProgressIndicator())
           : activos.isEmpty
-          ? const Center(child: Text("No tienes activos registrados"))
-          : ListView.builder(
-              itemCount: activos.length,
+          ? const Padding(
+              padding: EdgeInsets.all(20),
+              child: EstadoVacio(
+                icono: Icons.agriculture,
+                texto: "Todavía no tenés campos cargados.",
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: cargarActivos,
+              child: ListView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                itemCount: activos.length,
+                itemBuilder: (context, index) =>
+                    _tarjetaCampo(activos[index]),
+              ),
+            ),
+    );
+  }
 
-              itemBuilder: (context, index) {
-                final activo = activos[index];
+  Widget _tarjetaCampo(ActivoAgroV2 activo) {
+    final u = activo.ubicacion;
+    final lugar = [u.localidad, u.provincia]
+        .where((x) => x.trim().isNotEmpty)
+        .join(', ');
+    // AF-135: lo declarado al crear el campo + lo cargado en Producción.
+    final cargadas = actividadesPorCampo[activo.activoId];
+    final declaradas = actividadesDeclaradas(activo);
+    final actividades = cargadas == null && declaradas.isEmpty
+        ? null
+        : [
+            ...declaradas,
+            ...?cargadas?.where((a) => !declaradas.contains(a)),
+          ];
+    final estado = activo.estado.name;
+    final yaEnviado = estado == "publicado" || estado == "pendienteRevision";
+    final avance = activo.madurez.porcentaje.clamp(0, 100).toDouble();
 
-                return Card(
-                  margin: const EdgeInsets.all(12),
-
-                  elevation: 3,
-
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TarjetaBlanca(
+        // Se toca la tarjeta entera para entrar a la ficha.
+        onTap: () => _abrirFicha(activo),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const IconoCirculo(Icons.grass,
+                      color: AgroTema.verde, tamano: 48),
+                  const SizedBox(width: 12),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
                         Text(
                           activo.nombre,
-
                           style: const TextStyle(
-                            fontSize: 22,
-
-                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AgroTema.pizarra,
                           ),
                         ),
-
-                        const SizedBox(height: 8),
-
-                        Text(activo.descripcion),
-
-                        const SizedBox(height: 10),
-
-                        Text(
-                          "Estado: "
-                          "${estadoTexto(activo.estado.name)}",
-                        ),
-
-                        Text(
-                          "Tipo: "
-                          "${activo.tipoActivo.name}",
-                        ),
-
-                        Text(
-                          "Ubicación: "
-                          "${activo.ubicacion.localidad}, "
-                          "${activo.ubicacion.provincia}",
-                        ),
-
-                        const SizedBox(height: 10),
-
+                        const SizedBox(height: 2),
                         Row(
                           children: [
-                            Text(
-                              "Confianza: "
-                              "${activo.confianza.nivelGeneral}%",
-                            ),
-
-                            const SizedBox(width: 20),
-
-                            Text(
-                              "Madurez: "
-                              "${activo.madurez.porcentaje}%",
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 15),
-
-                        Row(
-                          children: [
+                            const Icon(Icons.place,
+                                size: 16, color: AgroTema.terracota),
+                            const SizedBox(width: 4),
                             Expanded(
-                              child: ElevatedButton.icon(
-                                icon: const Icon(Icons.visibility),
-
-                                label: const Text("Ver"),
-
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          DetalleActivoAgroScreen(
-                                            activo: activo,
-                                          ),
-                                    ),
-                                  );
-
-                                  await cargarActivos();
-                                },
-                              ),
-                            ),
-
-                            const SizedBox(width: 10),
-
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                icon: const Icon(Icons.publish),
-
-                                label: Text(
-                                  activo.estado.name == "publicado"
-                                      ? "Publicado"
-                                      : activo.estado.name == "pendienteRevision"
-                                          ? "En revisión"
-                                          : "Publicar",
-                                ),
-
-                                onPressed: activo.estado.name == "publicado" ||
-                                        activo.estado.name == "pendienteRevision"
-                                    ? null
-                                    : () {
-                                        publicar(activo.activoId);
-                                      },
+                              child: Text(
+                                lugar.isEmpty
+                                    ? "Ubicación sin información"
+                                    : lugar,
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    color: AgroTema.pizarraSuave),
                               ),
                             ),
                           ],
@@ -268,9 +309,125 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
                       ],
                     ),
                   ),
-                );
-              },
+                  const Icon(Icons.chevron_right,
+                      color: AgroTema.pizarraSuave),
+                ],
+              ),
+              if (activo.descripcion.trim().isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Text(
+                  activo.descripcion,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontSize: 14, color: AgroTema.pizarra),
+                ),
+              ],
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  if (actividades != null)
+                    _chip(
+                      Icons.agriculture,
+                      actividades.isEmpty
+                          ? "Sin actividades cargadas"
+                          : actividades.map(nombreActividad).join(" · "),
+                      actividades.isEmpty
+                          ? AgroTema.pizarraSuave
+                          : AgroTema.verde,
+                    ),
+                  _chip(
+                    estado == "publicado"
+                        ? Icons.storefront
+                        : estado == "pendienteRevision"
+                            ? Icons.hourglass_top
+                            : Icons.edit_note,
+                    estadoTexto(estado),
+                    estado == "publicado"
+                        ? AgroTema.azul
+                        : estado == "pendienteRevision"
+                            ? AgroTema.dorado
+                            : AgroTema.terracota,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  const Text(
+                    "Expediente",
+                    style: TextStyle(
+                        fontSize: 13, color: AgroTema.pizarraSuave),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: avance / 100,
+                        minHeight: 8,
+                        backgroundColor: AgroTema.borde,
+                        color: AgroTema.verde,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    "${avance.round()}%",
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AgroTema.pizarra,
+                    ),
+                  ),
+                ],
+              ),
+              if (!yaEnviado) ...[
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: OutlinedButton.icon(
+                    onPressed: () => confirmarPublicar(activo),
+                    icon: const Icon(Icons.publish, size: 18),
+                    label: const Text("Publicar en el Mercado"),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AgroTema.terracota,
+                      side: const BorderSide(color: AgroTema.terracota),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _chip(IconData icono, String texto, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withAlpha(30),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withAlpha(90)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icono, size: 16, color: color),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              texto,
+              style: TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.w600, color: color),
             ),
+          ),
+        ],
+      ),
     );
   }
 }

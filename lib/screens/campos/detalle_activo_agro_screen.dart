@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
+import '../../models/activos/grupo_productivo_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../../services/produccion_service.dart';
 import '../documentos/documentos_activo_screen.dart';
@@ -20,6 +21,15 @@ import 'suelo_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 import '../../widgets/barra_campo.dart';
 import '../produccion/produccion_estilo.dart';
+
+/// AF-135 (24/11/2026): actividades marcadas al crear el campo.
+/// Solo cuentan las del formulario nuevo (datos['declarada'] == true): los
+/// campos viejos tienen "agricultura" guardado por error y no se muestran.
+List<String> actividadesDeclaradas(ActivoAgroV2 a) => [
+      for (final p in a.producciones)
+        if (p.datos['declarada'] == true && p.actividad.isNotEmpty)
+          p.actividad,
+    ];
 
 class DetalleActivoAgroScreen extends StatefulWidget {
   final ActivoAgroV2 activo;
@@ -39,6 +49,11 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   /// campo (para "Primeros pasos"). null = todavía no se sabe.
   int? _lugares;
   int? _animalesOCultivos;
+
+  /// Ficha por actividades (24/11/2026): cuántos rodeos, cultivos o lotes
+  /// hay de cada actividad. null = no se pudo saber (se muestra Producción
+  /// como antes).
+  Map<String, int>? _porActividad;
 
   late ActivoAgroV2 activo;
 
@@ -132,19 +147,28 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   bool get _esDueno =>
       FirebaseAuth.instance.currentUser?.uid == activo.propietarioId;
 
-  /// QA Grupo B: solo hace falta para "Primeros pasos" (lo ve el dueño).
+  /// QA Grupo B: lugares y grupos para "Primeros pasos" (lo ve el dueño).
+  /// Ficha por actividades (24/11/2026): también cuenta los grupos por
+  /// actividad para la tarjeta "Actividades".
   Future<void> _cargarProduccion() async {
-    if (!_esDueno) return;
     try {
       final unidades = await _produccion.unidadesDeActivo(activo.activoId);
       final grupos = await _produccion.gruposDeActivo(activo.activoId);
+      final porActividad = <String, int>{};
+      for (final g in grupos
+          .where((g) => g.estado == EstadoGrupoProductivo.activo)) {
+        final a = actividadDeGrupo(g);
+        porActividad[a] = (porActividad[a] ?? 0) + 1;
+      }
       if (!mounted) return;
       setState(() {
         _lugares = unidades.length;
         _animalesOCultivos = grupos.length;
+        _porActividad = porActividad;
       });
     } catch (_) {
-      // Sin señal o sin permiso: la tarjeta no se muestra.
+      // Sin señal o sin permiso: "Primeros pasos" no se muestra y en
+      // Actividades queda el botón Producción como antes.
     }
   }
 
@@ -244,8 +268,17 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
           ],
           const SizedBox(height: 20),
           // Diseño V8 (16/11/2026): títulos con la banda oscura.
-          const TituloSeccion('Gestión del campo', icono: Icons.agriculture),
-          _modulos(),
+          // Ficha por actividades (24/11/2026): la grilla única se separó
+          // en Actividades, Servicios del campo y Administración.
+          const TituloSeccion('Actividades', icono: Icons.agriculture),
+          _grilla(_actividades()),
+          _pieActividades(),
+          const SizedBox(height: 22),
+          const TituloSeccion('Servicios del campo', icono: Icons.explore),
+          _grilla(_servicios()),
+          const SizedBox(height: 22),
+          const TituloSeccion('Administración', icono: Icons.assignment),
+          _grilla(_administracion()),
           const SizedBox(height: 22),
           const TituloSeccion('Información del expediente',
               icono: Icons.folder_open),
@@ -438,11 +471,104 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   }
 
   // ---------------- MÓDULOS (dos columnas) ----------------
+  // Ficha por actividades (24/11/2026): tres grupos de botones.
+  // Un botón con alTocar == null se ve gris ("Próximamente").
 
-  Widget _modulos() {
+  /// Botón de una actividad del campo (abre Producción solo con ella).
+  /// AF-135: con 0 cargados invita a empezar; null = no se pudo contar.
+  (IconData, String, String, Color, VoidCallback?) _botonActividad(
+      String actividad, int? cantidad) {
+    final (IconData icono, Color color, String uno, String varios) =
+        switch (actividad) {
+      'agricultura' => (Icons.grass, AgroTema.verde, 'cultivo', 'cultivos'),
+      'avicultura' => (Icons.egg_outlined, AgroTema.terracota, 'lote', 'lotes'),
+      'piscicultura' => (Icons.set_meal, AgroTema.azul, 'lote', 'lotes'),
+      'ganaderia' => (Icons.pets, AgroTema.terracota, 'rodeo', 'rodeos'),
+      _ => (Icons.pets, AgroTema.pizarra, 'lote', 'lotes'),
+    };
+    return (
+      icono,
+      nombreActividad(actividad),
+      cantidad == null
+          ? 'Tocá para ver'
+          : cantidad == 0
+              ? 'Empezá cargando tu $uno'
+              : '$cantidad ${cantidad == 1 ? uno : varios}',
+      color,
+      () => _abrir(ProduccionActivoScreen(
+          activoAgroId: activo.activoId,
+          nombreActivo: activo.nombre,
+          actividad: actividad)),
+    );
+  }
+
+  List<(IconData, String, String, Color, VoidCallback?)> _actividades() {
     final id = activo.activoId;
     final nombre = activo.nombre;
-    final modulos = <(IconData, String, String, Color, VoidCallback?)>[
+    final porActividad = _porActividad;
+    final presentes = _actividadesPresentes;
+    return [
+      for (final a in presentes)
+        _botonActividad(
+            a, porActividad == null ? null : (porActividad[a] ?? 0)),
+      // Sin actividades todavía: un solo botón para empezar.
+      if (presentes.isEmpty)
+        (
+          Icons.pets,
+          'Producción',
+          'Lugares, animales y cultivos',
+          AgroTema.verde,
+          () => _abrir(ProduccionActivoScreen(
+              activoAgroId: id, nombreActivo: nombre)),
+        ),
+    ];
+  }
+
+  /// AF-135: actividades declaradas al crear el campo + las que tienen
+  /// algo cargado en Producción, en un orden fijo.
+  List<String> get _actividadesPresentes {
+    const orden = ['ganaderia', 'agricultura', 'avicultura', 'piscicultura'];
+    final todas = {
+      ...actividadesDeclaradas(activo),
+      ...?_porActividad?.keys,
+    };
+    return [
+      ...orden.where(todas.contains),
+      ...todas.where((a) => !orden.contains(a)),
+    ];
+  }
+
+  /// Retoque de diseño (24/11/2026): "Sumar actividad" como botón naranja
+  /// y lo que viene, en un renglón chico (no ocupa lugar en la grilla).
+  Widget _pieActividades() {
+    final hayActividades = _actividadesPresentes.isNotEmpty;
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (hayActividades)
+            BotonGrande(
+              texto: 'Sumar actividad',
+              icono: Icons.add,
+              onPressed: () => _abrir(ProduccionActivoScreen(
+                  activoAgroId: activo.activoId,
+                  nombreActivo: activo.nombre)),
+            ),
+          const SizedBox(height: 8),
+          const Text(
+            'Próximamente: Apicultura · Frutales',
+            style: TextStyle(fontSize: 13, color: AgroTema.pizarraSuave),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<(IconData, String, String, Color, VoidCallback?)> _servicios() {
+    final id = activo.activoId;
+    final nombre = activo.nombre;
+    return [
       (
         activo.ubicacion.tieneCoordenadas
             ? Icons.location_on
@@ -461,51 +587,11 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         _abrirSuelo,
       ),
       (
-        Icons.pets,
-        'Producción',
-        'Lugares, animales y cultivos',
+        Icons.landscape,
+        'Historia del territorio',
+        'Desmontes, canales, caminos...',
         AgroTema.verde,
-        () => _abrir(ProduccionActivoScreen(
-            activoAgroId: id, nombreActivo: nombre)),
-      ),
-      (
-        Icons.verified_user,
-        'Operaciones protegidas',
-        'Ventas, cheques y garantías',
-        AgroTema.pizarra,
-        () => _abrir(OperacionesActivoScreen(
-            activoAgroId: id, nombreActivo: nombre)),
-      ),
-      (
-        Icons.description,
-        'Documentos',
-        'Escrituras, permisos, certificaciones',
-        AgroTema.terracota,
-        () => _abrir(DocumentosActivoScreen(
-            activoAgroId: id, nombreActivo: nombre)),
-      ),
-      (
-        Icons.local_shipping,
-        'Traslados',
-        'Salidas de hacienda, granos y más',
-        const Color(0xFFE8893A),
-        () => _abrir(
-            TrasladosActivoScreen(activoAgroId: id, nombreActivo: nombre)),
-      ),
-      (
-        Icons.badge,
-        'Profesionales',
-        'Agrónomos, veterinarios, técnicos',
-        AgroTema.azul,
-        () => _abrir(ProfesionalesActivoScreen(
-            activoAgroId: id, nombreActivo: nombre)),
-      ),
-      (
-        Icons.engineering,
-        'Encargados',
-        'Quién trabaja el campo y qué carga',
-        AgroTema.pizarra,
-        () => _abrir(EncargadosActivoScreen(
+        () => _abrir(HistoriaTerritorioScreen(
             activoAgroId: id, nombreActivo: nombre)),
       ),
       (
@@ -517,13 +603,30 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
             activoAgroId: id, nombreActivo: nombre)),
       ),
       (
-        Icons.landscape,
-        'Historia del territorio',
-        'Desmontes, canales, caminos...',
-        AgroTema.verde,
-        () => _abrir(HistoriaTerritorioScreen(
+        Icons.local_shipping,
+        'Traslados',
+        'Salidas de hacienda, granos y más',
+        const Color(0xFFE8893A),
+        () => _abrir(
+            TrasladosActivoScreen(activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.description,
+        'Documentos',
+        'Escrituras, permisos, certificaciones',
+        AgroTema.terracota,
+        () => _abrir(DocumentosActivoScreen(
             activoAgroId: id, nombreActivo: nombre)),
       ),
+      // GAP-MERC-01 lo va a activar.
+      (Icons.storefront, 'Mercado', 'Próximamente', AgroTema.azul, null),
+    ];
+  }
+
+  List<(IconData, String, String, Color, VoidCallback?)> _administracion() {
+    final id = activo.activoId;
+    final nombre = activo.nombre;
+    return [
       (
         Icons.inventory_2,
         'Stock e insumos',
@@ -540,8 +643,35 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         () => _abrir(
             EconomiaActivoScreen(activoAgroId: id, nombreActivo: nombre)),
       ),
+      (
+        Icons.verified_user,
+        'Operaciones protegidas',
+        'Ventas, cheques y garantías',
+        AgroTema.pizarra,
+        () => _abrir(OperacionesActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.engineering,
+        'Encargados',
+        'Quién trabaja el campo y qué carga',
+        AgroTema.pizarra,
+        () => _abrir(EncargadosActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
+      (
+        Icons.badge,
+        'Profesionales',
+        'Agrónomos, veterinarios, técnicos',
+        AgroTema.azul,
+        () => _abrir(ProfesionalesActivoScreen(
+            activoAgroId: id, nombreActivo: nombre)),
+      ),
     ];
+  }
 
+  Widget _grilla(
+      List<(IconData, String, String, Color, VoidCallback?)> modulos) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

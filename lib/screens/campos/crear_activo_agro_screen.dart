@@ -16,8 +16,44 @@ import '../../models/activos/documentacion_activo_model.dart';
 import '../../models/activos/evaluacion_confianza_model.dart';
 import '../../models/activos/participante_activo_model.dart';
 
+import '../../core/theme/agro_tema.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../../widgets/barra_campo.dart';
+import '../produccion/produccion_estilo.dart';
+
+/// Diseño "Nuevo campo" (24/11/2026): países de la lista, con su moneda y
+/// zona horaria. "Otro" deja escribir el país y usa los valores de antes.
+const Map<String, (String moneda, String zonaHoraria)> _paises = {
+  'Argentina': ('ARS', 'America/Argentina/Buenos_Aires'),
+  'Paraguay': ('PYG', 'America/Asuncion'),
+  'Uruguay': ('UYU', 'America/Montevideo'),
+};
+const String _otroPais = 'Otro';
+
+/// AF-135 (24/11/2026): actividades que se eligen al crear el campo
+/// (los mismos nombres que usa Producción) y su tipo de campo.
+const List<(String, String, IconData, TipoActivo)> _actividadesCampo = [
+  ('ganaderia', 'Ganadería', Icons.pets, TipoActivo.ganadero),
+  ('agricultura', 'Agricultura', Icons.grass, TipoActivo.agricola),
+  ('avicultura', 'Avicultura', Icons.egg_outlined, TipoActivo.avicola),
+  ('piscicultura', 'Piscicultura', Icons.set_meal, TipoActivo.piscicola),
+];
+
+/// Superficie escrita como en la región: "2.390", "2.390,5", "150 ha".
+/// La misma cuenta sirve para revisar y para guardar.
+double? _leerSuperficie(String texto) {
+  var t = texto.toLowerCase().trim();
+  t = t
+      .replaceAll("hectáreas", "")
+      .replaceAll("hectareas", "")
+      .replaceAll("hectárea", "")
+      .replaceAll("hectarea", "")
+      .replaceAll("has", "")
+      .replaceAll("ha", "")
+      .trim();
+  t = t.replaceAll(".", "").replaceAll(",", ".");
+  return double.tryParse(t);
+}
 
 class CrearActivoAgroScreen extends StatefulWidget {
   const CrearActivoAgroScreen({super.key});
@@ -49,6 +85,18 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
   bool loading = false;
 
+  /// Diseño "Nuevo campo": país elegido de la lista.
+  String _pais = 'Argentina';
+
+  /// AF-135: actividades marcadas (al menos una).
+  final Set<String> _actividades = {};
+  bool _faltaActividad = false;
+
+  /// Mixto (agrícola-ganadero) = Ganadería y Agricultura marcadas.
+  bool get _esMixto =>
+      _actividades.contains('ganaderia') &&
+      _actividades.contains('agricultura');
+
   @override
   void dispose() {
     nombreController.dispose();
@@ -71,7 +119,10 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
   }
 
   Future<void> guardarActivo() async {
-    if (!_formKey.currentState!.validate()) {
+    final formularioBien = _formKey.currentState!.validate();
+    // AF-135: hay que marcar al menos una actividad.
+    setState(() => _faltaActividad = _actividades.isEmpty);
+    if (!formularioBien || _actividades.isEmpty) {
       return;
     }
 
@@ -90,7 +141,11 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
       final nombre = nombreController.text.trim();
 
-      final pais = paisController.text.trim();
+      final pais =
+          _pais == _otroPais ? paisController.text.trim() : _pais;
+      // Moneda y zona horaria según el país (con "Otro", como antes).
+      final (moneda, zonaHoraria) =
+          _paises[_pais] ?? ('ARS', 'America/Argentina/Buenos_Aires');
 
       final provincia = provinciaController.text.trim();
 
@@ -100,22 +155,7 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
       final codigoPostal = codigoPostalController.text.trim();
 
-      var superficieTexto = superficieController.text.toLowerCase().trim();
-
-      superficieTexto = superficieTexto
-          .replaceAll("hectáreas", "")
-          .replaceAll("hectareas", "")
-          .replaceAll("hectárea", "")
-          .replaceAll("hectarea", "")
-          .replaceAll("has", "")
-          .replaceAll("ha", "")
-          .trim();
-
-      superficieTexto = superficieTexto
-          .replaceAll(".", "")
-          .replaceAll(",", ".");
-
-      final superficie = double.tryParse(superficieTexto) ?? 0;
+      final superficie = _leerSuperficie(superficieController.text) ?? 0;
 
       final descripcion = descripcionController.text.trim();
 
@@ -133,7 +173,12 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
         descripcion: descripcion,
 
-        tipoActivo: TipoActivo.agricola,
+        // AF-135: una actividad = su tipo; dos o más = mixto.
+        tipoActivo: _actividades.length > 1
+            ? TipoActivo.mixto
+            : _actividadesCampo
+                .firstWhere((a) => a.$1 == _actividades.first)
+                .$4,
 
         categorias: ['produccion', 'agro'],
 
@@ -156,7 +201,7 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
           tipoZona: 'rural',
 
-          zonaHoraria: 'America/Argentina/Buenos_Aires',
+          zonaHoraria: zonaHoraria,
 
           accesoCaminos: '',
 
@@ -168,17 +213,22 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
           regionProductiva: provincia,
 
-          monedaLocal: 'ARS',
+          monedaLocal: moneda,
         ),
 
+        // AF-135: una entrada por actividad marcada, en el orden de la
+        // lista. "declarada" distingue estas de las viejas (que guardaban
+        // "agricultura" siempre).
         producciones: [
-          ModuloProduccion(
-            actividad: 'agricultura',
-            dominio: 'agropecuario',
-            descripcion: 'Producción inicial',
-            datos: {},
-            ciclos: [],
-          ),
+          for (final a in _actividadesCampo)
+            if (_actividades.contains(a.$1))
+              ModuloProduccion(
+                actividad: a.$1,
+                dominio: 'agropecuario',
+                descripcion: 'Declarada al crear el campo',
+                datos: {'declarada': true},
+                ciclos: [],
+              ),
         ],
 
         economia: EconomiaActivo.inicial(),
@@ -211,7 +261,7 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
           inversionDeclarada: false,
           inversionVerificada: false,
           montoInversionDeclarada: 0,
-          monedaInversion: 'ARS',
+          monedaInversion: moneda,
 
           participantesVerificados: false,
 
@@ -291,7 +341,7 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Activo Agro creado correctamente')),
+        const SnackBar(content: Text('Campo creado correctamente')),
       );
 
       Navigator.pop(context);
@@ -308,7 +358,7 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Error creando activo: $e')));
+      ).showSnackBar(SnackBar(content: Text('Error creando el campo: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -318,120 +368,245 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
     }
   }
 
+  /// Diseño "Nuevo campo": casilla blanca con borde redondeado.
+  InputDecoration _decoracion(String etiqueta,
+      {String? ayuda, String? sufijo}) {
+    return InputDecoration(
+      labelText: etiqueta,
+      hintText: ayuda,
+      suffixText: sufijo,
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AgroTema.borde),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AgroTema.borde),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AgroTema.terracota, width: 2),
+      ),
+    );
+  }
+
+  /// Diseño "Nuevo campo": una tarjeta por pregunta.
+  Widget _grupo(IconData icono, Color color, String pregunta,
+      List<Widget> campos) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: TarjetaBlanca(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  IconoCirculo(icono, color: color, tamano: 40),
+                  const SizedBox(width: 10),
+                  Text(
+                    pregunta,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: AgroTema.pizarra,
+                    ),
+                  ),
+                ],
+              ),
+              for (final c in campos) ...[const SizedBox(height: 12), c],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BarraCampo(title: const Text('Crear Activo Agro')),
+      appBar: BarraCampo(title: const Text('Nuevo campo')),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: Form(
+        key: _formKey,
 
-        child: Form(
-          key: _formKey,
-
-          child: ListView(
-            children: [
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+          children: [
+            _grupo(Icons.badge_outlined, AgroTema.verde, '¿Cómo se llama?', [
               TextFormField(
                 controller: nombreController,
-
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del activo',
-                ),
-
+                textCapitalization: TextCapitalization.sentences,
+                decoration: _decoracion('Nombre del campo',
+                    ayuda: 'Por ejemplo: La Esperanza'),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) {
-                    return 'Ingrese nombre';
+                    return 'Escribí el nombre del campo';
                   }
-
                   return null;
                 },
               ),
-
-              TextFormField(
-                controller: paisController,
-
-                decoration: const InputDecoration(labelText: 'País'),
-              ),
-
-              TextFormField(
-                controller: provinciaController,
-
-                decoration: const InputDecoration(labelText: 'Provincia'),
-
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) {
-                    return 'Ingrese provincia';
-                  }
-
-                  return null;
-                },
-              ),
-
-              TextFormField(
-                controller: departamentoController,
-
-                decoration: const InputDecoration(
-                  labelText: 'Departamento / Estado',
-                ),
-              ),
-
-              TextFormField(
-                controller: localidadController,
-
-                decoration: const InputDecoration(labelText: 'Localidad'),
-              ),
-
-              TextFormField(
-                controller: codigoPostalController,
-
-                decoration: const InputDecoration(labelText: 'Código postal'),
-              ),
-
-              TextFormField(
-                controller: superficieController,
-
-                keyboardType: TextInputType.number,
-
-                decoration: const InputDecoration(
-                  labelText: 'Superficie hectáreas',
-                ),
-
-                validator: (v) {
-                  final valor = double.tryParse((v ?? '').replaceAll(',', '.'));
-
-                  if (valor == null || valor <= 0) {
-                    return 'Ingrese superficie válida';
-                  }
-
-                  return null;
-                },
-              ),
-
               TextFormField(
                 controller: descripcionController,
-
                 maxLines: 3,
-
-                decoration: const InputDecoration(labelText: 'Descripción'),
+                textCapitalization: TextCapitalization.sentences,
+                decoration: _decoracion('Descripción (opcional)',
+                    ayuda: 'Qué se hace en el campo, cómo es...'),
               ),
-
-              const SizedBox(height: 24),
-
-              ElevatedButton(
-                onPressed: loading ? null : guardarActivo,
-
-                child: loading
-                    ? const SizedBox(
-                        height: 20,
-
-                        width: 20,
-
-                        child: CircularProgressIndicator(),
-                      )
-                    : const Text('Crear Activo Agro'),
+            ]),
+            _grupo(Icons.place, AgroTema.azul, '¿Dónde está?', [
+              DropdownButtonFormField<String>(
+                value: _pais,
+                decoration: _decoracion('País'),
+                items: [
+                  for (final p in [..._paises.keys, _otroPais])
+                    DropdownMenuItem(value: p, child: Text(p)),
+                ],
+                onChanged: (v) => setState(() => _pais = v ?? _pais),
               ),
-            ],
-          ),
+              if (_pais == _otroPais)
+                TextFormField(
+                  controller: paisController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: _decoracion('¿Qué país?'),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) {
+                      return 'Escribí el país';
+                    }
+                    return null;
+                  },
+                ),
+              TextFormField(
+                controller: provinciaController,
+                textCapitalization: TextCapitalization.words,
+                decoration: _decoracion('Provincia / Departamento'),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) {
+                    return 'Escribí la provincia';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: departamentoController,
+                textCapitalization: TextCapitalization.words,
+                decoration: _decoracion('Partido / Distrito (opcional)'),
+              ),
+              TextFormField(
+                controller: localidadController,
+                textCapitalization: TextCapitalization.words,
+                decoration: _decoracion('Localidad o pueblo más cercano'),
+              ),
+              TextFormField(
+                controller: codigoPostalController,
+                decoration: _decoracion('Código postal (opcional)'),
+              ),
+            ]),
+            // AF-135: qué se hace en el campo.
+            _grupo(Icons.agriculture, AgroTema.verde,
+                '¿Qué hacés en el campo?', [
+              const Text(
+                'Marcá una o varias. "Mixto" marca Ganadería y '
+                'Agricultura juntas.',
+                style: TextStyle(fontSize: 14, color: AgroTema.pizarraSuave),
+              ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  // "Mixto" = Ganadería + Agricultura juntas (atajo).
+                  FilterChip(
+                    avatar: Icon(Icons.agriculture,
+                        size: 18,
+                        color: _esMixto ? Colors.white : AgroTema.verde),
+                    label: const Text('Mixto (agrícola-ganadero)'),
+                    selected: _esMixto,
+                    showCheckmark: false,
+                    selectedColor: AgroTema.verde,
+                    backgroundColor: Colors.white,
+                    labelStyle: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: _esMixto ? Colors.white : AgroTema.pizarra,
+                    ),
+                    side: const BorderSide(color: AgroTema.borde),
+                    onSelected: (si) => setState(() {
+                      if (si) {
+                        _actividades.addAll(['ganaderia', 'agricultura']);
+                      } else {
+                        _actividades.removeAll(['ganaderia', 'agricultura']);
+                      }
+                      if (_actividades.isNotEmpty) _faltaActividad = false;
+                    }),
+                  ),
+                  for (final (clave, nombre, icono, _) in _actividadesCampo)
+                    FilterChip(
+                      avatar: Icon(icono,
+                          size: 18,
+                          color: _actividades.contains(clave)
+                              ? Colors.white
+                              : AgroTema.verde),
+                      label: Text(nombre),
+                      selected: _actividades.contains(clave),
+                      showCheckmark: false,
+                      selectedColor: AgroTema.verde,
+                      backgroundColor: Colors.white,
+                      labelStyle: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: _actividades.contains(clave)
+                            ? Colors.white
+                            : AgroTema.pizarra,
+                      ),
+                      side: const BorderSide(color: AgroTema.borde),
+                      onSelected: (si) => setState(() {
+                        si ? _actividades.add(clave) : _actividades.remove(clave);
+                        if (_actividades.isNotEmpty) _faltaActividad = false;
+                      }),
+                    ),
+                ],
+              ),
+              const Text(
+                'Próximamente: Apicultura · Frutales',
+                style: TextStyle(fontSize: 13, color: AgroTema.pizarraSuave),
+              ),
+              if (_faltaActividad)
+                const Text(
+                  'Marcá al menos una actividad',
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AgroTema.rojo),
+                ),
+            ]),
+            _grupo(Icons.straighten, AgroTema.terracota,
+                '¿Qué tamaño tiene?', [
+              TextFormField(
+                controller: superficieController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: _decoracion('Superficie',
+                    ayuda: 'Por ejemplo: 2.390', sufijo: 'ha'),
+                validator: (v) {
+                  final valor = _leerSuperficie(v ?? '');
+                  if (valor == null || valor <= 0) {
+                    return 'Escribí las hectáreas (por ejemplo: 150)';
+                  }
+                  return null;
+                },
+              ),
+            ]),
+            const SizedBox(height: 8),
+            BotonGrande(
+              texto: 'Crear campo',
+              icono: Icons.check,
+              ocupado: loading,
+              onPressed: loading ? null : guardarActivo,
+            ),
+          ],
         ),
       ),
     );
