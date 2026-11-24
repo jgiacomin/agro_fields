@@ -187,14 +187,34 @@ service cloud.firestore {
             && (d.ofertas.size() < 3 || ofertaValida(d.ofertas[2])));
     }
 
-    function resumenPublicoValido(d) {
+    // GAP-MERC-01 Parte B: hasta 6 fotos, todas de la carpeta publica de
+    // ESE campo en Storage.
+    function fotoValida(f, id) {
+      return f is string
+        && f.matches('activos/' + id + '/publico/fotos/[^/]+');
+    }
+
+    function fotosValidas(d, id) {
+      return !('fotos' in d)
+        || (d.fotos is list
+            && d.fotos.size() <= 6
+            && (d.fotos.size() < 1 || fotoValida(d.fotos[0], id))
+            && (d.fotos.size() < 2 || fotoValida(d.fotos[1], id))
+            && (d.fotos.size() < 3 || fotoValida(d.fotos[2], id))
+            && (d.fotos.size() < 4 || fotoValida(d.fotos[3], id))
+            && (d.fotos.size() < 5 || fotoValida(d.fotos[4], id))
+            && (d.fotos.size() < 6 || fotoValida(d.fotos[5], id)));
+    }
+
+    function resumenPublicoValido(d, id) {
       return d.keys().hasOnly([
           'activoId', 'nombre', 'descripcion', 'tipoActivo', 'pais',
           'provincia', 'localidad', 'superficie', 'nivelConfianza',
           'madurezPorcentaje', 'producciones', 'propietarioId',
           'estadoPublicacion', 'visible', 'ultimaActualizacion',
-          'motivoRevision', 'ofertas'])
-        && ofertasValidas(d);
+          'motivoRevision', 'ofertas', 'fotos'])
+        && ofertasValidas(d)
+        && fotosValidas(d, id);
     }
 
     match /activos_publicos/{activoId} {
@@ -217,7 +237,7 @@ service cloud.firestore {
             && request.resource.data.propietarioId == request.auth.uid
             && request.resource.data.estadoPublicacion == 'pendienteRevision'
             && request.resource.data.visible == false
-            && resumenPublicoValido(request.resource.data));
+            && resumenPublicoValido(request.resource.data, activoId));
 
       // El dueÃ±o puede editar borrador/pendiente/pausar, pero NO poner 'publicado'.
       allow update: if esAdmin()
@@ -227,7 +247,7 @@ service cloud.firestore {
             && request.resource.data.estadoPublicacion
                  in ['borrador', 'pendienteRevision', 'pausado']
             && request.resource.data.visible == false
-            && resumenPublicoValido(request.resource.data));
+            && resumenPublicoValido(request.resource.data, activoId));
 
       allow delete: if esAdmin();
     }

@@ -92,6 +92,16 @@ const darAutorizacion = (permiso, extra = {}) =>
     });
   });
 
+// GAP-MERC-01 Parte B: resumen del campo en el Mercado (aprobado o no).
+const publicarEnMercado = (aprobado) =>
+  env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'activos_publicos/a1'), {
+      propietarioId: DUENO,
+      estadoPublicacion: aprobado ? 'publicado' : 'pendienteRevision',
+      visible: aprobado,
+    });
+  });
+
 const cargarArchivo = (ruta, meta = PDF) =>
   env.withSecurityRulesDisabled(async (ctx) => {
     await uploadBytes(ref(ctx.storage(), ruta), bytes(), meta);
@@ -180,7 +190,8 @@ test('ST-15. El encargado NO reemplaza un documento ya subido [PROHIBIDO]', asyn
 });
 
 // ------------------------- RESUMEN PÚBLICO (sin cambios) -------------------------
-test('ST-16. Un usuario logueado ve una foto del resumen público [PERMITIDO]', async () => {
+test('ST-16. Un usuario logueado ve una foto de un campo aprobado en el Mercado [PERMITIDO]', async () => {
+  await publicarEnMercado(true);
   await cargarArchivo(RUTA_PUBLICA, { contentType: 'image/jpeg' });
   await assertSucceeds(getMetadata(ref(como(OTRO), RUTA_PUBLICA)));
 });
@@ -282,4 +293,47 @@ test('ST-TERR-02. El broker NO sube archivos del territorio [PROHIBIDO]', async 
 
 test('ST-TERR-03. Otro usuario NO sube archivos del territorio [PROHIBIDO]', async () => {
   await assertFails(uploadBytes(ref(como(OTRO), rutaTerritorio(3)), bytes(), PDF));
+});
+
+// =====================================================================
+// GAP-MERC-01 Parte B (24/11/2026): fotos de la publicación del Mercado
+// Carpeta: activos/{activo}/publico/fotos/...
+// =====================================================================
+
+const rutaFoto = (n) => `activos/a1/publico/fotos/${CORRIDA}_${n}.jpg`;
+const JPG_FOTO = { contentType: 'image/jpeg' };
+
+test('ST-FOTO-01. El dueño sube una foto de su campo [PERMITIDO]', async () => {
+  await assertSucceeds(uploadBytes(ref(como(DUENO), rutaFoto(1)), bytes(), JPG_FOTO));
+});
+
+test('ST-FOTO-02. NO se sube un PDF como foto [PROHIBIDO]', async () => {
+  await assertFails(uploadBytes(ref(como(DUENO), `activos/a1/publico/fotos/${CORRIDA}_2.pdf`), bytes(), PDF));
+});
+
+test('ST-FOTO-03. Otro usuario NO sube fotos a un campo ajeno [PROHIBIDO]', async () => {
+  await assertFails(uploadBytes(ref(como(OTRO), rutaFoto(3)), bytes(), JPG_FOTO));
+});
+
+test('ST-FOTO-04. Otro usuario NO ve las fotos de un campo sin aprobar [PROHIBIDO]', async () => {
+  await publicarEnMercado(false);
+  await cargarArchivo(rutaFoto(4), JPG_FOTO);
+  await assertFails(getMetadata(ref(como(OTRO), rutaFoto(4))));
+});
+
+test('ST-FOTO-05. Otro usuario ve las fotos de un campo aprobado [PERMITIDO]', async () => {
+  await publicarEnMercado(true);
+  await cargarArchivo(rutaFoto(5), JPG_FOTO);
+  await assertSucceeds(getMetadata(ref(como(OTRO), rutaFoto(5))));
+});
+
+test('ST-FOTO-06. El dueño ve sus fotos aunque no esté aprobado [PERMITIDO]', async () => {
+  await cargarArchivo(rutaFoto(6), JPG_FOTO);
+  await assertSucceeds(getMetadata(ref(como(DUENO), rutaFoto(6))));
+});
+
+test('ST-FOTO-07. El dueño quita una foto; otro usuario NO [PERMITIDO / PROHIBIDO]', async () => {
+  await cargarArchivo(rutaFoto(7), JPG_FOTO);
+  await assertFails(deleteObject(ref(como(OTRO), rutaFoto(7))));
+  await assertSucceeds(deleteObject(ref(como(DUENO), rutaFoto(7))));
 });

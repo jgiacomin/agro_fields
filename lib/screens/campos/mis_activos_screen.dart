@@ -155,6 +155,31 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
   /// GAP-MERC-01 Parte A: publicar abre "Publicar en el Mercado"
   /// (operación y precio). Si se envió, se recarga la lista.
   Future<void> abrirPublicar(ActivoAgroV2 activo) async {
+    // Editar una publicación ya enviada: vuelve a revisión (se avisa).
+    final estado = activo.estado.name;
+    if (estado == "publicado" || estado == "pendienteRevision") {
+      final seguir = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Editar publicación"),
+          content: const Text(
+            "Cuando guardes los cambios, el campo vuelve a revisión y no se "
+            "ve en el Mercado hasta que se apruebe de nuevo.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text("Cancelar"),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text("Seguir"),
+            ),
+          ],
+        ),
+      );
+      if (seguir != true || !mounted) return;
+    }
     final envio = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
@@ -375,14 +400,18 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
                   ),
                 ],
               ),
-              if (!yaEnviado) ...[
+              // Ya enviado: se puede editar (precio, fotos); vuelve a revisión.
+              ...[
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
                   child: OutlinedButton.icon(
                     onPressed: () => abrirPublicar(activo),
-                    icon: const Icon(Icons.publish, size: 18),
-                    label: const Text("Publicar en el Mercado"),
+                    icon: Icon(yaEnviado ? Icons.edit : Icons.publish,
+                        size: 18),
+                    label: Text(yaEnviado
+                        ? "Editar publicación"
+                        : "Publicar en el Mercado"),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AgroTema.terracota,
                       side: const BorderSide(color: AgroTema.terracota),

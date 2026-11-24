@@ -1,9 +1,11 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../models/activos/economia_activo_model.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../../services/foto_mercado_service.dart';
 import '../../widgets/barra_campo.dart';
 import '../produccion/produccion_estilo.dart';
 
@@ -39,6 +41,13 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
   bool _faltaOperacion = false;
   bool _enviando = false;
 
+  /// GAP-MERC-01 Parte B: fotos de la publicación (la primera es la
+  /// portada) y las que se quitaron (se borran recién al enviar).
+  final FotoMercadoService _fotosServicio = FotoMercadoService();
+  List<String> _fotos = [];
+  final List<String> _quitadas = [];
+  bool _subiendoFoto = false;
+
   String get _monedaDelCampo {
     final m = widget.activo.ubicacion.monedaLocal;
     return OfertaMercado.monedas.contains(m) ? m : 'USD';
@@ -54,7 +63,54 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
       if (o.precio != null) f.precio.text = OfertaMercado.numero(o.precio!);
       _ofertas[o.operacion] = f;
     }
+    _cargarFotos();
   }
+
+  Future<void> _cargarFotos() async {
+    try {
+      final fotos =
+          await FotoMercadoService.fotosPublicadas(widget.activo.activoId);
+      if (mounted) setState(() => _fotos = fotos);
+    } catch (_) {
+      // Sin señal o sin publicación anterior: se arranca sin fotos.
+    }
+  }
+
+  Future<void> _agregarFoto() async {
+    final archivo = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: const ['jpg', 'jpeg', 'png', 'webp'],
+    );
+    if (archivo == null) return;
+    setState(() => _subiendoFoto = true);
+    try {
+      final bytes = await archivo.readAsBytes();
+      final ruta = await _fotosServicio.subir(
+        activoId: widget.activo.activoId,
+        nombreArchivo: archivo.name,
+        bytes: bytes,
+      );
+      if (mounted) setState(() => _fotos = [..._fotos, ruta]);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e is ArgumentError
+            ? '${e.message}'
+            : 'No se pudo subir la foto: $e'),
+      ));
+    } finally {
+      if (mounted) setState(() => _subiendoFoto = false);
+    }
+  }
+
+  void _quitarFoto(String ruta) => setState(() {
+        _fotos = [..._fotos]..remove(ruta);
+        _quitadas.add(ruta);
+      });
+
+  void _hacerPortada(String ruta) => setState(() {
+        _fotos = [ruta, ..._fotos.where((f) => f != ruta)];
+      });
 
   @override
   void dispose() {
@@ -103,7 +159,14 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
     setState(() => _enviando = true);
     try {
       await _servicio.publicarActivo(widget.activo.activoId,
-          ofertas: ofertas);
+          ofertas: ofertas, fotos: _fotos);
+      // Las fotos quitadas se borran recién ahora (si se cancelaba, la
+      // publicación anterior seguía usándolas).
+      for (final ruta in _quitadas) {
+        try {
+          await _fotosServicio.quitar(ruta);
+        } catch (_) {}
+      }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
@@ -263,6 +326,96 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
     ]);
   }
 
+  /// GAP-MERC-01 Parte B: tarjeta de fotos.
+  Widget _tarjetaFotos() {
+    return _tarjeta(Icons.photo_library_outlined, AgroTema.verde,
+        'Fotos del campo', [
+      Text(
+        _fotos.isEmpty
+            ? 'Hasta ${FotoMercadoService.maxFotos} fotos. La primera es la '
+                'portada que se ve en el Mercado.'
+            : 'Tocá ★ para elegir la portada (la primera).',
+        style: const TextStyle(fontSize: 14, color: AgroTema.pizarraSuave),
+      ),
+      Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        children: [
+          for (final ruta in _fotos)
+            SizedBox(
+              width: 120,
+              height: 90,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: FotoDelMercado(ruta: ruta, alto: 90, ancho: 120),
+                  ),
+                  Positioned(
+                    left: 2,
+                    top: 2,
+                    child: _botonFoto(
+                      ruta == _fotos.first ? Icons.star : Icons.star_border,
+                      ruta == _fotos.first ? 'Portada' : 'Hacer portada',
+                      () => _hacerPortada(ruta),
+                    ),
+                  ),
+                  Positioned(
+                    right: 2,
+                    top: 2,
+                    child: _botonFoto(
+                        Icons.close, 'Quitar', () => _quitarFoto(ruta)),
+                  ),
+                ],
+              ),
+            ),
+          if (_fotos.length < FotoMercadoService.maxFotos)
+            SizedBox(
+              width: 120,
+              height: 90,
+              child: OutlinedButton(
+                onPressed: _subiendoFoto ? null : _agregarFoto,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AgroTema.terracota,
+                  side: const BorderSide(color: AgroTema.terracota),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                child: _subiendoFoto
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add_a_photo_outlined),
+                          SizedBox(height: 4),
+                          Text('Agregar foto'),
+                        ],
+                      ),
+              ),
+            ),
+        ],
+      ),
+    ]);
+  }
+
+  Widget _botonFoto(IconData icono, String ayuda, VoidCallback alTocar) {
+    return Material(
+      color: Colors.black54,
+      shape: const CircleBorder(),
+      child: IconButton(
+        icon: Icon(icono, color: Colors.white, size: 18),
+        tooltip: ayuda,
+        visualDensity: VisualDensity.compact,
+        constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+        padding: EdgeInsets.zero,
+        onPressed: alTocar,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -318,12 +471,13 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
             ]),
             for (final op in OfertaMercado.operaciones)
               if (_ofertas[op] != null) _tarjetaPrecio(op, _ofertas[op]!),
+            _tarjetaFotos(),
             const SizedBox(height: 8),
             BotonGrande(
               texto: 'Enviar a revisión',
               icono: Icons.send,
               ocupado: _enviando,
-              onPressed: _enviando ? null : _enviar,
+              onPressed: _enviando || _subiendoFoto ? null : _enviar,
             ),
             const SizedBox(height: 10),
             const Text(

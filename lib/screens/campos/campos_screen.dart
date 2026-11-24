@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/activos/activo_publico_model.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../../services/foto_mercado_service.dart';
 
 import 'detalle_campo_screen.dart';
 import '../../widgets/barra_campo.dart';
@@ -302,6 +303,14 @@ class _ActivoCard extends StatelessWidget {
 
 
             children:[
+              // GAP-MERC-01 Parte B: la portada arriba de la tarjeta.
+              if (activo.fotos.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: FotoDelMercado(ruta: activo.fotos.first, alto: 170),
+                ),
+                const SizedBox(height: 10),
+              ],
 
 
 

@@ -298,9 +298,12 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     final lugar = [u.localidad, u.provincia, u.pais]
         .where((x) => x.trim().isNotEmpty)
         .join(', ');
-    final actividad = activo.produccionPrincipal == null
-        ? null
-        : _claro(activo.produccionPrincipal!.actividad);
+    // Las actividades reales (declaradas al crear o cargadas en
+    // Producción), no la vieja "actividad principal", que en los campos
+    // viejos quedaba siempre "agricultura".
+    final presentes = _actividadesPresentes;
+    final actividad =
+        presentes.isEmpty ? null : presentes.map(nombreActividad).join(' · ');
     return TarjetaBlanca(
       child: Padding(
         padding: const EdgeInsets.all(16),

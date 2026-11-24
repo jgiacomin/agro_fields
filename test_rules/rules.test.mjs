@@ -2118,3 +2118,21 @@ test('MERC-06. NO más de 3 ofertas ni datos de más dentro de una oferta [PROHI
   await assertFails(publicarConOfertas([ofertaDe(), ofertaDe(), ofertaDe(), ofertaDe()]));
   await assertFails(publicarConOfertas([ofertaDe({ telefono: '123' })]));
 });
+
+// GAP-MERC-01 Parte B: fotos en el resumen público
+const fotoDe = (n) => `activos/a1/publico/fotos/f${n}.jpg`;
+
+test('MERC-07. El dueño publica con fotos de su carpeta pública [PERMITIDO]', async () => {
+  await assertSucceeds(publicarConOfertas([ofertaDe()], { fotos: [fotoDe(1), fotoDe(2)] }));
+});
+
+test('MERC-08. NO se publica una foto de otra carpeta o de otro campo [PROHIBIDO]', async () => {
+  await assertFails(publicarConOfertas([ofertaDe()], { fotos: ['activos/a1/privado/escritura.jpg'] }));
+  await assertFails(publicarConOfertas([ofertaDe()], { fotos: ['activos/otro/publico/fotos/f1.jpg'] }));
+});
+
+test('MERC-09. NO más de 6 fotos [PROHIBIDO]', async () => {
+  await assertFails(publicarConOfertas([ofertaDe()], {
+    fotos: [1, 2, 3, 4, 5, 6, 7].map(fotoDe),
+  }));
+});

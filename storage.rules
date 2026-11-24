@@ -9,8 +9,10 @@ rules_version = '2';
 //   activos/{activoId}/privado/documentos/{documentoId}/{archivo}
 //                                    -> además, quien tenga autorización en el
 //                                       ámbito "documentacion" (paso 4b)
-//   activos/{activoId}/publico/...   -> fotos del resumen público
-//                                       (las ve cualquier usuario logueado)
+//   activos/{activoId}/publico/...   -> fotos de la publicación del Mercado
+//                                       (GAP-MERC-01 Parte B: otros usuarios
+//                                       las ven solo si el campo está
+//                                       aprobado; el dueño puede quitarlas)
 //   usuarios/{uid}/...               -> foto de perfil
 //
 // Todo lo demás está prohibido.
@@ -108,8 +110,20 @@ service firebase.storage {
     }
 
     // ---------------- RESUMEN PUBLICO ----------------
+    // GAP-MERC-01 Parte B (24/11/2026): el resumen del campo esta
+    // aprobado y visible en el Mercado.
+    function publicadoEnMercado(id) {
+      return firestore.exists(/databases/(default)/documents/activos_publicos/$(id))
+        && firestore.get(/databases/(default)/documents/activos_publicos/$(id)).data.estadoPublicacion == 'publicado'
+        && firestore.get(/databases/(default)/documents/activos_publicos/$(id)).data.visible == true;
+    }
+
     match /activos/{activoId}/publico/{archivo=**} {
-      allow read: if logueado();
+      // Antes: cualquier usuario logueado. Ahora: el dueño y quien cargó el
+      // campo siempre; los demás, solo si está aprobado en el Mercado.
+      allow read: if esAdmin()
+        || puedeActivo(activoId)
+        || (logueado() && publicadoEnMercado(activoId));
 
       allow create: if (esAdmin() || esDuenoActivo(activoId))
         && esImagen() && pesaMenosDe(10);

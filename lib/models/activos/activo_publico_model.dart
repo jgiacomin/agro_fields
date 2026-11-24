@@ -46,6 +46,10 @@ class ActivoPublico {
   /// que elige el dueño al publicar).
   final List<OfertaMercado> ofertas;
 
+  /// GAP-MERC-01 Parte B: rutas de las fotos en la carpeta pública del
+  /// campo (la primera es la portada). Son de la publicación.
+  final List<String> fotos;
+
   const ActivoPublico({
     required this.activoId,
     required this.nombre,
@@ -63,11 +67,13 @@ class ActivoPublico {
     required this.visible,
     required this.ultimaActualizacion,
     this.ofertas = const [],
+    this.fotos = const [],
   });
 
   /// Arma el resumen a partir del expediente, copiando solo lo publicable.
   /// Siempre nace pendiente de revisión y no visible.
-  factory ActivoPublico.desdeActivo(ActivoAgroV2 activo) {
+  factory ActivoPublico.desdeActivo(ActivoAgroV2 activo,
+      {List<String> fotos = const []}) {
     return ActivoPublico(
       activoId: activo.activoId,
       nombre: activo.nombre,
@@ -86,6 +92,7 @@ class ActivoPublico {
       visible: false,
       ultimaActualizacion: DateTime.now(),
       ofertas: activo.economia.ofertas,
+      fotos: fotos,
     );
   }
 
@@ -108,6 +115,9 @@ class ActivoPublico {
       visible: map['visible'] == true,
       ultimaActualizacion: _leerFecha(map['ultimaActualizacion']),
       ofertas: OfertaMercado.listaDesde(map['ofertas']),
+      fotos: map['fotos'] is List
+          ? List<String>.from((map['fotos'] as List).whereType<String>())
+          : const [],
     );
   }
 
@@ -129,6 +139,7 @@ class ActivoPublico {
       'visible': visible,
       'ultimaActualizacion': Timestamp.fromDate(ultimaActualizacion),
       'ofertas': ofertas.map((o) => o.toMap()).toList(),
+      'fotos': fotos,
     };
   }
 

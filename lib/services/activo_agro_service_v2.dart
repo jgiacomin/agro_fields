@@ -343,9 +343,12 @@ Future<List<ActivoAgroV2>> buscarPorPublicador(
 /// GAP-MERC-01 Parte A (24/11/2026): [ofertas] es lo que el dueño ofrece
 /// (operación y precio). Se guarda en la Economía del expediente y se copia
 /// al resumen público. Sin ofertas se publica como antes.
+/// GAP-MERC-01 Parte B: [fotos] son las rutas de las fotos públicas (la
+/// primera es la portada). Si no vienen, se conservan las que ya tenía.
 Future<void> publicarActivo(
   String activoId, {
   List<OfertaMercado>? ofertas,
+  List<String>? fotos,
 }) async {
 
   final activo =
@@ -424,8 +427,19 @@ Future<void> publicarActivo(
     ],
   );
 
+  // GAP-MERC-01 Parte B: fotos de la publicación (las nuevas o las que
+  // ya tenía el resumen).
+  var fotosResumen = fotos;
+  if (fotosResumen == null) {
+    final anterior =
+        await _db.collection(coleccionPublica).doc(activoId).get();
+    final guardadas = anterior.data()?['fotos'];
+    fotosResumen =
+        guardadas is List ? guardadas.whereType<String>().toList() : const [];
+  }
+
   final resumen =
-      ActivoPublico.desdeActivo(activoActualizado);
+      ActivoPublico.desdeActivo(activoActualizado, fotos: fotosResumen);
 
   final batch = _db.batch();
 

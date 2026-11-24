@@ -59,6 +59,8 @@ void main() {
           // GAP-MERC-01 Parte A (24/11/2026): operación y precio que elige
           // el dueño al publicar (dato publicable aprobado).
           'ofertas',
+          // GAP-MERC-01 Parte B: rutas de las fotos públicas del campo.
+          'fotos',
         },
       );
 

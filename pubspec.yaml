@@ -46,6 +46,7 @@ dependencies:
   # GAP-ARCH-01: abrir archivos adjuntos (foto o PDF).
   url_launcher: ^6.3.1
   http: ^1.6.0
+  image: ^4.13.1
 
 
 dev_dependencies:

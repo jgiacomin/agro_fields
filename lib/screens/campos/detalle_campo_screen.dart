@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/activos/activo_publico_model.dart';
 import '../../models/solicitud_contacto_model.dart';
 import '../../services/solicitud_contacto_service.dart';
+import '../../services/foto_mercado_service.dart';
 import '../../enums/solicitud_estado.dart';
 import '../../widgets/barra_campo.dart';
 
@@ -341,6 +342,35 @@ class _DetalleCampoScreenState
                 ),
               ),
             if (activo.ofertas.isNotEmpty) const SizedBox(height: 10),
+
+            // GAP-MERC-01 Parte B: fotos del campo (se deslizan).
+            if (activo.fotos.isNotEmpty) ...[
+              SizedBox(
+                height: 240,
+                child: PageView(
+                  children: [
+                    for (final ruta in activo.fotos)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: FotoDelMercado(ruta: ruta, alto: 240),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (activo.fotos.length > 1)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    '${activo.fotos.length} fotos · deslizá para ver más',
+                    style: const TextStyle(
+                        fontSize: 12, color: Color(0xFF6B7680)),
+                  ),
+                ),
+              const SizedBox(height: 14),
+            ],
 
 
 
