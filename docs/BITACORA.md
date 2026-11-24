@@ -8228,3 +8228,34 @@ El Mercado no muestra precio, venta o alquiler, ni fotos; confianza y madurez no
 * Completar los corchetes de los términos y la revisión legal.
 * Revisar las pantallas largas con texto sobre la foto.
 * Probar en Android: sin señal (aviso de pendientes, adjuntar), "¿Guardar sin descontar?" y GPS.
+
+---
+
+# 24/11/2026 - Concepto y Matriz al día; ficha por actividades, Mis campos y Nuevo campo (rama ficha-actividades)
+
+**Estado: PROGRAMADO Y PROBADO EN CHROME.** flutter test 328 + 2 fallas conocidas (antes y después). Sin cambios de reglas ni colecciones nuevas. Commit: pendiente de anotar el hash.
+
+### Documentos
+
+* `CONCEPTO_GENERAL_INTEGRAL_AGRO_FIELDS_V8.md`: casos 25.13 (Uruguay: trazabilidad y acceso al mercado europeo; cifras a confirmar con su fuente), 25.14 (curso de invernada y feedlot) y 25.15 (limón caviar: cultivos perennes y frutales) + "Incorporaciones del 24/11/2026".
+* Matriz: AF-126 carga animal, AF-127 resultado del rodeo, AF-128 superficie mapa vs. escritura, AF-129 piscicultura chica, AF-130 genética, AF-131 Emergencia ↔ Traslado, AF-132 granos guardados, AF-133 "¿A dónde va la plata de mi venta?", AF-134 cultivo perenne / frutales y AF-135 actividades al crear el campo.
+* Copia Word del Concepto completa (1 a 25.15) en `Desktop\App\concepto general de la app 24-11-2026.docx`; la del 12/11 la borra el usuario.
+
+### Código
+
+* `detalle_activo_agro_screen.dart`: la grilla única "Gestión del campo" se separó en **Actividades** (un botón por actividad, con cantidad o "Empezá cargando tu rodeo"; "Sumar actividad" naranja; "Próximamente: Apicultura · Frutales"), **Servicios del campo** (Mapa, Suelo, Historia del territorio, Emergencias, Traslados, Documentos, Mercado "Próximamente") y **Administración** (Stock, Economía, Operaciones protegidas, Encargados, Profesionales). No se quitó ningún botón ni dato. Función `actividadesDeclaradas()`.
+* `produccion_activo_screen.dart`: parámetro opcional `actividad`; muestra solo esa actividad y "+ Cargar" ofrece lo que corresponde (lugares siempre). Funciones `actividadDeGrupo()` y `nombreActividad()`.
+* `mis_activos_screen.dart`: "Mis campos": tarjeta entera que abre la ficha, chips de actividades reales y estado, barrita "Expediente %", "Publicar en el Mercado" chico y con confirmación. Ya no muestra "Tipo".
+* `crear_activo_agro_screen.dart`: "Nuevo campo" en tarjetas (¿Cómo se llama? / ¿Dónde está? / ¿Qué hacés en el campo? / ¿Qué tamaño tiene?), país de una lista con moneda y zona horaria (ARS, PYG, UYU; "Otro" como antes), superficie con "ha" y la misma cuenta para revisar y guardar (acepta "2.390,5"), botón "Crear campo".
+* AF-135: al crear se marcan actividades (Mixto agrícola-ganadero, Ganadería, Agricultura, Avicultura, Piscicultura; al menos una). Una = su tipo; dos o más = `mixto`. Se guardan en `producciones` con `datos.declarada = true`; los campos viejos (que guardaban "agricultura" por error) no se toman en cuenta.
+
+### Hallazgos
+
+* Todo campo nuevo se guardaba como "agrícola" y con moneda/horario de Argentina: corregido.
+* Al guardar el cambio de "Mixto" llegó primero una versión vieja del archivo a la PC; se volvió a guardar y se comprobaron todos los archivos del día.
+
+### Pendiente
+
+* Confirmar la prueba de un campo nuevo de Paraguay con Mixto.
+* Mejorar el diseño general (pedido del usuario): seguir con Inicio y el resto de las pantallas.
+* Siguiente: GAP-MERC-01 (Mercado para inmobiliarias), mensajes para los primeros Fundadores, manual de usuario y cuándo enviar los mails de la app.

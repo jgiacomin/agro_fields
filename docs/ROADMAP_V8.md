@@ -3931,3 +3931,12 @@ Para marzo 2027 (🟡/🟢): ocupación de corrales (AF-112), días de permanenc
 **Antes de publicar (diciembre):** 1) GAP-MERC-01 Mercado para inmobiliarias; 2) evidencia en las intervenciones del profesional; 3) revisar lecturas de `usuarios/` en `lib`; 4) completar los corchetes de los términos + revisión legal; 5) pantallas largas con texto sobre la foto; 6) prueba en Android (sin señal, GPS); 7) los 🔴 nuevos del Concepto (AF-119, AF-121 a AF-124).
 
 Nuevos 🔴 para enero desde el Concepto (20/11/2026): AF-119 terminación del lote y días de encierre; AF-121 registro de clientes (GAP-CLI-01); AF-122 invitar al comprador a pasar a gestión; AF-123 código de invitación de Fundadores; AF-124 catálogo compartido entre brokers. Cada uno pasa por Auditoría antes de programarse.
+
+## Ficha por actividades y Nuevo campo — Estado (24/11/2026)
+
+✅ Concepto 25.13 a 25.15 y Matriz AF-126 a AF-135 anotados.
+✅ **Ficha por actividades** (Actividades / Servicios del campo / Administración) y Producción filtrada por actividad — rama `ficha-actividades`, probado en Chrome.
+✅ **Mis campos** y **Nuevo campo** rediseñados (país con moneda y horario).
+✅ **AF-135 Actividades al crear el campo** (Mixto agrícola-ganadero incluido) — 🔴 enero, programado; falta confirmar la prueba de un campo de Paraguay.
+
+**Siguiente:** unir `ficha-actividades` a main; GAP-MERC-01 Mercado para inmobiliarias (el botón Mercado ya está en la ficha como "Próximamente"); después AF-126 carga animal, AF-128 superficie mapa vs. escritura, AF-131 Emergencia ↔ Traslado y AF-132 granos guardados. También: mensajes para los Fundadores, manual de usuario y diseño del resto de las pantallas.
