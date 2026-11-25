@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/chat_model.dart';
 import '../../services/chat_service.dart';
 import '../../widgets/barra_campo.dart';
+import '../../core/theme/agro_tema.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
@@ -99,8 +100,14 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
 
           /// ✍ INPUT
+          // QA 25/11/2026: franja crema y caja blanca para que se lea bien
+          // sobre la foto del fondo.
           Container(
             padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              color: AgroTema.crema,
+              border: Border(top: BorderSide(color: AgroTema.borde)),
+            ),
             child: Row(
               children: [
 
@@ -108,9 +115,26 @@ class _ChatScreenState extends State<ChatScreen> {
   child: TextField(
     controller: _controller,
     onSubmitted: (_) => enviarMensaje(),
-    decoration: const InputDecoration(
+    style: const TextStyle(color: AgroTema.pizarra),
+    decoration: InputDecoration(
       hintText: 'Escribir mensaje...',
-      border: OutlineInputBorder(),
+      hintStyle: const TextStyle(color: AgroTema.pizarraSuave),
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(24),
+        borderSide: const BorderSide(color: AgroTema.borde),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(24),
+        borderSide: const BorderSide(color: AgroTema.borde),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(24),
+        borderSide: const BorderSide(color: AgroTema.terracota, width: 2),
+      ),
     ),
   ),
 ),
@@ -118,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(width: 8),
 
                 IconButton(
-                  icon: const Icon(Icons.send, color: Colors.green),
+                  icon: const Icon(Icons.send, color: AgroTema.terracota),
                   onPressed: enviarMensaje,
                 ),
               ],

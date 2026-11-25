@@ -124,9 +124,9 @@ class ChatPreviewModel {
 
     if (activo != null) {
 
-      return activo!.produccionPrincipal
-              ?.superficie ??
-          0;
+      // QA 25/11/2026: superficie total del campo (antes tomaba la de la
+      // actividad principal y mostraba 0).
+      return activo!.ubicacion.superficie;
 
     }
 
@@ -142,4 +142,19 @@ class ChatPreviewModel {
 
   }
 
+
+  /// QA 25/11/2026: "Saladillo, Buenos Aires" (localidad y provincia).
+  String get ubicacionTexto {
+    String localidad = '';
+    if (campo != null) {
+      localidad = campo!.localidad;
+    } else if (activo != null) {
+      localidad = activo!.ubicacion.localidad;
+    } else if (resumen != null) {
+      localidad = resumen!.localidad;
+    }
+    return [localidad, provincia]
+        .where((t) => t.trim().isNotEmpty)
+        .join(', ');
+  }
 }

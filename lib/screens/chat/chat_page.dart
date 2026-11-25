@@ -261,7 +261,7 @@ class ChatPage extends StatelessWidget {
 
                         Text(
 
-                          '📍 ${chat.provincia}',
+                          '📍 ${chat.ubicacionTexto}',
 
                         ),
 
@@ -269,7 +269,7 @@ class ChatPage extends StatelessWidget {
 
                         Text(
 
-                          '📐 ${chat.hectareas} hectáreas',
+                          '📐 ${numeroHa(chat.hectareas)} hectáreas',
 
                         ),
 
@@ -285,11 +285,8 @@ class ChatPage extends StatelessWidget {
 
 
 
-                        Text(
-
-                          'Estado: ${chat.estado}',
-
-                        ),
+                        // QA 25/11/2026: se sacó "Estado: activo" (era el
+                        // estado interno del chat y confundía).
 
 
 
@@ -391,4 +388,11 @@ class ChatPage extends StatelessWidget {
   }
 
 
-}
+}
+
+/// QA 25/11/2026: 300.0 -> "300"; 12.5 -> "12,5".
+String numeroHa(double v) {
+  final t =
+      v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(1);
+  return t.replaceAll('.', ',');
+}

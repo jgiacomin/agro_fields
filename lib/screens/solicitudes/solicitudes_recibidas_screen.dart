@@ -142,8 +142,14 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
 
 
 
-          final solicitudes =
-              snapshot.data!;
+          // QA 25/11/2026: primero las que hay que responder, después las
+          // aceptadas (historial); dentro de cada grupo, la más nueva primero.
+          final solicitudes = [...snapshot.data!]..sort((a, b) {
+              final pa = a.estado == SolicitudEstado.aceptada ? 1 : 0;
+              final pb = b.estado == SolicitudEstado.aceptada ? 1 : 0;
+              if (pa != pb) return pa.compareTo(pb);
+              return b.fechaCreacion.compareTo(a.fechaCreacion);
+            });
 
 
 
@@ -478,7 +484,7 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
 
                       Text(
 
-                        'Estado: ${solicitud.estado.name}',
+                        'Estado: ${_textoEstado(solicitud.estado)}',
 
                       ),
 
@@ -494,7 +500,9 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
 
 
 
-                      Row(
+                      solicitud.estado == SolicitudEstado.aceptada
+                          ? _botonAbrirChat(context, solicitud)
+                          : Row(
 
 
 
@@ -513,11 +521,15 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
                             solicitud.estado == SolicitudEstado.pendiente
 
                               ? () async {
-
-
-
+                                  // QA 25/11/2026: se guardan el navegador y
+                                  // el mensajero ANTES de esperar: al aceptar,
+                                  // la tarjeta se mueve o desaparece y antes
+                                  // el chat no llegaba a abrirse.
+                                  final navegador = Navigator.of(context);
+                                  final mensajero =
+                                      ScaffoldMessenger.of(context);
+                                  try {
                                   final chatId =
-
                                       await chatService.crearChat(
 
 
@@ -553,8 +565,7 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
                       chatId: chatId,
                                       );
                                   // QA 20/11/2026: al aceptar se abre el chat.
-                                  if (!context.mounted) return;
-                                  Navigator.of(context).push(
+                                  navegador.push(
                                     MaterialPageRoute(
                                       builder: (_) => ChatScreen(
                                         chatId: chatId,
@@ -563,6 +574,12 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
                                       ),
                                     ),
                                   );
+                                  } catch (e) {
+                                    mensajero.showSnackBar(SnackBar(
+                                      content: Text(
+                                          'No se pudo aceptar el contacto: $e'),
+                                    ));
+                                  }
                                 }
 
 
@@ -611,15 +628,19 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
                               solicitud.estado == SolicitudEstado.pendiente
 
                               ? () async {
-
-
-
-                    await solicitudService.actualizarEstadoSolicitud(
+                                  final mensajero =
+                                      ScaffoldMessenger.of(context);
+                                  try {
+                                    await solicitudService.actualizarEstadoSolicitud(
                    solicitud.solicitudId,
                SolicitudEstado.rechazada,
                  );
-
-
+                                  } catch (e) {
+                                    mensajero.showSnackBar(SnackBar(
+                                      content:
+                                          Text('No se pudo rechazar: $e'),
+                                    ));
+                                  }
                                 }
 
 
@@ -677,6 +698,55 @@ class SolicitudesRecibidasScreen extends StatelessWidget {
     );
 
 
+  }
+
+  /// QA 25/11/2026: estado en palabras simples.
+  static String _textoEstado(SolicitudEstado e) => switch (e) {
+        SolicitudEstado.pendiente => 'Pendiente',
+        SolicitudEstado.vista => 'Pendiente',
+        SolicitudEstado.aceptada => 'Aceptada',
+        SolicitudEstado.rechazada => 'Rechazada',
+        SolicitudEstado.cancelada => 'Cancelada',
+        SolicitudEstado.finalizada => 'Finalizada',
+      };
+
+  /// QA 25/11/2026: en una solicitud aceptada, volver al chat.
+  /// Si la solicitud no guardó el chat, se recupera el existente.
+  Widget _botonAbrirChat(BuildContext context, SolicitudContacto solicitud) {
+    return ElevatedButton.icon(
+      icon: const Icon(Icons.chat_bubble_outline),
+      label: const Text('Abrir chat'),
+      onPressed: () async {
+        final navegador = Navigator.of(context);
+        final mensajero = ScaffoldMessenger.of(context);
+        try {
+          final chatId = (solicitud.chatId != null &&
+                  solicitud.chatId!.isNotEmpty)
+              ? solicitud.chatId!
+              : await chatService.crearChat(
+                  campoId: solicitud.campoId,
+                  propietarioId: solicitud.propietarioId,
+                  interesadoId: solicitud.interesadoId,
+                  interesadoNombre: solicitud.interesadoNombre,
+                  propietarioNombre:
+                      FirebaseAuth.instance.currentUser?.displayName,
+                );
+          navegador.push(
+            MaterialPageRoute(
+              builder: (_) => ChatScreen(
+                chatId: chatId,
+                otroUsuarioId: solicitud.interesadoId,
+                nombreOtro: solicitud.interesadoNombre,
+              ),
+            ),
+          );
+        } catch (e) {
+          mensajero.showSnackBar(SnackBar(
+            content: Text('No se pudo abrir el chat: $e'),
+          ));
+        }
+      },
+    );
   }
 
   /// GAP-MERC-01 Parte C: "venta" -> "Comprar", etc.

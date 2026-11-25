@@ -93,8 +93,10 @@ Future<void> crearSolicitud(
   isEqualTo: propietarioId,
 )
 .where(
+  // QA 25/11/2026: pendientes (y vistas) arriba para responder; aceptadas
+  // abajo como historial con "Abrir chat". Las rechazadas no se muestran.
   'estado',
-  isEqualTo: 'pendiente',
+  whereIn: ['pendiente', 'vista', 'aceptada'],
 )
     .snapshots()
 
@@ -229,4 +231,4 @@ Future<void> crearSolicitud(
 
 
 
-}
+}
