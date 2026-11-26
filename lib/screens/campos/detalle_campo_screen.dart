@@ -167,6 +167,15 @@ class _DetalleCampoScreenState extends State<DetalleCampoScreen> {
                       ),
                     ),
                   ),
+                // GAP-MERC-01 H (25/11/2026): fecha de publicación.
+                if (publicado) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Publicado el ${fechaCorta(activo.ultimaActualizacion)}',
+                    style: const TextStyle(
+                        fontSize: 13, color: AgroTema.pizarraSuave),
+                  ),
+                ],
                 const SizedBox(height: 14),
                 ResumenNumeros([
                   (

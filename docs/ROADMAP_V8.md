@@ -3940,3 +3940,22 @@ Nuevos 🔴 para enero desde el Concepto (20/11/2026): AF-119 terminación del l
 ✅ **AF-135 Actividades al crear el campo** (Mixto agrícola-ganadero incluido) — 🔴 enero, programado; falta confirmar la prueba de un campo de Paraguay.
 
 **Siguiente:** unir `ficha-actividades` a main; GAP-MERC-01 Mercado para inmobiliarias (el botón Mercado ya está en la ficha como "Próximamente"); después AF-126 carga animal, AF-128 superficie mapa vs. escritura, AF-131 Emergencia ↔ Traslado y AF-132 granos guardados. También: mensajes para los Fundadores, manual de usuario y diseño del resto de las pantallas.
+
+## Mercado para inmobiliarias (GAP-MERC-01) — Estado (24/11/2026)
+
+✅ **Parte A: operación y precio** — probada en Chrome (reglas 305/305; flutter test 328 + 2 fallas conocidas). Reglas a publicar con deploy.
+⏳ Parte B: fotos (Storage público solo si está aprobado).
+⏳ Parte C: interesados con nombre en solicitudes y chat.
+⏳ Parte D: diseño del Mercado (tarjeta con foto y precio, filtro venta/alquiler, texto legible sobre la foto).
+
+Después: AF-124 "otros brokers pueden ofrecerlo", publicar por clientes, AF-122 pasar a gestión y AF-123 código de Fundadores. Nuevos 🟡 del caso 25.16: AF-136 a AF-138.
+
+## Prueba del Mercado y chat — Estado (25/11/2026)
+
+✅ **Prueba con dos cuentas de punta a punta** (publicar → aprobar → consultar → aceptar → chatear) — Parte C confirmada.
+✅ **Arreglo del chat** (rama `qa-mercado-chat`, unida a main = 25f1476): el chat se abre al aceptar; aceptadas con "Abrir chat"; Conversaciones con hectáreas reales y localidad; caja de mensaje legible.
+✅ Concepto 25.18 a 25.22 y Matriz AF-140 a AF-144 anotados.
+
+**Mercado, partes nuevas (AF-038):** 🔴 antes del ~15/12: G aviso de publicaciones para aprobar, H fecha de publicación, E carga rápida en 4 pasos, F el dueño toma posesión, I orden simple por probabilidad de negocio. 🟡: I con perfil del inversor, J compartir la ficha desde el chat.
+
+**Siguiente:** diseñar G y H (las más rápidas) → E y F → Partes B (fotos) y D (diseño del Mercado).

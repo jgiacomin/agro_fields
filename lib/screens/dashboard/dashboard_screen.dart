@@ -26,6 +26,7 @@ import '../chat/chat_page.dart';
 import '../encargados/campos_encargado_screen.dart';
 import '../profesionales/campos_profesional_screen.dart';
 import '../profesionales/mi_codigo_profesional_screen.dart';
+import '../../widgets/aviso_publicaciones_admin.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({
@@ -440,6 +441,8 @@ debugPrint(
                         const SizedBox(height: 14),
                         // GAP-OFF-01: datos guardados sin señal.
                         const AvisoPendientes(),
+                        // GAP-MERC-01 G: publicaciones para aprobar (admin).
+                        const AvisoPublicacionesAdmin(),
                         if (esPropietario) ...[
                           const TituloSeccion('Tu campo en resumen',
                               icono: Icons.insights),

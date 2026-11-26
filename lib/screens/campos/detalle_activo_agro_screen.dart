@@ -17,6 +17,7 @@ import '../economia/economia_activo_screen.dart';
 import '../stock/stock_activo_screen.dart';
 import '../territorio/historia_territorio_screen.dart';
 import 'primeros_pasos.dart';
+import 'publicar_campo_screen.dart';
 import 'suelo_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
 import '../../widgets/barra_campo.dart';
@@ -251,6 +252,54 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   String _numero(num v) => v == v.roundToDouble()
       ? v.toInt().toString()
       : v.toString().replaceAll('.', ',');
+
+  /// GAP-MERC-01: el dueño o quien cargó el campo (broker) puede publicar.
+  bool get _puedePublicar {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    return uid != null &&
+        (uid == activo.propietarioId || uid == activo.publicadorId);
+  }
+
+  String get _textoMercado {
+    switch (activo.estado.name) {
+      case 'publicado':
+        return 'Publicado · tocá para editar';
+      case 'pendienteRevision':
+        return 'En revisión · tocá para editar';
+      default:
+        return 'Publicar con precio y fotos';
+    }
+  }
+
+  /// GAP-MERC-01 (26/11/2026): abre "Publicar en el Mercado" (la misma
+  /// pantalla de "Mis campos"). Editar algo ya enviado lo vuelve a revisión.
+  Future<void> _abrirMercado() async {
+    final estado = activo.estado.name;
+    if (estado == 'publicado' || estado == 'pendienteRevision') {
+      final seguir = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Editar publicación'),
+          content: const Text(
+            'Cuando guardes los cambios, el campo vuelve a revisión y no se '
+            've en el Mercado hasta que se apruebe de nuevo.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Seguir'),
+            ),
+          ],
+        ),
+      );
+      if (seguir != true || !mounted) return;
+    }
+    await _abrir(PublicarCampoScreen(activo: activo));
+  }
 
   Future<void> _abrir(Widget pantalla) async {
     await Navigator.of(context)
@@ -635,8 +684,15 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         () => _abrir(DocumentosActivoScreen(
             activoAgroId: id, nombreActivo: nombre)),
       ),
-      // GAP-MERC-01 lo va a activar.
-      (Icons.storefront, 'Mercado', 'Próximamente', AgroTema.azul, null),
+      // GAP-MERC-01 (26/11/2026): publicar desde la ficha, igual que en
+      // "Mis campos" (antes decía "Próximamente" y confundía).
+      (
+        Icons.storefront,
+        'Mercado',
+        _textoMercado,
+        AgroTema.azul,
+        _puedePublicar ? _abrirMercado : null,
+      ),
     ];
   }
 

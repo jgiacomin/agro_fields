@@ -122,6 +122,24 @@ class _CamposScreenState extends State<CamposScreen> {
   }
 }
 
+/// GAP-MERC-01 H (25/11/2026): "Publicado hoy", "Publicado ayer",
+/// "Publicado hace 5 días", "hace 3 meses"...
+String publicadoHace(DateTime fecha, [DateTime? ahora]) {
+  final hoy = ahora ?? DateTime.now();
+  final dias = DateTime(hoy.year, hoy.month, hoy.day)
+      .difference(DateTime(fecha.year, fecha.month, fecha.day))
+      .inDays;
+  if (dias <= 0) return 'Publicado hoy';
+  if (dias == 1) return 'Publicado ayer';
+  if (dias < 30) return 'Publicado hace $dias días';
+  final meses = dias ~/ 30;
+  if (meses < 12) {
+    return meses == 1 ? 'Publicado hace 1 mes' : 'Publicado hace $meses meses';
+  }
+  final anios = dias ~/ 365;
+  return anios <= 1 ? 'Publicado hace más de 1 año' : 'Publicado hace $anios años';
+}
+
 /// "2.390" o "6,5" (como se escribe en la región).
 String hectareasTexto(double ha) {
   final entero = ha.truncate();
@@ -266,6 +284,14 @@ class _TarjetaCampo extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                  // GAP-MERC-01 H (25/11/2026): cuándo se publicó (la fecha
+                  // se guarda al aprobar la publicación).
+                  const SizedBox(height: 4),
+                  Text(
+                    publicadoHace(campo.ultimaActualizacion),
+                    style: const TextStyle(
+                        fontSize: 13, color: AgroTema.pizarraSuave),
                   ),
                   if (campo.ofertas.length > 1) ...[
                     const SizedBox(height: 6),

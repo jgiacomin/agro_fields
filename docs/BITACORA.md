@@ -8259,3 +8259,64 @@ El Mercado no muestra precio, venta o alquiler, ni fotos; confianza y madurez no
 * Confirmar la prueba de un campo nuevo de Paraguay con Mixto.
 * Mejorar el diseño general (pedido del usuario): seguir con Inicio y el resto de las pantallas.
 * Siguiente: GAP-MERC-01 (Mercado para inmobiliarias), mensajes para los primeros Fundadores, manual de usuario y cuándo enviar los mails de la app.
+
+---
+
+# 24/11/2026 - GAP-MERC-01 Parte A: operación y precio en el Mercado (rama gap-merc-01)
+
+**Estado: PROBADO EN CHROME.** flutter test 328 + 2 fallas conocidas; reglas 305/305 (6 pruebas nuevas MERC-01 a MERC-06). Matriz AF-038 pasa a 🔴 enero como GAP-MERC-01 (4 partes: A precio y operación, B fotos, C interesados con nombre, D diseño). Commit: pendiente de anotar el hash. Reglas: publicar con `firebase deploy --only firestore:rules`.
+
+### Código
+
+* `economia_activo_model.dart`: clase `OfertaMercado` (operación venta / alquiler / arrendamiento; precio o null = "Consultar precio"; moneda USD / ARS / PYG / UYU; total / por hectárea / por hectárea por año; textos "Venta · USD 1.500.000") y lista `ofertas` en la Economía del expediente.
+* `activo_publico_model.dart`: `ofertas` en el resumen público (dato publicable).
+* `activo_agro_service_v2.dart`: `publicarActivo(id, ofertas:)` guarda las ofertas en la Economía (la primera también llena operación, precio y moneda de siempre) y las copia al resumen.
+* `publicar_campo_screen.dart` (nuevo): "Publicar en el Mercado": ¿Qué querés hacer? (una o varias) y ¿Cuánto? por cada una; moneda según el país del campo; "Consultar precio"; envía a revisión.
+* `mis_activos_screen.dart`: el botón abre esa pantalla; chips con las ofertas.
+* `campos_screen.dart` y `detalle_campo_screen.dart`: muestran las ofertas (se sacó "Tipo", que quedaba siempre "agricola").
+* `firestore.rules`: `resumenPublicoValido`: lista cerrada de datos de `activos_publicos` (los de siempre + `motivoRevision` + `ofertas`) y `ofertaValida` (hasta 3, con valores permitidos). `test_rules/rules.test.mjs`: MERC-01 a MERC-06.
+* `test/activo_publico_model_test.dart`: el test "el resumen NO lleva datos privados" suma `ofertas` a la lista aprobada (avisó bien el cambio).
+
+### Prueba
+
+* La tana publicada con "Venta · USD 1.500.000" y aprobada: se ve en el Mercado (lista y detalle). Estancia Demo con "Alquiler · Consultar precio" en revisión.
+
+### Documentos
+
+* Concepto 25.16 (maíz amarillento por fósforo bloqueado; publicación comercial de Agrobull Ecuador, a confirmar con fuente técnica) y Matriz AF-136 (nutrientes en el suelo), AF-137 (síntomas en el monitoreo; "posibles causas" 🟢 marzo) y AF-138 (fertilizante en la siembra), todos 🟡.
+
+### Pendiente
+
+* Parte B fotos, Parte C interesados con nombre, Parte D diseño del Mercado (incluye el texto sobre la foto que no se lee).
+* Los campos publicados antes no tienen precio hasta volver a publicarse.
+
+# 25/11/2026 - Prueba del Mercado con dos cuentas y arreglo del chat (rama qa-mercado-chat)
+
+**Estado: PROBADO EN CHROME, UNIDO A MAIN Y SUBIDO (main = 25f1476).** flutter test 328 + 2 fallas conocidas (antes y después). Sin cambios de reglas ni datos nuevos.
+
+### Prueba de punta a punta
+
+* Broker crea el campo (La Talitakumi, Saladillo, 300 ha) y lo publica → admin aprueba → comprador (juliano) consulta → broker acepta → chat de los dos lados (mensajes y respuesta). Parte C de GAP-MERC-01 (interesados con nombre) confirmada.
+
+### Fallas encontradas y arregladas
+
+* Al aceptar no se abría el chat: la lista solo mostraba pendientes, la tarjeta desaparecía al aceptar y la app se frenaba antes de abrir el chat (el chat sí se creaba).
+* Conversaciones mostraba "0 hectáreas" (tomaba la superficie de la actividad principal), solo la provincia y "Estado: activo" (estado interno del chat).
+* La caja "Escribir mensaje..." casi no se leía sobre la foto del fondo.
+
+### Código
+
+* `solicitudes_recibidas_screen.dart`: el navegador y el mensajero se guardan antes de esperar, así el chat se abre siempre al aceptar; mensaje si aceptar o rechazar falla; pendientes arriba y aceptadas abajo con "Abrir chat" (recupera el chat si la solicitud no lo guardó); estado en palabras ("Pendiente", "Aceptada").
+* `solicitud_contacto_service.dart`: la lista trae pendientes, vistas y aceptadas (las rechazadas no se muestran).
+* `chat_preview_model.dart`: superficie total del campo (`ubicacion.superficie`) y texto "localidad, provincia".
+* `chat_page.dart`: "Saladillo, Buenos Aires", hectáreas con coma decimal y sin "Estado: activo".
+* `chat_screen.dart`: franja crema, caja blanca redondeada con letra gris oscuro y botón de enviar terracota.
+
+### Documentos
+
+* Concepto 25.18 a 25.22 (maíz barato/Morixe, operación a término incumplida en Formosa, cooperativas de San Martín, girasol en Corzuela con revisión del código de cosecha, frutihortícola de Sáenz Peña) y Matriz AF-140 a AF-144.
+* AF-038 (GAP-MERC-01) suma, desde esta prueba: E carga rápida en 4 pasos con "¿Sos el dueño o lo publicás para un cliente?", F el dueño toma posesión con código, G aviso de publicaciones para aprobar en el Inicio del admin, H fecha de publicación, I orden por probabilidad de negocio para el inversor (explicable, no es recomendación), J compartir la ficha del campo desde el chat (🟡).
+
+### Pendiente
+
+* Diseñar y programar G y H (rápidas), después E y F; Partes B (fotos) y D (diseño del Mercado).
