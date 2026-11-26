@@ -3959,3 +3959,9 @@ Después: AF-124 "otros brokers pueden ofrecerlo", publicar por clientes, AF-122
 **Mercado, partes nuevas (AF-038):** 🔴 antes del ~15/12: G aviso de publicaciones para aprobar, H fecha de publicación, E carga rápida en 4 pasos, F el dueño toma posesión, I orden simple por probabilidad de negocio. 🟡: I con perfil del inversor, J compartir la ficha desde el chat.
 
 **Siguiente:** diseñar G y H (las más rápidas) → E y F → Partes B (fotos) y D (diseño del Mercado).
+
+## Mercado G y H — Estado (26/11/2026)
+
+✅ **G aviso de publicaciones al admin**, **H fecha de publicación** y **botón Mercado en la ficha** — rama `gap-merc-gh`, probado en Chrome, unido a main (1b64da6).
+
+**Pendiente antes del ~15/12 (herramientas para inmobiliarias):** E carga rápida (ampliada con el aviso de Ischilín), F el dueño toma posesión, K ficha según el rol, L checks de qué se comparte al publicar, AF-145 campanita de avisos (versión chica); I orden simple. Después: B fotos, D diseño del Mercado, J compartir la ficha desde el chat (🟡).

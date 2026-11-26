@@ -8320,3 +8320,27 @@ El Mercado no muestra precio, venta o alquiler, ni fotos; confianza y madurez no
 ### Pendiente
 
 * Diseñar y programar G y H (rápidas), después E y F; Partes B (fotos) y D (diseño del Mercado).
+
+# 26/11/2026 - GAP-MERC-01 G (aviso al admin), H (fecha de publicación) y botón Mercado en la ficha (rama gap-merc-gh)
+
+**Estado: PROBADO EN CHROME, UNIDO A MAIN Y SUBIDO (main = 1b64da6).** flutter test 328 + 2 fallas conocidas; flutter analyze sin errores (solo avisos viejos). Sin cambios de reglas ni datos nuevos.
+
+### Código
+
+* `widgets/aviso_publicaciones_admin.dart` (nuevo): tarjeta "Tenés N publicaciones para aprobar" en el Inicio, solo para el admin; lleva a Administración y vuelve a contar al regresar; no se muestra si no hay pendientes.
+* `dashboard_screen.dart`: la tarjeta debajo del saludo (junto al aviso de datos pendientes).
+* `campos_screen.dart`: "Publicado hoy / ayer / hace X días / meses" en la lista del Mercado (función `publicadoHace`; usa la fecha que se guarda al aprobar).
+* `detalle_campo_screen.dart`: "Publicado el dd/mm/aaaa" debajo del precio.
+* `detalle_activo_agro_screen.dart`: el botón Mercado de la ficha abre "Publicar en el Mercado" (antes "Próximamente"; confundía porque solo se publicaba desde "Ver todos"); dice "Publicar con precio y fotos", "En revisión · tocá para editar" o "Publicado · tocá para editar"; lo usan el dueño o quien cargó el campo.
+
+### Prueba
+
+* Broker publica La panpeanna desde la ficha (Venta · ARS 50.000.000) → admin ve la tarjeta naranja → aprueba → Mercado muestra "Publicado hoy" (vista de comprador y de broker).
+
+### Documentos
+
+* AF-038: E ampliada con el aviso real de Ischilín (distribución por uso, mejoras, negociable, financiación, tranquera cerrada, IP/aptitud/título perfecto, pegar el texto del aviso) y K ficha según el rol (el broker no ve la gestión del dueño). L checks de qué se comparte al publicar. AF-145 nuevo: campanita de avisos.
+
+### Pendiente
+
+* Diseñar E, F, K y L (herramientas para inmobiliarias) y AF-145 campanita; Partes B (fotos) y D (diseño del Mercado).
