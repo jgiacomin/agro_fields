@@ -89,7 +89,8 @@ class ActivoPublico {
       madurezPorcentaje: activo.madurez.porcentaje,
       producciones: actividades ??
           activo.producciones.map((p) => p.actividad).toList(),
-      propietarioId: activo.propietarioId,
+      // GAP-BROKER-01: quien atiende las consultas (dueño o broker).
+      propietarioId: activo.contactoMercadoId,
       estadoPublicacion: 'pendienteRevision',
       visible: false,
       ultimaActualizacion: DateTime.now(),

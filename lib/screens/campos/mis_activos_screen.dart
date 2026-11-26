@@ -54,7 +54,8 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
     }
 
     try {
-      final resultado = await servicio.buscarPorPropietario(usuario.uid);
+      // GAP-BROKER-01: también los campos cargados para un cliente.
+      final resultado = await servicio.buscarMisCampos(usuario.uid);
       final resultadoActualizado = <ActivoAgroV2>[];
 
       for (final activo in resultado) {
@@ -301,6 +302,18 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
                             color: AgroTema.pizarra,
                           ),
                         ),
+                        // GAP-BROKER-01: campo cargado para un cliente.
+                        if (activo.sinDueno)
+                          Text(
+                            activo.duenoDeclarado == null
+                                ? 'Cargado para un cliente'
+                                : 'Cargado para ${activo.duenoDeclarado}',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AgroTema.azul,
+                            ),
+                          ),
                         const SizedBox(height: 2),
                         Row(
                           children: [

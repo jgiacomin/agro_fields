@@ -336,6 +336,18 @@ Future<List<ActivoAgroV2>> buscarPorPublicador(
       .toList();
 }
 
+/// GAP-BROKER-01 (26/11/2026): los campos del usuario: los que es dueño
+/// y los que cargó (por ejemplo, como broker para un cliente), sin repetir.
+Future<List<ActivoAgroV2>> buscarMisCampos(String uid) async {
+  final propios = await buscarPorPropietario(uid);
+  final cargados = await buscarPorPublicador(uid);
+  final ids = propios.map((a) => a.activoId).toSet();
+  return [
+    ...propios,
+    ...cargados.where((a) => !ids.contains(a.activoId)),
+  ];
+}
+
 // =====================================================
 // PUBLICAR ACTIVO
 // =====================================================

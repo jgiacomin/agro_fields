@@ -76,6 +76,14 @@ service cloud.firestore {
         || d.get('publicadorId', '') == request.auth.uid;
     }
 
+    // GAP-BROKER-01 (26/11/2026): quien atiende las consultas del Mercado:
+    // el dueno si ya lo hay; si no, quien cargo el campo (broker).
+    function contactoMercado(id) {
+      return activoDe(id).propietarioId != ''
+        ? activoDe(id).propietarioId
+        : activoDe(id).get('publicadorId', '');
+    }
+
     // -----------------------------------------------------------------
     // AUTORIZACIONES (paso 3, 06/11/2026)
     // Un tercero (encargado, profesional, etc.) puede actuar sobre un
@@ -233,16 +241,16 @@ service cloud.firestore {
 
       // El dueÃ±o solo puede pedir revisiÃ³n (nunca publicar directo).
       allow create: if esAdmin()
-        || (esDuenoActivo(activoId)
-            && request.resource.data.propietarioId == request.auth.uid
+        || (puedeActivo(activoId)
+            && request.resource.data.propietarioId == contactoMercado(activoId)
             && request.resource.data.estadoPublicacion == 'pendienteRevision'
             && request.resource.data.visible == false
             && resumenPublicoValido(request.resource.data, activoId));
 
       // El dueÃ±o puede editar borrador/pendiente/pausar, pero NO poner 'publicado'.
       allow update: if esAdmin()
-        || (esDuenoActivo(activoId)
-            && resource.data.propietarioId == request.auth.uid
+        || (puedeActivo(activoId)
+            && resource.data.propietarioId == contactoMercado(activoId)
             && request.resource.data.propietarioId == resource.data.propietarioId
             && request.resource.data.estadoPublicacion
                  in ['borrador', 'pendienteRevision', 'pausado']
@@ -274,12 +282,12 @@ service cloud.firestore {
     match /eventos_afectacion/{eventoId} {
       allow get: if esAdmin()
         || (logueado()
-            && (resource == null || puedeActivo(resource.data.activoAgroId)));
+            && (resource == null || esDuenoActivo(resource.data.activoAgroId)));
       allow list: if esAdmin()
-        || (logueado() && puedeActivo(resource.data.activoAgroId));
+        || (logueado() && esDuenoActivo(resource.data.activoAgroId));
 
       allow create: if esAdmin()
-        || puedeActivo(request.resource.data.activoAgroId);
+        || esDuenoActivo(request.resource.data.activoAgroId);
 
       allow update: if esAdmin();
 
@@ -342,19 +350,19 @@ service cloud.firestore {
     match /recursos/{recursoId} {
   allow get: if esAdmin()
     || (logueado()
-        && (puedeActivo(resource.data.activoAgroId)
+        && (esDuenoActivo(resource.data.activoAgroId)
             || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
   allow list: if esAdmin()
     || (logueado()
-        && (puedeActivo(resource.data.activoAgroId)
+        && (esDuenoActivo(resource.data.activoAgroId)
             || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
   // GAP-STOCK-01 (13/11/2026): el producto nace con saldo 0 y con nombre;
   // el stock inicial entra como movimiento "entrada" (queda trazado).
   allow create: if (esAdmin()
     || (logueado()
-        && (puedeActivo(request.resource.data.activoAgroId)
+        && (esDuenoActivo(request.resource.data.activoAgroId)
             || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'recursosInventario'))))
     && request.resource.data.get('cantidadActual', 0) == 0
     && request.resource.data.nombre is string
@@ -365,7 +373,7 @@ service cloud.firestore {
   allow update: if esAdmin()
     || (
       logueado()
-      && (puedeActivo(resource.data.activoAgroId)
+      && (esDuenoActivo(resource.data.activoAgroId)
           || tieneAutorizacion(resource.data.activoAgroId, 'crear', 'recursosInventario'))
       && request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly([
@@ -438,17 +446,17 @@ service cloud.firestore {
     match /movimientos_stock/{movimientoId} {
       allow get: if esAdmin()
         || (logueado()
-            && (puedeActivo(resource.data.activoAgroId)
+            && (esDuenoActivo(resource.data.activoAgroId)
                 || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
       allow list: if esAdmin()
         || (logueado()
-            && (puedeActivo(resource.data.activoAgroId)
+            && (esDuenoActivo(resource.data.activoAgroId)
                 || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'recursosInventario')));
 
       allow create: if esAdmin()
         || (logueado()
-            && (puedeActivo(request.resource.data.activoAgroId)
+            && (esDuenoActivo(request.resource.data.activoAgroId)
                 || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'recursosInventario'))
             && request.resource.data.usuarioId == request.auth.uid);
 
@@ -674,17 +682,17 @@ service cloud.firestore {
     match /trabajos/{trabajoId} {
       allow get: if esAdmin()
         || (logueado()
-            && (puedeActivo(resource.data.activoAgroId)
+            && (esDuenoActivo(resource.data.activoAgroId)
                 || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'trabajo')));
 
       allow list: if esAdmin()
         || (logueado()
-            && (puedeActivo(resource.data.activoAgroId)
+            && (esDuenoActivo(resource.data.activoAgroId)
                 || tieneAutorizacion(resource.data.activoAgroId, 'ver', 'trabajo')));
 
       allow create: if esAdmin()
         || (logueado()
-            && (puedeActivo(request.resource.data.activoAgroId)
+            && (esDuenoActivo(request.resource.data.activoAgroId)
                 || tieneAutorizacion(request.resource.data.activoAgroId, 'crear', 'trabajo')));
 
       allow update, delete: if false;
@@ -875,7 +883,7 @@ service cloud.firestore {
     function puedeProduccion(activoId, permiso) {
       return esAdmin()
         || (logueado()
-            && (puedeActivo(activoId)
+            && (esDuenoActivo(activoId)
                 || tieneAutorizacion(activoId, permiso, 'produccion')));
     }
 

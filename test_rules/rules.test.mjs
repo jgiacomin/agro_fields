@@ -578,8 +578,10 @@ test('PUB-01. El dueño publica como la app (expediente + resumen pendiente) [PE
   await assertSucceeds(publicarComoLaApp(DUENO));
 });
 
-test('PUB-02. El broker NO puede mandar a publicar (solo el dueño) [PROHIBIDO]', async () => {
-  await assertFails(publicarComoLaApp(BROKER));
+// GAP-BROKER-01 (26/11/2026): el broker que cargó el campo también puede
+// mandarlo a revisión; si el campo tiene dueño, las consultas van al dueño.
+test('PUB-02. El broker manda a revisión el campo que cargó (contacto = dueño) [PERMITIDO]', async () => {
+  await assertSucceeds(publicarComoLaApp(BROKER));
 });
 
 test('PUB-03. El dueño ve su resumen pendiente [PERMITIDO]', async () => {
@@ -2153,4 +2155,74 @@ test('MERC-11. NO se manda sin nombre ni con un dato de más [PROHIBIDO]', async
 test('MERC-12. NO se acepta un mensaje larguísimo ni un teléfono raro [PROHIBIDO]', async () => {
   await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/m13'), pedidoDe({ mensaje: 'x'.repeat(501) })));
   await assertFails(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/m14'), pedidoDe({ interesadoTelefono: 12345 })));
+});
+
+// =====================================================================
+// GAP-BROKER-01 (26/11/2026): el broker separado del dueño.
+// a9 = campo cargado por el broker para un cliente (dueño pendiente).
+// =====================================================================
+const cargarCampoDeCliente = () => env.withSecurityRulesDisabled(async (ctx) => {
+  await setDoc(doc(ctx.firestore(), 'activos_agro/a9'), {
+    propietarioId: '', publicadorId: BROKER, tipoRelacionPropietario: 'cliente_de_broker',
+    nombre: 'Campo de un cliente',
+  });
+});
+
+const resumenA9 = (contacto, extra = {}) => ({
+  ...resumenDe('pendienteRevision', false), activoId: 'a9', nombre: 'Campo de un cliente',
+  propietarioId: contacto, ...extra,
+});
+
+test('BROKER-01. El broker crea un campo para un cliente, con el dueño pendiente [PERMITIDO]', async () => {
+  await assertSucceeds(setDoc(doc(como(BROKER), 'activos_agro/a8'), {
+    propietarioId: '', publicadorId: BROKER, tipoRelacionPropietario: 'cliente_de_broker',
+    nombre: 'Campo nuevo de un cliente',
+  }));
+});
+
+test('BROKER-02. Sin dueño, el broker publica y atiende las consultas [PERMITIDO]', async () => {
+  await cargarCampoDeCliente();
+  await assertSucceeds(setDoc(doc(como(BROKER), 'activos_publicos/a9'), resumenA9(BROKER)));
+  await assertSucceeds(getDoc(doc(como(BROKER), 'activos_publicos/a9')));
+});
+
+test('BROKER-03. El contacto NO se puede inventar (ni otro usuario ni el broker si hay dueño) [PROHIBIDO]', async () => {
+  await cargarCampoDeCliente();
+  await assertFails(setDoc(doc(como(BROKER), 'activos_publicos/a9'), resumenA9(OTRO)));
+  const db = como(BROKER);
+  await assertFails(setDoc(doc(db, 'activos_publicos/a1'),
+    { ...resumenDe('pendienteRevision', false), propietarioId: BROKER }));
+});
+
+test('BROKER-04. Un tercero NO publica el campo de un cliente del broker [PROHIBIDO]', async () => {
+  await cargarCampoDeCliente();
+  await assertFails(setDoc(doc(como(OTRO), 'activos_publicos/a9'), resumenA9(OTRO)));
+});
+
+test('BROKER-05. Publicado, el comprador consulta y el pedido le llega al broker [PERMITIDO]', async () => {
+  await cargarCampoDeCliente();
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'activos_publicos/a9'),
+      { ...resumenA9(BROKER), estadoPublicacion: 'publicado', visible: true });
+  });
+  await assertSucceeds(setDoc(doc(como(COMPRADOR), 'solicitudes_contacto/b5'),
+    pedidoDe({ campoId: 'a9', propietarioId: BROKER })));
+  await assertSucceeds(getDoc(doc(como(BROKER), 'solicitudes_contacto/b5')));
+});
+
+test('BROKER-06. El broker NO ve ni carga el stock del campo con dueño [PROHIBIDO]', async () => {
+  await assertFails(getDoc(doc(como(BROKER), 'recursos/recurso_001')));
+  await assertFails(setDoc(doc(como(BROKER), 'recursos/recurso_b6'),
+    { activoAgroId: 'a1', tipo: 'herramienta', nombre: 'Herramienta' }));
+});
+
+test('BROKER-07. El broker NO carga producción ni emergencias del campo con dueño [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(BROKER), 'unidades_productivas/u1'), unidadDe(BROKER)));
+  await assertFails(setDoc(doc(como(BROKER), 'grupos_productivos/g1'), grupoDe(BROKER)));
+  await assertFails(addDoc(collection(como(BROKER), 'eventos_afectacion'), eventoDeEjemplo(BROKER)));
+});
+
+test('BROKER-08. El dueño sigue viendo y cargando su stock y su producción [PERMITIDO]', async () => {
+  await assertSucceeds(getDoc(doc(como(DUENO), 'recursos/recurso_001')));
+  await assertSucceeds(setDoc(doc(como(DUENO), 'unidades_productivas/u1'), unidadDe(DUENO)));
 });

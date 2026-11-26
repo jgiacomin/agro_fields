@@ -116,8 +116,9 @@ final data =
 
 debugPrint('DASHBOARD: getUsuario OK');
 
+// GAP-BROKER-01: también los campos que cargó para un cliente.
 final activosPropios =
-    await _activoService.buscarPorPropietario(
+    await _activoService.buscarMisCampos(
   user.uid,
 );
 

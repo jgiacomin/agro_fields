@@ -132,7 +132,20 @@ class ActivoAgroV2 {
 
 
   /// propietario, arrendatario, administrador, representante
+  /// GAP-BROKER-01: 'cliente_de_broker' = lo cargó un broker para un
+  /// cliente y el dueño todavía no tomó posesión (propietarioId vacío).
   final String tipoRelacionPropietario;
+
+  /// GAP-BROKER-01 (26/11/2026): nombre del dueño que anotó el broker.
+  /// Dato declarado (no verificado); null si no se anotó.
+  final String? duenoDeclarado;
+
+  /// GAP-BROKER-01: el campo todavía no tiene dueño confirmado.
+  bool get sinDueno => propietarioId.trim().isEmpty;
+
+  /// GAP-BROKER-01: quién atiende las consultas del Mercado: el dueño si
+  /// ya lo hay; si no, quien cargó el campo (el broker).
+  String get contactoMercadoId => sinDueno ? publicadorId : propietarioId;
 
 
 
@@ -236,6 +249,8 @@ class ActivoAgroV2 {
     required this.publicadorId,
 
     required this.tipoRelacionPropietario,
+
+    this.duenoDeclarado,
 
     required this.estado,
 
@@ -512,6 +527,8 @@ class ActivoAgroV2 {
 
       map['tipoRelacionPropietario'] ?? 'propietario',
 
+      duenoDeclarado: map['duenoDeclarado'] as String?,
+
 
 
       estado:
@@ -718,6 +735,8 @@ class ActivoAgroV2 {
       'tipoRelacionPropietario':
       tipoRelacionPropietario,
 
+      if (duenoDeclarado != null) 'duenoDeclarado': duenoDeclarado,
+
 
       'estado':
       estado.name,
@@ -857,6 +876,8 @@ class ActivoAgroV2 {
       publicadorId: publicadorId,
 
       tipoRelacionPropietario: tipoRelacionPropietario,
+
+      duenoDeclarado: duenoDeclarado,
 
       estado: estado ?? this.estado,
 

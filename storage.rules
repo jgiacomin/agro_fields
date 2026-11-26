@@ -125,10 +125,10 @@ service firebase.storage {
         || puedeActivo(activoId)
         || (logueado() && publicadoEnMercado(activoId));
 
-      allow create: if (esAdmin() || esDuenoActivo(activoId))
+      allow create: if (esAdmin() || puedeActivo(activoId))
         && esImagen() && pesaMenosDe(10);
 
-      allow update, delete: if esAdmin() || esDuenoActivo(activoId);
+      allow update, delete: if esAdmin() || puedeActivo(activoId);
     }
 
     // ---------------- FOTO DE PERFIL ----------------

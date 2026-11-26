@@ -83,6 +83,11 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
 
   final descripcionController = TextEditingController();
 
+  /// GAP-BROKER-01 (26/11/2026): ¿lo carga el dueño o un broker para un
+  /// cliente? Y, si es para un cliente, el nombre del dueño (declarado).
+  bool _paraCliente = false;
+  final duenoController = TextEditingController();
+
   bool loading = false;
 
   /// Diseño "Nuevo campo": país elegido de la lista.
@@ -114,6 +119,8 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
     superficieController.dispose();
 
     descripcionController.dispose();
+
+    duenoController.dispose();
 
     super.dispose();
   }
@@ -291,19 +298,27 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
          participantes: [
            ParticipanteActivo(
             usuarioId: user.uid,
-            rol: 'propietario',
+            // GAP-BROKER-01: el broker entra como broker, no como dueño.
+            rol: _paraCliente ? 'broker' : 'propietario',
             estado: 'activo',
             fechaIngreso: ahora,
           ),
          ],
 
-        propietarioId: user.uid,
+        // GAP-BROKER-01: si es para un cliente, el dueño queda pendiente
+        // (vacío) hasta que tome posesión; el broker queda como publicador.
+        propietarioId: _paraCliente ? '' : user.uid,
 
         creadorId: user.uid,
 
         publicadorId: user.uid,
 
-        tipoRelacionPropietario: 'propietario',
+        tipoRelacionPropietario:
+            _paraCliente ? 'cliente_de_broker' : 'propietario',
+
+        duenoDeclarado: _paraCliente && duenoController.text.trim().isNotEmpty
+            ? duenoController.text.trim()
+            : null,
 
         estado: EstadoActivo.borrador,
 
@@ -392,6 +407,27 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
     );
   }
 
+  /// GAP-BROKER-01: botón de "¿De quién es el campo?".
+  Widget _opcionDueno(
+      String texto, IconData icono, bool elegido, VoidCallback alTocar) {
+    return ChoiceChip(
+      avatar: Icon(icono,
+          size: 18, color: elegido ? Colors.white : AgroTema.azul),
+      label: Text(texto),
+      selected: elegido,
+      showCheckmark: false,
+      selectedColor: AgroTema.azul,
+      backgroundColor: Colors.white,
+      labelStyle: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: elegido ? Colors.white : AgroTema.pizarra,
+      ),
+      side: const BorderSide(color: AgroTema.borde),
+      onSelected: (_) => alTocar(),
+    );
+  }
+
   /// Diseño "Nuevo campo": una tarjeta por pregunta.
   Widget _grupo(IconData icono, Color color, String pregunta,
       List<Widget> campos) {
@@ -436,6 +472,37 @@ class _CrearActivoAgroScreenState extends State<CrearActivoAgroScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
           children: [
+            // GAP-BROKER-01 (26/11/2026): primero, de quién es el campo.
+            _grupo(Icons.person_pin_circle_outlined, AgroTema.azul,
+                '¿De quién es el campo?', [
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _opcionDueno('Soy el dueño', Icons.home_work_outlined,
+                      !_paraCliente, () => setState(() => _paraCliente = false)),
+                  _opcionDueno(
+                      'Lo publico para un cliente',
+                      Icons.handshake_outlined,
+                      _paraCliente,
+                      () => setState(() => _paraCliente = true)),
+                ],
+              ),
+              if (_paraCliente) ...[
+                const Text(
+                  'Vas a quedar como quien cargó el campo (broker o '
+                  'inmobiliaria). El dueño lo puede sumar después con un '
+                  'código y ver su gestión; vos no ves la gestión del dueño.',
+                  style: TextStyle(fontSize: 14, color: AgroTema.pizarraSuave),
+                ),
+                TextFormField(
+                  controller: duenoController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: _decoracion('Nombre del dueño (opcional)',
+                      ayuda: 'Queda como dato declarado'),
+                ),
+              ],
+            ]),
             _grupo(Icons.badge_outlined, AgroTema.verde, '¿Cómo se llama?', [
               TextFormField(
                 controller: nombreController,

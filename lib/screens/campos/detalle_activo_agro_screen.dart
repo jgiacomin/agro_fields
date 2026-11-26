@@ -159,6 +159,47 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   bool get _esDueno =>
       FirebaseAuth.instance.currentUser?.uid == activo.propietarioId;
 
+  /// GAP-BROKER-01 (26/11/2026): lo mira quien cargó el campo sin ser el
+  /// dueño (broker o inmobiliaria). Ve solo lo que sirve para el aviso;
+  /// la gestión del dueño queda escondida (y las reglas tampoco la dejan).
+  bool get _modoBroker =>
+      !_esDueno &&
+      FirebaseAuth.instance.currentUser?.uid == activo.publicadorId;
+
+  /// GAP-BROKER-01: los botones que ve el broker.
+  List<(IconData, String, String, Color, VoidCallback?)> _serviciosBroker() {
+    const paraElAviso = ['Marcar en el mapa', 'Suelo', 'Documentos', 'Mercado'];
+    return _servicios().where((s) => paraElAviso.contains(s.$2)).toList();
+  }
+
+  Widget _avisoBroker() {
+    final dueno = activo.sinDueno
+        ? (activo.duenoDeclarado == null
+            ? 'Dueño: pendiente (todavía no se sumó)'
+            : 'Dueño declarado: ${activo.duenoDeclarado} (todavía no se sumó)')
+        : 'El dueño ya tomó posesión del campo.';
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F0F8),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AgroTema.azul.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.handshake_outlined, color: AgroTema.azul),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Cargaste este campo para un cliente.\n$dueno',
+              style: const TextStyle(fontSize: 14, color: AgroTema.pizarra),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// QA Grupo B: lugares y grupos para "Primeros pasos" (lo ve el dueño).
   /// Ficha por actividades (24/11/2026): también cuenta los grupos por
   /// actividad para la tarjeta "Actividades".
@@ -316,6 +357,18 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [
           _resumen(),
+          // GAP-BROKER-01: ficha en modo broker (solo lo del aviso).
+          if (_modoBroker) ...[
+            const SizedBox(height: 12),
+            _avisoBroker(),
+            const SizedBox(height: 20),
+            const TituloSeccion('Para el aviso', icono: Icons.storefront),
+            _grilla(_serviciosBroker()),
+            const SizedBox(height: 22),
+            const TituloSeccion('Información del expediente',
+                icono: Icons.folder_open),
+            _secciones(),
+          ] else ...[
           // QA Grupo B: mientras falten primeros pasos, se muestran ellos
           // en vez del "Próximo paso" (una pantalla, una pregunta).
           if (_primerosPasos != null) ...[
@@ -343,6 +396,7 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
           const TituloSeccion('Información del expediente',
               icono: Icons.folder_open),
           _secciones(),
+          ],
         ],
       ),
     );
@@ -913,6 +967,8 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
             ),
           ),
         ], resumen: _claro(s.estado)),
+        // GAP-BROKER-01: el broker no ve producción ni economía del dueño.
+        if (!_modoBroker)
         _seccion(Icons.category, 'Clasificación y producción', [
           _fila('Tipo de campo', _claro(activo.tipoActivo.name)),
           _fila('Categorías',
@@ -921,6 +977,7 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
           if (p != null && p.descripcion.trim().isNotEmpty)
             _fila('Descripción', p.descripcion),
         ], resumen: p == null ? 'Sin producción registrada' : _claro(p.actividad)),
+        if (!_modoBroker)
         _seccion(Icons.payments, 'Economía', [
           _fila('Valor solicitado', '${e.valorSolicitado} ${e.moneda}'),
           _fila('Tipo de operación', _claro(e.tipoOperacion)),
