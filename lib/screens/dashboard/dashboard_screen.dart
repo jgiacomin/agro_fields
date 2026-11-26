@@ -27,6 +27,8 @@ import '../encargados/campos_encargado_screen.dart';
 import '../profesionales/campos_profesional_screen.dart';
 import '../profesionales/mi_codigo_profesional_screen.dart';
 import '../../widgets/aviso_publicaciones_admin.dart';
+import '../../services/avisos_service.dart';
+import '../avisos/avisos_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({
@@ -50,6 +52,24 @@ class _DashboardScreenState
 
   /// Los campos propios (para las tarjetas del Inicio).
   List<ActivoAgroV2> activos = [];
+
+  /// AF-145: cuántos avisos hay para la campanita.
+  int _cantidadAvisos = 0;
+
+  Future<void> _contarAvisos() async {
+    try {
+      final lista = await AvisosService().avisos(activos);
+      if (!mounted) return;
+      setState(() => _cantidadAvisos = lista.length);
+    } catch (_) {}
+  }
+
+  Future<void> _abrirAvisos() async {
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => AvisosScreen(campos: activos)));
+    // Al volver, se vuelve a contar.
+    _contarAvisos();
+  }
 
   final UserService _userService =
       UserService();
@@ -129,6 +149,8 @@ debugPrint(
 
         loading = false;
       });
+      // AF-145: la campanita cuenta los avisos con los campos ya cargados.
+      _contarAvisos();
     } catch (e) {
       debugPrint(
         'ERROR CARGANDO DASHBOARD: $e',
@@ -559,12 +581,19 @@ debugPrint(
                         ],
                       ),
                     ),
+                    // AF-145 (26/11/2026): campanita de avisos con número.
                     IconButton(
-                      icon: const Icon(Icons.notifications_none,
-                          color: Colors.white),
-                      tooltip: 'Avisos (pronto)',
-                      onPressed: null,
-                      disabledColor: Colors.white,
+                      icon: Badge(
+                        isLabelVisible: _cantidadAvisos > 0,
+                        label: Text('$_cantidadAvisos'),
+                        child: Icon(
+                            _cantidadAvisos > 0
+                                ? Icons.notifications_active
+                                : Icons.notifications_none,
+                            color: Colors.white),
+                      ),
+                      tooltip: 'Avisos',
+                      onPressed: _abrirAvisos,
                     ),
                   ],
                 ),
