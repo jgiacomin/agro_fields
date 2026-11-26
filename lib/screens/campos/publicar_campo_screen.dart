@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/agro_tema.dart';
@@ -13,6 +14,11 @@ import 'detalle_activo_agro_screen.dart' show actividadesDeclaradas;
 import '../../widgets/barra_campo.dart';
 import '../produccion/produccion_estilo.dart';
 
+/// GAP-EDITAR-01 (26/11/2026): esta pantalla pasa a ser "Editar campo":
+/// arriba los datos del campo y abajo el aviso y las fotos. Se llega desde
+/// el ✏️ de la tarjeta (Inicio) y de la ficha. "Guardar" solo guarda los
+/// datos; "Guardar y publicar" además manda el aviso a revisión.
+///
 /// GAP-MERC-01 Parte A (24/11/2026): "Publicar en el Mercado".
 /// El dueño elige qué ofrece (venta, alquiler y/o arrendamiento) y el
 /// precio de cada una (o "Consultar precio"). Se envía a revisión: el
@@ -51,6 +57,27 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
   List<String> _fotos = [];
   final List<String> _quitadas = [];
   bool _subiendoFoto = false;
+
+  /// GAP-EDITAR-01: datos del campo.
+  late final TextEditingController _nombre =
+      TextEditingController(text: widget.activo.nombre);
+  late final TextEditingController _descripcion =
+      TextEditingController(text: widget.activo.descripcion);
+  late final TextEditingController _provincia =
+      TextEditingController(text: widget.activo.ubicacion.provincia);
+  late final TextEditingController _localidad =
+      TextEditingController(text: widget.activo.ubicacion.localidad);
+  late final TextEditingController _superficie = TextEditingController(
+      text: widget.activo.ubicacion.superficie > 0
+          ? OfertaMercado.numero(widget.activo.ubicacion.superficie)
+          : '');
+  late final TextEditingController _dueno =
+      TextEditingController(text: widget.activo.duenoDeclarado ?? '');
+  bool _guardando = false;
+
+  String get _estado => widget.activo.estadoPublicacion;
+  bool get _yaEnviado =>
+      _estado == 'publicado' || _estado == 'pendienteRevision';
 
   String get _monedaDelCampo {
     final m = widget.activo.ubicacion.monedaLocal;
@@ -144,7 +171,55 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
     for (final o in _ofertas.values) {
       o.precio.dispose();
     }
+    for (final c in [
+      _nombre, _descripcion, _provincia, _localidad, _superficie, _dueno,
+    ]) {
+      c.dispose();
+    }
     super.dispose();
+  }
+
+  /// GAP-EDITAR-01: guarda los datos del campo (sin tocar el aviso).
+  Future<void> _guardarDatos() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    await _servicio.actualizarDatosCampo(
+      activo: widget.activo,
+      usuarioId: uid,
+      nombre: _nombre.text.trim(),
+      descripcion: _descripcion.text.trim(),
+      provincia: _provincia.text.trim(),
+      localidad: _localidad.text.trim(),
+      superficie: _leerPrecio(_superficie.text) ?? 0,
+      duenoDeclarado:
+          _dueno.text.trim().isEmpty ? null : _dueno.text.trim(),
+    );
+  }
+
+  /// "Guardar": solo los datos del campo. El aviso queda como estaba.
+  Future<void> _soloGuardar() async {
+    if (_nombre.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Escribí el nombre del campo')));
+      return;
+    }
+    setState(() => _guardando = true);
+    try {
+      await _guardarDatos();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(_estado == 'publicado'
+            ? 'Guardado. El aviso del Mercado se actualiza cuando lo '
+                'vuelvas a publicar.'
+            : 'Guardado'),
+      ));
+      Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('No se pudo guardar: $e')));
+    } finally {
+      if (mounted) setState(() => _guardando = false);
+    }
   }
 
   void _elegir(String operacion, bool si) {
@@ -183,8 +258,34 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
           ),
     ];
 
+    // GAP-EDITAR-01: si ya estaba publicado, se avisa que vuelve a revisión.
+    if (_estado == 'publicado') {
+      final seguir = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('El aviso vuelve a revisión'),
+          content: const Text(
+            'No se ve en el Mercado hasta que el administrador lo apruebe '
+            'de nuevo. Si solo querés guardar los datos del campo, tocá '
+            '"Guardar".',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Seguir'),
+            ),
+          ],
+        ),
+      );
+      if (seguir != true || !mounted) return;
+    }
     setState(() => _enviando = true);
     try {
+      await _guardarDatos();
       await _servicio.publicarActivo(widget.activo.activoId,
           ofertas: ofertas, fotos: _fotos, actividades: await _actividades());
       // Las fotos quitadas se borran recién ahora (si se cancelaba, la
@@ -446,27 +547,70 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BarraCampo(title: const Text('Publicar en el Mercado')),
+      appBar: BarraCampo(title: const Text('Editar campo')),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
           children: [
-            Text(
-              widget.activo.nombre,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: AgroTema.pizarra,
+            // GAP-EDITAR-01: datos del campo.
+            _tarjeta(Icons.edit_note, AgroTema.verde, 'Datos del campo', [
+              TextFormField(
+                controller: _nombre,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: _decoracion('Nombre del campo'),
               ),
-            ),
+              TextFormField(
+                controller: _descripcion,
+                textCapitalization: TextCapitalization.sentences,
+                maxLines: 3,
+                decoration: _decoracion('Descripción (opcional)'),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _provincia,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: _decoracion('Provincia'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _localidad,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: _decoracion('Localidad'),
+                    ),
+                  ),
+                ],
+              ),
+              TextFormField(
+                controller: _superficie,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: _decoracion('Hectáreas', ayuda: '2.300'),
+              ),
+              if (widget.activo.sinDueno)
+                TextFormField(
+                  controller: _dueno,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: _decoracion('Nombre del dueño (opcional)',
+                      ayuda: 'Dato declarado'),
+                ),
+              const Text(
+                'Las actividades se suman desde la ficha del campo.',
+                style: TextStyle(fontSize: 13, color: AgroTema.pizarraSuave),
+              ),
+            ]),
             const SizedBox(height: 4),
             const Text(
-              'Solo se publica el resumen del campo. Lo privado '
-              '(documentos, economía, suelo, personas) no se muestra.',
+              'El aviso del Mercado: solo se publica el resumen del campo. '
+              'Lo privado (documentos, economía, suelo, personas) no se '
+              'muestra.',
               style: TextStyle(fontSize: 14, color: AgroTema.pizarraSuave),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             _tarjeta(Icons.storefront, AgroTema.azul, '¿Qué querés hacer?', [
               const Text(
                 'Podés marcar más de una (por ejemplo, vender o alquilar).',
@@ -500,11 +644,34 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
               if (_ofertas[op] != null) _tarjetaPrecio(op, _ofertas[op]!),
             _tarjetaFotos(),
             const SizedBox(height: 8),
+            // GAP-EDITAR-01: "Guardar" (solo datos) o publicar el aviso.
             BotonGrande(
-              texto: 'Enviar a revisión',
-              icono: Icons.send,
-              ocupado: _enviando,
-              onPressed: _enviando || _subiendoFoto ? null : _enviar,
+              texto: 'Guardar',
+              icono: Icons.save_outlined,
+              ocupado: _guardando,
+              onPressed: _guardando || _enviando || _subiendoFoto
+                  ? null
+                  : _soloGuardar,
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              onPressed: _enviando || _guardando || _subiendoFoto
+                  ? null
+                  : _enviar,
+              icon: _enviando
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.storefront),
+              label: Text(_yaEnviado
+                  ? 'Guardar y enviar el aviso a revisión'
+                  : 'Guardar y publicar en el Mercado'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AgroTema.terracota,
+                side: const BorderSide(color: AgroTema.terracota),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
             ),
             const SizedBox(height: 10),
             const Text(

@@ -353,7 +353,18 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BarraCampo(title: Text(activo.nombre)),
+      appBar: BarraCampo(
+        title: Text(activo.nombre),
+        // GAP-EDITAR-01 (26/11/2026): el mismo ✏️ que en el Inicio.
+        actions: [
+          if (_puedePublicar)
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              tooltip: 'Editar campo',
+              onPressed: () => _abrir(PublicarCampoScreen(activo: activo)),
+            ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
         children: [

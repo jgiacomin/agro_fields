@@ -336,6 +336,59 @@ Future<List<ActivoAgroV2>> buscarPorPublicador(
       .toList();
 }
 
+/// GAP-EDITAR-01 (26/11/2026): "Editar campo": guarda los datos básicos
+/// (nombre, descripción, provincia, localidad, hectáreas y dueño
+/// declarado). Edición simple: NO cambia la identidad del campo (el hash
+/// queda igual) ni llena el historial; deja un registro interno mínimo en
+/// la auditoría (quién, cuándo y qué cambió). El aviso del Mercado no
+/// cambia solo: se actualiza al volver a publicar.
+Future<void> actualizarDatosCampo({
+  required ActivoAgroV2 activo,
+  required String usuarioId,
+  required String nombre,
+  required String descripcion,
+  required String provincia,
+  required String localidad,
+  required double superficie,
+  String? duenoDeclarado,
+}) async {
+  final u = activo.ubicacion;
+  final cambios = <String, Object?>{};
+  final antes = <String, Object?>{};
+  void anotar(String clave, Object? viejo, Object? nuevo) {
+    if (viejo != nuevo) {
+      cambios[clave] = nuevo;
+      antes[clave] = viejo;
+    }
+  }
+
+  anotar('nombre', activo.nombre, nombre);
+  anotar('descripcion', activo.descripcion, descripcion);
+  anotar('ubicacion.provincia', u.provincia, provincia);
+  anotar('ubicacion.localidad', u.localidad, localidad);
+  anotar('ubicacion.superficie', u.superficie, superficie);
+  if (activo.sinDueno) {
+    anotar('duenoDeclarado', activo.duenoDeclarado, duenoDeclarado);
+  }
+  if (cambios.isEmpty) return;
+
+  await _db.collection(coleccion).doc(activo.activoId).update({
+    ...cambios,
+    'ultimaActualizacion': Timestamp.now(),
+  });
+
+  await _auditService.registrar(
+    activoId: activo.activoId,
+    usuarioId: usuarioId,
+    tipo: AuditType.modificacion,
+    modulo: 'activo',
+    accion: 'editar_datos_campo',
+    elementoAfectado: activo.activoId,
+    referencia: activo.activoId,
+    datos: {'antes': antes, 'despues': cambios},
+  );
+}
+
 /// GAP-BROKER-01 (26/11/2026): los campos del usuario: los que es dueño
 /// y los que cargó (por ejemplo, como broker para un cliente), sin repetir.
 Future<List<ActivoAgroV2>> buscarMisCampos(String uid) async {

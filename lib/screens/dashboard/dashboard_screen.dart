@@ -29,6 +29,7 @@ import '../profesionales/mi_codigo_profesional_screen.dart';
 import '../../widgets/aviso_publicaciones_admin.dart';
 import '../../services/avisos_service.dart';
 import '../avisos/avisos_screen.dart';
+import '../../widgets/tarjeta_campo.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({
@@ -472,21 +473,25 @@ debugPrint(
                           _resumen(),
                           const SizedBox(height: 20),
                         ],
-                        // GAP-BROKER-01 (26/11/2026): los propios y los de
-                        // clientes, en dos grupos (si hay de los dos).
-                        // QA 26/11/2026: sin "Ver todos": tocar el campo
-                        // lleva a la ficha (un solo camino). La lista
-                        // completa sigue en el menú.
+                        // GAP-EDITAR-01 (26/11/2026): el Inicio ES la lista
+                        // de campos (tarjeta completa con ✏️ Editar). Tocar
+                        // el campo abre la ficha. Propios y de clientes en
+                        // dos grupos (GAP-BROKER-01).
                         if (activos.any((a) => !a.sinDueno)) ...[
                           const TituloSeccion('Mis campos',
                               icono: Icons.agriculture),
-                          _carruselCampos(clientes: false),
-                          const SizedBox(height: 20),
+                          ..._listaCampos(clientes: false),
+                          const SizedBox(height: 8),
                         ],
                         if (activos.any((a) => a.sinDueno)) ...[
                           const TituloSeccion('Campos de clientes',
                               icono: Icons.handshake_outlined),
-                          _carruselCampos(clientes: true),
+                          ..._listaCampos(clientes: true),
+                          const SizedBox(height: 8),
+                        ],
+                        // Sin campos: el Mercado y la invitación a cargar.
+                        if (activos.isEmpty) ...[
+                          _sinCampos(),
                           const SizedBox(height: 20),
                         ],
                         const TituloSeccion('Accesos', icono: Icons.apps),
@@ -655,16 +660,10 @@ debugPrint(
   Widget _accesosRapidos() {
     // Los que todavía no existen ("Próximamente") van al final.
     final accesos = <_Acceso>[
-      if (esPropietario)
-        _Acceso(Icons.eco, 'Mis Activos Agro', AgroTema.verde, abrirMisActivos),
-      _Acceso(Icons.add_business, 'Crear campo', AgroTema.terracota,
-          abrirCrearActivo),
-      _Acceso(Icons.storefront, 'Mercado de campos', const Color(0xFFE8893A),
-          abrirCamposDisponibles),
+      // GAP-EDITAR-01: sin repetidos (Mis campos = Inicio, Crear = ➕,
+      // Mercado y Mensajes = menú de abajo).
       if (esPropietario)
         _Acceso(Icons.inbox, 'Solicitudes', AgroTema.azul, abrirSolicitudes),
-      _Acceso(Icons.chat_bubble, 'Conversaciones', AgroTema.pizarra,
-          abrirConversaciones),
       const _Acceso(Icons.map, 'Territorio Inteligente', AgroTema.azul, null),
       const _Acceso(
           Icons.bar_chart, 'Economía y Gestión', AgroTema.verde, null),
@@ -724,7 +723,8 @@ debugPrint(
           child: Row(
             children: [
               item(Icons.home, 'Inicio', null, activo: true),
-              item(Icons.agriculture, 'Mis campos', abrirMisActivos),
+              // GAP-EDITAR-01: el mismo menú para todos.
+              item(Icons.storefront, 'Mercado', abrirCamposDisponibles),
               Expanded(
                 child: Center(
                   child: Tooltip(
@@ -828,20 +828,6 @@ debugPrint(
 
   // ---------------- MIS CAMPOS (tarjetas que se deslizan) ----------------
 
-  /// Banda oscura V8 con el botón "Ver todos" a la derecha.
-  Widget _tituloConAccion(String titulo, String accion, VoidCallback alTocar) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: TituloSeccion(titulo, icono: Icons.agriculture)),
-        const SizedBox(width: 8),
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: TextButton(onPressed: alTocar, child: Text('$accion  ›')),
-        ),
-      ],
-    );
-  }
 
   Future<void> _abrirCampo(ActivoAgroV2 activo) async {
     await Navigator.of(context).push(
@@ -852,165 +838,57 @@ debugPrint(
     await cargarUsuario();
   }
 
-  Widget _carruselCampos({required bool clientes}) {
-    // QA T1-02 (18/11/2026): el más nuevo primero, para no tocar otro
-    // campo por error cuando hay muchos.
+  /// GAP-EDITAR-01: la lista de campos del Inicio (el más nuevo primero).
+  List<Widget> _listaCampos({required bool clientes}) {
     final lista = activos.where((a) => a.sinDueno == clientes).toList()
       ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
-    return SizedBox(
-      height: 172,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: lista.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (_, i) => _tarjetaCampo(lista[i]),
-      ),
-    );
+    return [
+      for (final a in lista)
+        // QA 26/11/2026: sin lápiz en el Inicio; se edita desde la ficha
+        // (un solo camino: Inicio → campo → ✏️).
+        TarjetaCampo(activo: a, alAbrir: () => _abrirCampo(a)),
+    ];
   }
 
-  Widget _tarjetaCampo(ActivoAgroV2 a) {
-    final u = a.ubicacion;
-    final lugar = [u.localidad, u.provincia]
-        .where((x) => x.trim().isNotEmpty)
-        .join(', ');
-    final superficie = u.superficie > 0
-        ? '${_miles(u.superficie)} ha'
-        : 'Superficie sin información';
-
-    return SizedBox(
-      width: 220,
-      child: Padding(
-        // Lugar para la sombra de la tarjeta.
-        padding: const EdgeInsets.only(bottom: 4),
-        child: TarjetaBlanca(
-          onTap: () => _abrirCampo(a),
+  /// GAP-EDITAR-01: quien no tiene campos ve el Mercado y la invitación.
+  Widget _sinCampos() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const TituloSeccion('Mercado de campos', icono: Icons.storefront),
+        TarjetaBlanca(
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Sin flecha (se toca toda la tarjeta) y el nombre en hasta
-                // 2 renglones, para que se lea completo.
-                Row(
-                  children: [
-                    const IconoCirculo(Icons.grass,
-                        color: AgroTema.verde, tamano: 38),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        a.nombre,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          height: 1.2,
-                          fontWeight: FontWeight.w700,
-                          color: AgroTema.pizarra,
-                        ),
-                      ),
-                    ),
-                  ],
+                const Text(
+                  'Buscá campos para comprar, alquilar o invertir.',
+                  style: TextStyle(fontSize: 15, color: AgroTema.pizarra),
                 ),
-                // GAP-BROKER-01: de quién es (campo de un cliente).
-                if (a.sinDueno) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    a.duenoDeclarado == null
-                        ? 'Campo de un cliente'
-                        : 'Cliente: ${a.duenoDeclarado}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AgroTema.azul,
-                    ),
+                const SizedBox(height: 12),
+                BotonGrande(
+                  texto: 'Ver el Mercado',
+                  icono: Icons.storefront,
+                  onPressed: abrirCamposDisponibles,
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: abrirCrearActivo,
+                  icon: const Icon(Icons.add),
+                  label: const Text('¿Tenés un campo? Cargalo'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AgroTema.terracota,
+                    side: const BorderSide(color: AgroTema.terracota),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                ],
-                const Spacer(),
-                Row(
-                  children: [
-                    const Icon(Icons.place,
-                        size: 15, color: AgroTema.pizarraSuave),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        lugar.isEmpty ? 'Ubicación sin información' : lugar,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            fontSize: 13, color: AgroTema.pizarraSuave),
-                      ),
-                    ),
-                  ],
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.straighten,
-                        size: 15,
-                        color: u.superficie > 0
-                            ? AgroTema.verde
-                            : AgroTema.pizarraSuave),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        superficie,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          fontStyle: u.superficie > 0
-                              ? FontStyle.normal
-                              : FontStyle.italic,
-                          color: u.superficie > 0
-                              ? AgroTema.verde
-                              : AgroTema.pizarraSuave,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                // QA 26/11/2026: cómo está en el Mercado, sin entrar a otra
-                // pantalla.
-                if (_textoMercado(a) != null) ...[
-                  const SizedBox(height: 6),
-                  Text(
-                    _textoMercado(a)!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: a.estadoPublicacion == 'publicado'
-                          ? AgroTema.terracota
-                          : AgroTema.dorado,
-                    ),
-                  ),
-                ],
               ],
             ),
           ),
         ),
-      ),
+      ],
     );
-  }
-
-  /// QA 26/11/2026: "Publicado · USD 3.000.000", "En revisión" o nada.
-  String? _textoMercado(ActivoAgroV2 a) {
-    final ofertas = a.economia.ofertas;
-    final precio = ofertas.isEmpty ? null : ofertas.first.texto;
-    switch (a.estadoPublicacion) {
-      case 'publicado':
-        return precio == null ? 'Publicado' : 'Publicado · $precio';
-      case 'pendienteRevision':
-        return 'En revisión';
-      case 'pausado':
-        return 'Publicación pausada';
-      default:
-        return null;
-    }
   }
 
   /// Diseño V8: tarjeta crema con el ícono en círculo. Los "Próximamente"
