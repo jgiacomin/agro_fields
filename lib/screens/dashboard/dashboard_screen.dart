@@ -472,13 +472,21 @@ debugPrint(
                           _resumen(),
                           const SizedBox(height: 20),
                         ],
-                        if (activos.isNotEmpty) ...[
-                          _tituloConAccion(
-                            'Mis campos',
-                            'Ver todos',
-                            abrirMisActivos,
-                          ),
-                          _carruselCampos(),
+                        // GAP-BROKER-01 (26/11/2026): los propios y los de
+                        // clientes, en dos grupos (si hay de los dos).
+                        // QA 26/11/2026: sin "Ver todos": tocar el campo
+                        // lleva a la ficha (un solo camino). La lista
+                        // completa sigue en el menú.
+                        if (activos.any((a) => !a.sinDueno)) ...[
+                          const TituloSeccion('Mis campos',
+                              icono: Icons.agriculture),
+                          _carruselCampos(clientes: false),
+                          const SizedBox(height: 20),
+                        ],
+                        if (activos.any((a) => a.sinDueno)) ...[
+                          const TituloSeccion('Campos de clientes',
+                              icono: Icons.handshake_outlined),
+                          _carruselCampos(clientes: true),
                           const SizedBox(height: 20),
                         ],
                         const TituloSeccion('Accesos', icono: Icons.apps),
@@ -844,13 +852,13 @@ debugPrint(
     await cargarUsuario();
   }
 
-  Widget _carruselCampos() {
+  Widget _carruselCampos({required bool clientes}) {
     // QA T1-02 (18/11/2026): el más nuevo primero, para no tocar otro
     // campo por error cuando hay muchos.
-    final lista = [...activos]
+    final lista = activos.where((a) => a.sinDueno == clientes).toList()
       ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
     return SizedBox(
-      height: 150,
+      height: 172,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: lista.length,
@@ -903,6 +911,22 @@ debugPrint(
                     ),
                   ],
                 ),
+                // GAP-BROKER-01: de quién es (campo de un cliente).
+                if (a.sinDueno) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    a.duenoDeclarado == null
+                        ? 'Campo de un cliente'
+                        : 'Cliente: ${a.duenoDeclarado}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AgroTema.azul,
+                    ),
+                  ),
+                ],
                 const Spacer(),
                 Row(
                   children: [
@@ -948,12 +972,45 @@ debugPrint(
                     ),
                   ],
                 ),
+                // QA 26/11/2026: cómo está en el Mercado, sin entrar a otra
+                // pantalla.
+                if (_textoMercado(a) != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    _textoMercado(a)!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: a.estadoPublicacion == 'publicado'
+                          ? AgroTema.terracota
+                          : AgroTema.dorado,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// QA 26/11/2026: "Publicado · USD 3.000.000", "En revisión" o nada.
+  String? _textoMercado(ActivoAgroV2 a) {
+    final ofertas = a.economia.ofertas;
+    final precio = ofertas.isEmpty ? null : ofertas.first.texto;
+    switch (a.estadoPublicacion) {
+      case 'publicado':
+        return precio == null ? 'Publicado' : 'Publicado · $precio';
+      case 'pendienteRevision':
+        return 'En revisión';
+      case 'pausado':
+        return 'Publicación pausada';
+      default:
+        return null;
+    }
   }
 
   /// Diseño V8: tarjeta crema con el ícono en círculo. Los "Próximamente"

@@ -302,7 +302,8 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   }
 
   String get _textoMercado {
-    switch (activo.estado.name) {
+    // QA 26/11/2026: el estado de la publicación (el que cambia el admin).
+    switch (activo.estadoPublicacion) {
       case 'publicado':
         return 'Publicado · tocá para editar';
       case 'pendienteRevision':
@@ -315,7 +316,7 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
   /// GAP-MERC-01 (26/11/2026): abre "Publicar en el Mercado" (la misma
   /// pantalla de "Mis campos"). Editar algo ya enviado lo vuelve a revisión.
   Future<void> _abrirMercado() async {
-    final estado = activo.estado.name;
+    final estado = activo.estadoPublicacion;
     if (estado == 'publicado' || estado == 'pendienteRevision') {
       final seguir = await showDialog<bool>(
         context: context,

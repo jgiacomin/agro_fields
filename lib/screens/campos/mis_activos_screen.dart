@@ -157,7 +157,8 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
   /// (operación y precio). Si se envió, se recarga la lista.
   Future<void> abrirPublicar(ActivoAgroV2 activo) async {
     // Editar una publicación ya enviada: vuelve a revisión (se avisa).
-    final estado = activo.estado.name;
+    // QA 26/11/2026: el estado de la publicación (el que cambia el admin).
+    final estado = activo.estadoPublicacion;
     if (estado == "publicado" || estado == "pendienteRevision") {
       final seguir = await showDialog<bool>(
         context: context,
@@ -247,11 +248,25 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
             )
           : RefreshIndicator(
               onRefresh: cargarActivos,
-              child: ListView.builder(
+              // GAP-BROKER-01 (26/11/2026): si hay campos de clientes, se
+              // separan en dos grupos; si no, la lista es la de siempre.
+              child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-                itemCount: activos.length,
-                itemBuilder: (context, index) =>
-                    _tarjetaCampo(activos[index]),
+                children: [
+                  if (activos.any((a) => a.sinDueno)) ...[
+                    if (activos.any((a) => !a.sinDueno)) ...[
+                      const TituloSeccion('Mis campos', icono: Icons.agriculture),
+                      for (final a in activos.where((a) => !a.sinDueno))
+                        _tarjetaCampo(a),
+                      const SizedBox(height: 12),
+                    ],
+                    const TituloSeccion('Campos de clientes',
+                        icono: Icons.handshake_outlined),
+                    for (final a in activos.where((a) => a.sinDueno))
+                      _tarjetaCampo(a),
+                  ] else
+                    for (final a in activos) _tarjetaCampo(a),
+                ],
               ),
             ),
     );
@@ -271,7 +286,8 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
             ...declaradas,
             ...?cargadas?.where((a) => !declaradas.contains(a)),
           ];
-    final estado = activo.estado.name;
+    // QA 26/11/2026: el estado de la publicación (el que cambia el admin).
+    final estado = activo.estadoPublicacion;
     final yaEnviado = estado == "publicado" || estado == "pendienteRevision";
     final avance = activo.madurez.porcentaje.clamp(0, 100).toDouble();
 
@@ -306,8 +322,8 @@ class _MisActivosScreenState extends State<MisActivosScreen> {
                         if (activo.sinDueno)
                           Text(
                             activo.duenoDeclarado == null
-                                ? 'Cargado para un cliente'
-                                : 'Cargado para ${activo.duenoDeclarado}',
+                                ? 'Campo de un cliente'
+                                : 'Cliente: ${activo.duenoDeclarado}',
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,

@@ -41,6 +41,9 @@ class AdminService {
     });
     batch.update(_db.collection(coleccionActivos).doc(p.activoId), {
       'estadoPublicacion': 'publicado',
+      // QA 26/11/2026: también el estado del campo (antes quedaba
+      // "En revisión" en Mis campos aunque ya estaba publicado).
+      'estado': 'publicado',
     });
     await batch.commit();
     await _auditoria.registrar(
@@ -69,6 +72,7 @@ class AdminService {
     });
     batch.update(_db.collection(coleccionActivos).doc(p.activoId), {
       'estadoPublicacion': 'borrador',
+      'estado': 'borrador',
     });
     await batch.commit();
     await _auditoria.registrar(
