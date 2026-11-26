@@ -3965,3 +3965,9 @@ Después: AF-124 "otros brokers pueden ofrecerlo", publicar por clientes, AF-122
 ✅ **G aviso de publicaciones al admin**, **H fecha de publicación** y **botón Mercado en la ficha** — rama `gap-merc-gh`, probado en Chrome, unido a main (1b64da6).
 
 **Pendiente antes del ~15/12 (herramientas para inmobiliarias):** E carga rápida (ampliada con el aviso de Ischilín), F el dueño toma posesión, K ficha según el rol, L checks de qué se comparte al publicar, AF-145 campanita de avisos (versión chica); I orden simple. Después: B fotos, D diseño del Mercado, J compartir la ficha desde el chat (🟡).
+
+## Campanita de avisos (AF-145) — Estado (26/11/2026)
+
+✅ **Campanita de avisos** — rama `gap-avisos-01`, probada en Chrome, unida a main (d5b4d95): publicaciones para aprobar, consultas nuevas, documentos y cheques en un solo lugar.
+
+**Siguiente:** diseñar juntas E (carga rápida), F (el dueño toma posesión), K (ficha según el rol) y L (checks de qué se comparte) — herramientas para inmobiliarias antes del ~15/12.

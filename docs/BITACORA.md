@@ -8344,3 +8344,21 @@ El Mercado no muestra precio, venta o alquiler, ni fotos; confianza y madurez no
 ### Pendiente
 
 * Diseñar E, F, K y L (herramientas para inmobiliarias) y AF-145 campanita; Partes B (fotos) y D (diseño del Mercado).
+
+# 26/11/2026 - AF-145 Campanita de avisos (rama gap-avisos-01)
+
+**Estado: PROBADO EN CHROME, UNIDO A MAIN Y SUBIDO (main = d5b4d95).** flutter test 328 + 2 fallas conocidas; flutter analyze sin errores. Sin cambios de reglas ni colecciones nuevas.
+
+### Código
+
+* `services/avisos_service.dart` (nuevo): junta los avisos que la app ya calcula: publicaciones para aprobar (admin), consultas nuevas del Mercado (pendientes y vistas), documentos vencidos o por vencer (30 días, sin archivados) y cheques/pagos por vencer (7 días), vencidos o rechazados de operaciones abiertas, por cada campo propio. Si una parte no se puede leer, se saltea.
+* `screens/avisos/avisos_screen.dart` (nuevo): lista "Avisos"; cada aviso lleva a su pantalla (Administración, Solicitudes recibidas, Documentos, Operaciones protegidas) y al volver se recalcula; "No tenés avisos. Está todo al día." si no hay.
+* `dashboard_screen.dart`: la campanita (antes desactivada, "Avisos (pronto)") muestra el número en rojo y abre la pantalla; se cuenta al cargar el Inicio y al volver.
+
+### Prueba
+
+* Campanita con 6 avisos reales de los campos de prueba: publicación para aprobar, 2 documentos vencidos y 1 cheque rechazado (La tranquera), documentos por vencer (Campo La Esperanza y Estancia Demo) y 1 pago vencido sin cobrar (Estancia Demo).
+
+### Pendiente
+
+* 🟡 mensajes de chat sin leer; 🟢 avisos al teléfono o mail (Cloud Functions). Los datos guardados sin señal siguen con su tarjeta propia en el Inicio.

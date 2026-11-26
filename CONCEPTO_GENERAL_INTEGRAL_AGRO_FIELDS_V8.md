@@ -1049,6 +1049,16 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en las jorn
 
 Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 
+### Incorporaciones del 25/11/2026
+
+- Caso de referencia: maíz barato y costo de alimentación ganadera (sección 25.18). Matriz AF-140 (precio de referencia manual); amplía AF-127 y AF-132.
+- Caso de referencia: operación a término incumplida (sección 25.19). Matriz AF-141 (operación a término, dentro de GAP-OPER-01 y GAP-CLI-01).
+- Caso de referencia: cooperativas vitivinícolas de San Martín, Mendoza (sección 25.20). Matriz AF-142 (cooperativas: entrega de la cosecha); amplía AF-134 y AF-038.
+- Caso de referencia: cosecha de girasol en Corzuela, Chaco (sección 25.21). Matriz AF-143 (cosecha pausada por clima y promedio de referencia).
+- Caso de referencia: frutihortícola de Presidencia Roque Sáenz Peña, Chaco (sección 25.22). Matriz AF-144 (horticultura de ciclos cortos); amplía AF-134.
+
+Los cinco casos se cargaron a partir de los antecedentes registrados en la jornada del 24/11/2026, no de los documentos originales completos. Toda cifra y toda norma se confirman con su fuente antes de usarlas.
+
 ---
 
 ## 25. Casos de referencia estratégicos
@@ -1342,3 +1352,80 @@ Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 | Avisos automáticos por ubicación | — | Alertas por ubicación (AF-117) | 🟢 marzo |
 
 **Criterio:** Agro Fields no pronostica ni reemplaza a los servicios meteorológicos: muestra las alertas oficiales con su fuente y ayuda a prepararse y registrar. No atribuir causas sin evidencia.
+
+### 25.18. Maíz barato y costo de alimentación ganadera (nota de Valor Agro, Federico Morixe, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica. Cifras y precios a confirmar con la fuente antes de usarlos.
+
+**Síntesis:** la abundancia de maíz en Argentina, Brasil y Paraguay baja el costo de alimentación de los feedlots y de la producción animal en general.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Conocer el precio del maíz | Ventas guarda el precio obtenido | Precio de referencia manual del maíz (y otros granos) con fuente y fecha, dentro de Inteligencia de Mercados (AF-140) | 🟡 |
+| Saber cuánto cuesta alimentar por kilo producido | Pesajes (AF-102), Gastos (GAP-ECO-01), Stock (GAP-STOCK-01) | Costo de alimentación por kilo producido en "Resultado del rodeo" (AF-127), con la ración del feedlot unida al Stock y el precio del maíz | 🟡 |
+| Avisar cuando cambia el precio | — | Aviso automático de precio | 🟢 |
+| Conectar al que tiene grano con el que lo necesita | Granos guardados (AF-132) | Marca voluntaria "tengo grano para vender" para conectar silobolsa con ganadero de la zona | 🟢 marzo |
+
+**Criterio:** Agro Fields informa, no recomienda comprar ni vender; conecta, no garantiza. No cambia el plan de diciembre.
+
+### 25.19. Operación a término incumplida (Formosa, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica. No se nombra a ninguna persona.
+
+**Síntesis:** una venta de hacienda a término (entrega y pago en fechas futuras, con cheques) que no se cumplió. Muestra el riesgo de operar sin conocer a la otra parte ni seguir los compromisos.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Registrar la operación a término | Operación Agropecuaria Protegida y cheques (GAP-OPER-01); aviso 7 días antes del vencimiento de un cheque | Operación a término: animales, kilos, precio, fecha de entrega, calendario de cheques; estados pendiente de entrega / entregado / incumplido; aviso 7 días antes de la entrega (AF-141) | 🔴 enero |
+| Conocer al cliente | Registro de clientes (GAP-CLI-01, AF-121) | Unir la operación a término con el cliente | 🔴 enero |
+| Revisar los cheques | — | Botón "Consultar cheques en el Banco Central" que abre la consulta oficial por CUIT | 🔴 enero |
+| Saber si el vendedor tiene lo que vende | Producción (existencias) | Lugar preparado para que el vendedor comparta su stock real | 🟡 |
+| Confianza compartida | — | Semáforo automático con el BCRA (confirmar si se permite), historial de cumplimiento compartido (red de cheques), pago en garantía con banco o billetera virtual | 🟢 marzo o después |
+
+**Criterio:** la app no nombra a nadie como estafador: solo muestra datos objetivos. Agro Fields no es garante. Amplía GAP-OPER-01 sin módulo nuevo y no cambia el plan de diciembre.
+
+### 25.20. Cooperativas vitivinícolas de San Martín (Mendoza, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica.
+
+**Síntesis:** en San Martín (Mendoza) los productores de uva entregan la cosecha a cooperativas vitivinícolas. Hay fincas con viñedo abandonadas.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Registrar el viñedo | Agricultura (cultivo); Cultivo perenne / frutales (AF-134) | "Vid / viñedo" como ejemplo en AF-134 | 🟡 |
+| Entregar la cosecha a la cooperativa | Cosecha; "¿A dónde va la plata de mi venta?" (AF-133) | Cooperativas: entrega de la cosecha (cantidad, fecha, cooperativa, liquidación) unida al desglose de la venta (AF-142) | 🟡 febrero-marzo |
+| Ofrecer fincas abandonadas | Mercado para inmobiliarias (AF-038, GAP-MERC-01) | Usarlas como ejemplo de publicación en el Mercado | Ejemplo |
+
+**Criterio:** nada nuevo antes de la prueba cerrada del ~15/12/2026.
+
+### 25.21. Cosecha de girasol en Corzuela (Chaco, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica. Cifras a confirmar con la fuente.
+
+**Síntesis:** en el establecimiento Don Vidal (Corzuela) se cosecharon unas 70 ha de girasol de un total de unas 700, con un rendimiento informado de 2.200 kg/ha contra 1.800 kg/ha de promedio provincial. La cosecha se frenó por el clima, y en diciembre siguen soja y maíz.
+
+**Revisión del código (25/11/2026, solo lectura):**
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Cosechar un lote por partes | ✅ Varias cosechas en el mismo cultivo se suman solas (sembrado X ha / cosechado Y ha) y avisa si se cosecha más de lo sembrado | — | Hecho |
+| Pausar la cosecha por el clima y retomarla | 🟡 Cada parte tiene fecha y notas | Marca "cosecha en pausa" con motivo (clima), unible a Emergencias (AF-143) | 🟡 enero-febrero |
+| Rendimiento por lote comparado con un promedio | 🟡 El sistema calcula el rendimiento (tn ÷ ha cosechadas) por cultivo y lote | Promedio de referencia con fuente y fecha y la comparación "+X % sobre el promedio" (AF-143) | 🟡 enero-febrero |
+| Segundo cultivo en el mismo lote y la misma campaña | ✅ Cada cultivo es "cultivo + campaña + lote": se pueden cargar dos en el mismo lote | Marcar "de segunda" (opcional) | Hecho |
+
+**Criterio:** el caso ya se puede cargar casi completo. No cambia el plan de diciembre.
+
+### 25.22. Frutihortícola de Presidencia Roque Sáenz Peña (Chaco, noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 24/11/2026; no es especificación técnica.
+
+**Síntesis:** la Ing. Agr. Cecilia Codutti busca que los productores frutihortícolas de la zona incorporen nuevas tecnologías.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Frutales | Cultivo perenne / frutales (AF-134) | — (se suma como ejemplo) | 🟡 |
+| Hortalizas de ciclo corto | Agricultura (cultivo + campaña + lote) | Horticultura: varios ciclos por año en el mismo lote, lotes chicos (m² o surcos), invernadero y riego, venta frecuente (feria, mercado concentrador, directo) (AF-144) | 🟡 |
+| Probar lo que hay | — | Auditar que Agricultura acepte un lote chico con más de un cultivo por año | 🔴 enero, nada nuevo |
+| Módulo completo | — | Módulo de horticultura completo | 🟢 después |
+
+**Criterio:** en enero no se agrega nada nuevo; primero se audita lo que ya existe.
