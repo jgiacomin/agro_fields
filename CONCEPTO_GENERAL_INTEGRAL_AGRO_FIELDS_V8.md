@@ -1065,6 +1065,12 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en la jorna
 - Principio inspirador: "Verificar antes de arrancar", a partir de la parábola del trigo y la cizaña (sección 25.26). Matriz AF-153 (moderación del Mercado: marcar, apartar, decidir con criterio, mirar el fruto y cuidar el trigo); amplía AF-038 y AF-145.
 - Principio inspirador: Virgilio, Bucólicas y Geórgicas, con el lema *"labor omnia vicit improbus"* para la página web (sección 25.27). Sin AF nuevo.
 
+### Incorporaciones del 27/11/2026
+
+- Caso de referencia: miArgentina y GDEBA como modelos de sencillez (sección 25.29). Matriz AF-154 (Inicio con botones y "Mis campos" en lista corta, validado), AF-155 (entrar con huella, 🟡 diciembre) y AF-156 (página web pública, demo aprobada).
+- Decisión del Mercado: publicar directo con un solo "Guardar" para quien el admin habilitó una vez, con "Bajó de precio" (Matriz AF-157, validado: 300 pruebas de reglas y prueba en la app). Responsable del aviso: el primer broker o inmobiliaria que carga el campo, hasta que el dueño toma posesión; si el dueño nunca se suma, sigue el primer broker. Cada campo aparece una sola vez en el Mercado, con un solo precio. Amplía AF-038.
+- Campanita de cambios para el dueño y el admin (Matriz AF-158) y aviso de campo repetido (Matriz AF-159, 🟡 enero).
+
 ---
 
 ## 25. Casos de referencia estratégicos
@@ -1523,3 +1529,17 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en la jorna
 | Un pastor pierde su tierra y otro la conserva (Bucólica I) | Seguridad de los títulos: expediente y toma de posesión del Mercado (AF-038 F) |
 
 **Criterio:** inspiración para el tono y los textos de la página web; no agrega funciones. Las frases en latín se citan con su fuente (obra, libro y verso) y con traducción simple.
+
+### 25.29. miArgentina y GDEBA: sencillez como modelo (noviembre de 2026)
+
+**Estado:** referencia de diseño registrada el 27/11/2026 a pedido del usuario; no es especificación técnica.
+
+**Qué se tomó:** de la app miArgentina, el Inicio con pocos botones grandes y casi sin bajar ("¿Qué necesitás hoy?"); de la página de GDEBA, una web pública con menú, banner, objetivos numerados y un botón de acceso que lleva al sistema. Agro Fields usa su propia frase: "¿Qué hacemos hoy en el campo?".
+
+| Referencia | Dónde aparece en Agro Fields |
+|---|---|
+| Inicio con botones grandes y perfil arriba (miArgentina) | AF-154: Inicio con 9 botones, campanita y personita ("Mi perfil") |
+| Ingreso simple en el celular | AF-155: entrar con huella (solo en el celular) |
+| Web pública con "Acceso" (GDEBA) | AF-156: página web con el lema de Virgilio (25.27) |
+
+**Criterio:** menos pantallas y menos botones repetidos; lo importante, a un toque. Las ideas se inspiran en esos sitios, sin copiar su marca ni su diseño.
