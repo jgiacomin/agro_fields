@@ -2324,3 +2324,91 @@ test('HA-02. Hectáreas con texto, negativas o claves raras [PROHIBIDO]', async 
   await assertFails(updateDoc(ref, { hectareas: { monte: -5 } }));
   await assertFails(updateDoc(ref, { hectareas: { privado: 10 } }));
 });
+
+// ------------------------- AF-038 F: TOMA DE POSESIÓN (27/11/2026) -------------------------
+// El broker carga el campo de un cliente (a9, sin dueño), genera un código
+// de un solo uso y el dueño lo canjea.
+const NUEVO_DUENO = 'nuevoDueno';
+const enDias = (d) => new Date(Date.now() + d * 24 * 3600 * 1000);
+
+const codigoDe = (extra = {}) => ({
+  activoId: 'a9', creadoPor: BROKER, fecha: new Date(), vence: enDias(7),
+  nombreCampo: 'Campo de un cliente', lugar: 'Villa Elisa', ...extra,
+});
+
+const guardarCodigo = (id, extra = {}) => env.withSecurityRulesDisabled(async (ctx) => {
+  await setDoc(doc(ctx.firestore(), `codigos_posesion/${id}`), codigoDe(extra));
+});
+
+const canjear = (uid, codigo, activo = 'a9') => {
+  const db = como(uid);
+  const batch = writeBatch(db);
+  batch.update(doc(db, `codigos_posesion/${codigo}`), { usadoPor: uid, usadoEn: new Date() });
+  batch.update(doc(db, `activos_agro/${activo}`), {
+    propietarioId: uid, codigoPosesion: codigo, ultimaActualizacion: new Date(),
+  });
+  return batch.commit();
+};
+
+test('POS-01. El broker genera un código para el campo sin dueño que cargó [PERMITIDO]', async () => {
+  await cargarCampoDeCliente();
+  await assertSucceeds(setDoc(doc(como(BROKER), 'codigos_posesion/AF7K3P9Q'), codigoDe()));
+});
+
+test('POS-02. Nadie genera código para un campo que ya tiene dueño, ni para uno ajeno [PROHIBIDO]', async () => {
+  await cargarCampoDeCliente();
+  await assertFails(setDoc(doc(como(BROKER), 'codigos_posesion/AF1'), codigoDe({ activoId: 'a1' })));
+  await assertFails(setDoc(doc(como(OTRO), 'codigos_posesion/AF2'), codigoDe({ creadoPor: OTRO })));
+  await assertFails(setDoc(doc(como(BROKER), 'codigos_posesion/AF3'), codigoDe({ vence: enDias(30) })));
+});
+
+test('POS-03. El dueño canjea el código y queda como dueño [PERMITIDO]', async () => {
+  await cargarCampoDeCliente();
+  await guardarCodigo('AF7K3P9Q');
+  await assertSucceeds(canjear(NUEVO_DUENO, 'AF7K3P9Q'));
+  await assertSucceeds(getDoc(doc(como(NUEVO_DUENO), 'activos_agro/a9')));
+});
+
+test('POS-04. Un código vencido no sirve [PROHIBIDO]', async () => {
+  await cargarCampoDeCliente();
+  await guardarCodigo('VIEJO1', { vence: enDias(-1) });
+  await assertFails(canjear(NUEVO_DUENO, 'VIEJO1'));
+});
+
+test('POS-05. Un código ya usado no sirve para otro [PROHIBIDO]', async () => {
+  await cargarCampoDeCliente();
+  await guardarCodigo('UNAVEZ');
+  await canjear(NUEVO_DUENO, 'UNAVEZ');
+  await assertFails(canjear(OTRO, 'UNAVEZ'));
+});
+
+test('POS-06. Sin código (o con el de otro campo) nadie se queda con un campo [PROHIBIDO]', async () => {
+  await cargarCampoDeCliente();
+  await assertFails(updateDoc(doc(como(OTRO), 'activos_agro/a9'), { propietarioId: OTRO }));
+  await guardarCodigo('DEA1', { activoId: 'a1' });
+  await assertFails(canjear(OTRO, 'DEA1', 'a9'));
+});
+
+test('POS-07. El broker no puede canjear su propio código [PROHIBIDO]', async () => {
+  await cargarCampoDeCliente();
+  await guardarCodigo('PROPIO');
+  await assertFails(canjear(BROKER, 'PROPIO'));
+});
+
+test('POS-08. Al tomar posesión, el contacto del aviso pasa al dueño [PERMITIDO]', async () => {
+  await cargarCampoDeCliente();
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), 'activos_publicos/a9'),
+      { ...resumenA9(BROKER), estadoPublicacion: 'publicado', visible: true });
+  });
+  await guardarCodigo('CONTACTO');
+  const db = como(NUEVO_DUENO);
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'codigos_posesion/CONTACTO'), { usadoPor: NUEVO_DUENO, usadoEn: new Date() });
+  batch.update(doc(db, 'activos_agro/a9'), {
+    propietarioId: NUEVO_DUENO, codigoPosesion: 'CONTACTO', ultimaActualizacion: new Date(),
+  });
+  batch.update(doc(db, 'activos_publicos/a9'), { propietarioId: NUEVO_DUENO, ultimaActualizacion: new Date() });
+  await assertSucceeds(batch.commit());
+});
+

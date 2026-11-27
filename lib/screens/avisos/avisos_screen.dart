@@ -71,6 +71,9 @@ class _AvisosScreenState extends State<AvisosScreen> {
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: () async {
+          // 27/11/2026: los avisos de "algo que pasó" quedan vistos.
+          await _servicio.marcarVisto(a);
+          if (!mounted) return;
           await Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => a.destino()));
           // Al volver, se recalcula (por si ya lo atendiste).

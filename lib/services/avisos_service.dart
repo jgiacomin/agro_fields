@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -30,12 +31,21 @@ class Aviso {
   /// La pantalla a la que lleva el aviso.
   final Widget Function() destino;
 
+  /// Avisos de "algo que pasó" (27/11/2026): al tocarlos quedan vistos y
+  /// desaparecen hasta que pase algo nuevo. Los de "algo pendiente"
+  /// (documentos, consultas, cheques) no tienen clave: quedan hasta
+  /// resolverlos.
+  final String? claveVisto;
+  final DateTime? fecha;
+
   const Aviso({
     required this.icono,
     required this.color,
     required this.titulo,
     required this.detalle,
     required this.destino,
+    this.claveVisto,
+    this.fecha,
   });
 }
 
@@ -56,10 +66,46 @@ class AvisosService {
   final OperacionService _operaciones = OperacionService();
   final AuditService _auditoria = AuditService();
 
+  /// Lo que el usuario ya vio (se guarda en su documento de usuario, así
+  /// vale en el celular y en la compu).
+  Future<Map<String, DateTime>> _vistos(String uid) async {
+    try {
+      final d = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(uid)
+          .get();
+      final m = d.data()?['avisosVistos'];
+      if (m is! Map) return {};
+      return {
+        for (final e in m.entries)
+          if (e.value is Timestamp)
+            e.key.toString(): (e.value as Timestamp).toDate(),
+      };
+    } catch (_) {
+      return {};
+    }
+  }
+
+  /// Al tocar un aviso de "algo que pasó", queda visto.
+  Future<void> marcarVisto(Aviso a) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final clave = a.claveVisto;
+    final fecha = a.fecha;
+    if (uid == null || clave == null || fecha == null) return;
+    try {
+      await FirebaseFirestore.instance.collection('usuarios').doc(uid).update(
+          {'avisosVistos.$clave': Timestamp.fromDate(fecha)});
+    } catch (_) {}
+  }
+
+  static bool _nuevo(DateTime fecha, DateTime? visto) =>
+      visto == null || fecha.isAfter(visto);
+
   Future<List<Aviso>> avisos(List<ActivoAgroV2> campos) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return [];
     final lista = <Aviso>[];
+    final vistos = await _vistos(uid);
 
     // 1. Admin: publicaciones para aprobar.
     if (esAdminPorUid(uid)) {
@@ -83,18 +129,27 @@ class AvisosService {
     if (esAdminPorUid(uid)) {
       try {
         final hoy = DateTime.now();
+        final clave =
+            'mercado_${hoy.year}${hoy.month.toString().padLeft(2, '0')}${hoy.day.toString().padLeft(2, '0')}';
         final publicados =
             await ActivoAgroServiceV2().obtenerActivosPublicados();
-        final n = publicados.where((p) {
+        final cambiados = publicados.where((p) {
           final f = p.ultimaActualizacion;
           return p.ultimoCambioPor.isNotEmpty &&
               !esAdminPorUid(p.ultimoCambioPor) &&
               f.year == hoy.year &&
               f.month == hoy.month &&
-              f.day == hoy.day;
-        }).length;
+              f.day == hoy.day &&
+              _nuevo(f, vistos[clave]);
+        }).toList();
+        final n = cambiados.length;
         if (n > 0) {
+          final ultima = cambiados
+              .map((p) => p.ultimaActualizacion)
+              .reduce((a, b) => a.isAfter(b) ? a : b);
           lista.add(Aviso(
+            claveVisto: clave,
+            fecha: ultima,
             icono: Icons.storefront,
             color: AgroTema.azul,
             titulo: n == 1
@@ -133,8 +188,17 @@ class AvisosService {
       // días): el dueño, o el broker que lo cargó si todavía no hay dueño.
       if (campo.contactoMercadoId == uid) {
         try {
-          final c = await _avisoDeCambios(campo, uid);
+          final c = await _avisoDeCambios(campo, uid, vistos);
           if (c != null) lista.add(c);
+        } catch (_) {}
+      }
+      // AF-038 F: al broker, cuando el dueño toma posesión del campo.
+      if (campo.publicadorId == uid &&
+          campo.propietarioId.isNotEmpty &&
+          campo.propietarioId != uid) {
+        try {
+          final p = await _avisoDePosesion(campo, uid, vistos);
+          if (p != null) lista.add(p);
         } catch (_) {}
       }
       lista.addAll(_avisosDeDocumentos(campo));
@@ -148,19 +212,27 @@ class AvisosService {
   /// AF-158 (27/11/2026): el último cambio que hizo otra persona (broker,
   /// admin, profesional o encargado) en los últimos 7 días. Lee el registro
   /// del campo (auditoría), que el dueño ya puede leer.
-  Future<Aviso?> _avisoDeCambios(ActivoAgroV2 campo, String uid) async {
+  static const _noSonCambios = {'generar_codigo_posesion', 'tomar_posesion'};
+
+  Future<Aviso?> _avisoDeCambios(
+      ActivoAgroV2 campo, String uid, Map<String, DateTime> vistos) async {
     final desde = DateTime.now().subtract(const Duration(days: 7));
+    final clave = 'cambios_${campo.activoId}';
     final eventos = (await _auditoria.obtenerPorActivo(campo.activoId))
         .where((e) =>
             e.usuarioId.isNotEmpty &&
             e.usuarioId != uid &&
-            e.fecha.isAfter(desde))
+            !_noSonCambios.contains(e.accion) &&
+            e.fecha.isAfter(desde) &&
+            _nuevo(e.fecha, vistos[clave]))
         .toList()
       ..sort((a, b) => b.fecha.compareTo(a.fecha));
     if (eventos.isEmpty) return null;
     final ultimo = eventos.first;
     final mas = eventos.length - 1;
     return Aviso(
+      claveVisto: clave,
+      fecha: ultimo.fecha,
       icono: Icons.edit_note,
       color: AgroTema.terracota,
       titulo: '${_quien(ultimo, campo)} ${_queHizo(ultimo.accion)}',
@@ -171,6 +243,34 @@ class AvisosService {
         if (mas > 1) '$mas cambios más',
       ].join(' · '),
       destino: () => DetalleActivoAgroScreen(activo: campo),
+    );
+  }
+
+  Future<Aviso?> _avisoDePosesion(
+      ActivoAgroV2 campo, String uid, Map<String, DateTime> vistos) async {
+    final desde = DateTime.now().subtract(const Duration(days: 7));
+    final clave = 'posesion_${campo.activoId}';
+    final eventos = (await _auditoria.obtenerPorActivo(campo.activoId))
+        .where((e) =>
+            e.accion == 'tomar_posesion' &&
+            e.fecha.isAfter(desde) &&
+            _nuevo(e.fecha, vistos[clave]))
+        .toList()
+      ..sort((a, b) => b.fecha.compareTo(a.fecha));
+    if (eventos.isEmpty) return null;
+    final e = eventos.first;
+    final nombre = e.datos?['quien'];
+    final quien = nombre is String && nombre.trim().isNotEmpty
+        ? nombre.trim()
+        : 'El dueño';
+    return Aviso(
+      icono: Icons.key_outlined,
+      color: AgroTema.verde,
+      titulo: '$quien tomó posesión de ${campo.nombre}',
+      detalle: 'Ahora las consultas le llegan al dueño · ${_cuando(e.fecha)}',
+      destino: () => DetalleActivoAgroScreen(activo: campo),
+      claveVisto: clave,
+      fecha: e.fecha,
     );
   }
 

@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/auth/admin.dart';
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../models/activos/grupo_productivo_model.dart';
 import '../../services/activo_agro_service_v2.dart';
+import '../../services/posesion_service.dart';
 import '../../services/produccion_service.dart';
 import '../documentos/documentos_activo_screen.dart';
 import '../emergencias/emergencias_activo_screen.dart';
@@ -192,10 +195,90 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
           const Icon(Icons.handshake_outlined, color: AgroTema.azul),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              'Cargaste este campo para un cliente.\n$dueno',
-              style: const TextStyle(fontSize: 14, color: AgroTema.pizarra),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Cargaste este campo para un cliente.\n$dueno',
+                  style:
+                      const TextStyle(fontSize: 14, color: AgroTema.pizarra),
+                ),
+                // AF-038 F (27/11/2026): código para que el dueño tome
+                // posesión del campo.
+                if (activo.sinDueno)
+                  TextButton.icon(
+                    onPressed: _pasarAlDueno,
+                    icon: const Icon(Icons.key_outlined, size: 18),
+                    label: const Text('Pasarle el campo al dueño'),
+                    style: TextButton.styleFrom(
+                        foregroundColor: AgroTema.azul,
+                        padding: EdgeInsets.zero),
+                  ),
+              ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pasarAlDueno() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+    String codigo;
+    try {
+      codigo = await PosesionService().generar(activo, uid);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No se pudo generar el código: $e')));
+      return;
+    }
+    if (!mounted) return;
+    final visible = PosesionService.mostrar(codigo);
+    final mensaje = 'Hola. Cargué tu campo "${activo.nombre}" en Agro Fields. '
+        'Para que quede a tu nombre, entrá a la app, andá a Menú → '
+        '"Tengo un código de mi campo" y pegá este código: $visible '
+        '(vence en 7 días).';
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Código para el dueño'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SelectableText(visible,
+                style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
+                    color: AgroTema.pizarra)),
+            const SizedBox(height: 8),
+            const Text('Sirve una sola vez y vence en 7 días. Cuando el '
+                'dueño lo use, te llega un aviso a la campanita.'),
+          ],
+        ),
+        actions: [
+          TextButton.icon(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: mensaje));
+              if (ctx.mounted) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                    const SnackBar(content: Text('Mensaje copiado')));
+              }
+            },
+            icon: const Icon(Icons.copy),
+            label: const Text('Copiar'),
+          ),
+          FilledButton.icon(
+            onPressed: () => launchUrl(
+              Uri.parse(
+                  'https://wa.me/?text=${Uri.encodeComponent(mensaje)}'),
+              mode: LaunchMode.externalApplication,
+            ),
+            icon: const Icon(Icons.send),
+            label: const Text('WhatsApp'),
           ),
         ],
       ),

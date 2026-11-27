@@ -16,6 +16,7 @@ import '../plan/mi_plan_screen.dart';
 import '../../widgets/logo_agro_fields.dart';
 import '../produccion/produccion_estilo.dart';
 import '../campos/mis_campos_screen.dart';
+import '../campos/tomar_posesion_screen.dart';
 import '../campos/ubicacion_activo_screen.dart';
 import '../documentos/documentos_activo_screen.dart';
 import '../emergencias/emergencias_activo_screen.dart';
@@ -373,6 +374,15 @@ debugPrint(
                   Navigator.of(hoja).pop();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => const CamposProfesionalScreen()));
+                },
+              ),
+              // AF-038 F: el dueño pega el código que le mandó el broker.
+              ListTile(
+                leading: const Icon(Icons.key_outlined),
+                title: const Text('Tengo un código de mi campo'),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  _abrirTomarPosesion();
                 },
               ),
               ListTile(
@@ -772,6 +782,12 @@ debugPrint(
     );
   }
 
+  Future<void> _abrirTomarPosesion() async {
+    await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const TomarPosesionScreen()));
+    await cargarUsuario();
+  }
+
   Future<void> _abrirMisCampos() async {
     await Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const MisCamposScreen()));
@@ -1137,6 +1153,12 @@ debugPrint(
                     side: const BorderSide(color: AgroTema.terracota),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
+                ),
+                // AF-038 F: si un broker ya lo cargó, con el código.
+                TextButton.icon(
+                  onPressed: _abrirTomarPosesion,
+                  icon: const Icon(Icons.key_outlined),
+                  label: const Text('Me mandaron un código de mi campo'),
                 ),
               ],
             ),

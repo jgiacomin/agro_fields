@@ -50,6 +50,20 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/publicadores_habilitados/$(request.auth.uid));
     }
 
+    // AF-038 F (27/11/2026): el dueño toma posesión con un código de un solo
+    // uso que generó el broker. En el mismo batch el código queda usado por
+    // él (getAfter) y antes no lo había usado nadie (get).
+    function codigoPosesionValido(id, codigo) {
+      let ruta = /databases/$(database)/documents/codigos_posesion/$(codigo);
+      let despues = getAfter(ruta).data;
+      return codigo is string
+        && exists(ruta)
+        && get(ruta).data.get('usadoPor', '') == ''
+        && despues.activoId == id
+        && despues.usadoPor == request.auth.uid
+        && despues.vence > request.time;
+    }
+
     // true si la escritura modifica alguno de esos campos.
     // QA Grupo C (20/11/2026): cuántos documentos tiene el expediente.
     function cantidadDocumentos(d) {
@@ -168,7 +182,15 @@ service cloud.firestore {
             && parteDeActivo(resource.data)
             && !cambia(['propietarioId', 'publicadorId'])
             && cantidadDocumentos(request.resource.data)
-                >= cantidadDocumentos(resource.data));
+                >= cantidadDocumentos(resource.data))
+        // AF-038 F: toma de posesión. Solo un campo sin dueño, solo para
+        // quien canjea el código y sin tocar nada más del expediente.
+        || (logueado()
+            && resource.data.propietarioId == ''
+            && request.resource.data.propietarioId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['propietarioId', 'codigoPosesion', 'ultimaActualizacion'])
+            && codigoPosesionValido(activoId, request.resource.data.codigoPosesion));
 
       // Un expediente no se borra desde la app (trazabilidad).
       allow delete: if esAdmin();
@@ -297,7 +319,14 @@ service cloud.firestore {
             && request.resource.data.visible == false
             && resumenPublicoValido(request.resource.data, activoId))
         || (resource.data.propietarioId == request.resource.data.propietarioId
-            && publicaDirecto(request.resource.data, activoId));
+            && publicaDirecto(request.resource.data, activoId))
+        // AF-038 F: al tomar posesión, el contacto del aviso pasa al dueño.
+        || (logueado()
+            && activoDe(activoId).propietarioId == ''
+            && getAfter(/databases/$(database)/documents/activos_agro/$(activoId)).data.propietarioId == request.auth.uid
+            && request.resource.data.propietarioId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['propietarioId', 'ultimaActualizacion']));
 
       allow delete: if esAdmin();
     }
@@ -1306,6 +1335,34 @@ service cloud.firestore {
     // desde ahí publica y cambia sus avisos sin revisión. Solo el admin lo
     // crea o lo borra (sacar el permiso). Cada uno puede leer el suyo.
     // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // CÓDIGOS DE POSESIÓN (AF-038 F, 27/11/2026)
+    // El broker que cargó un campo sin dueño genera un código de un solo
+    // uso (ID = el código) que vence en 7 días. El dueño lo canjea una vez.
+    // -----------------------------------------------------------------
+    match /codigos_posesion/{codigo} {
+      // Para canjearlo hay que conocer el código.
+      allow get: if logueado();
+      allow list: if esAdmin();
+      allow create: if esAdmin()
+        || (logueado()
+            && request.resource.data.creadoPor == request.auth.uid
+            && request.resource.data.keys().hasOnly(
+                 ['activoId', 'creadoPor', 'fecha', 'vence', 'nombreCampo', 'lugar'])
+            && activoDe(request.resource.data.activoId).get('publicadorId', '') == request.auth.uid
+            && activoDe(request.resource.data.activoId).propietarioId == ''
+            && request.resource.data.vence is timestamp
+            && request.resource.data.vence <= request.time + duration.value(8, 'd'));
+      allow update: if logueado()
+        && resource.data.get('usadoPor', '') == ''
+        && resource.data.vence > request.time
+        && request.auth.uid != resource.data.creadoPor
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['usadoPor', 'usadoEn'])
+        && request.resource.data.usadoPor == request.auth.uid;
+      allow delete: if esAdmin() || resource.data.creadoPor == request.auth.uid;
+    }
+
     match /publicadores_habilitados/{usuarioId} {
       allow get: if esAdmin() || esUsuario(usuarioId);
       allow list: if esAdmin();
