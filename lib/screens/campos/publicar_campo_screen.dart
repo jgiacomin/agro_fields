@@ -73,6 +73,19 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
       text: widget.activo.ubicacion.superficie > 0
           ? OfertaMercado.numero(widget.activo.ubicacion.superficie)
           : '');
+  // AF-146: "¿Cómo están las hectáreas?"
+  late final TextEditingController _haLimpias =
+      _controlHa(widget.activo.ubicacion.haLimpias);
+  late final TextEditingController _haAgricolas =
+      _controlHa(widget.activo.ubicacion.haAgricolas);
+  late final TextEditingController _haGanaderas =
+      _controlHa(widget.activo.ubicacion.haGanaderas);
+  late final TextEditingController _haMonte =
+      _controlHa(widget.activo.ubicacion.haMonte);
+
+  static TextEditingController _controlHa(double v) => TextEditingController(
+      text: v > 0 ? OfertaMercado.numero(v) : '');
+
   late final TextEditingController _dueno =
       TextEditingController(text: widget.activo.duenoDeclarado ?? '');
   bool _guardando = false;
@@ -189,6 +202,7 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
     }
     for (final c in [
       _nombre, _descripcion, _provincia, _localidad, _superficie, _dueno,
+      _haLimpias, _haAgricolas, _haGanaderas, _haMonte,
     ]) {
       c.dispose();
     }
@@ -206,6 +220,10 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
       provincia: _provincia.text.trim(),
       localidad: _localidad.text.trim(),
       superficie: _leerPrecio(_superficie.text) ?? 0,
+      haLimpias: _leerPrecio(_haLimpias.text) ?? 0,
+      haAgricolas: _leerPrecio(_haAgricolas.text) ?? 0,
+      haGanaderas: _leerPrecio(_haGanaderas.text) ?? 0,
+      haMonte: _leerPrecio(_haMonte.text) ?? 0,
       duenoDeclarado:
           _dueno.text.trim().isEmpty ? null : _dueno.text.trim(),
     );
@@ -333,6 +351,14 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
               precioPor: _ofertas[op]!.precioPor,
             ),
       ];
+
+  Widget _campoHa(TextEditingController c, String etiqueta) {
+    return TextFormField(
+      controller: c,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      decoration: _decoracion(etiqueta, ayuda: 'ha'),
+    );
+  }
 
   InputDecoration _decoracion(String etiqueta, {String? ayuda}) {
     final borde = OutlineInputBorder(
@@ -614,6 +640,34 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 decoration: _decoracion('Hectáreas', ayuda: '2.300'),
+              ),
+              // AF-146 (27/11/2026): cómo están las hectáreas (declarado).
+              const Padding(
+                padding: EdgeInsets.only(top: 4),
+                child: Text('¿Cómo están las hectáreas?',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: AgroTema.pizarra)),
+              ),
+              Row(
+                children: [
+                  Expanded(child: _campoHa(_haLimpias, 'Limpias')),
+                  const SizedBox(width: 10),
+                  Expanded(
+                      child: _campoHa(_haAgricolas, 'Agrícolas / directa')),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                      child: _campoHa(_haGanaderas, 'Ganaderas / pasturas')),
+                  const SizedBox(width: 10),
+                  Expanded(child: _campoHa(_haMonte, 'Monte')),
+                ],
+              ),
+              const Text(
+                'Dato declarado. Dejá vacío lo que no sepas.',
+                style: TextStyle(fontSize: 12, color: AgroTema.pizarraSuave),
               ),
               if (widget.activo.sinDueno)
                 TextFormField(

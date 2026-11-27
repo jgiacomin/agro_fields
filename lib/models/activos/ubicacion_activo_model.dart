@@ -28,6 +28,18 @@ class UbicacionActivo {
 
   final double superficie;
 
+  /// AF-146 (27/11/2026): "¿Cómo están las hectáreas?" (declarado por quien
+  /// carga el campo; 0 = sin dato).
+  final double haLimpias;
+  final double haAgricolas;
+  final double haGanaderas;
+  final double haMonte;
+
+  bool get tieneDistribucion =>
+      haLimpias > 0 || haAgricolas > 0 || haGanaderas > 0 || haMonte > 0;
+
+  static double _num(dynamic v) => v is num ? v.toDouble() : 0;
+
 
 
   // ==========================
@@ -101,6 +113,10 @@ class UbicacionActivo {
     required this.zonaHoraria,
 
     required this.monedaLocal,
+    this.haLimpias = 0,
+    this.haAgricolas = 0,
+    this.haGanaderas = 0,
+    this.haMonte = 0,
 
   });
 
@@ -180,6 +196,11 @@ class UbicacionActivo {
 
       monedaLocal:
       map['monedaLocal'] ?? '',
+
+      haLimpias: _num(map['haLimpias']),
+      haAgricolas: _num(map['haAgricolas']),
+      haGanaderas: _num(map['haGanaderas']),
+      haMonte: _num(map['haMonte']),
 
     );
 
@@ -261,6 +282,11 @@ class UbicacionActivo {
       'monedaLocal':
       monedaLocal,
 
+      'haLimpias': haLimpias,
+      'haAgricolas': haAgricolas,
+      'haGanaderas': haGanaderas,
+      'haMonte': haMonte,
+
     };
 
   }
@@ -308,6 +334,10 @@ class UbicacionActivo {
       jurisdiccionLegal: jurisdiccionLegal,
       zonaHoraria: zonaHoraria,
       monedaLocal: monedaLocal,
+      haLimpias: haLimpias,
+      haAgricolas: haAgricolas,
+      haGanaderas: haGanaderas,
+      haMonte: haMonte,
     );
   }
 }

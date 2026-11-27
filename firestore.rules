@@ -228,11 +228,27 @@ service cloud.firestore {
           'madurezPorcentaje', 'producciones', 'propietarioId',
           'estadoPublicacion', 'visible', 'ultimaActualizacion',
           'motivoRevision', 'ofertas', 'fotos',
-          'bajoDePrecio', 'ultimoCambioPor'])
+          'bajoDePrecio', 'ultimoCambioPor', 'hectareas'])
         && d.get('bajoDePrecio', false) is bool
+        && hectareasValidas(d.get('hectareas', {}))
         && d.get('ultimoCambioPor', '') is string
         && ofertasValidas(d)
         && fotosValidas(d, id);
+    }
+
+    // AF-146 (27/11/2026): "¿Cómo están las hectáreas?" en el aviso.
+    // Solo estas claves, cada una un número de 0 o más.
+    function haValida(h, clave) {
+      return !(clave in h) || (h[clave] is number && h[clave] >= 0);
+    }
+
+    function hectareasValidas(h) {
+      return h is map
+        && h.keys().hasOnly(['limpias', 'agricolas', 'ganaderas', 'monte'])
+        && haValida(h, 'limpias')
+        && haValida(h, 'agricolas')
+        && haValida(h, 'ganaderas')
+        && haValida(h, 'monte');
     }
 
     // PUB-DIRECTO: aviso publicado directo por alguien habilitado (dueño o

@@ -57,6 +57,15 @@ class ActivoPublico {
   /// PUB-DIRECTO: quién hizo el último cambio del aviso (uid).
   final String ultimoCambioPor;
 
+  /// AF-146 (27/11/2026): "¿Cómo están las hectáreas?" (declarado; 0 = sin dato).
+  final double haLimpias;
+  final double haAgricolas;
+  final double haGanaderas;
+  final double haMonte;
+
+  bool get tieneDistribucion =>
+      haLimpias > 0 || haAgricolas > 0 || haGanaderas > 0 || haMonte > 0;
+
   const ActivoPublico({
     required this.activoId,
     required this.nombre,
@@ -77,6 +86,10 @@ class ActivoPublico {
     this.fotos = const [],
     this.bajoDePrecio = false,
     this.ultimoCambioPor = '',
+    this.haLimpias = 0,
+    this.haAgricolas = 0,
+    this.haGanaderas = 0,
+    this.haMonte = 0,
   });
 
   /// Arma el resumen a partir del expediente, copiando solo lo publicable.
@@ -112,6 +125,10 @@ class ActivoPublico {
       fotos: fotos,
       bajoDePrecio: bajoDePrecio,
       ultimoCambioPor: ultimoCambioPor,
+      haLimpias: activo.ubicacion.haLimpias,
+      haAgricolas: activo.ubicacion.haAgricolas,
+      haGanaderas: activo.ubicacion.haGanaderas,
+      haMonte: activo.ubicacion.haMonte,
     );
   }
 
@@ -138,6 +155,10 @@ class ActivoPublico {
           ? List<String>.from((map['fotos'] as List).whereType<String>())
           : const [],
       bajoDePrecio: map['bajoDePrecio'] == true,
+      haLimpias: _ha(map['hectareas'], 'limpias'),
+      haAgricolas: _ha(map['hectareas'], 'agricolas'),
+      haGanaderas: _ha(map['hectareas'], 'ganaderas'),
+      haMonte: _ha(map['hectareas'], 'monte'),
       ultimoCambioPor: map['ultimoCambioPor'] is String
           ? map['ultimoCambioPor'] as String
           : '',
@@ -165,7 +186,20 @@ class ActivoPublico {
       'fotos': fotos,
       'bajoDePrecio': bajoDePrecio,
       if (ultimoCambioPor.isNotEmpty) 'ultimoCambioPor': ultimoCambioPor,
+      if (tieneDistribucion)
+        'hectareas': {
+          if (haLimpias > 0) 'limpias': haLimpias,
+          if (haAgricolas > 0) 'agricolas': haAgricolas,
+          if (haGanaderas > 0) 'ganaderas': haGanaderas,
+          if (haMonte > 0) 'monte': haMonte,
+        },
     };
+  }
+
+  static double _ha(dynamic mapa, String clave) {
+    if (mapa is! Map) return 0;
+    final v = mapa[clave];
+    return v is num ? v.toDouble() : 0;
   }
 
   static DateTime _leerFecha(dynamic valor) {

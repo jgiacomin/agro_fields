@@ -141,6 +141,17 @@ String publicadoHace(DateTime fecha, [DateTime? ahora]) {
 }
 
 /// "2.390" o "6,5" (como se escribe en la región).
+/// AF-146: "250 limpias · 200 agrícolas · 50 monte" (solo lo cargado).
+String distribucionTexto(
+    double limpias, double agricolas, double ganaderas, double monte) {
+  return [
+    if (limpias > 0) '${hectareasTexto(limpias)} limpias',
+    if (agricolas > 0) '${hectareasTexto(agricolas)} agrícolas',
+    if (ganaderas > 0) '${hectareasTexto(ganaderas)} ganaderas',
+    if (monte > 0) '${hectareasTexto(monte)} monte',
+  ].join(' · ');
+}
+
 String hectareasTexto(double ha) {
   final entero = ha.truncate();
   final s = entero.toString();
@@ -315,6 +326,19 @@ class _TarjetaCampo extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // AF-146 (27/11/2026): cómo están las hectáreas.
+                  if (campo.tieneDistribucion) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      distribucionTexto(campo.haLimpias, campo.haAgricolas,
+                          campo.haGanaderas, campo.haMonte),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AgroTema.verde,
+                      ),
+                    ),
+                  ],
                   // GAP-MERC-01 H (25/11/2026): cuándo se publicó (la fecha
                   // se guarda al aprobar la publicación).
                   const SizedBox(height: 4),

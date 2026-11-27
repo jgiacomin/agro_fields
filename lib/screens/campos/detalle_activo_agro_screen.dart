@@ -18,6 +18,7 @@ import '../economia/economia_activo_screen.dart';
 import '../stock/stock_activo_screen.dart';
 import '../territorio/historia_territorio_screen.dart';
 import 'primeros_pasos.dart';
+import 'campos_screen.dart' show distribucionTexto;
 import 'publicar_campo_screen.dart';
 import 'suelo_activo_screen.dart';
 import 'ubicacion_activo_screen.dart';
@@ -479,6 +480,17 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
                 ),
               ],
             ),
+            // AF-146 (27/11/2026): cómo están las hectáreas.
+            if (u.tieneDistribucion) ...[
+              const SizedBox(height: 10),
+              Text(
+                'Hectáreas: ${distribucionTexto(u.haLimpias, u.haAgricolas, u.haGanaderas, u.haMonte)} (declarado)',
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AgroTema.verde),
+              ),
+            ],
             const SizedBox(height: 14),
             ResumenNumeros([
               (

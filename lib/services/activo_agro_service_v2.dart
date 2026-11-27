@@ -351,6 +351,11 @@ Future<void> actualizarDatosCampo({
   required String localidad,
   required double superficie,
   String? duenoDeclarado,
+  // AF-146: "¿Cómo están las hectáreas?" (null = no se toca).
+  double? haLimpias,
+  double? haAgricolas,
+  double? haGanaderas,
+  double? haMonte,
 }) async {
   final u = activo.ubicacion;
   final cambios = <String, Object?>{};
@@ -367,6 +372,14 @@ Future<void> actualizarDatosCampo({
   anotar('ubicacion.provincia', u.provincia, provincia);
   anotar('ubicacion.localidad', u.localidad, localidad);
   anotar('ubicacion.superficie', u.superficie, superficie);
+  if (haLimpias != null) anotar('ubicacion.haLimpias', u.haLimpias, haLimpias);
+  if (haAgricolas != null) {
+    anotar('ubicacion.haAgricolas', u.haAgricolas, haAgricolas);
+  }
+  if (haGanaderas != null) {
+    anotar('ubicacion.haGanaderas', u.haGanaderas, haGanaderas);
+  }
+  if (haMonte != null) anotar('ubicacion.haMonte', u.haMonte, haMonte);
   if (activo.sinDueno) {
     anotar('duenoDeclarado', activo.duenoDeclarado, duenoDeclarado);
   }

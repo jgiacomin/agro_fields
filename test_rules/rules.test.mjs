@@ -2308,3 +2308,19 @@ test('DIR-10. El admin saca el permiso y el dueño vuelve a pasar por revisión 
   await assertFails(publicarDirecto(DUENO));
   await assertSucceeds(publicarComoLaApp(DUENO));
 });
+
+// ------------------------- AF-146 HECTÁREAS (27/11/2026) -------------------------
+test('HA-01. El aviso lleva cómo están las hectáreas (números) [PERMITIDO]', async () => {
+  await assertSucceeds(publicarComoLaApp(DUENO));
+  await assertSucceeds(updateDoc(doc(como(DUENO), 'activos_publicos/a1'), {
+    hectareas: { limpias: 1800, agricolas: 250, monte: 400 },
+  }));
+});
+
+test('HA-02. Hectáreas con texto, negativas o claves raras [PROHIBIDO]', async () => {
+  await publicarComoLaApp(DUENO);
+  const ref = doc(como(DUENO), 'activos_publicos/a1');
+  await assertFails(updateDoc(ref, { hectareas: { limpias: 'mil' } }));
+  await assertFails(updateDoc(ref, { hectareas: { monte: -5 } }));
+  await assertFails(updateDoc(ref, { hectareas: { privado: 10 } }));
+});
