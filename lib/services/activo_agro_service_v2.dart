@@ -389,6 +389,44 @@ Future<void> actualizarDatosCampo({
   );
 }
 
+/// INICIO-BOTONES (27/11/2026), paso 2 de GAP-EDITAR-01: "Guardar" en
+/// "Editar campo" también guarda la operación y el precio en el expediente
+/// (Inicio y "Mis campos" lo muestran al instante). El aviso público del
+/// Mercado no se toca acá: se actualiza al volver a publicar.
+Future<void> guardarOfertas({
+  required ActivoAgroV2 activo,
+  required List<OfertaMercado> ofertas,
+  required String usuarioId,
+}) async {
+  if (ofertas.isEmpty) return;
+  final antes = activo.economia.ofertas.map((o) => o.toMap()).toList();
+  final despues = ofertas.map((o) => o.toMap()).toList();
+  final economia = EconomiaActivo.fromMap({
+    ...activo.economia.toMap(),
+    'ofertas': despues,
+    'tipoOperacion': ofertas.first.operacion,
+    'valorSolicitado': ofertas.first.precio ?? 0,
+    'moneda': ofertas.first.moneda,
+    'fechaActualizacion': DateTime.now(),
+  });
+
+  await _db.collection(coleccion).doc(activo.activoId).update({
+    'economia': economia.toMap(),
+    'ultimaActualizacion': Timestamp.now(),
+  });
+
+  await _auditService.registrar(
+    activoId: activo.activoId,
+    usuarioId: usuarioId,
+    tipo: AuditType.modificacion,
+    modulo: 'economia',
+    accion: 'guardar_ofertas',
+    elementoAfectado: activo.activoId,
+    referencia: activo.activoId,
+    datos: {'antes': antes, 'despues': despues},
+  );
+}
+
 /// GAP-BROKER-01 (26/11/2026): los campos del usuario: los que es dueño
 /// y los que cargó (por ejemplo, como broker para un cliente), sin repetir.
 Future<List<ActivoAgroV2>> buscarMisCampos(String uid) async {

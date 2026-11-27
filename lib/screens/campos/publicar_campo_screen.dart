@@ -205,11 +205,18 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
     setState(() => _guardando = true);
     try {
       await _guardarDatos();
+      // INICIO-BOTONES (27/11/2026): también la operación y el precio.
+      final ofertas = _armarOfertas();
+      if (ofertas.isNotEmpty) {
+        final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+        await _servicio.guardarOfertas(
+            activo: widget.activo, ofertas: ofertas, usuarioId: uid);
+      }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(_estado == 'publicado'
-            ? 'Guardado. El aviso del Mercado se actualiza cuando lo '
-                'vuelvas a publicar.'
+            ? 'Guardado. En el Mercado el precio nuevo se ve cuando '
+                'vuelvas a publicar el aviso.'
             : 'Guardado'),
       ));
       Navigator.of(context).pop(true);
@@ -240,23 +247,26 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
   double? _leerPrecio(String texto) => double.tryParse(
       texto.trim().replaceAll('.', '').replaceAll(',', '.'));
 
+  /// Las ofertas tal como están en pantalla (operación, precio, moneda).
+  List<OfertaMercado> _armarOfertas() => [
+        for (final op in OfertaMercado.operaciones)
+          if (_ofertas[op] != null)
+            OfertaMercado(
+              operacion: op,
+              precio: _ofertas[op]!.consultar
+                  ? null
+                  : _leerPrecio(_ofertas[op]!.precio.text),
+              moneda: _ofertas[op]!.moneda,
+              precioPor: _ofertas[op]!.precioPor,
+            ),
+      ];
+
   Future<void> _enviar() async {
     final bien = _formKey.currentState!.validate();
     setState(() => _faltaOperacion = _ofertas.isEmpty);
     if (!bien || _ofertas.isEmpty) return;
 
-    final ofertas = [
-      for (final op in OfertaMercado.operaciones)
-        if (_ofertas[op] != null)
-          OfertaMercado(
-            operacion: op,
-            precio: _ofertas[op]!.consultar
-                ? null
-                : _leerPrecio(_ofertas[op]!.precio.text),
-            moneda: _ofertas[op]!.moneda,
-            precioPor: _ofertas[op]!.precioPor,
-          ),
-    ];
+    final ofertas = _armarOfertas();
 
     // GAP-EDITAR-01: si ya estaba publicado, se avisa que vuelve a revisión.
     if (_estado == 'publicado') {

@@ -15,7 +15,11 @@ import '../legal/terminos_screen.dart';
 import '../plan/mi_plan_screen.dart';
 import '../../widgets/logo_agro_fields.dart';
 import '../produccion/produccion_estilo.dart';
-import '../campos/detalle_activo_agro_screen.dart';
+import '../campos/mis_campos_screen.dart';
+import '../campos/ubicacion_activo_screen.dart';
+import '../documentos/documentos_activo_screen.dart';
+import '../emergencias/emergencias_activo_screen.dart';
+import '../produccion/produccion_activo_screen.dart';
 
 import '../campos/crear_activo_agro_screen.dart';
 import '../campos/mis_activos_screen.dart';
@@ -29,7 +33,6 @@ import '../profesionales/mi_codigo_profesional_screen.dart';
 import '../../widgets/aviso_publicaciones_admin.dart';
 import '../../services/avisos_service.dart';
 import '../avisos/avisos_screen.dart';
-import '../../widgets/tarjeta_campo.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({
@@ -467,35 +470,32 @@ debugPrint(
                         const AvisoPendientes(),
                         // GAP-MERC-01 G: publicaciones para aprobar (admin).
                         const AvisoPublicacionesAdmin(),
+                        // INICIO-BOTONES (27/11/2026): el Inicio con botones
+                        // grandes (estilo miArgentina). La lista de campos
+                        // pasó al botón "Mis campos" (lista corta).
                         if (esPropietario) ...[
-                          const TituloSeccion('Tu campo en resumen',
-                              icono: Icons.insights),
                           _resumen(),
-                          const SizedBox(height: 20),
-                        ],
-                        // GAP-EDITAR-01 (26/11/2026): el Inicio ES la lista
-                        // de campos (tarjeta completa con ✏️ Editar). Tocar
-                        // el campo abre la ficha. Propios y de clientes en
-                        // dos grupos (GAP-BROKER-01).
-                        if (activos.any((a) => !a.sinDueno)) ...[
-                          const TituloSeccion('Mis campos',
-                              icono: Icons.agriculture),
-                          ..._listaCampos(clientes: false),
-                          const SizedBox(height: 8),
-                        ],
-                        if (activos.any((a) => a.sinDueno)) ...[
-                          const TituloSeccion('Campos de clientes',
-                              icono: Icons.handshake_outlined),
-                          ..._listaCampos(clientes: true),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 18),
                         ],
                         // Sin campos: el Mercado y la invitación a cargar.
                         if (activos.isEmpty) ...[
                           _sinCampos(),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 18),
                         ],
-                        const TituloSeccion('Accesos', icono: Icons.apps),
-                        _accesosRapidos(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, bottom: 12),
+                          child: Text(
+                            _trabajaElCampo
+                                ? '¿Qué hacemos hoy en el campo?'
+                                : '¿Qué querés hacer hoy?',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: AgroTema.pizarra,
+                            ),
+                          ),
+                        ),
+                        _botones(),
                       ],
                     ),
                   ),
@@ -609,6 +609,18 @@ debugPrint(
                       tooltip: 'Avisos',
                       onPressed: _abrirAvisos,
                     ),
+                    // INICIO-BOTONES: la personita abre "Mi perfil".
+                    Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: _abrirPerfil,
+                        child: Tooltip(
+                          message: 'Mi perfil',
+                          child: _avatar(40),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 18),
@@ -655,33 +667,287 @@ debugPrint(
     return 'Buenas noches';
   }
 
-  // ---------------- ACCESOS (dos columnas) ----------------
+  // ---------------- BOTONES (INICIO-BOTONES, 27/11/2026) ----------------
 
-  Widget _accesosRapidos() {
-    // Los que todavía no existen ("Próximamente") van al final.
-    final accesos = <_Acceso>[
-      // GAP-EDITAR-01: sin repetidos (Mis campos = Inicio, Crear = ➕,
-      // Mercado y Mensajes = menú de abajo).
-      if (esPropietario)
-        _Acceso(Icons.inbox, 'Solicitudes', AgroTema.azul, abrirSolicitudes),
-      const _Acceso(Icons.map, 'Territorio Inteligente', AgroTema.azul, null),
-      const _Acceso(
-          Icons.bar_chart, 'Economía y Gestión', AgroTema.verde, null),
-      const _Acceso(Icons.groups, 'Red Agropecuaria', AgroTema.pizarra, null),
+  /// Trabaja el campo (tiene campos propios) o es broker/inmobiliaria/
+  /// sin campos: cambia la frase de arriba de los botones.
+  bool get _trabajaElCampo => activos.any((a) => !a.sinDueno);
+
+  bool get _esAdmin => esAdminPorUid(FirebaseAuth.instance.currentUser?.uid);
+
+  Widget _botones() {
+    final botones = <_Boton>[
+      _Boton(Icons.agriculture, 'Mis campos', AgroTema.verde, _abrirMisCampos),
+      _Boton(Icons.storefront, 'Mercado', AgroTema.azul, abrirCamposDisponibles),
+      _Boton(Icons.chat_bubble_outline, 'Mensajes', AgroTema.azul,
+          abrirConversaciones),
+      _Boton(Icons.description_outlined, 'Documentos', AgroTema.pizarra,
+          () => _conCampo('Documentos', soloPropios: false, abrir: (a) {
+                return DocumentosActivoScreen(
+                    activoAgroId: a.activoId, nombreActivo: a.nombre);
+              })),
+      _Boton(Icons.warning_amber_rounded, 'Emergencias', AgroTema.rojo,
+          () => _conCampo('Emergencias', abrir: (a) {
+                return EmergenciasActivoScreen(
+                    activoAgroId: a.activoId, nombreActivo: a.nombre);
+              })),
+      _Boton(Icons.location_on_outlined, 'Mapa', AgroTema.verde,
+          () => _conCampo('Mapa', soloPropios: false, abrir: (a) {
+                return UbicacionActivoScreen(activo: a);
+              })),
+      _Boton(Icons.bar_chart, 'Producción', AgroTema.pizarra,
+          () => _conCampo('Producción', abrir: (a) {
+                return ProduccionActivoScreen(
+                    activoAgroId: a.activoId, nombreActivo: a.nombre);
+              })),
+      if (_esAdmin)
+        _Boton(Icons.admin_panel_settings_outlined, 'Administración',
+            AgroTema.pizarra, () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const AdminScreen()));
+        })
+      else if (esPropietario)
+        _Boton(Icons.inbox_outlined, 'Solicitudes', AgroTema.azul,
+            abrirSolicitudes)
+      else
+        _Boton(Icons.workspace_premium_outlined, 'Mi plan', AgroTema.pizarra,
+            () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const MiPlanScreen()));
+        }),
+      _Boton(Icons.add, 'Cargar campo', AgroTema.terracota, abrirCrearActivo,
+          destacado: true),
     ];
 
-    // Dos columnas en el celular; más en pantallas grandes.
-    return GridView.builder(
+    // Tres columnas, en el celular y en la compu (como la demo aprobada).
+    return GridView.count(
+      crossAxisCount: 3,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: accesos.length,
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 260,
-        mainAxisExtent: 78,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: MediaQuery.sizeOf(context).width > 600 ? 2.2 : 1.0,
+      children: [for (final b in botones) _cuadroBoton(b)],
+    );
+  }
+
+  Widget _cuadroBoton(_Boton b) {
+    final fondo = b.destacado ? AgroTema.terracota : Colors.white;
+    final colorTexto = b.destacado ? Colors.white : AgroTema.pizarra;
+    return Material(
+      color: fondo,
+      elevation: 1.5,
+      shadowColor: const Color(0x332F3B46),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+            color: b.destacado ? AgroTema.terracotaOscuro : AgroTema.borde),
       ),
-      itemBuilder: (_, i) => _cuadroAcceso(accesos[i]),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: b.alTocar,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(b.icono,
+                  size: 34, color: b.destacado ? Colors.white : b.color),
+              const SizedBox(height: 8),
+              Text(
+                b.texto,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: colorTexto,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _abrirMisCampos() async {
+    await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const MisCamposScreen()));
+    await cargarUsuario();
+  }
+
+  /// Documentos, Emergencias, Mapa y Producción son de un campo: con un
+  /// solo campo se abre directo; con varios, primero se elige cuál.
+  /// [soloPropios]: la gestión (Producción, Emergencias) no es para los
+  /// campos que un broker cargó para un cliente.
+  Future<void> _conCampo(
+    String titulo, {
+    bool soloPropios = true,
+    required Widget Function(ActivoAgroV2 activo) abrir,
+  }) async {
+    final lista = activos.where((a) => !soloPropios || !a.sinDueno).toList()
+      ..sort((a, b) => a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase()));
+    if (lista.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Primero cargá un campo con "Cargar campo".')));
+      return;
+    }
+    ActivoAgroV2? elegido = lista.length == 1 ? lista.first : null;
+    elegido ??= await showModalBottomSheet<ActivoAgroV2>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (hoja) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(hoja).height * 0.7),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+                child: Text(
+                  '$titulo: ¿de qué campo?',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+              ),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final a in lista)
+                      ListTile(
+                        leading: const Icon(Icons.grass, color: AgroTema.verde),
+                        title: Text(a.nombre),
+                        subtitle: Text([
+                          a.ubicacion.localidad,
+                          a.ubicacion.provincia
+                        ].where((x) => x.trim().isNotEmpty).join(', ')),
+                        onTap: () => Navigator.of(hoja).pop(a),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (elegido == null || !mounted) return;
+    await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => abrir(elegido!)));
+    await cargarUsuario();
+  }
+
+  // ---------------- MI PERFIL (la personita) ----------------
+
+  Widget _avatar(double tamano) {
+    final foto = usuario?.foto.trim() ?? '';
+    return Container(
+      width: tamano,
+      height: tamano,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFFE9E2D4),
+        border: Border.all(color: AgroTema.dorado, width: 2),
+      ),
+      child: ClipOval(
+        child: foto.isEmpty
+            ? Icon(Icons.person, color: AgroTema.pizarra, size: tamano * 0.6)
+            : Image.network(
+                foto,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Icon(Icons.person,
+                    color: AgroTema.pizarra, size: tamano * 0.6),
+              ),
+      ),
+    );
+  }
+
+  void _abrirPerfil() {
+    final email = usuario?.email ?? '';
+    final nombre = usuario?.nombre.trim() ?? '';
+    final rol = _esAdmin
+        ? 'Administrador'
+        : (usuario?.rol.trim().isNotEmpty ?? false)
+            ? usuario!.rol
+            : '';
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (hoja) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _avatar(72),
+              const SizedBox(height: 10),
+              Text(
+                nombre.isEmpty ? 'Mi perfil' : nombre,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+              ),
+              if (email.isNotEmpty)
+                Text(email,
+                    style: const TextStyle(color: AgroTema.pizarraSuave)),
+              if (rol.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(rol,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, color: AgroTema.verde)),
+                ),
+              const SizedBox(height: 8),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.workspace_premium_outlined),
+                title: const Text('Mi plan'),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const MiPlanScreen()));
+                },
+              ),
+              // AF nuevo "Entrar con huella": 🟡 diciembre, en Android.
+              const ListTile(
+                enabled: false,
+                leading: Icon(Icons.fingerprint),
+                title: Text('Entrar con huella'),
+                subtitle: Text('Próximamente, en el celular'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.gavel_outlined),
+                title: const Text('Términos y privacidad'),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const TerminosScreen()));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout, color: AgroTema.rojo),
+                title: const Text('Cerrar sesión',
+                    style: TextStyle(color: AgroTema.rojo)),
+                onTap: () {
+                  Navigator.of(hoja).pop();
+                  cerrarSesion();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -774,45 +1040,58 @@ debugPrint(
         0, (suma, a) => suma + (a.ubicacion.superficie > 0 ? a.ubicacion.superficie : 0));
     final enMapa = activos.where((a) => a.ubicacion.tieneCoordenadas).length;
 
-    // Diseño V8: los mismos números de colores que el resumen de Producción,
-    // en dos filas para que entren bien en el celular.
+    // INICIO-BOTONES: los 4 números en una sola fila chica.
     final colorDocs = vencidos > 0
         ? AgroTema.rojo
         : porVencer > 0
             ? AgroTema.terracota
             : AgroTema.pizarraSuave;
-    return Column(
+    return Row(
       children: [
-        ResumenNumeros([
-          (
-            '$cantidadActivosPropios',
+        _numero('$cantidadActivosPropios',
             cantidadActivosPropios == 1 ? 'campo' : 'campos',
-            Icons.agriculture,
-            AgroTema.verde,
-          ),
-          (
-            hectareas > 0 ? _miles(hectareas) : '—',
-            'hectáreas',
-            Icons.straighten,
-            AgroTema.azul,
-          ),
-        ]),
-        const SizedBox(height: 10),
-        ResumenNumeros([
-          (
-            '${vencidos + porVencer}',
+            AgroTema.verde, AgroTema.verdeClaro),
+        const SizedBox(width: 8),
+        _numero(hectareas > 0 ? _miles(hectareas) : '—', 'hectáreas',
+            AgroTema.azul, const Color(0xFFE6ECF3)),
+        const SizedBox(width: 8),
+        _numero('${vencidos + porVencer}',
             vencidos > 0 ? 'docs. vencidos' : 'docs. por vencer',
-            Icons.description,
-            colorDocs,
-          ),
-          (
-            '$enMapa/$cantidadActivosPropios',
-            'en el mapa',
-            Icons.location_on,
-            AgroTema.terracota,
-          ),
-        ]),
+            colorDocs, AgroTema.rojoFondo),
+        const SizedBox(width: 8),
+        _numero('$enMapa/$cantidadActivosPropios', 'en el mapa',
+            AgroTema.terracotaOscuro, AgroTema.terracotaClaro),
       ],
+    );
+  }
+
+  Widget _numero(String valor, String texto, Color color, Color fondo) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+        decoration: BoxDecoration(
+          color: fondo,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            FittedBox(
+              child: Text(
+                valor,
+                style: TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.w800, color: color),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              texto,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: const TextStyle(fontSize: 11, color: AgroTema.pizarra),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -824,30 +1103,6 @@ debugPrint(
       buffer.write(entero[i]);
     }
     return buffer.toString();
-  }
-
-  // ---------------- MIS CAMPOS (tarjetas que se deslizan) ----------------
-
-
-  Future<void> _abrirCampo(ActivoAgroV2 activo) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => DetalleActivoAgroScreen(activo: activo),
-      ),
-    );
-    await cargarUsuario();
-  }
-
-  /// GAP-EDITAR-01: la lista de campos del Inicio (el más nuevo primero).
-  List<Widget> _listaCampos({required bool clientes}) {
-    final lista = activos.where((a) => a.sinDueno == clientes).toList()
-      ..sort((a, b) => b.fechaCreacion.compareTo(a.fechaCreacion));
-    return [
-      for (final a in lista)
-        // QA 26/11/2026: sin lápiz en el Inicio; se edita desde la ficha
-        // (un solo camino: Inicio → campo → ✏️).
-        TarjetaCampo(activo: a, alAbrir: () => _abrirCampo(a)),
-    ];
   }
 
   /// GAP-EDITAR-01: quien no tiene campos ve el Mercado y la invitación.
@@ -891,68 +1146,18 @@ debugPrint(
     );
   }
 
-  /// Diseño V8: tarjeta crema con el ícono en círculo. Los "Próximamente"
-  /// quedan más apagados y sin flecha.
-  Widget _cuadroAcceso(_Acceso acceso) {
-    final pronto = acceso.alTocar == null;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 2),
-      child: TarjetaBlanca(
-        onTap: pronto ? null : acceso.alTocar,
-        colorFondo: pronto ? const Color(0xFFF3EEE5) : const Color(0xFFFFFAF2),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            children: [
-              IconoCirculo(
-                acceso.icono,
-                color: pronto ? AgroTema.pizarraSuave : acceso.color,
-                tamano: 44,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      acceso.texto,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.2,
-                        fontWeight: FontWeight.w600,
-                        color: pronto ? AgroTema.pizarraSuave : AgroTema.pizarra,
-                      ),
-                    ),
-                    if (pronto)
-                      const Text(
-                        'Próximamente',
-                        style: TextStyle(
-                            fontSize: 11, color: AgroTema.pizarraSuave),
-                      ),
-                  ],
-                ),
-              ),
-              if (!pronto)
-                const Icon(Icons.chevron_right, color: AgroTema.pizarraSuave),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
 
-/// Un cuadro de "Accesos rapidos". Sin accion = todavia no existe ("Próximamente").
-class _Acceso {
+/// Un botón grande del Inicio (INICIO-BOTONES, 27/11/2026).
+class _Boton {
   final IconData icono;
   final String texto;
   final Color color;
-  final VoidCallback? alTocar;
+  final VoidCallback alTocar;
+  final bool destacado;
 
-  const _Acceso(this.icono, this.texto, this.color, this.alTocar);
+  const _Boton(this.icono, this.texto, this.color, this.alTocar,
+      {this.destacado = false});
 }
 
 /// Curva dorada abajo del encabezado del Inicio (la misma que dibuja

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/auth/admin.dart';
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../models/activos/grupo_productivo_model.dart';
@@ -295,10 +296,14 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
       : v.toString().replaceAll('.', ',');
 
   /// GAP-MERC-01: el dueño o quien cargó el campo (broker) puede publicar.
+  /// INICIO-BOTONES (27/11/2026): el admin también puede editar (las reglas
+  /// de Firebase ya lo dejaban; cada cambio queda en la auditoría con su uid).
   bool get _puedePublicar {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     return uid != null &&
-        (uid == activo.propietarioId || uid == activo.publicadorId);
+        (uid == activo.propietarioId ||
+            uid == activo.publicadorId ||
+            esAdminPorUid(uid));
   }
 
   String get _textoMercado {
