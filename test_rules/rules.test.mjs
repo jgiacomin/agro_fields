@@ -2226,3 +2226,85 @@ test('BROKER-08. El dueño sigue viendo y cargando su stock y su producción [PE
   await assertSucceeds(getDoc(doc(como(DUENO), 'recursos/recurso_001')));
   await assertSucceeds(setDoc(doc(como(DUENO), 'unidades_productivas/u1'), unidadDe(DUENO)));
 });
+
+// ------------------------- PUB-DIRECTO (27/11/2026) -------------------------
+// Quien el admin habilitó una vez (dueño, broker o inmobiliaria) publica y
+// cambia su aviso sin revisión. El resto sigue pasando por revisión.
+
+const habilitar = (uid) => env.withSecurityRulesDisabled(async (ctx) => {
+  await setDoc(doc(ctx.firestore(), `publicadores_habilitados/${uid}`),
+    { habilitadoPor: ADMIN, fecha: new Date() });
+});
+
+const publicarDirecto = (uid, extra = {}) => {
+  const db = como(uid);
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'activos_agro/a1'), {
+    estadoPublicacion: 'publicado',
+    visible: true,
+  });
+  batch.set(doc(db, 'activos_publicos/a1'), {
+    ...resumenDe('publicado', true),
+    ultimoCambioPor: uid,
+    ...extra,
+  });
+  return batch.commit();
+};
+
+test('DIR-01. El dueño habilitado publica directo y el comprador lo ve [PERMITIDO]', async () => {
+  await habilitar(DUENO);
+  await assertSucceeds(publicarDirecto(DUENO));
+  await assertSucceeds(getDoc(doc(como(COMPRADOR), 'activos_publicos/a1')));
+});
+
+test('DIR-02. El dueño NO habilitado no puede publicar directo [PROHIBIDO]', async () => {
+  await assertFails(publicarDirecto(DUENO));
+});
+
+test('DIR-03. El broker habilitado cambia el precio del aviso publicado (bajó de precio) [PERMITIDO]', async () => {
+  await habilitar(DUENO);
+  await habilitar(BROKER);
+  await publicarDirecto(DUENO);
+  await assertSucceeds(publicarDirecto(BROKER, { bajoDePrecio: true }));
+});
+
+test('DIR-04. Un tercero habilitado NO publica el campo de otro [PROHIBIDO]', async () => {
+  await habilitar(OTRO);
+  await assertFails(publicarDirecto(OTRO));
+});
+
+test('DIR-05. Nadie puede anotar que el cambio lo hizo otra persona [PROHIBIDO]', async () => {
+  await habilitar(BROKER);
+  await assertFails(publicarDirecto(BROKER, { ultimoCambioPor: DUENO }));
+});
+
+test('DIR-06. El habilitado NO puede cambiar el contacto del aviso [PROHIBIDO]', async () => {
+  await habilitar(BROKER);
+  await assertFails(publicarDirecto(BROKER, { propietarioId: BROKER }));
+});
+
+test('DIR-07. bajoDePrecio tiene que ser sí/no [PROHIBIDO]', async () => {
+  await habilitar(DUENO);
+  await assertFails(publicarDirecto(DUENO, { bajoDePrecio: 'si' }));
+});
+
+test('DIR-08. Solo el admin habilita; nadie se habilita solo [PROHIBIDO]', async () => {
+  await assertFails(setDoc(doc(como(DUENO), `publicadores_habilitados/${DUENO}`),
+    { habilitadoPor: DUENO, fecha: new Date() }));
+  await assertSucceeds(setDoc(doc(como(ADMIN), `publicadores_habilitados/${DUENO}`),
+    { habilitadoPor: ADMIN, fecha: new Date() }));
+});
+
+test('DIR-09. Cada uno ve si está habilitado, pero no la lista de otros [PERMITIDO/PROHIBIDO]', async () => {
+  await habilitar(DUENO);
+  await assertSucceeds(getDoc(doc(como(DUENO), `publicadores_habilitados/${DUENO}`)));
+  await assertFails(getDoc(doc(como(OTRO), `publicadores_habilitados/${DUENO}`)));
+  await assertFails(getDocs(collection(como(OTRO), 'publicadores_habilitados')));
+});
+
+test('DIR-10. El admin saca el permiso y el dueño vuelve a pasar por revisión [PERMITIDO]', async () => {
+  await habilitar(DUENO);
+  await assertSucceeds(deleteDoc(doc(como(ADMIN), `publicadores_habilitados/${DUENO}`)));
+  await assertFails(publicarDirecto(DUENO));
+  await assertSucceeds(publicarComoLaApp(DUENO));
+});

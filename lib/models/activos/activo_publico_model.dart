@@ -50,6 +50,13 @@ class ActivoPublico {
   /// campo (la primera es la portada). Son de la publicación.
   final List<String> fotos;
 
+  /// PUB-DIRECTO (27/11/2026): el último cambio bajó el precio (el Mercado
+  /// muestra "Bajó de precio").
+  final bool bajoDePrecio;
+
+  /// PUB-DIRECTO: quién hizo el último cambio del aviso (uid).
+  final String ultimoCambioPor;
+
   const ActivoPublico({
     required this.activoId,
     required this.nombre,
@@ -68,6 +75,8 @@ class ActivoPublico {
     required this.ultimaActualizacion,
     this.ofertas = const [],
     this.fotos = const [],
+    this.bajoDePrecio = false,
+    this.ultimoCambioPor = '',
   });
 
   /// Arma el resumen a partir del expediente, copiando solo lo publicable.
@@ -75,7 +84,11 @@ class ActivoPublico {
   /// GAP-MERC-01 Parte D: [actividades] son las actividades reales del
   /// campo; si no vienen, se usan las del expediente (como antes).
   factory ActivoPublico.desdeActivo(ActivoAgroV2 activo,
-      {List<String> fotos = const [], List<String>? actividades}) {
+      {List<String> fotos = const [],
+      List<String>? actividades,
+      bool directo = false,
+      bool bajoDePrecio = false,
+      String ultimoCambioPor = ''}) {
     return ActivoPublico(
       activoId: activo.activoId,
       nombre: activo.nombre,
@@ -91,11 +104,14 @@ class ActivoPublico {
           activo.producciones.map((p) => p.actividad).toList(),
       // GAP-BROKER-01: quien atiende las consultas (dueño o broker).
       propietarioId: activo.contactoMercadoId,
-      estadoPublicacion: 'pendienteRevision',
-      visible: false,
+      // PUB-DIRECTO: quien está habilitado publica directo.
+      estadoPublicacion: directo ? 'publicado' : 'pendienteRevision',
+      visible: directo,
       ultimaActualizacion: DateTime.now(),
       ofertas: activo.economia.ofertas,
       fotos: fotos,
+      bajoDePrecio: bajoDePrecio,
+      ultimoCambioPor: ultimoCambioPor,
     );
   }
 
@@ -121,6 +137,10 @@ class ActivoPublico {
       fotos: map['fotos'] is List
           ? List<String>.from((map['fotos'] as List).whereType<String>())
           : const [],
+      bajoDePrecio: map['bajoDePrecio'] == true,
+      ultimoCambioPor: map['ultimoCambioPor'] is String
+          ? map['ultimoCambioPor'] as String
+          : '',
     );
   }
 
@@ -143,6 +163,8 @@ class ActivoPublico {
       'ultimaActualizacion': Timestamp.fromDate(ultimaActualizacion),
       'ofertas': ofertas.map((o) => o.toMap()).toList(),
       'fotos': fotos,
+      'bajoDePrecio': bajoDePrecio,
+      if (ultimoCambioPor.isNotEmpty) 'ultimoCambioPor': ultimoCambioPor,
     };
   }
 

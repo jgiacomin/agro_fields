@@ -43,6 +43,13 @@ service cloud.firestore {
       return logueado() && request.auth.uid == uid;
     }
 
+    // PUB-DIRECTO (27/11/2026): el admin habilitó a este usuario (dueño,
+    // broker o inmobiliaria) para publicar y cambiar sus avisos sin revisión.
+    function habilitado() {
+      return logueado()
+        && exists(/databases/$(database)/documents/publicadores_habilitados/$(request.auth.uid));
+    }
+
     // true si la escritura modifica alguno de esos campos.
     // QA Grupo C (20/11/2026): cuántos documentos tiene el expediente.
     function cantidadDocumentos(d) {
@@ -220,9 +227,25 @@ service cloud.firestore {
           'provincia', 'localidad', 'superficie', 'nivelConfianza',
           'madurezPorcentaje', 'producciones', 'propietarioId',
           'estadoPublicacion', 'visible', 'ultimaActualizacion',
-          'motivoRevision', 'ofertas', 'fotos'])
+          'motivoRevision', 'ofertas', 'fotos',
+          'bajoDePrecio', 'ultimoCambioPor'])
+        && d.get('bajoDePrecio', false) is bool
+        && d.get('ultimoCambioPor', '') is string
         && ofertasValidas(d)
         && fotosValidas(d, id);
+    }
+
+    // PUB-DIRECTO: aviso publicado directo por alguien habilitado (dueño o
+    // quien cargó el campo). El contacto sigue siendo el responsable del
+    // campo y queda anotado quién hizo el último cambio.
+    function publicaDirecto(d, id) {
+      return puedeActivo(id)
+        && habilitado()
+        && d.propietarioId == contactoMercado(id)
+        && d.estadoPublicacion == 'publicado'
+        && d.visible == true
+        && d.get('ultimoCambioPor', '') == request.auth.uid
+        && resumenPublicoValido(d, id);
     }
 
     match /activos_publicos/{activoId} {
@@ -245,7 +268,8 @@ service cloud.firestore {
             && request.resource.data.propietarioId == contactoMercado(activoId)
             && request.resource.data.estadoPublicacion == 'pendienteRevision'
             && request.resource.data.visible == false
-            && resumenPublicoValido(request.resource.data, activoId));
+            && resumenPublicoValido(request.resource.data, activoId))
+        || publicaDirecto(request.resource.data, activoId);
 
       // El dueÃ±o puede editar borrador/pendiente/pausar, pero NO poner 'publicado'.
       allow update: if esAdmin()
@@ -255,7 +279,9 @@ service cloud.firestore {
             && request.resource.data.estadoPublicacion
                  in ['borrador', 'pendienteRevision', 'pausado']
             && request.resource.data.visible == false
-            && resumenPublicoValido(request.resource.data, activoId));
+            && resumenPublicoValido(request.resource.data, activoId))
+        || (resource.data.propietarioId == request.resource.data.propietarioId
+            && publicaDirecto(request.resource.data, activoId));
 
       allow delete: if esAdmin();
     }
@@ -1256,6 +1282,18 @@ service cloud.firestore {
       allow create, update: if esAdmin()
         && exists(/databases/$(database)/documents/usuarios/$(usuarioId));
       allow delete: if false;
+    }
+
+    // -----------------------------------------------------------------
+    // PUBLICADORES HABILITADOS (PUB-DIRECTO, 27/11/2026)
+    // Un documento por usuario (ID = usuario) que el admin aprobó una vez:
+    // desde ahí publica y cambia sus avisos sin revisión. Solo el admin lo
+    // crea o lo borra (sacar el permiso). Cada uno puede leer el suyo.
+    // -----------------------------------------------------------------
+    match /publicadores_habilitados/{usuarioId} {
+      allow get: if esAdmin() || esUsuario(usuarioId);
+      allow list: if esAdmin();
+      allow create, update, delete: if esAdmin();
     }
 
     match /{document=**} {

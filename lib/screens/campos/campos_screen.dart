@@ -210,6 +210,36 @@ class _TarjetaCampo extends StatelessWidget {
                       ),
                     ),
                   ),
+                // PUB-DIRECTO (27/11/2026): el último cambio bajó el precio.
+                if (campo.bajoDePrecio)
+                  Positioned(
+                    left: 10,
+                    top: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AgroTema.verde,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.trending_down,
+                              size: 16, color: Colors.white),
+                          SizedBox(width: 4),
+                          Text(
+                            'Bajó de precio',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (campo.fotos.length > 1)
                   Positioned(
                     right: 10,

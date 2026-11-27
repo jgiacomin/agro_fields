@@ -318,33 +318,10 @@ class _DetalleActivoAgroScreenState extends State<DetalleActivoAgroScreen> {
     }
   }
 
-  /// GAP-MERC-01 (26/11/2026): abre "Publicar en el Mercado" (la misma
-  /// pantalla de "Mis campos"). Editar algo ya enviado lo vuelve a revisión.
+  /// GAP-MERC-01 (26/11/2026): abre "Editar campo" (precio, fotos y el
+  /// interruptor "Mostrar en el Mercado"). PUB-DIRECTO (27/11/2026): ahí
+  /// mismo se avisa si el cambio va a revisión.
   Future<void> _abrirMercado() async {
-    final estado = activo.estadoPublicacion;
-    if (estado == 'publicado' || estado == 'pendienteRevision') {
-      final seguir = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Editar publicación'),
-          content: const Text(
-            'Cuando guardes los cambios, el campo vuelve a revisión y no se '
-            've en el Mercado hasta que se apruebe de nuevo.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancelar'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Seguir'),
-            ),
-          ],
-        ),
-      );
-      if (seguir != true || !mounted) return;
-    }
     await _abrir(PublicarCampoScreen(activo: activo));
   }
 

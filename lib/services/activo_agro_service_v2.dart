@@ -448,11 +448,16 @@ Future<List<ActivoAgroV2>> buscarMisCampos(String uid) async {
 /// al resumen público. Sin ofertas se publica como antes.
 /// GAP-MERC-01 Parte B: [fotos] son las rutas de las fotos públicas (la
 /// primera es la portada). Si no vienen, se conservan las que ya tenía.
+/// PUB-DIRECTO (27/11/2026): con [directo] (admin o usuario habilitado)
+/// el aviso queda publicado al instante, sin revisión. [usuarioId] es quien
+/// hace el cambio (queda en el aviso como último cambio).
 Future<void> publicarActivo(
   String activoId, {
   List<OfertaMercado>? ofertas,
   List<String>? fotos,
   List<String>? actividades,
+  bool directo = false,
+  String usuarioId = '',
 }) async {
 
   final activo =
@@ -520,11 +525,11 @@ Future<void> publicarActivo(
     economia:
         economia,
     estado:
-        EstadoActivo.pendienteRevision,
+        directo ? EstadoActivo.publicado : EstadoActivo.pendienteRevision,
     estadoPublicacion:
-        'pendienteRevision',
+        directo ? 'publicado' : 'pendienteRevision',
     visible:
-        false,
+        directo,
     historial: [
       ...activoEvaluado.historial,
       evento,
@@ -533,18 +538,30 @@ Future<void> publicarActivo(
 
   // GAP-MERC-01 Parte B: fotos de la publicación (las nuevas o las que
   // ya tenía el resumen).
-  var fotosResumen = fotos;
-  if (fotosResumen == null) {
+  // PUB-DIRECTO: el aviso anterior (fotos y precio de antes).
+  Map<String, dynamic>? datosAnteriores;
+  try {
     final anterior =
         await _db.collection(coleccionPublica).doc(activoId).get();
-    final guardadas = anterior.data()?['fotos'];
+    datosAnteriores = anterior.data();
+  } catch (_) {
+    datosAnteriores = null;
+  }
+
+  var fotosResumen = fotos;
+  if (fotosResumen == null) {
+    final guardadas = datosAnteriores?['fotos'];
     fotosResumen =
         guardadas is List ? guardadas.whereType<String>().toList() : const [];
   }
 
   final resumen =
       ActivoPublico.desdeActivo(activoActualizado,
-          fotos: fotosResumen, actividades: actividades);
+          fotos: fotosResumen,
+          actividades: actividades,
+          directo: directo,
+          bajoDePrecio: _bajoDePrecio(datosAnteriores, economia.ofertas),
+          ultimoCambioPor: usuarioId);
 
   final batch = _db.batch();
 
@@ -579,10 +596,34 @@ Future<void> publicarActivo(
     estadoAnterior:
         activoEvaluado.estadoPublicacion,
     estadoNuevo:
-        'pendienteRevision',
+        directo ? 'publicado' : 'pendienteRevision',
     referencia:
         activoId,
   );
+}
+
+/// PUB-DIRECTO: ¿el precio nuevo es más bajo que el del aviso anterior?
+/// Se compara la misma operación (venta con venta, alquiler con alquiler).
+/// Si subió, se apaga; si no cambió, queda como estaba.
+bool _bajoDePrecio(
+    Map<String, dynamic>? anterior, List<OfertaMercado> nuevas) {
+  if (anterior == null || nuevas.isEmpty) return false;
+  final antes = OfertaMercado.listaDesde(anterior['ofertas']);
+  final seguia = anterior['bajoDePrecio'] == true;
+  var bajo = false;
+  var subio = false;
+  for (final n in nuevas) {
+    if (n.precio == null) continue;
+    for (final a in antes) {
+      if (a.operacion != n.operacion || a.precio == null) continue;
+      if (a.moneda != n.moneda) continue;
+      if (n.precio! < a.precio!) bajo = true;
+      if (n.precio! > a.precio!) subio = true;
+    }
+  }
+  if (bajo) return true;
+  if (subio) return false;
+  return seguia;
 }
 
 // =====================================================

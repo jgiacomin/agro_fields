@@ -7,6 +7,7 @@ import '../../models/aceptacion_legal_model.dart';
 import '../../models/activos/activo_publico_model.dart';
 import '../../models/plan_usuario_model.dart';
 import '../../services/admin_service.dart';
+import '../../services/habilitacion_service.dart';
 import '../../services/encargado_service.dart' show CodigoNoValido;
 import '../../widgets/aviso_codigo_equivocado.dart';
 import '../produccion/produccion_estilo.dart';
@@ -79,25 +80,72 @@ class _Publicaciones extends StatefulWidget {
 
 class _PublicacionesState extends State<_Publicaciones> {
   final AdminService _admin = AdminService();
+  final HabilitacionService _habilitacion = HabilitacionService();
   Future<List<ActivoPublico>>? _futuro;
+  Future<List<Habilitado>>? _habilitados;
 
   @override
   void initState() {
     super.initState();
     _futuro = _admin.publicacionesPendientes();
+    _habilitados = _habilitacion.habilitados();
   }
 
   // QA 20/11/2026: setState no puede devolver un Future (daba error al
   // aprobar o rechazar). Se asigna adentro de un bloque.
   void _recargar() => setState(() {
         _futuro = _admin.publicacionesPendientes();
+        _habilitados = _habilitacion.habilitados();
       });
 
   Future<void> _aprobar(ActivoPublico p) async {
+    // PUB-DIRECTO (27/11/2026): al aprobar, se puede habilitar a quien
+    // publicó para que de ahora en más publique directo.
+    final quien =
+        p.ultimoCambioPor.isNotEmpty ? p.ultimoCambioPor : p.propietarioId;
+    final yaHabilitado = await _habilitacion.estaHabilitado(quien);
+    if (!mounted) return;
+    var habilitar = !yaHabilitado;
+    final seguir = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogo) => AlertDialog(
+          title: const Text('Aprobar publicación'),
+          content: yaHabilitado
+              ? const Text('Quien publicó ya está habilitado para publicar '
+                  'directo.')
+              : CheckboxListTile(
+                  value: habilitar,
+                  contentPadding: EdgeInsets.zero,
+                  onChanged: (v) => setDialogo(() => habilitar = v ?? false),
+                  title: const Text('Habilitar para publicar directo'),
+                  subtitle: const Text(
+                      'De ahora en más sus avisos y cambios se ven al instante, '
+                      'sin revisión. Podés sacarle el permiso cuando quieras.'),
+                ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancelar')),
+            ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Aprobar')),
+          ],
+        ),
+      ),
+    );
+    if (seguir != true) return;
     try {
       await _admin.aprobar(p, widget.adminId);
+      if (habilitar && !yaHabilitado && quien.isNotEmpty) {
+        await _habilitacion.habilitar(quien, widget.adminId);
+      }
       if (!mounted) return;
-      _avisar(context, 'Aprobada: ya aparece en el Mercado de campos.');
+      _avisar(
+          context,
+          habilitar && !yaHabilitado
+              ? 'Aprobada y habilitado para publicar directo.'
+              : 'Aprobada: ya aparece en el Mercado de campos.');
       _recargar();
     } catch (e) {
       if (!mounted) return;
@@ -217,11 +265,78 @@ class _PublicacionesState extends State<_Publicaciones> {
                     ),
                   ),
                 ),
+              const SizedBox(height: 16),
+              _seccionHabilitados(),
             ],
           ),
         );
       },
     );
+  }
+
+  /// PUB-DIRECTO: quiénes publican directo, con el botón para sacar el permiso.
+  Widget _seccionHabilitados() {
+    return FutureBuilder<List<Habilitado>>(
+      future: _habilitados,
+      builder: (context, snap) {
+        final lista = snap.data ?? const <Habilitado>[];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Habilitados para publicar directo',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 6),
+            if (!snap.hasData && !snap.hasError)
+              const LinearProgressIndicator()
+            else if (lista.isEmpty)
+              const Text('Todavía no habilitaste a nadie.',
+                  style: TextStyle(color: EstiloProduccion.textoSuave)),
+            for (final h in lista)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.verified_outlined),
+                title: Text(h.nombre),
+                subtitle: h.fecha == null
+                    ? null
+                    : Text('Desde el ${fechaCorta(h.fecha!)}'),
+                trailing: TextButton(
+                  onPressed: () => _quitar(h),
+                  child: const Text('Quitar permiso'),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _quitar(Habilitado h) async {
+    final seguir = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Quitar permiso'),
+        content: Text('${h.nombre} va a volver a pasar por revisión cada vez '
+            'que publique o cambie un aviso.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancelar')),
+          ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Quitar')),
+        ],
+      ),
+    );
+    if (seguir != true) return;
+    try {
+      await _habilitacion.quitar(h.usuarioId, widget.adminId);
+      if (!mounted) return;
+      _avisar(context, 'Permiso quitado.');
+      _recargar();
+    } catch (e) {
+      if (!mounted) return;
+      _avisar(context, 'No se pudo quitar: $e');
+    }
   }
 }
 

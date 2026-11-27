@@ -2,11 +2,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/auth/admin.dart';
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_agro_model_v2.dart';
 import '../../models/activos/economia_activo_model.dart';
 import '../../services/activo_agro_service_v2.dart';
 import '../../services/foto_mercado_service.dart';
+import '../../services/habilitacion_service.dart';
 import '../../models/activos/grupo_productivo_model.dart';
 import '../../services/produccion_service.dart';
 import '../produccion/produccion_activo_screen.dart' show actividadDeGrupo;
@@ -49,7 +51,7 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
   /// Operaciones elegidas, en el orden fijo de OfertaMercado.operaciones.
   final Map<String, _Oferta> _ofertas = {};
   bool _faltaOperacion = false;
-  bool _enviando = false;
+
 
   /// GAP-MERC-01 Parte B: fotos de la publicación (la primera es la
   /// portada) y las que se quitaron (se borran recién al enviar).
@@ -79,6 +81,19 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
   bool get _yaEnviado =>
       _estado == 'publicado' || _estado == 'pendienteRevision';
 
+  /// PUB-DIRECTO (27/11/2026): interruptor "Mostrar en el Mercado".
+  late bool _enMercado = _yaEnviado;
+
+  /// Admin o usuario habilitado: lo que guarda se ve al instante.
+  bool _directo = false;
+
+  Future<void> _verSiPublicaDirecto() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final si = esAdminPorUid(uid) ||
+        await HabilitacionService().estaHabilitado(uid);
+    if (mounted) setState(() => _directo = si);
+  }
+
   String get _monedaDelCampo {
     final m = widget.activo.ubicacion.monedaLocal;
     return OfertaMercado.monedas.contains(m) ? m : 'USD';
@@ -95,6 +110,7 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
       _ofertas[o.operacion] = f;
     }
     _cargarFotos();
+    _verSiPublicaDirecto();
   }
 
   /// GAP-MERC-01 Parte D: actividades reales del campo para el Mercado
@@ -195,30 +211,87 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
     );
   }
 
-  /// "Guardar": solo los datos del campo. El aviso queda como estaba.
-  Future<void> _soloGuardar() async {
+  /// PUB-DIRECTO (27/11/2026): un solo botón "Guardar".
+  /// - Siempre guarda los datos del campo y el precio.
+  /// - "Mostrar en el Mercado" prendido: publica el aviso. Si es admin o
+  ///   está habilitado, se ve al instante; si no, va a revisión.
+  /// - Apagado en un aviso que estaba en el Mercado: se saca (pausa).
+  Future<void> _guardar() async {
     if (_nombre.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Escribí el nombre del campo')));
       return;
     }
+    final ofertas = _armarOfertas();
+    if (_enMercado) {
+      final bien = _formKey.currentState!.validate();
+      setState(() => _faltaOperacion = _ofertas.isEmpty);
+      if (!bien || _ofertas.isEmpty) return;
+    }
+
+    // Sin permiso para publicar directo, un aviso ya publicado vuelve a
+    // revisión: se avisa antes.
+    if (_enMercado && !_directo && _estado == 'publicado') {
+      final seguir = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('El aviso vuelve a revisión'),
+          content: const Text(
+            'El precio ya queda guardado en tu campo. En el Mercado se ve '
+            'cuando el administrador apruebe el cambio.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Seguir'),
+            ),
+          ],
+        ),
+      );
+      if (seguir != true || !mounted) return;
+    }
+
     setState(() => _guardando = true);
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     try {
       await _guardarDatos();
-      // INICIO-BOTONES (27/11/2026): también la operación y el precio.
-      final ofertas = _armarOfertas();
-      if (ofertas.isNotEmpty) {
-        final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-        await _servicio.guardarOfertas(
-            activo: widget.activo, ofertas: ofertas, usuarioId: uid);
+      String mensaje;
+      if (_enMercado) {
+        await _servicio.publicarActivo(widget.activo.activoId,
+            ofertas: ofertas,
+            fotos: _fotos,
+            actividades: await _actividades(),
+            directo: _directo,
+            usuarioId: uid);
+        // Las fotos quitadas se borran recién ahora.
+        for (final ruta in _quitadas) {
+          try {
+            await _fotosServicio.quitar(ruta);
+          } catch (_) {}
+        }
+        mensaje = _directo
+            ? 'Guardado. Ya se ve en el Mercado 🚜'
+            : 'Guardado y enviado a revisión: se verá en el Mercado '
+                'cuando se apruebe.';
+      } else {
+        if (ofertas.isNotEmpty) {
+          await _servicio.guardarOfertas(
+              activo: widget.activo, ofertas: ofertas, usuarioId: uid);
+        }
+        if (_yaEnviado) {
+          await _servicio.pausarActivo(widget.activo.activoId);
+          mensaje = 'Guardado. El aviso ya no se ve en el Mercado.';
+        } else {
+          mensaje = 'Guardado';
+        }
       }
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(_estado == 'publicado'
-            ? 'Guardado. En el Mercado el precio nuevo se ve cuando '
-                'vuelvas a publicar el aviso.'
-            : 'Guardado'),
-      ));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(mensaje)));
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
@@ -260,65 +333,6 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
               precioPor: _ofertas[op]!.precioPor,
             ),
       ];
-
-  Future<void> _enviar() async {
-    final bien = _formKey.currentState!.validate();
-    setState(() => _faltaOperacion = _ofertas.isEmpty);
-    if (!bien || _ofertas.isEmpty) return;
-
-    final ofertas = _armarOfertas();
-
-    // GAP-EDITAR-01: si ya estaba publicado, se avisa que vuelve a revisión.
-    if (_estado == 'publicado') {
-      final seguir = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('El aviso vuelve a revisión'),
-          content: const Text(
-            'No se ve en el Mercado hasta que el administrador lo apruebe '
-            'de nuevo. Si solo querés guardar los datos del campo, tocá '
-            '"Guardar".',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancelar'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Seguir'),
-            ),
-          ],
-        ),
-      );
-      if (seguir != true || !mounted) return;
-    }
-    setState(() => _enviando = true);
-    try {
-      await _guardarDatos();
-      await _servicio.publicarActivo(widget.activo.activoId,
-          ofertas: ofertas, fotos: _fotos, actividades: await _actividades());
-      // Las fotos quitadas se borran recién ahora (si se cancelaba, la
-      // publicación anterior seguía usándolas).
-      for (final ruta in _quitadas) {
-        try {
-          await _fotosServicio.quitar(ruta);
-        } catch (_) {}
-      }
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-            'Enviado a revisión: se verá en el Mercado cuando se apruebe 🚜'),
-      ));
-      Navigator.of(context).pop(true);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('No se pudo enviar: $e')));
-    } finally {
-      if (mounted) setState(() => _enviando = false);
-    }
-  }
 
   InputDecoration _decoracion(String etiqueta, {String? ayuda}) {
     final borde = OutlineInputBorder(
@@ -654,34 +668,37 @@ class _PublicarCampoScreenState extends State<PublicarCampoScreen> {
               if (_ofertas[op] != null) _tarjetaPrecio(op, _ofertas[op]!),
             _tarjetaFotos(),
             const SizedBox(height: 8),
-            // GAP-EDITAR-01: "Guardar" (solo datos) o publicar el aviso.
+            // PUB-DIRECTO (27/11/2026): un interruptor y un solo botón.
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AgroTema.borde),
+              ),
+              child: SwitchListTile(
+                value: _enMercado,
+                onChanged: _guardando
+                    ? null
+                    : (v) => setState(() => _enMercado = v),
+                activeColor: AgroTema.verde,
+                secondary:
+                    const Icon(Icons.storefront, color: AgroTema.azul),
+                title: const Text('Mostrar en el Mercado',
+                    style: TextStyle(fontWeight: FontWeight.w700)),
+                subtitle: Text(!_enMercado
+                    ? 'El aviso no se ve en el Mercado'
+                    : _directo
+                        ? 'Lo que guardes se ve al instante'
+                        : 'Se ve cuando el administrador lo apruebe'),
+              ),
+            ),
+            const SizedBox(height: 12),
             BotonGrande(
               texto: 'Guardar',
               icono: Icons.save_outlined,
               ocupado: _guardando,
-              onPressed: _guardando || _enviando || _subiendoFoto
-                  ? null
-                  : _soloGuardar,
-            ),
-            const SizedBox(height: 10),
-            OutlinedButton.icon(
-              onPressed: _enviando || _guardando || _subiendoFoto
-                  ? null
-                  : _enviar,
-              icon: _enviando
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.storefront),
-              label: Text(_yaEnviado
-                  ? 'Guardar y enviar el aviso a revisión'
-                  : 'Guardar y publicar en el Mercado'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AgroTema.terracota,
-                side: const BorderSide(color: AgroTema.terracota),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
+              onPressed:
+                  _guardando || _subiendoFoto ? null : _guardar,
             ),
             const SizedBox(height: 10),
             const Text(
