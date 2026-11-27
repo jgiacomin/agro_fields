@@ -596,8 +596,9 @@ Future<void> publicarActivo(
 
   await _auditService.registrar(
     activoId: activoId,
+    // AF-158: quien hizo el cambio (antes quedaba siempre el publicador).
     usuarioId:
-        activoEvaluado.publicadorId,
+        usuarioId.isNotEmpty ? usuarioId : activoEvaluado.publicadorId,
     tipo:
         AuditType.publicacion,
     modulo:

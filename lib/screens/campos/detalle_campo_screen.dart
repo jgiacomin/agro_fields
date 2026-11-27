@@ -2,17 +2,20 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../core/auth/admin.dart';
 import '../../core/theme/agro_tema.dart';
 import '../../models/activos/activo_publico_model.dart';
 import '../../models/solicitud_contacto_model.dart';
 import '../../services/solicitud_contacto_service.dart';
 import '../../services/foto_mercado_service.dart';
+import '../../services/activo_agro_service_v2.dart';
 import '../../enums/solicitud_estado.dart';
 import '../../widgets/barra_campo.dart';
 import '../produccion/produccion_activo_screen.dart' show nombreActividad;
 import '../produccion/produccion_estilo.dart';
 import 'campos_screen.dart' show hectareasTexto;
 import 'detalle_activo_agro_screen.dart' show emojiActividad;
+import 'publicar_campo_screen.dart';
 
 /// Detalle de un campo del Mercado (lo ve el comprador o arrendatario).
 /// GAP-MERC-01 Parte D (24/11/2026): diseño nuevo: fotos arriba con
@@ -120,6 +123,21 @@ class _DetalleCampoScreenState extends State<DetalleCampoScreen> {
         duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
   }
 
+  Future<void> _editarComoAdmin() async {
+    final completo = await ActivoAgroServiceV2()
+        .obtenerActivoPorId(widget.activo.activoId);
+    if (!mounted) return;
+    if (completo == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('No se pudo abrir el campo')));
+      return;
+    }
+    final guardo = await Navigator.of(context).push<bool>(MaterialPageRoute(
+        builder: (_) => PublicarCampoScreen(activo: completo)));
+    // Al guardar, se vuelve al Mercado para ver el aviso actualizado.
+    if (guardo == true && mounted) Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final activo = widget.activo;
@@ -127,7 +145,19 @@ class _DetalleCampoScreenState extends State<DetalleCampoScreen> {
 
     return Scaffold(
       backgroundColor: AgroTema.crema,
-      appBar: BarraCampo(title: Text(activo.nombre)),
+      appBar: BarraCampo(
+        title: Text(activo.nombre),
+        // AF-158 (27/11/2026): el admin puede editar cualquier aviso desde
+        // el Mercado (antes solo llegaba a los campos propios).
+        actions: [
+          if (esAdminPorUid(FirebaseAuth.instance.currentUser?.uid))
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              tooltip: 'Editar (administrador)',
+              onPressed: _editarComoAdmin,
+            ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [

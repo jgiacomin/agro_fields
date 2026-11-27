@@ -1,15 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../core/audit/audit_event.dart';
+import '../core/audit/audit_service.dart';
 import '../core/auth/admin.dart';
 import '../core/theme/agro_tema.dart';
 import '../models/activos/activo_agro_model_v2.dart';
 import '../models/activos/documento_activo_model.dart';
 import '../models/activos/operacion_protegida_model.dart';
 import '../screens/admin/admin_screen.dart';
+import '../screens/campos/campos_screen.dart';
+import '../screens/campos/detalle_activo_agro_screen.dart';
 import '../screens/documentos/documentos_activo_screen.dart';
 import '../screens/operaciones/operaciones_activo_screen.dart';
 import '../screens/solicitudes/solicitudes_recibidas_screen.dart';
+import 'activo_agro_service_v2.dart';
 import 'admin_service.dart';
 import 'control_operacion.dart';
 import 'operacion_service.dart';
@@ -49,6 +54,7 @@ class AvisosService {
   final AdminService _admin = AdminService();
   final SolicitudContactoService _solicitudes = SolicitudContactoService();
   final OperacionService _operaciones = OperacionService();
+  final AuditService _auditoria = AuditService();
 
   Future<List<Aviso>> avisos(List<ActivoAgroV2> campos) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -68,6 +74,34 @@ class AvisosService {
                 : 'Tenés $n publicaciones para aprobar',
             detalle: 'Administración',
             destino: () => const AdminScreen(),
+          ));
+        }
+      } catch (_) {}
+    }
+
+    // 1b. AF-158 (27/11/2026): avisos del Mercado cambiados hoy por otros.
+    if (esAdminPorUid(uid)) {
+      try {
+        final hoy = DateTime.now();
+        final publicados =
+            await ActivoAgroServiceV2().obtenerActivosPublicados();
+        final n = publicados.where((p) {
+          final f = p.ultimaActualizacion;
+          return p.ultimoCambioPor.isNotEmpty &&
+              !esAdminPorUid(p.ultimoCambioPor) &&
+              f.year == hoy.year &&
+              f.month == hoy.month &&
+              f.day == hoy.day;
+        }).length;
+        if (n > 0) {
+          lista.add(Aviso(
+            icono: Icons.storefront,
+            color: AgroTema.azul,
+            titulo: n == 1
+                ? 'Hoy se cambió 1 aviso del Mercado'
+                : 'Hoy se cambiaron $n avisos del Mercado',
+            detalle: 'Mirar y pausar si hace falta',
+            destino: () => const CamposScreen(),
           ));
         }
       } catch (_) {}
@@ -95,12 +129,86 @@ class AvisosService {
 
     // 3 y 4. Por cada campo propio: documentos y cheques.
     for (final campo in campos) {
+      // AF-158: lo que otros cambiaron en los campos del responsable (7
+      // días): el dueño, o el broker que lo cargó si todavía no hay dueño.
+      if (campo.contactoMercadoId == uid) {
+        try {
+          final c = await _avisoDeCambios(campo, uid);
+          if (c != null) lista.add(c);
+        } catch (_) {}
+      }
       lista.addAll(_avisosDeDocumentos(campo));
       try {
         lista.addAll(await _avisosDeCheques(campo));
       } catch (_) {}
     }
     return lista;
+  }
+
+  /// AF-158 (27/11/2026): el último cambio que hizo otra persona (broker,
+  /// admin, profesional o encargado) en los últimos 7 días. Lee el registro
+  /// del campo (auditoría), que el dueño ya puede leer.
+  Future<Aviso?> _avisoDeCambios(ActivoAgroV2 campo, String uid) async {
+    final desde = DateTime.now().subtract(const Duration(days: 7));
+    final eventos = (await _auditoria.obtenerPorActivo(campo.activoId))
+        .where((e) =>
+            e.usuarioId.isNotEmpty &&
+            e.usuarioId != uid &&
+            e.fecha.isAfter(desde))
+        .toList()
+      ..sort((a, b) => b.fecha.compareTo(a.fecha));
+    if (eventos.isEmpty) return null;
+    final ultimo = eventos.first;
+    final mas = eventos.length - 1;
+    return Aviso(
+      icono: Icons.edit_note,
+      color: AgroTema.terracota,
+      titulo: '${_quien(ultimo, campo)} ${_queHizo(ultimo.accion)}',
+      detalle: [
+        campo.nombre,
+        _cuando(ultimo.fecha),
+        if (mas == 1) '1 cambio más',
+        if (mas > 1) '$mas cambios más',
+      ].join(' · '),
+      destino: () => DetalleActivoAgroScreen(activo: campo),
+    );
+  }
+
+  static String _quien(AuditEvent e, ActivoAgroV2 campo) {
+    final rol = esAdminPorUid(e.usuarioId)
+        ? 'administrador'
+        : e.usuarioId == campo.publicadorId
+            ? 'broker'
+            : '';
+    final nombre = e.datos?['quien'];
+    if (nombre is String && nombre.trim().isNotEmpty) {
+      return rol.isEmpty ? nombre.trim() : '${nombre.trim()} ($rol)';
+    }
+    if (rol == 'administrador') return 'El administrador';
+    if (rol == 'broker') return 'El broker';
+    return 'Un profesional o encargado';
+  }
+
+  static String _queHizo(String accion) {
+    switch (accion) {
+      case 'guardar_ofertas':
+        return 'cambió el precio';
+      case 'editar_datos_campo':
+        return 'editó los datos del campo';
+      case 'publicar_activo':
+        return 'cambió el aviso del Mercado';
+      default:
+        return 'hizo un cambio';
+    }
+  }
+
+  static String _cuando(DateTime f) {
+    final hoy = DateTime.now();
+    final dia = DateTime(f.year, f.month, f.day);
+    final dias = DateTime(hoy.year, hoy.month, hoy.day).difference(dia).inDays;
+    if (dias <= 0) return 'hoy';
+    if (dias == 1) return 'ayer';
+    return 'hace $dias días';
   }
 
   List<Aviso> _avisosDeDocumentos(ActivoAgroV2 campo) {

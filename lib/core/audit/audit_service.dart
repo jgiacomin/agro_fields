@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'audit_event.dart';
 import 'audit_type.dart';
@@ -27,6 +28,15 @@ class AuditService {
         .doc()
         .id;
 
+    // AF-158 (27/11/2026): el nombre de quien hizo el cambio, para la
+    // campanita del dueño (el dueño no puede leer los perfiles de otros).
+    final yo = FirebaseAuth.instance.currentUser;
+    final nombre = (yo?.displayName ?? '').trim();
+    final datosConNombre = {
+      ...?datos,
+      if (nombre.isNotEmpty && yo?.uid == usuarioId) 'quien': nombre,
+    };
+
     final evento = AuditEvent(
       eventoId: eventoId,
       activoId: activoId,
@@ -40,7 +50,7 @@ class AuditService {
       estadoAnterior: estadoAnterior,
       estadoNuevo: estadoNuevo,
       referencia: referencia,
-      datos: datos,
+      datos: datosConNombre.isEmpty ? null : datosConNombre,
     );
 
     await _db
