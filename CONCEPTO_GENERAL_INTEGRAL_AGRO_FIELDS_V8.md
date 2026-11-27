@@ -1059,6 +1059,12 @@ Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 
 Los cinco casos se cargaron a partir de los antecedentes registrados en la jornada del 24/11/2026, no de los documentos originales completos. Toda cifra y toda norma se confirman con su fuente antes de usarlas.
 
+### Incorporaciones del 26/11/2026
+
+- Caso de referencia: MiCampoDigital, competencia en gestión ganadera (sección 25.25). Matriz AF-147 (importar planilla Excel), AF-148 (archivo para SENASA/SIGSA), AF-149 (lector de caravanas y balanza), AF-150 (preñez y recordatorios sanitarios), AF-151 (potreros dibujados y verde por cuadro) y AF-152 (calculadoras gratis); el asistente con IA se suma a AF-082.
+- Principio inspirador: "Verificar antes de arrancar", a partir de la parábola del trigo y la cizaña (sección 25.26). Matriz AF-153 (moderación del Mercado: marcar, apartar, decidir con criterio, mirar el fruto y cuidar el trigo); amplía AF-038 y AF-145.
+- Principio inspirador: Virgilio, Bucólicas y Geórgicas, con el lema *"labor omnia vicit improbus"* para la página web (sección 25.27). Sin AF nuevo.
+
 ---
 
 ## 25. Casos de referencia estratégicos
@@ -1429,3 +1435,91 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en la jorna
 | Módulo completo | — | Módulo de horticultura completo | 🟢 después |
 
 **Criterio:** en enero no se agrega nada nuevo; primero se audita lo que ya existe.
+
+### 25.23. Resolución 2003/2026: frigoríficos que exportan carne vacuna a la Unión Europea (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 25/11/2026; no es especificación técnica. Confirmar cifras y requisitos con el texto oficial del Boletín Oficial antes de usarlos.
+
+**Síntesis:** el Ministerio de Economía fijó nuevas reglas para los frigoríficos que exportan carne vacuna a la Unión Europea dentro del cupo de cortes enfriados y congelados con arancel cero: faena primero y en orden cronológico de las tropas, identificación de las reses, cajas cerradas con fajas y rótulos, y exclusión y sumarios si no se cumple.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Saber de qué tropa y de qué campo viene cada res | Traslado simple (AF-089), núcleo productivo ganadero (GAP-PROD-01) | — | 🔴 enero, nada nuevo |
+| Marcar un lote "pensado para Europa" y ver qué requisitos le faltan | Paquete de origen (AF-118) | Marca de lote "pensado para Europa" con requisitos faltantes | 🟡 |
+| Unir cada animal con su paquete de origen y conectarse con el frigorífico | Caravana individual (AF-104) | Caravana individual unida al paquete de origen; conexión con frigoríficos por vías oficiales | 🟢 |
+
+**Relación:** 25.13 (Uruguay y carne a Europa) y 25.8 (VISEC Carne).
+
+**Criterio:** Agro Fields no certifica ni garantiza: brinda la trazabilidad de los datos que el productor entrega a su cliente. Sin AF nuevo.
+
+### 25.24. Búfalos en Chaco (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 25/11/2026; no es especificación técnica.
+
+**Síntesis:** nota sobre la cría de búfalos en Chaco. El usuario quiere incorporar la especie a Agro Fields.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Cargar un rodeo de búfalos | Núcleo productivo ganadero (GAP-PROD-01), apto para otras especies | Especie "búfalo" en la lista | 🔴 enero |
+| Caravana electrónica y razas | Genética (AF-130), caravana individual (AF-104) | Razas bubalinas; caravana electrónica según la norma | 🟡 |
+| Leche de búfala y exportación | Paquete de origen (AF-118), caso 25.23 | Producción de leche y requisitos de exportación | 🟢 |
+
+**Pendiente:** cuando se trabaje la hacienda, confirmar con fuente oficial (SENASA) desde cuándo es obligatoria la caravana electrónica para búfalos y cuáles son las categorías oficiales.
+
+**Criterio:** sin AF nuevo; se reutiliza el núcleo ganadero.
+
+### 25.25. MiCampoDigital: competencia en gestión ganadera (noviembre de 2026)
+
+**Estado:** caso de referencia registrado el 26/11/2026 a partir de la página comercial https://micampodigital.com.ar/; no es especificación técnica. Lo que dice la página no está verificado por Agro Fields.
+
+**Síntesis:** software argentino de gestión ganadera (cría, recría, invernada y feedlot), sin agricultura. Hoy todas sus funciones son gratis. Fuerte en la carga en la manga: historia de cada animal por caravana, preñez y sanidad, administración (gastos, ingresos, libro diario), mapa satelital de potreros con índice de verde y carga, asistente con IA por texto o audio, importación de Excel, calculadoras gratis sin cuenta, funcionamiento sin señal, roles de equipo, archivo para SENASA (SIGSA, Res. 841/2025) y lector de caravanas y balanza.
+
+| Aprendizaje del caso | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| Pasar planillas sin cargar todo de nuevo | AF-052 (Excel/CSV, sin hacer) | Importar Excel con elección de columnas y vista previa (AF-147) | 🔴 enero si entra |
+| Declarar ante SENASA sin carga doble | Traslado simple (AF-089), caso SNIG (sección 12) | Archivo para SIGSA, con formato confirmado en fuente oficial (AF-148) | 🟡 |
+| Cargar en la manga con lector y balanza | Pesajes (GAP-PESO-01), sin señal (GAP-OFF-01), Tru-Test (sección 17) | Lectura de caravanas EID/RFID y balanza (AF-149) | 🟡 / 🟢 |
+| Preñez y vacunas | Eventos del rodeo (GAP-PROD-01), campanita (AF-145) | Tasa de preñez por lote y recordatorios sanitarios (AF-150) | 🟡 |
+| Manejar el pasto con el mapa | Ubicación (AF-090), carga animal (AF-126), superficie dibujada (AF-128) | Potreros dibujados y verde por cuadro (AF-151) | 🟢 marzo |
+| Atraer usuarios con algo útil | Precio de referencia (AF-140) | Calculadoras gratis en la web (AF-152) | 🟢 |
+| Consultar con IA por texto o audio | Asistente Integral (AF-082) | Asistente por texto y audio | 🟢 |
+
+**Lo que Agro Fields tiene y ellos no:** agricultura y otras especies (aves, peces, búfalos), Mercado para inmobiliarias y brokers, expediente del campo con estados de confianza, documentos con vencimiento, emergencias e historia del territorio, operaciones y cheques, stock e insumos, Paraguay y Argentina.
+
+**Criterio:** en ganadería pura y gratis la competencia es fuerte; el diferencial de Agro Fields es el campo completo, la confianza en los datos y el Mercado. Revisar el precio de Pro Productor (US$ 19) con los Fundadores teniendo en cuenta que esta competencia es gratis. La IA sugiere, no verifica.
+
+### 25.26. "Verificar antes de arrancar": la parábola del trigo y la cizaña (noviembre de 2026)
+
+**Estado:** principio inspirador registrado el 26/11/2026 a pedido del usuario; no es especificación técnica.
+
+**Síntesis:** en la parábola (Mateo 13,24-30 y 36-43) un hombre siembra buena semilla, pero mientras todos duermen un enemigo siembra cizaña. Los siervos quieren arrancarla enseguida; el dueño les dice que esperen a la cosecha para no arrancar también el trigo, y que la separación la harán los segadores en su momento: primero juntan la cizaña y después guardan el trigo en el granero. La cizaña joven se parece mucho al trigo y recién se distingue bien cuando espiga.
+
+| Enseñanza | Ya existe | Falta | Etapa |
+|---|---|---|---|
+| El enemigo siembra de noche: alguien tiene que estar atento | Campanita de avisos (AF-145); aprobación del broker/inmobiliaria (AF-038) | Avisos de publicaciones marcadas como dudosas | AF-153 |
+| No arrancar apurado: lo dudoso se marca y se aparta, no se borra | Pausar aviso o sacar permiso (AF-038) | Estado "en revisión" con motivo visible para el afectado | AF-153 |
+| No separa cualquiera: hace falta un rol y un criterio | Roles y permisos (administrador) | Reglas claras de revisión; solo el administrador decide | AF-153 |
+| Se conoce por el fruto | Fecha de publicación (AF-038 H), operaciones y cheques | Historial del usuario como apoyo para decidir | AF-153 / 🟡 |
+| Cuidar el trigo: lo bueno se guarda con cuidado | Trazabilidad y expediente del campo | Registro de quién, cuándo y por qué; poder deshacer | AF-153 |
+
+**Criterio:** Agro Fields no juzga personas: revisa publicaciones y datos con paciencia, criterio y registro. Nada se borra por un error y todo se puede deshacer. Sembrar bien desde el principio (datos correctos y reglas claras) evita la mayor parte de los problemas.
+
+### 25.27. Virgilio: Bucólicas y Geórgicas, y el lema de la página web (noviembre de 2026)
+
+**Estado:** principio inspirador registrado el 26/11/2026 a pedido del usuario; no es especificación técnica.
+
+**Lema aprobado para la página web:** *"Labor omnia vicit improbus"* (Geórgicas I, 145-146): el trabajo constante lo vence todo. El usuario pidió que la página web de Agro Fields lleve estas inspiraciones (este lema, la parábola del trigo y la cizaña de la sección 25.26 y las enseñanzas de abajo).
+
+**Síntesis:** Virgilio escribió hace más de 2.000 años las Bucólicas (poemas de pastores) y las Geórgicas (un libro de trabajo rural en cuatro partes: cultivos y clima, árboles y viñas, ganado, abejas). Muchas de sus enseñanzas coinciden con lo que Agro Fields busca resolver.
+
+| Enseñanza de Virgilio | Dónde aparece en Agro Fields |
+|---|---|
+| No todas las tierras pueden dar de todo; probar el suelo antes de sembrar (Geórgicas II) | Pregunta guía y expediente del campo: clase de suelo, producción compatible |
+| Leer las señales del cielo y de los animales para anticipar el tiempo (Geórgicas I) | Clima, alertas y emergencias |
+| Rotar cultivos y dejar descansar la tierra (Geórgicas I) | Historial productivo de cada lote |
+| Elegir bien las madres para la cría (Geórgicas III) | Genética (AF-130) |
+| Apartar a tiempo al animal enfermo para que no contagie (Geórgicas III) | Sanidad y trazabilidad; "marcar y apartar" (AF-153) |
+| La colmena funciona porque cada abeja tiene su tarea (Geórgicas IV) | Roles: dueño, encargado, ingeniero, broker |
+| Un pastor pierde su tierra y otro la conserva (Bucólica I) | Seguridad de los títulos: expediente y toma de posesión del Mercado (AF-038 F) |
+
+**Criterio:** inspiración para el tono y los textos de la página web; no agrega funciones. Las frases en latín se citan con su fuente (obra, libro y verso) y con traducción simple.
