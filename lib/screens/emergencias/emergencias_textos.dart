@@ -7,6 +7,8 @@ const List<String> tiposEmergencia = [
   'incendio',
   'granizo',
   'helada',
+  // Caso 25.28 (27/11/2026): olas de calor de hasta 45 °C.
+  'calor_extremo',
   'tormenta',
   'enfermedad_plaga',
   'otro',
@@ -24,6 +26,8 @@ String nombreTipoEmergencia(String? tipo) {
       return 'Granizo';
     case 'helada':
       return 'Helada';
+    case 'calor_extremo':
+      return 'Calor extremo';
     case 'tormenta':
       return 'Tormenta o viento';
     case 'enfermedad_plaga':

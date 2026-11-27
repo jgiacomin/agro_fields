@@ -1070,7 +1070,7 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en la jorna
 - Caso de referencia: miArgentina y GDEBA como modelos de sencillez (sección 25.29). Matriz AF-154 (Inicio con botones y "Mis campos" en lista corta, validado), AF-155 (entrar con huella, 🟡 diciembre) y AF-156 (página web pública, demo aprobada).
 - Decisión del Mercado: publicar directo con un solo "Guardar" para quien el admin habilitó una vez, con "Bajó de precio" (Matriz AF-157, validado: 300 pruebas de reglas y prueba en la app). Responsable del aviso: el primer broker o inmobiliaria que carga el campo, hasta que el dueño toma posesión; si el dueño nunca se suma, sigue el primer broker. Cada campo aparece una sola vez en el Mercado, con un solo precio. Amplía AF-038.
 - Campanita de cambios para el dueño y el admin (Matriz AF-158) y aviso de campo repetido (Matriz AF-159, 🟡 enero).
-- Caso de referencia: pronóstico agroclimático de la Bolsa de Cereales de Buenos Aires para el 26/11 al 2/12/2026 (sección 25.28). Sin AF nuevo por ahora; ligado a AF-117, AF-092 y AF-143. Revisión del código: "helada" ya existe como emergencia; "calor extremo" y el registro de la lluvia del pluviómetro no existen.
+- Caso de referencia: pronóstico agroclimático de la Bolsa de Cereales de Buenos Aires para el 26/11 al 2/12/2026 (sección 25.28). Ligado a AF-117, AF-092 y AF-143. Revisión del código: "helada" ya existía; se sumó "Calor extremo" a las emergencias (27/11/2026) y el registro de lluvia queda como Matriz AF-160 (🟡 enero).
 
 ---
 
@@ -1541,8 +1541,8 @@ Los cinco casos se cargaron a partir de los antecedentes registrados en la jorna
 |---|---|---|
 | La alerta tiene que ser por campo, no por provincia | AF-117 (alerta según la ubicación del campo, 🟢 marzo) | Planificado |
 | Heladas como emergencia | AF-092 (emergencias) | Ya existe el tipo "Helada" |
-| Ola de calor como emergencia (y estrés por calor en la hacienda) | AF-092 | No existe "Calor extremo": falta sumarlo |
-| Lo que vale es lo que marcó el pluviómetro del campo, con fecha y fuente | Clima e Inteligencia hídrica (25.5) | No existe registro de lluvia |
+| Ola de calor como emergencia (y estrés por calor en la hacienda) | AF-092 | Sumado "Calor extremo" el 27/11/2026 |
+| Lo que vale es lo que marcó el pluviómetro del campo, con fecha y fuente | Clima e Inteligencia hídrica (25.5) | No existe: AF-160 Registro de lluvia (🟡 enero) |
 | Cosecha frenada por lluvias | AF-143 (cosecha en pausa por clima) | Planificado |
 | La Bolsa de Cereales como fuente con fecha, junto al SMN | Botón "Ver alertas oficiales" | Solo SMN |
 
